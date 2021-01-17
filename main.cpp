@@ -36,21 +36,31 @@ int main()
 
     std::ofstream moveofs;
     moveofs.open("moves.csv", std::ofstream::out);
-    moveofs << "id,time,x,y,energy\n";
+    moveofs << "id,time,x,y,energy,trait\n";
 
-    for (size_t t = 0; t < 10; t++) {
+    for (size_t t = 0; t < 100; t++) {
 
         pop.move(food);
 
         for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++)
         {
-            findNearestItem(i, food, pop);
-//            std::cout << food.nAvailable << "\n";
+            forage(i, food, pop);
+            food.countAvailable();
+            std::cout << food.nAvailable << "\n";
             moveofs << i << ","
                     << t << ","
                     << pop.coordX[i] << ","
                     << pop.coordY[i] << ","
-                    << pop.energy[i] << "\n";
+                    << pop.energy[i] << ","
+                    << pop.trait[i] << "\n";
+        }
+
+        // decrement food counter by one
+        for (size_t j = 0; j < static_cast<size_t>(food.nItems); j++){
+            if(food.counter[j] > 0) {
+                food.counter[j] --;
+            }
+
         }
     }
     moveofs.close();
