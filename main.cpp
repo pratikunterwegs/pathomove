@@ -12,10 +12,10 @@ int main()
 {
     // init food
     Resources food;
-    food.initResources(30, 2.5);
+    food.initResources(30, 1.5);
     food.countAvailable();
 
-//    std::cout << food.nAvailable << "\n";
+    //    std::cout << food.nAvailable << "\n";
 
     // print to file
     std::ofstream ofs;
@@ -36,33 +36,49 @@ int main()
 
     std::ofstream moveofs;
     moveofs.open("moves.csv", std::ofstream::out);
-    moveofs << "id,time,x,y,energy,trait\n";
+    moveofs << "id,gen,x,y,energy,trait\n";
 
-    for (size_t t = 0; t < 100; t++) {
+    for(int gen = 0; gen < 500; gen++) {
 
-        pop.move(food);
 
-        for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++)
-        {
-            forage(i, food, pop);
-            food.countAvailable();
-            std::cout << food.nAvailable << "\n";
-            moveofs << i << ","
-                    << t << ","
-                    << pop.coordX[i] << ","
-                    << pop.coordY[i] << ","
-                    << pop.energy[i] << ","
-                    << pop.trait[i] << "\n";
-        }
+        std::cout << "gen = " << gen << "\n";
 
-        // decrement food counter by one
-        for (size_t j = 0; j < static_cast<size_t>(food.nItems); j++){
-            if(food.counter[j] > 0) {
-                food.counter[j] --;
+        for (size_t t = 0; t < 100; t++) {
+
+            pop.initPos(food);
+            pop.move(food);
+
+            for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++)
+            {
+                forage(i, food, pop);
+                food.countAvailable();
             }
 
+            // decrement food counter by one
+            for (size_t j = 0; j < static_cast<size_t>(food.nItems); j++){
+                if(food.counter[j] > 0) {
+                    food.counter[j] --;
+                }
+
+            }
         }
+
+        if(gen > 100) {
+            // print evolved pop
+            for(size_t i = 0; i < pop.nAgents; i++){
+                moveofs << i << ","
+                        << gen << ","
+                        << pop.coordX[i] << ","
+                        << pop.coordY[i] << ","
+                        << pop.energy[i] << ","
+                        << pop.trait[i] << "\n";
+            }
+        }
+        // reproduce
+        pop.Reproduce();
+
     }
+
     moveofs.close();
 
     std::cout << "done";

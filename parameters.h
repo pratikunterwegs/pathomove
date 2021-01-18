@@ -14,11 +14,14 @@ std::mt19937 rng;
 // movement
 const double indivStepSize = 2.0;
 const double indivStepSizeSd = 0.2;
-//const float indivKappa = 3.f;
+
+const double stepSizeArs = 0.5;
+const double stepSizeSdArs = 0.05;
+
 const double etaCrw = 50.0; // three degrees heading sd = 2.0 when correlated, fewer turns
 const double etaArs = 120.0;
 const int searchTime = 5;
-const double moveCost = 0.01;
+const double moveCost = 0.001;
 
 // agents
 const double range = 2.0;

@@ -20,7 +20,7 @@
 struct Population {
 public:
     Population() :
-        nAgents (300),
+        nAgents (1000),
         coordX (nAgents, 50.0),
         coordY (nAgents, 50.0),
         energy (nAgents, 0.000001),
@@ -70,17 +70,20 @@ void Population::move(Resources food) {
 
     double heading;
     double landsize = food.dSize;
+    double stepSize;
 
     for(size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-        double stepSize = gsl_ran_gamma(r, indivStepSize, indivStepSizeSd);
-        // pay cost
-        energy[i] -= (moveCost * stepSize);
 
         // get heading checking for counter
         if (counter[i] > 0) {
+            // use ars step size
+            stepSize = gsl_ran_gamma(r, stepSizeArs, stepSizeSdArs);
+            // pay cost
+            energy[i] -= (moveCost * stepSize);
             heading = etaArs * gsl_ran_gaussian(r, 1.0);
             counter[i] -- ;
         } else {
+            stepSize = gsl_ran_gamma(r, indivStepSize, indivStepSizeSd);
             heading = etaCrw * gsl_ran_gaussian(r, 1.0);
         }
 
@@ -198,7 +201,7 @@ void Population::Reproduce() {
     // mutate trait
     for (size_t a = 0; static_cast<int>(a) < nAgents; a++) {
         if (gsl_ran_bernoulli(r, mProb) == 1) {
-            newTrait[a] += gsl_ran_cauchy(r, static_cast<double>(mShift));
+            newTrait[a] += gsl_ran_gaussian(r, mShift);
 
             if (newTrait[a] >= 1.0) {
                 newTrait[a] = 0.99;
