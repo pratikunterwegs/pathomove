@@ -77,11 +77,14 @@ void Resources::initResources(const int nCentres, const double dDispersal) {
     }
 
     // initialise rtree
+    bgi::rtree< value, bgi::quadratic<16> > tmpRtree;
     for (int i = 0; i < nItems; ++i)
     {
         point p = point(coordX[i], coordY[i]);
-        rtree.insert(std::make_pair(p, i));
+        tmpRtree.insert(std::make_pair(p, i));
     }
+    std::swap(rtree, tmpRtree);
+    tmpRtree.clear();
 }
 
 void Resources::countAvailable() {
