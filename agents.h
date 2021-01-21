@@ -55,7 +55,7 @@ void Population::initPos(Resources food) {
 
 void Population::setTrait() {
     for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-        trait[i] = gsl_ran_gamma(r, 1.0, 1.0);
+        trait[i] = gsl_rng_uniform(r);
     }
 
     // scale trait
@@ -201,7 +201,7 @@ void Population::Reproduce() {
     // mutate trait
     for (size_t a = 0; static_cast<int>(a) < nAgents; a++) {
         if (gsl_ran_bernoulli(r, mProb) == 1) {
-            newTrait[a] += gsl_ran_gaussian(r, mShift);
+            newTrait[a] += gsl_ran_cauchy(r, mShift);
 
             if (newTrait[a] >= 1.0) {
                 newTrait[a] = 0.99;
