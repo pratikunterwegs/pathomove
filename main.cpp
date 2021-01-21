@@ -38,7 +38,7 @@ int main()
     moveofs.open("moves.csv", std::ofstream::out);
     moveofs << "id,gen,x,y,energy,trait\n";
 
-    for(int gen = 0; gen < 500; gen++) {
+    for(int gen = 0; gen < 10500; gen++) {
 
 
         std::cout << "gen = " << gen << "\n";
@@ -63,7 +63,7 @@ int main()
             }
         }
 
-        if(gen > 100) {
+        if(gen % 10 == 0) {
             // print evolved pop
             for(size_t i = 0; i < pop.nAgents; i++){
                 moveofs << i << ","
