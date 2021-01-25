@@ -10,6 +10,7 @@
 
 #include "parameters.h"
 #include "landscape.h"
+#include "network.h"
 
 // EtaCRW=0.7 #the weight of the CRW component in the BCRW used to model the Indiv movement
 // StpSize_ind=7 #Mean step lengths of individuals;
@@ -38,12 +39,24 @@ public:
     std::vector<double> trait;
     std::vector<int> counter;
 
+    // network
+    Network pbsn;
+
+    // position rtree
+    bgi::rtree< value, bgi::quadratic<16> > rtree;
+
     // funs for pop
     void setTrait ();
     void initPos(Resources food);
     void move(Resources food);
     void normaliseIntake();
     void Reproduce();
+
+    // for rtree
+    void updateRtree();
+
+    // for network
+    void updatePbsn();
 };
 
 void Population::initPos(Resources food) {
@@ -62,6 +75,50 @@ void Population::setTrait() {
     sort(trait.begin(), trait.end());
     for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
         trait[i] = trait[i] / trait[nAgents - 1];
+    }
+
+}
+
+// to update rtree
+void Population::updateRtree() {
+    // make new rtree and swap
+    bgi::rtree< value, bgi::quadratic<16> > tmpRtree;
+    for (int i = 0; i < nAgents; ++i)
+    {
+        point p = point(coordX[i], coordY[i]);
+        tmpRtree.insert(std::make_pair(p, i));
+    }
+    std::swap(rtree, tmpRtree);
+    tmpRtree.clear();
+}
+
+// to update pbsn
+void Population::updatePbsn() {
+
+    // focal agents
+    for(size_t i = 0; i < static_cast<size_t>(nAgents) - 1; i++) {
+        // make vector of proximate agents
+        std::vector<value> nearAgents;
+        point currentLoc = point(coordX[i], coordY[i]);
+        box bbox(point(coordX[i] - range,
+            coordY[i] - range),
+            point(coordX[i] + range, coordY[i] + range));
+
+
+        // query the rtree
+        rtree.query(
+                    bgi::within(bbox) &&
+                    bgi::satisfies([&](value const& v) {return bg::distance(v.first, currentLoc) < range;}),
+                    std::back_inserter(nearAgents));
+
+        // update pbsn for elements (agent ids) greater than i
+        // agent ids are in nearAgents[it].second
+
+        for (size_t j = 0; j < nearAgents.size(); j++) {
+            if(nearAgents[j].second > i) {
+                pbsn.associations[i][nearAgents[j].second]++;
+            }
+        }
     }
 
 }
@@ -114,7 +171,7 @@ std::vector<int> findNearItems(size_t individual, Resources &food, Population &p
 
         food.rtree.query(
                     bgi::within(bbox) &&
-                    bgi::satisfies([&](value const& v) {return bg::distance(v.first, currentLoc) < 2;}),
+                    bgi::satisfies([&](value const& v) {return bg::distance(v.first, currentLoc) < range;}),
                     std::back_inserter(nearItems));
 
         for(size_t i = 0; i < nearItems.size(); i++){
@@ -196,7 +253,7 @@ void Population::Reproduce() {
     // reset counter
     assert(newTrait.size() == trait.size() && "traits different size");
     counter = std::vector<int> (nAgents);
-    assert(counter.size() == nAgents && "counter size wrong");
+    assert(static_cast<int>(counter.size()) == nAgents && "counter size wrong");
 
     // mutate trait
     for (size_t a = 0; static_cast<int>(a) < nAgents; a++) {
