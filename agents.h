@@ -51,10 +51,6 @@ public:
     void move(Resources food);
     void normaliseIntake();
     void Reproduce();
-
-    // for rtree
-    void updateRtree();
-
     // for network
     void updatePbsn();
 };
@@ -79,51 +75,25 @@ void Population::setTrait() {
 
 }
 
-// to update rtree
-void Population::updateRtree() {
-    // make new rtree and swap
-    bgi::rtree< value, bgi::quadratic<16> > tmpRtree;
-    for (int i = 0; i < nAgents; ++i)
-    {
-        point p = point(coordX[i], coordY[i]);
-        tmpRtree.insert(std::make_pair(p, i));
-    }
-    std::swap(agentRtree, tmpRtree);
-    tmpRtree.clear();
+// distance function without wrapping
+double distance(double x1, double y1, double x2, double y2) {
+
+    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
 
 // to update pbsn
 void Population::updatePbsn() {
 
     // focal agents
-    for(size_t i = 0; i < static_cast<size_t>(nAgents) - 1; i++) {
+    for(size_t i = 0; i < static_cast<size_t>(nAgents - 1); i++) {
         // make vector of proximate agents
-        std::vector<value> nearAgents;
-        point currentPos = point(coordX[i], coordY[i]);
-        box bbox(point(coordX[i] - range,
-            coordY[i] - range),
-            point(coordX[i] + range, coordY[i] + range));
+        for(size_t j = i + 1; j < static_cast<size_t>(nAgents); j++) {
 
-        // query the rtree
-        agentRtree.query(
-                    bgi::within(bbox) &&
-                    bgi::satisfies([&](value const& v) {return bg::distance(v.first, currentPos) < 2;}),
-                    std::back_inserter(nearAgents));
-
-        // update pbsn for elements (agent ids) greater than i
-        // agent ids are in nearAgents[it].second
-
-        assert(nearAgents.size() < nAgents && "updatePbsn: extra agents found");
-
-        for (size_t j = 0; j < nearAgents.size(); j++) {
-
-            if(nearAgents[j].second > i) {
-
-                pbsn.associations[i][(nearAgents[j].second)]++;
+            if(distance(coordX[i], coordY[i], coordX[j], coordY[j]) < range) {
+                pbsn.associations[i][j]++;
             }
         }
     }
-
 }
 
 void Population::move(Resources food) {
