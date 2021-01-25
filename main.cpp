@@ -6,7 +6,7 @@
 #include "parameters.h"
 #include "landscape.h"
 #include "agents.h"
-
+#include "network.h"
 
 int main()
 {
@@ -65,7 +65,7 @@ int main()
 
         if(gen % 10 == 0) {
             // print evolved pop
-            for(size_t i = 0; i < pop.nAgents; i++){
+            for(size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++){
                 moveofs << i << ","
                         << gen << ","
                         << pop.coordX[i] << ","
@@ -80,6 +80,5 @@ int main()
     }
 
     moveofs.close();
-
     std::cout << "done";
 }

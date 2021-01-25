@@ -31,11 +31,13 @@ RCPPINCL =      $$system($$R_HOME/bin/Rscript -e \"Rcpp:::CxxFlags\(\)\")
 RCPPLIBS =      $$system($$R_HOME/bin/Rscript -e \"Rcpp:::LdFlags\(\)\")
 
 SOURCES += \
-        main.cpp
+        main.cpp \
+        simulations.cpp
 
 HEADERS += \
     agents.h \
     landscape.h \
+    network.h \
     parameters.h
 
 QMAKE_CXXFLAGS += $$RCPPWARNING $$RCPPFLAGS $$RCPPINCL
@@ -43,6 +45,7 @@ QMAKE_LIBS += $$RLDFLAGS $$RBLAS $$RLAPACK $$RCPPLIBS
 
 LIBS += -L/usr/local/lib -lgsl -lgslcblas -lm \
         -lboost_system
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
