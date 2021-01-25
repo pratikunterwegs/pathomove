@@ -21,7 +21,7 @@
 struct Population {
 public:
     Population() :
-        nAgents (1000),
+        nAgents (100),
         coordX (nAgents, 50.0),
         coordY (nAgents, 50.0),
         energy (nAgents, 0.000001),
@@ -43,7 +43,7 @@ public:
     Network pbsn;
 
     // position rtree
-    bgi::rtree< value, bgi::quadratic<16> > rtree;
+    bgi::rtree< value, bgi::quadratic<16> > agentRtree;
 
     // funs for pop
     void setTrait ();
@@ -88,7 +88,7 @@ void Population::updateRtree() {
         point p = point(coordX[i], coordY[i]);
         tmpRtree.insert(std::make_pair(p, i));
     }
-    std::swap(rtree, tmpRtree);
+    std::swap(agentRtree, tmpRtree);
     tmpRtree.clear();
 }
 
@@ -99,24 +99,27 @@ void Population::updatePbsn() {
     for(size_t i = 0; i < static_cast<size_t>(nAgents) - 1; i++) {
         // make vector of proximate agents
         std::vector<value> nearAgents;
-        point currentLoc = point(coordX[i], coordY[i]);
+        point currentPos = point(coordX[i], coordY[i]);
         box bbox(point(coordX[i] - range,
             coordY[i] - range),
             point(coordX[i] + range, coordY[i] + range));
 
-
         // query the rtree
-        rtree.query(
+        agentRtree.query(
                     bgi::within(bbox) &&
-                    bgi::satisfies([&](value const& v) {return bg::distance(v.first, currentLoc) < range;}),
+                    bgi::satisfies([&](value const& v) {return bg::distance(v.first, currentPos) < 2;}),
                     std::back_inserter(nearAgents));
 
         // update pbsn for elements (agent ids) greater than i
         // agent ids are in nearAgents[it].second
 
+        assert(nearAgents.size() < nAgents && "updatePbsn: extra agents found");
+
         for (size_t j = 0; j < nearAgents.size(); j++) {
+
             if(nearAgents[j].second > i) {
-                pbsn.associations[i][nearAgents[j].second]++;
+
+                pbsn.associations[i][(nearAgents[j].second)]++;
             }
         }
     }
@@ -166,12 +169,12 @@ std::vector<int> findNearItems(size_t individual, Resources &food, Population &p
         std::vector<value> nearItems;
         point currentLoc = point(pop.coordX[individual], pop.coordY[individual]);
         box bbox(point(pop.coordX[individual] - range,
-            pop.coordY[individual] - range),
-            point(pop.coordX[individual] + range, pop.coordY[individual] + range));
+                       pop.coordY[individual] - range),
+                 point(pop.coordX[individual] + range, pop.coordY[individual] + range));
 
         food.rtree.query(
                     bgi::within(bbox) &&
-                    bgi::satisfies([&](value const& v) {return bg::distance(v.first, currentLoc) < range;}),
+                    bgi::satisfies([&](value const& v) {return bg::distance(v.first, currentLoc) < 2;}),
                     std::back_inserter(nearItems));
 
         for(size_t i = 0; i < nearItems.size(); i++){
