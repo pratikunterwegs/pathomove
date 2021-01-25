@@ -13,11 +13,13 @@ public:
     int nAgents;
     std::vector<std::vector<int> > associations;
 
-    void initAssociations();
+    void initAssociations(int nVertices);
 };
 
 // initialise associations
-void Network::initAssociations(){
+void Network::initAssociations(int nVertices){
+
+    nAgents = nVertices;
     for(size_t i = 0; nAgents - (static_cast<int>(i) + 1) > 0; i ++) {
         associations.push_back(std::vector<int> (nAgents - (static_cast<int>(i) + 1), 0));
     }
