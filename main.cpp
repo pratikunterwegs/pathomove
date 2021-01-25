@@ -10,12 +10,16 @@
 
 int main()
 {
+    // set seed
+    gsl_rng_set(r, seed);
     // init food
+
+    std::cout << "preparing food landscape\n";
     Resources food;
     food.initResources(30, 1.5);
     food.countAvailable();
 
-    //    std::cout << food.nAvailable << "\n";
+    std::cout << food.nAvailable << "\n";
 
     // print to file
     std::ofstream ofs;
@@ -29,24 +33,36 @@ int main()
 
     ofs.close();
 
+
     // init pop
     Population pop;
     pop.initPos(food);
     pop.setTrait();
 
-    std::ofstream moveofs;
-    moveofs.open("moves.csv", std::ofstream::out);
-    moveofs << "id,gen,x,y,energy,trait\n";
+    // position ofs
+    std::ofstream traitofs;
+    traitofs.open("trait.csv", std::ofstream::out);
+    traitofs << "id,gen,trait\n";
 
-    for(int gen = 0; gen < 10500; gen++) {
+//    // pbsn of
+//    std::ofstream pbsnofs;
+//    pbsnofs.open("pbsn.csv", std::ofstream::out);
+//    pbsnofs << "gen,id1,id2,weight\n";
 
+    int genmax = 105;
 
-        std::cout << "gen = " << gen << "\n";
+    for(int gen = 0; gen < genmax; gen++) {
+
+//        std::cout << "here before init assoc";
+        pop.initPos(food);
+        pop.pbsn.initAssociations(pop.nAgents);
 
         for (size_t t = 0; t < 100; t++) {
 
-            pop.initPos(food);
+
             pop.move(food);
+//            pop.updateRtree();
+//            pop.updatePbsn();
 
             for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++)
             {
@@ -64,21 +80,39 @@ int main()
         }
 
         if(gen % 10 == 0) {
+            std::cout << "gen = " << gen << "\n";
+
             // print evolved pop
             for(size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++){
-                moveofs << i << ","
+                std::cout << i << "\n";
+                traitofs << i << ","
                         << gen << ","
-                        << pop.coordX[i] << ","
-                        << pop.coordY[i] << ","
-                        << pop.energy[i] << ","
+//                        << pop.coordX[i] << ","
+//                        << pop.coordY[i] << ","
+//                        << pop.energy[i] << ","
                         << pop.trait[i] << "\n";
             }
         }
+
+//        if(gen > (genmax -10)) {
+
+//            // print pbsn
+//            for(size_t i = 0; i < pop.nAgents - 1; i++) {
+//                for(size_t j = 0; j < pop.pbsn.associations[i].size(); j++) {
+//                    pbsnofs << gen << ","
+//                            << i << ","
+//                            << j << ","
+//                            << pop.pbsn.associations[i][j] << "\n";
+//                }
+//            }
+//        }
+
         // reproduce
         pop.Reproduce();
 
     }
 
-    moveofs.close();
+    traitofs.close();
+//    pbsnofs.close();
     std::cout << "done";
 }
