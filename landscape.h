@@ -24,7 +24,7 @@ struct Resources {
 public:
     Resources() :
     nItems(1000),
-    dSize(100.0),
+    dSize(10.0),
     coordX(nItems, 0.0),
     coordY(nItems, 0.0),
     counter(nItems, 0),
