@@ -6,9 +6,14 @@
 #include <stdio.h>
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
+#include <chrono>
 
 // make a gsl rng and a regular rng
+//const gsl_rng_type * T;
 gsl_rng * r = gsl_rng_alloc (gsl_rng_taus);
+// set seed
+unsigned seed = static_cast<unsigned> (std::chrono::system_clock::now().time_since_epoch().count());
+
 std::mt19937 rng;
 
 // movement
