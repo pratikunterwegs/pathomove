@@ -4,3 +4,5 @@
 ^data$
 ^.*\.Rmd$
 ^sociality_model_cpp$
+^.*\.sh$
+^LICENSE\.md$
