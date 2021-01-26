@@ -1,9 +1,8 @@
-test_that("multiplication works", {
+test_that("export landscape works", {
   
-  # check file exists
-  testthat::expect_output_file(
-    export_test_landscapes(100, 1, 100, 1),
-    file = "data/test_landscape/"
+  # check function runes
+  testthat::expect_silent(
+    export_test_landscapes(100, 1, 100, 1)
   )
   
 })
