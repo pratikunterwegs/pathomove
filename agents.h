@@ -84,7 +84,8 @@ void Population::updatePbsn(Network &pbsn) {
     // focal agents
     for(size_t i = 0; i < static_cast<size_t>(nAgents - 1); i++) {
         // make vector of proximate agents
-        for(size_t j = i + 1; j < static_cast<size_t>(nAgents); j++) {
+        // move j along the size of associations expected for i
+        for(size_t j = i + 1; j < pbsn.associations[i].size(); j++) {
 
             if(distance(coordX[i], coordY[i], coordX[j], coordY[j]) < range) {
                 pbsn.associations[i][j]++;
