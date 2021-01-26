@@ -9,7 +9,18 @@
 #include "agents.h"
 #include "simulations.cpp"
 
-int main()
+int main(int argc, char *argv[])
 {
-    do_simulation(100, 100, 20, 1.5);
+    // process cliargs
+    std::vector<std::string> cliArgs(argv, argv+argc);
+    // gather cli args
+    const int genmax = std::stoi(cliArgs[1]);
+    const int tmax = std::stoi(cliArgs[2]);
+    const int clusters = std::stoi(cliArgs[3]);
+    const double dispersal = std::stod(cliArgs[4]);
+    //        std::string rep = cliArgs[5];a
+    do_simulation(genmax, tmax, clusters, dispersal);
+
+    return 0;
+
 }
