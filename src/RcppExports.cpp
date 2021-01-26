@@ -6,34 +6,36 @@
 using namespace Rcpp;
 
 // export_test_landscapes
-void export_test_landscapes(int foodClusters, double clusterDispersal, int replicates);
-RcppExport SEXP _socialitymodel_export_test_landscapes(SEXP foodClustersSEXP, SEXP clusterDispersalSEXP, SEXP replicatesSEXP) {
+void export_test_landscapes(int foodClusters, double clusterDispersal, double landsize, int replicates);
+RcppExport SEXP _socialitymodel_export_test_landscapes(SEXP foodClustersSEXP, SEXP clusterDispersalSEXP, SEXP landsizeSEXP, SEXP replicatesSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type foodClusters(foodClustersSEXP);
     Rcpp::traits::input_parameter< double >::type clusterDispersal(clusterDispersalSEXP);
+    Rcpp::traits::input_parameter< double >::type landsize(landsizeSEXP);
     Rcpp::traits::input_parameter< int >::type replicates(replicatesSEXP);
-    export_test_landscapes(foodClusters, clusterDispersal, replicates);
+    export_test_landscapes(foodClusters, clusterDispersal, landsize, replicates);
     return R_NilValue;
 END_RCPP
 }
 // do_simulation
-void do_simulation(int genmax, int tmax, int foodClusters, double clusterDispersal);
-RcppExport SEXP _socialitymodel_do_simulation(SEXP genmaxSEXP, SEXP tmaxSEXP, SEXP foodClustersSEXP, SEXP clusterDispersalSEXP) {
+void do_simulation(int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize);
+RcppExport SEXP _socialitymodel_do_simulation(SEXP genmaxSEXP, SEXP tmaxSEXP, SEXP foodClustersSEXP, SEXP clusterDispersalSEXP, SEXP landsizeSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type genmax(genmaxSEXP);
     Rcpp::traits::input_parameter< int >::type tmax(tmaxSEXP);
     Rcpp::traits::input_parameter< int >::type foodClusters(foodClustersSEXP);
     Rcpp::traits::input_parameter< double >::type clusterDispersal(clusterDispersalSEXP);
-    do_simulation(genmax, tmax, foodClusters, clusterDispersal);
+    Rcpp::traits::input_parameter< double >::type landsize(landsizeSEXP);
+    do_simulation(genmax, tmax, foodClusters, clusterDispersal, landsize);
     return R_NilValue;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_socialitymodel_export_test_landscapes", (DL_FUNC) &_socialitymodel_export_test_landscapes, 3},
-    {"_socialitymodel_do_simulation", (DL_FUNC) &_socialitymodel_do_simulation, 4},
+    {"_socialitymodel_export_test_landscapes", (DL_FUNC) &_socialitymodel_export_test_landscapes, 4},
+    {"_socialitymodel_do_simulation", (DL_FUNC) &_socialitymodel_do_simulation, 5},
     {NULL, NULL, 0}
 };
 

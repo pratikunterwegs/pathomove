@@ -7,10 +7,11 @@
 #'
 #' @param foodClusters Number of clusters around which food is generated.
 #' @param clusterDispersal How dispersed food is around the cluster centre.
+#' @param landsize The size of the landscape as a numeric (double).
 #' @param replicates How many replicates.
 #' @return Nothing. Runs simulation.
-export_test_landscapes <- function(foodClusters, clusterDispersal, replicates) {
-    invisible(.Call('_socialitymodel_export_test_landscapes', PACKAGE = 'socialitymodel', foodClusters, clusterDispersal, replicates))
+export_test_landscapes <- function(foodClusters, clusterDispersal, landsize, replicates) {
+    invisible(.Call('_socialitymodel_export_test_landscapes', PACKAGE = 'socialitymodel', foodClusters, clusterDispersal, landsize, replicates))
 }
 
 #' Runs the sociality model simulation.
@@ -22,8 +23,9 @@ export_test_landscapes <- function(foodClusters, clusterDispersal, replicates) {
 #' @param tmax The number of timesteps per generation.
 #' @param foodClusters Number of clusters around which food is generated.
 #' @param clusterDispersal How dispersed food is around the cluster centre.
+#' @param landsize The size of the landscape as a numeric (double).
 #' @return Nothing. Runs simulation.
-do_simulation <- function(genmax, tmax, foodClusters, clusterDispersal) {
-    invisible(.Call('_socialitymodel_do_simulation', PACKAGE = 'socialitymodel', genmax, tmax, foodClusters, clusterDispersal))
+do_simulation <- function(genmax, tmax, foodClusters, clusterDispersal, landsize) {
+    invisible(.Call('_socialitymodel_do_simulation', PACKAGE = 'socialitymodel', genmax, tmax, foodClusters, clusterDispersal, landsize))
 }
 
