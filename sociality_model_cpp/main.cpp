@@ -3,11 +3,11 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-#include "parameters.h"
-#include "landscape.h"
-#include "network.h"
-#include "agents.h"
-#include "simulations.cpp"
+#include "../src/parameters.h"
+#include "../src/landscape.h"
+#include "../src/network.h"
+#include "../src/agents.h"
+#include "../src/simulations.cpp"
 
 int main(int argc, char *argv[])
 {
