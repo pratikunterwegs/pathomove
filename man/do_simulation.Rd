@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{do_simulation}
 \alias{do_simulation}
-\title{Runs the noisewalker simulation.}
+\title{Runs the sociality model simulation.}
 \usage{
 do_simulation(genmax, tmax, foodClusters, clusterDispersal)
 }
