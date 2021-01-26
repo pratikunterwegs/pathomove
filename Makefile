@@ -360,8 +360,9 @@ compiler_clean: compiler_moc_predefs_clean
 
 main.o: main.cpp parameters.h \
 		landscape.h \
+		network.h \
 		agents.h \
-		network.h
+		simulations.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 ####### Install
