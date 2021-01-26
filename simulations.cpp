@@ -119,11 +119,12 @@ void evolve_pop(int genmax, int tmax,
     for(int gen = 0; gen < genmax; gen++) {
 
         pop.initPos(food);
-        pop.pbsn.initAssociations(pop.nAgents);
+        Network pbsn;
+        pbsn.initAssociations(pop.nAgents);
         for (int t = 0; t < tmax; t++) {
 
             pop.move(food);
-            pop.updatePbsn();
+            pop.updatePbsn(pbsn);
 
 
             for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++)
