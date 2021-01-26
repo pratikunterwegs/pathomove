@@ -76,6 +76,29 @@ void exportTraits(const int gen, Population &pop, std::vector<std::string> outpu
     traitofs.close();
 }
 
+// export pbsn
+void exportPbsn(const int gen, Network &pbsn, std::vector<std::string> outputPath) {
+    // trait ofs
+    std::ofstream pbsnofs;
+    pbsnofs.open(outputPath[0] + "pbsn/" + outputPath[1], std::ofstream::out | std::ofstream::app);
+
+    // expect output at gen = 0 else no colnames
+    if(gen > 0) {
+        pbsnofs << "gen,id1,id2,weight\n";
+    }
+
+    // loop over and write
+    for(size_t i = 0; i < pbsn.associations.size(); i++) {
+        for(size_t j = 0; j < pbsn.associations[i].size(); j++) {
+            pbsnofs << gen << ","
+                    << i << ","
+                    << j+1 << ","
+                    << pbsn.associations[i][j] << "\n";
+        }
+    }
+    pbsnofs.close();
+}
+
 //if(gen > (genmax -10)) {
 
 //    // print pbsn
@@ -137,8 +160,11 @@ void evolve_pop(int genmax, int tmax,
             std::cout << t << " ";
 
             pop.move(food);
-            pop.updatePbsn(pbsn);
 
+            // update pbsn only in last 10 gens
+            if(gen == (genmax - 1)) {
+                pop.updatePbsn(pbsn);
+            }
 
             for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++)
             {
@@ -160,6 +186,7 @@ void evolve_pop(int genmax, int tmax,
         // write traits to file
         if(gen == genmax - 1) {
             exportTraits(gen, pop, outpath);
+            exportPbsn(gen, pbsn, outpath);
         }
 
         // reproduce
