@@ -22,12 +22,12 @@ public:
 void Network::initAssociations(int nVertices){
 
     nAgents = nVertices;
-    for(size_t i = 0; i < (nAgents - 1); i ++) {
+    for(size_t i = 0; i < static_cast<size_t>(nAgents - 1); i ++) {
         associations[i] = (std::vector<int> (nAgents - (i + 1), 0));
     }
 
     // check size
-    assert(associations[0].size() == (nAgents - 1) && "association triangle is wrong");
+    assert(static_cast<int>(associations[0].size()) == (nAgents - 1) && "association triangle is wrong");
 }
 
 #endif // NETWORK_H

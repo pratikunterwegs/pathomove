@@ -32,7 +32,7 @@ RCPPLIBS =      $$system($$R_HOME/bin/Rscript -e \"Rcpp:::LdFlags\(\)\")
 
 SOURCES += \
         main.cpp \
-#        simulations.cpp
+        simulations.cpp
 
 HEADERS += \
     agents.h \
