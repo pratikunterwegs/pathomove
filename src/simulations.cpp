@@ -164,7 +164,7 @@ void evolve_pop(int genmax, int tmax,
 //' @param replicates How many replicates.
 //' @return Nothing. Runs simulation.
 // [[Rcpp::export]]
-void export_test_landscapes(int foodClusters, double clusterDispersal, int replicates) {
+void export_test_landscapes(int foodClusters, double clusterDispersal, double landsize, int replicates) {
     // outpath is data/test_landscape
 
     // assumes path/type already prepared
@@ -175,7 +175,7 @@ void export_test_landscapes(int foodClusters, double clusterDispersal, int repli
 
         // make a landscape
         Resources tmpFood;
-        tmpFood.initResources(foodClusters, clusterDispersal);
+        tmpFood.initResources(foodClusters, clusterDispersal, landsize);
 
         // get unique id
         auto now = std::chrono::system_clock::now();
@@ -232,14 +232,14 @@ void export_test_landscapes(int foodClusters, double clusterDispersal, int repli
 //' @param clusterDispersal How dispersed food is around the cluster centre.
 //' @return Nothing. Runs simulation.
 // [[Rcpp::export]]
-void do_simulation(int genmax, int tmax, int foodClusters, double clusterDispersal) {
+void do_simulation(int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize) {
 
     // prepare output paths etc
     std::vector<std::string> outpath = identifyOutpath(foodClusters, clusterDispersal);
     std::cout << "output at " << outpath[0] << "/" << outpath[1] << "\n";
     // prepare landscape
     Resources food;
-    food.initResources(foodClusters, clusterDispersal);
+    food.initResources(foodClusters, clusterDispersal, landsize);
     food.countAvailable();
     std::cout << "landscape with " << foodClusters << " clusters\n";
      /// export landscape
