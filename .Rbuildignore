@@ -3,3 +3,4 @@
 ^\.github$
 ^data$
 ^.*\.Rmd$
+^sociality_model_cpp$
