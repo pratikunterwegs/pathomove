@@ -47,19 +47,32 @@ std::vector<std::string> identifyOutpath(const int clusters,
 
     return std::vector<std::string> {path, output_id};
 }
+
+// export evolved traits
+void exportTraits(const int gen, Population &pop, std::vector<std::string> outputPath) {
+
+    // trait ofs
+    std::ofstream traitofs;
+    traitofs.open(outputPath[0] + "trait/" + outputPath[1], std::ofstream::out | std::ofstream::app);
+    traitofs << "id,gen,trait\n";
+
+    // loop over and write
+    for(size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++){
+        traitofs << i << ","
+                 << gen << ","
+                 << pop.coordX[i] << ","
+                 << pop.coordY[i] << ","
+                 << pop.energy[i] << ","
+                 << pop.trait[i] << "\n";
+    }
+    traitofs.close();
+}
+
 //        if(gen % 10 == 0) {
 //            std::cout << "gen = " << gen << "\n";
 
 //            // print evolved pop
-////            for(size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++){
-////                std::cout << i << "\n";
-////                traitofs << i << ","
-////                        << gen << ","
-//////                        << pop.coordX[i] << ","
-//////                        << pop.coordY[i] << ","
-//////                        << pop.energy[i] << ","
-////                        << pop.trait[i] << "\n";
-////            }
+
 //        }
 
 //if(gen > (genmax -10)) {
@@ -92,13 +105,6 @@ std::vector<std::string> identifyOutpath(const int clusters,
 //    }
 
 //    ofs.close();
-//}
-
-//void export_traits() {
-//    // position ofs
-//    std::ofstream traitofs;
-//    traitofs.open("trait.csv", std::ofstream::out);
-//    traitofs << "id,gen,trait\n";
 //}
 
 //void export_pbsn(){
