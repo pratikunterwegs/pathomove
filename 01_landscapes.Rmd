@@ -1,0 +1,106 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+# make landscapes
+# load libs
+library(data.table)
+library(stringr)
+library(ggplot2)
+library(socialitymodel)
+```
+
+```{r}
+# test fun
+export_test_landscapes(3, 5, 100, 1)
+```
+
+## Export landscapes
+
+```{r}
+# landscape size
+landsize = 100
+# make dataframe of options
+params = CJ(clusters = c(1, seq(25, 100, 25)),
+            dispersal = landsize * seq(0, 0.05, 0.01))
+
+```
+
+```{r}
+invisible(
+  Map(export_test_landscapes,
+    params$clusters, params$dispersal, landsize, 3)
+)
+```
+
+## Read files
+
+```{r}
+# read lookup
+lookup = fread("data/test_landscape/test_landscape_lookup.csv")
+
+# read data
+data = copy(lookup)
+
+data[, land := lapply(
+  filename,
+  function(x) {
+    fread(glue::glue('data/test_landscape/{x}.csv'))
+  })
+  ]
+```
+
+```{r}
+# unnest
+data[, filename := NULL]
+
+data = data[, unlist(land, recursive = FALSE),
+     by = c("clusters", "dispersal", "replicate")]
+
+# count per 100th of size
+data_summary = copy(data)
+
+# round value
+data_summary[, `:=`(
+  x = round(x, -1),
+  y = round(y, -1)
+)]
+# count items
+data_summary <- data_summary[, .N, by = c("x", "y",
+                                          "clusters",
+                                          "dispersal",
+                                          "replicate")]
+
+# split by clusters and disperal
+data_summary = data_summary[replicate > 0]
+
+data_summary = split(data_summary, by = c("clusters", "dispersal",
+                                          "replicate"))
+```
+
+# Plot figures
+
+```{r}
+subplots = lapply(data_summary, function(df) {
+  ggplot(df)+
+  geom_tile(aes(x, y,
+                 fill = N),
+             show.legend = F,
+             size = 0.2)+
+  scale_fill_viridis_c()+
+  facet_grid(~replicate,
+             labeller = label_both)+
+  coord_cartesian(xlim = c(0, 100),
+                  ylim = c(0, 100))
+})
+```
+
+```{r}
+library(patchwork)
+
+wrap_plots(subplots)
+```
+
