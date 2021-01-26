@@ -67,7 +67,7 @@ jobs:
       - name: Install GSL and Boost dependencies
         if: runner.os == 'Linux'
         run: |
-          sudo apt install libboost1.71-dev
+          sudo apt install libboost1.71-dev libboost-system-dev
           sudo apt install libgsl-dev
 
       - name: Install dependencies
