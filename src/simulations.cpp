@@ -57,7 +57,7 @@ void exportTraits(const int gen, Population &pop, std::vector<std::string> outpu
 
     // trait ofs
     std::ofstream traitofs;
-    traitofs.open(outputPath[0] + "trait/" + outputPath[1], std::ofstream::out | std::ofstream::app);
+    traitofs.open(outputPath[0] + "trait/" + outputPath[1] + ".csv", std::ofstream::out | std::ofstream::app);
 
     // expect output at gen = 0 else no colnames
     if(gen > 0) {
@@ -80,7 +80,7 @@ void exportTraits(const int gen, Population &pop, std::vector<std::string> outpu
 void exportPbsn(const int gen, Network &pbsn, std::vector<std::string> outputPath) {
     // trait ofs
     std::ofstream pbsnofs;
-    pbsnofs.open(outputPath[0] + "pbsn/" + outputPath[1], std::ofstream::out | std::ofstream::app);
+    pbsnofs.open(outputPath[0] + "pbsn/" + outputPath[1] + ".csv", std::ofstream::out | std::ofstream::app);
 
     // expect output at gen = 0 else no colnames
     if(gen > 0) {
@@ -208,7 +208,7 @@ void export_test_landscapes(int foodClusters, double clusterDispersal, int repli
 
         // write the test landscape
         std::ofstream test_land_ofs;
-        test_land_ofs.open(path + "/" + output_id, std::ofstream::out);
+        test_land_ofs.open(path + "/" + output_id + ".csv", std::ofstream::out);
         test_land_ofs << "x,y\n";
 
         for (size_t i = 0; i < static_cast<size_t>(tmpFood.nItems); i++)
