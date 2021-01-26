@@ -54,7 +54,11 @@ void exportTraits(const int gen, Population &pop, std::vector<std::string> outpu
     // trait ofs
     std::ofstream traitofs;
     traitofs.open(outputPath[0] + "trait/" + outputPath[1], std::ofstream::out | std::ofstream::app);
-    traitofs << "id,gen,trait\n";
+
+    // expect output at gen = 0 else no colnames
+    if(gen > 0) {
+        traitofs << "id,gen,x,y,energy,trait\n";
+    }
 
     // loop over and write
     for(size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++){
@@ -149,7 +153,9 @@ void evolve_pop(int genmax, int tmax,
         // generation ends here
 
         // write traits to file
-        exportTraits(gen, pop, outpath);
+        if(gen == genmax - 1) {
+            exportTraits(gen, pop, outpath);
+        }
 
         // reproduce
         pop.Reproduce();
