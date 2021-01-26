@@ -36,3 +36,6 @@
 
 # profiling
 callgrind*
+
+# no data
+data/*.csv
