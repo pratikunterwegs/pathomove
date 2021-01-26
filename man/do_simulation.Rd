@@ -4,7 +4,7 @@
 \alias{do_simulation}
 \title{Runs the sociality model simulation.}
 \usage{
-do_simulation(genmax, tmax, foodClusters, clusterDispersal)
+do_simulation(genmax, tmax, foodClusters, clusterDispersal, landsize)
 }
 \arguments{
 \item{genmax}{The maximum number of generations per simulation.}
@@ -14,6 +14,8 @@ do_simulation(genmax, tmax, foodClusters, clusterDispersal)
 \item{foodClusters}{Number of clusters around which food is generated.}
 
 \item{clusterDispersal}{How dispersed food is around the cluster centre.}
+
+\item{landsize}{The size of the landscape as a numeric (double).}
 }
 \value{
 Nothing. Runs simulation.
