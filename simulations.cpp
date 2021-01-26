@@ -68,13 +68,6 @@ void exportTraits(const int gen, Population &pop, std::vector<std::string> outpu
     traitofs.close();
 }
 
-//        if(gen % 10 == 0) {
-//            std::cout << "gen = " << gen << "\n";
-
-//            // print evolved pop
-
-//        }
-
 //if(gen > (genmax -10)) {
 
 //    // print pbsn
@@ -117,7 +110,8 @@ void exportTraits(const int gen, Population &pop, std::vector<std::string> outpu
 //}
 
 void evolve_pop(int genmax, int tmax,
-                Population &pop, Resources &food)
+                Population &pop, Resources &food,
+                std::vector<std::string> outpath)
 {
     // set seed
     gsl_rng_set(r, seed);
@@ -153,6 +147,10 @@ void evolve_pop(int genmax, int tmax,
             // timestep ends here
         }
         // generation ends here
+
+        // write traits to file
+        exportTraits(gen, pop, outpath);
+
         // reproduce
         pop.Reproduce();
 
@@ -178,5 +176,5 @@ void do_simulation(int genmax, int tmax, int foodClusters, double clusterDispers
     std::cout << "pop initialised\n";
 
     // evolve population
-    evolve_pop(genmax, tmax, pop, food);
+    evolve_pop(genmax, tmax, pop, food, outpath);
 }
