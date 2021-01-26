@@ -32,13 +32,13 @@ RCPPLIBS =      $$system($$R_HOME/bin/Rscript -e \"Rcpp:::LdFlags\(\)\")
 
 SOURCES += \
         main.cpp \
-        simulations.cpp
+        ../src/simulations.cpp
 
 HEADERS += \
-    agents.h \
-    landscape.h \
-    network.h \
-    parameters.h
+    ../src/agents.h \
+    ../src/landscape.h \
+    ../src/network.h \
+    ../src/parameters.h
 
 QMAKE_CXXFLAGS += $$RCPPWARNING $$RCPPFLAGS $$RCPPINCL
 QMAKE_LIBS += $$RLDFLAGS $$RBLAS $$RLAPACK $$RCPPLIBS
