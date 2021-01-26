@@ -44,12 +44,14 @@ public:
     bgi::rtree< value, bgi::quadratic<16> > rtree;
 
     // funs to init with nCentres
-    void initResources(const int nCentres, const double dDispersal);
+    void initResources(const int nCentres, const double dDispersal, const double landsize);
     void countAvailable();
 
 };
 
-void Resources::initResources(const int nCentres, const double dDispersal) {
+void Resources::initResources(const int nCentres, const double dDispersal, const double landsize) {
+
+    dSize = landsize;
 
     // generate n central items
     std::vector<double> centreCoordX (nCentres);
