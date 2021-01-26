@@ -1,5 +1,5 @@
 Package: socialitymodel
-Title: Runs the evolved social networks simulations.
+Title: Runs the Evolved Social Networks Simulations.
 Version: 0.0.0.9000
 Authors@R:
     c(person(given = "Pratik",
