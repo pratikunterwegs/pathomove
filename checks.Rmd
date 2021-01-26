@@ -1,9 +1,21 @@
 
 library(data.table)
 library(ggplot2)
-a = fread("items.csv")
 
-b = fread("moves.csv")
+b = fread("data/trait/1611661721040")
+
+# where are the traits on the landscape
+b2 = copy(b)
+b2[, `:=`(xround = round(as.numeric(x)), yround = round(as.numeric(y)))]
+b2 = b2[, list(mean_trait = mean(trait),
+               sd_trait = sd(trait)),
+        by = c("xround", "yround")]
+
+ggplot(b2)+
+  geom_tile(aes(xround, yround,
+                fill = mean_trait))+
+  scale_fill_viridis_c(option = "A", direction = -1)+
+  coord_fixed()
 
 ggplot(b[gen == max(gen)])+
   geom_histogram(aes(trait),
