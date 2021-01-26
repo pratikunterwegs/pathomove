@@ -99,47 +99,6 @@ void exportPbsn(const int gen, Network &pbsn, std::vector<std::string> outputPat
     pbsnofs.close();
 }
 
-//if(gen > (genmax -10)) {
-
-//    // print pbsn
-//    for(size_t i = 0; i < static_cast<size_t>(pop.nAgents - 1); i++) {
-//        for(size_t j = 0; j < pop.pbsn.associations[i].size(); j++) {
-
-//            if(pop.pbsn.associations[i][j] > 0) {
-//                pbsnofs << gen << ","
-//                        << i << ","
-//                        << j + 1 << ","
-//                        << pop.pbsn.associations[i][j] << "\n";
-//            }
-
-//        }
-//    }
-//}
-
-//void export_landscape()
-//{
-//    // print to file
-//    std::ofstream ofs;
-//    ofs.open("items.csv", std::ofstream::out);
-//    ofs << "x,y\n";
-
-//    for (size_t i = 0; i < static_cast<size_t>(food.nItems); i++)
-//    {
-//        ofs << food.coordX[i] << "," << food.coordY[i] << "\n";
-//    }
-
-//    ofs.close();
-//}
-
-//void export_pbsn(){
-//    // pbsn ofs
-//    std::ofstream pbsnofs;
-//    pbsnofs.open("pbsn.csv", std::ofstream::out);
-//    pbsnofs << "gen,id1,id2,weight\n";
-
-//    std::cout << "opened ofs\n";
-//}
-
 // function to evolve population
 void evolve_pop(int genmax, int tmax,
                 Population &pop, Resources &food,
@@ -196,7 +155,73 @@ void evolve_pop(int genmax, int tmax,
     std::cout << "done evolving";
 }
 
-//' Runs the noisewalker simulation.
+//' Make landscapes with discrete food items in clusters.
+//'
+//' @description Makes landscape and writes them to file with unique id.
+//'
+//' @param foodClusters Number of clusters around which food is generated.
+//' @param clusterDispersal How dispersed food is around the cluster centre.
+//' @param replicates How many replicates.
+//' @return Nothing. Runs simulation.
+// [[Rcpp::export]]
+void export_test_landscapes(int foodClusters, double clusterDispersal, int replicates) {
+    // outpath is data/test_landscape
+
+    // assumes path/type already prepared
+    std::string path = "data/test_landscape";
+    // output filename as milliseconds since epoch
+
+    for(int i = 0; i < replicates; i++) {
+
+        // make a landscape
+        Resources tmpFood;
+        tmpFood.initResources(foodClusters, clusterDispersal);
+
+        // get unique id
+        auto now = std::chrono::system_clock::now();
+        auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+        auto value = now_ms.time_since_epoch();
+
+        // add a random number to be sure of discrete values
+        long duration = value.count() + static_cast<long>(gsl_rng_uniform_int(r, 10000));
+        std::string output_id = std::to_string(duration);
+        output_id = "test_landscape" + output_id;
+
+        // write summary of test landscapes
+        const std::string summary_out = path + "/test_landscape_lookup.csv";
+        std::ofstream summary_ofs;
+
+        // if not exists write col names
+        std::ifstream f2(summary_out.c_str());
+        if (!f2.good()) {
+            summary_ofs.open(summary_out, std::ofstream::out);
+            summary_ofs << "filename,clusters,dispersal,replicate\n";
+            summary_ofs.close();
+        }
+        // append if not
+        summary_ofs.open(summary_out, std::ofstream::out | std::ofstream::app);
+        summary_ofs << output_id << ","
+                    << foodClusters << ","
+                    << clusterDispersal << ","
+                    << i << "\n";
+        summary_ofs.close();
+
+        // write the test landscape
+        std::ofstream test_land_ofs;
+        test_land_ofs.open(path + "/" + output_id, std::ofstream::out);
+        test_land_ofs << "x,y\n";
+
+        for (size_t i = 0; i < static_cast<size_t>(tmpFood.nItems); i++)
+        {
+            test_land_ofs << tmpFood.coordX[i] << "," << tmpFood.coordY[i] << "\n";
+        }
+
+        test_land_ofs.close();
+
+    }
+}
+
+//' Runs the sociality model simulation.
 //'
 //' @description Run the simulation using parameters passed as
 //' arguments to the corresponding R function.
