@@ -1,5 +1,5 @@
 Package: socialitymodel
-Title: Runs the Evolved Social Networks Simulations.
+Title: Runs the Evolved Social Networks Simulations
 Version: 0.0.0.9000
 Authors@R:
     c(person(given = "Pratik",
@@ -8,8 +8,7 @@ Authors@R:
            email = "p.r.gupte@rug.nl",
            comment = c(ORCID = "https://orcid.org/0000-0001-5294-7819")))
 Description: Runs the evolved social networks simulations.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
