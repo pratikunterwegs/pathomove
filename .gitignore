@@ -33,3 +33,6 @@
 
 *.csv
 .Rproj.user
+
+# profiling
+callgrind*
