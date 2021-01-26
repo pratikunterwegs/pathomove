@@ -161,6 +161,7 @@ void evolve_pop(int genmax, int tmax,
 //'
 //' @param foodClusters Number of clusters around which food is generated.
 //' @param clusterDispersal How dispersed food is around the cluster centre.
+//' @param landsize The size of the landscape as a numeric (double).
 //' @param replicates How many replicates.
 //' @return Nothing. Runs simulation.
 // [[Rcpp::export]]
@@ -230,6 +231,7 @@ void export_test_landscapes(int foodClusters, double clusterDispersal, double la
 //' @param tmax The number of timesteps per generation.
 //' @param foodClusters Number of clusters around which food is generated.
 //' @param clusterDispersal How dispersed food is around the cluster centre.
+//' @param landsize The size of the landscape as a numeric (double).
 //' @return Nothing. Runs simulation.
 // [[Rcpp::export]]
 void do_simulation(int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize) {
