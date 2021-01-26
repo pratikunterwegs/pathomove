@@ -118,10 +118,14 @@ void evolve_pop(int genmax, int tmax,
 
     for(int gen = 0; gen < genmax; gen++) {
 
+        std::cout << "\ngen = " << gen << "\n";
+
         pop.initPos(food);
         Network pbsn;
         pbsn.initAssociations(pop.nAgents);
         for (int t = 0; t < tmax; t++) {
+
+            std::cout << t << " ";
 
             pop.move(food);
             pop.updatePbsn(pbsn);
@@ -153,18 +157,19 @@ void evolve_pop(int genmax, int tmax,
 void do_simulation(int genmax, int tmax, int foodClusters, double clusterDispersal) {
 
     // prepare output paths etc
-    identifyOutpath(foodClusters, clusterDispersal);
-
+    std::vector<std::string> outpath = identifyOutpath(foodClusters, clusterDispersal);
+    std::cout << "output at " << outpath[0] << "/" << outpath[1] << "\n";
     // prepare landscape
     Resources food;
     food.initResources(foodClusters, clusterDispersal);
     food.countAvailable();
-
+    std::cout << "landscape with " << foodClusters << " clusters\n";
      /// export landscape
 
     // prepare population
     Population pop;
     pop.setTrait();
+    std::cout << "pop initialised\n";
 
     // evolve population
     evolve_pop(genmax, tmax, pop, food);
