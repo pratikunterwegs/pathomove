@@ -39,9 +39,6 @@ public:
     std::vector<double> trait;
     std::vector<int> counter;
 
-    // network
-    Network pbsn;
-
     // position rtree
     bgi::rtree< value, bgi::quadratic<16> > agentRtree;
 
@@ -52,7 +49,7 @@ public:
     void normaliseIntake();
     void Reproduce();
     // for network
-    void updatePbsn();
+    void updatePbsn(Network &pbsn);
 };
 
 void Population::initPos(Resources food) {
@@ -82,7 +79,7 @@ double distance(double x1, double y1, double x2, double y2) {
 }
 
 // to update pbsn
-void Population::updatePbsn() {
+void Population::updatePbsn(Network &pbsn) {
 
     // focal agents
     for(size_t i = 0; i < static_cast<size_t>(nAgents - 1); i++) {
