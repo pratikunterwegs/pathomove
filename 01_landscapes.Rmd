@@ -73,34 +73,23 @@ data_summary <- data_summary[, .N, by = c("x", "y",
                                           "clusters",
                                           "dispersal",
                                           "replicate")]
-
-# split by clusters and disperal
-data_summary = data_summary[replicate > 0]
-
-data_summary = split(data_summary, by = c("clusters", "dispersal",
-                                          "replicate"))
-```
-
-# Plot figures
-
-```{r}
-subplots = lapply(data_summary, function(df) {
-  ggplot(df)+
-  geom_tile(aes(x, y,
-                 fill = N),
-             show.legend = F,
-             size = 0.2)+
-  scale_fill_viridis_c()+
-  facet_grid(~replicate,
-             labeller = label_both)+
-  coord_cartesian(xlim = c(0, 100),
-                  ylim = c(0, 100))
-})
 ```
 
 ```{r}
-library(patchwork)
+# export data
+fwrite(data_summary, file = "data/data_landscapes_for_moran.csv")
+```
 
-wrap_plots(subplots)
+## plot examples
+
+```{r}
+ggplot(data_summary[replicate == 1])+
+  geom_tile(aes(x, y, fill = N))+
+  scale_fill_distiller(palette = "YlOrRd", 
+                         trans = "log10", 
+                         direction = 1)+
+  facet_grid(clusters~dispersal)+
+  theme_test()+
+  coord_cartesian(expand = F)
 ```
 
