@@ -90,10 +90,13 @@ void exportPbsn(const int gen, Network &pbsn, std::vector<std::string> outputPat
     // loop over and write
     for(size_t i = 0; i < pbsn.associations.size(); i++) {
         for(size_t j = 0; j < pbsn.associations[i].size(); j++) {
-            pbsnofs << gen << ","
-                    << i << ","
-                    << j+1 << ","
-                    << pbsn.associations[i][j] << "\n";
+            // export if associations > 0, will zero fill in R
+            if(pbsn.associations[i][j] > 0) {
+                pbsnofs << gen << ","
+                        << i << ","
+                        << j+1 << ","
+                        << pbsn.associations[i][j] << "\n";
+            }
         }
     }
     pbsnofs.close();
@@ -116,7 +119,7 @@ void evolve_pop(int genmax, int tmax,
         pbsn.initAssociations(pop.nAgents);
         for (int t = 0; t < tmax; t++) {
 
-            std::cout << t << " ";
+//            std::cout << t << " ";
 
             pop.move(food);
 
