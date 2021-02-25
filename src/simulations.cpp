@@ -77,7 +77,7 @@ void exportTraits(const int gen, Population &pop, std::vector<std::string> outpu
 }
 
 // export pbsn
-void exportPbsn(const int gen, Network &pbsn, std::vector<std::string> outputPath) {
+void exportPbsn(const int gen, Network &pbsn, std::vector<std::string> outputPath, double maxtime) {
     // trait ofs
     std::ofstream pbsnofs;
     pbsnofs.open(outputPath[0] + "pbsn/" + outputPath[1] + ".csv", std::ofstream::out | std::ofstream::app);
@@ -95,7 +95,7 @@ void exportPbsn(const int gen, Network &pbsn, std::vector<std::string> outputPat
                 pbsnofs << gen << ","
                         << i << ","
                         << j+1 << ","
-                        << pbsn.associations[i][j] << "\n";
+                        << static_cast<double>(pbsn.associations[i][j]) / maxtime << "\n";
             }
         }
     }
@@ -148,7 +148,7 @@ void evolve_pop(int genmax, int tmax,
         // write traits to file
         if(gen == genmax - 1) {
             exportTraits(gen, pop, outpath);
-            exportPbsn(gen, pbsn, outpath);
+            exportPbsn(gen, pbsn, outpath, static_cast<double>(tmax));
         }
 
         // reproduce
