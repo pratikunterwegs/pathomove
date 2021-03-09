@@ -104,8 +104,7 @@ void exportPbsn(const int gen, Network &pbsn, std::vector<std::string> outputPat
 
 // function to evolve population
 void evolve_pop(int genmax, int tmax,
-                Population &pop, Resources &food,
-                std::vector<std::string> outpath)
+                Population &pop, Resources &food)
 {
     // set seed
     gsl_rng_set(r, seed);
@@ -151,7 +150,6 @@ void evolve_pop(int genmax, int tmax,
         pop.Reproduce();
 
     }
-    std::cout << "done evolving";
 }
 
 //' Make landscapes with discrete food items in clusters.
@@ -233,11 +231,8 @@ void export_test_landscapes(int foodClusters, double clusterDispersal, double la
 //' @param landsize The size of the landscape as a numeric (double).
 //' @return Nothing. Runs simulation.
 // [[Rcpp::export]]
-DataFrame do_simulation(int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize) {
+DataFrame do_simulation(int popsize, int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize) {
 
-    // prepare output paths etc
-    std::vector<std::string> outpath = identifyOutpath(foodClusters, clusterDispersal);
-    std::cout << "output at " << outpath[0] << "/" << outpath[1] << "\n";
     // prepare landscape
     Resources food;
     food.initResources(foodClusters, clusterDispersal, landsize);
@@ -247,17 +242,23 @@ DataFrame do_simulation(int genmax, int tmax, int foodClusters, double clusterDi
 
     // prepare population
     Population pop;
+    if (popsize != pop.nAgents) {
+        pop.setSize(popsize);
+    }
     pop.setTrait();
-    std::cout << "pop initialised\n";
+    std::cout << popsize << "agents over " << genmax << " gens of " << tmax << " timesteps\n";
 
     // evolve population
-    evolve_pop(genmax, tmax, pop, food, outpath);
+    evolve_pop(genmax, tmax, pop, food);
 
     // create data frame and return
     DataFrame df_evolved_pop = DataFrame::create(
         Named("gen") = std::vector<int> (pop.nAgents, genmax),
         Named("energy") = pop.energy,
         Named("p_ars") = pop.trait);
+
+
+    std::cout << "done evolving\n";
 
     return df_evolved_pop;
 }
