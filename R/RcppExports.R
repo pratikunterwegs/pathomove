@@ -24,7 +24,7 @@ export_test_landscapes <- function(foodClusters, clusterDispersal, landsize, rep
 #' @param foodClusters Number of clusters around which food is generated.
 #' @param clusterDispersal How dispersed food is around the cluster centre.
 #' @param landsize The size of the landscape as a numeric (double).
-#' @return Nothing. Runs simulation.
+#' @return A data frame of the evolved population traits.
 do_simulation <- function(genmax, tmax, foodClusters, clusterDispersal, landsize) {
     .Call(`_socialitymodel_do_simulation`, genmax, tmax, foodClusters, clusterDispersal, landsize)
 }
