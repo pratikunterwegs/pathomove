@@ -12,96 +12,6 @@
 
 using namespace Rcpp;
 
-/// construct agent output filename
-std::vector<std::string> identifyOutpath(const int clusters,
-                                         const double dispersal){
-    // assumes path/type already prepared
-    std::string path = "data/";
-    // output filename as milliseconds since epoch
-    // std::string output_id = std::to_string(static_cast<long>(gsl_rng_uniform_int(r, 10000)));
-    auto now = std::chrono::system_clock::now();
-    auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-    auto value = now_ms.time_since_epoch();
-
-    // add a random number to be sure of discrete values
-    long duration = value.count() + static_cast<long>(gsl_rng_uniform_int(r, 10000));
-    std::string output_id = std::to_string(duration);
-    // output_id = output_id + "_f" + std::to_string(frequency) + "ft" +
-    // std::to_string(frequencyTransfer) + "rep" + rep;
-
-    // write summary with filename to agent data
-    // and parameter files
-    // start with output id
-    const std::string summary_out = path + "/lookup.csv";
-    std::ofstream summary_ofs;
-
-    // if not exists write col names
-    std::ifstream f2(summary_out.c_str());
-    if (!f2.good()) {
-        summary_ofs.open(summary_out, std::ofstream::out);
-        summary_ofs << "filename,clusters,dispersal\n";
-        summary_ofs.close();
-    }
-    // append if not
-    summary_ofs.open(summary_out, std::ofstream::out | std::ofstream::app);
-    summary_ofs << output_id << ","
-                << clusters << ","
-                << dispersal << "\n";
-    summary_ofs.close();
-
-    return std::vector<std::string> {path, output_id};
-}
-
-// export evolved traits
-void exportTraits(const int gen, Population &pop, std::vector<std::string> outputPath) {
-
-    // trait ofs
-    std::ofstream traitofs;
-    traitofs.open(outputPath[0] + "trait/" + outputPath[1] + ".csv", std::ofstream::out | std::ofstream::app);
-
-    // expect output at gen = 0 else no colnames
-    if(gen > 0) {
-        traitofs << "id,gen,x,y,energy,trait\n";
-    }
-
-    // loop over and write
-    for(size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++){
-        traitofs << i << ","
-                 << gen << ","
-                 << pop.coordX[i] << ","
-                 << pop.coordY[i] << ","
-                 << pop.energy[i] << ","
-                 << pop.trait[i] << "\n";
-    }
-    traitofs.close();
-}
-
-// export pbsn
-void exportPbsn(const int gen, Network &pbsn, std::vector<std::string> outputPath, double maxtime) {
-    // trait ofs
-    std::ofstream pbsnofs;
-    pbsnofs.open(outputPath[0] + "pbsn/" + outputPath[1] + ".csv", std::ofstream::out | std::ofstream::app);
-
-    // expect output at gen = 0 else no colnames
-    if(gen > 0) {
-        pbsnofs << "gen,id1,id2,weight\n";
-    }
-
-    // loop over and write
-    for(size_t i = 0; i < pbsn.associations.size(); i++) {
-        for(size_t j = 0; j < pbsn.associations[i].size(); j++) {
-            // export if associations > 0, will zero fill in R
-            if(pbsn.associations[i][j] > 0) {
-                pbsnofs << gen << ","
-                        << i << ","
-                        << j+1 << ","
-                        << static_cast<double>(pbsn.associations[i][j]) / maxtime << "\n";
-            }
-        }
-    }
-    pbsnofs.close();
-}
-
 // function to evolve population
 void evolve_pop(int genmax, int tmax,
                 Population &pop, Resources &food)
@@ -139,12 +49,6 @@ void evolve_pop(int genmax, int tmax,
             // timestep ends here
         }
         // generation ends here
-
-        // write traits to file
-        // if(gen == genmax - 1) {
-        //     exportTraits(gen, pop, outpath);
-        //     exportPbsn(gen, pbsn, outpath, static_cast<double>(tmax));
-        // }
 
         // reproduce
         pop.Reproduce();
@@ -224,6 +128,7 @@ void export_test_landscapes(int foodClusters, double clusterDispersal, double la
 //' @description Run the simulation using parameters passed as
 //' arguments to the corresponding R function.
 //' 
+//' @param popsize The population size.
 //' @param genmax The maximum number of generations per simulation.
 //' @param tmax The number of timesteps per generation.
 //' @param foodClusters Number of clusters around which food is generated.
@@ -231,31 +136,50 @@ void export_test_landscapes(int foodClusters, double clusterDispersal, double la
 //' @param landsize The size of the landscape as a numeric (double).
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
-DataFrame do_simulation(int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize) {
+DataFrame do_simulation(int popsize, int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize) {
 
     // prepare landscape
     Resources food;
     food.initResources(foodClusters, clusterDispersal, landsize);
     food.countAvailable();
-    std::cout << "landscape with " << foodClusters << " clusters\n";
+    Rcpp::Rcout << "landscape with " << foodClusters << " clusters\n";
      /// export landscape
 
     // prepare population
     Population pop;
+    pop.initPop(popsize);
     pop.setTrait();
-    std::cout << pop.nAgents << " agents over " << genmax << " gens of " << tmax << " timesteps\n";
+    Rcpp::Rcout << pop.nAgents << " agents over " << genmax << " gens of " << tmax << " timesteps\n";
 
     // evolve population
     evolve_pop(genmax, tmax, pop, food);
 
     // create data frame and return
     DataFrame df_evolved_pop = DataFrame::create(
-        Named("gen") = std::vector<int> (pop.nAgents, genmax),
         Named("energy") = pop.energy,
-        Named("p_ars") = pop.trait);
+        Named("p_ars") = pop.trait
+     );
 
 
-    std::cout << "done evolving\n";
+    Rcpp::Rcout << "done evolving\n";
 
     return df_evolved_pop;
+}
+
+//' Export a population.
+//'
+//' @param popsize The population size.
+// [[Rcpp::export]]
+DataFrame export_pop(int popsize) {
+    Rcpp::Rcout << "in export function";
+    Population pop;
+    pop.initPop(popsize);
+    pop.setTrait();
+
+    DataFrame df_pop = DataFrame::create(
+                Named("trait") = pop.trait,
+                Named("energy") = pop.energy
+            );
+
+    return df_pop;
 }
