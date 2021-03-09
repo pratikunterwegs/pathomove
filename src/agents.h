@@ -20,19 +20,19 @@
 // Agent class
 struct Population {
 public:
-    Population() :
-        nAgents (1000),
-        coordX (nAgents, 50.0),
-        coordY (nAgents, 50.0),
-        energy (nAgents, 0.000001),
-        // one trait
-        trait(nAgents, 0.0),
-        counter(nAgents, 0)
+//    Population() :
+//        nAgents (100),
+//        coordX (nAgents, 50.0),
+//        coordY (nAgents, 50.0),
+//        energy (nAgents, 0.000001),
+//        // one trait
+//        trait(nAgents, 0.0),
+//        counter(nAgents, 0)
 
-    {}
-    ~Population() {}
+//    {}
+//    ~Population() {}
 
-    int nAgents;
+    int nAgents = 0;
     std::vector<double> coordX;
     std::vector<double> coordY;
     std::vector<double> energy;
@@ -43,6 +43,7 @@ public:
     bgi::rtree< value, bgi::quadratic<16> > agentRtree;
 
     // funs for pop
+    void initPop (int popsize);
     void setTrait ();
     void initPos(Resources food);
     void move(Resources food);
@@ -51,6 +52,15 @@ public:
     // for network
     void updatePbsn(Network &pbsn);
 };
+
+void Population::initPop(int popsize) {
+    nAgents = popsize;
+    coordX = std::vector<double> (popsize, 50.0);
+    coordY = std::vector<double> (popsize, 50.0);
+    energy = std::vector<double> (popsize, 0.000001);
+    trait = std::vector<double> (popsize, 0.5);
+    counter = std::vector<int> (popsize, 0);
+}
 
 void Population::initPos(Resources food) {
     for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
@@ -126,6 +136,9 @@ void Population::move(Resources food) {
         coordX[i] = fmod(landsize + coordX[i], landsize);
 
         coordY[i] = fmod(landsize + coordY[i], landsize);
+        
+        // add a cost
+        energy[i] -= (stepSize * 0.001);
     }
 }
 
