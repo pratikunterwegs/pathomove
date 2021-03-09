@@ -123,7 +123,7 @@ void evolve_pop(int genmax, int tmax,
 
             pop.move(food);
 
-            // update pbsn only in last 10 gens
+            // update pbsn only in last n gens
             if(gen == (genmax - 1)) {
                 pop.updatePbsn(pbsn);
             }
@@ -146,10 +146,10 @@ void evolve_pop(int genmax, int tmax,
         // generation ends here
 
         // write traits to file
-        if(gen == genmax - 1) {
-            exportTraits(gen, pop, outpath);
-            exportPbsn(gen, pbsn, outpath, static_cast<double>(tmax));
-        }
+        // if(gen == genmax - 1) {
+        //     exportTraits(gen, pop, outpath);
+        //     exportPbsn(gen, pbsn, outpath, static_cast<double>(tmax));
+        // }
 
         // reproduce
         pop.Reproduce();
@@ -237,7 +237,7 @@ void export_test_landscapes(int foodClusters, double clusterDispersal, double la
 //' @param landsize The size of the landscape as a numeric (double).
 //' @return Nothing. Runs simulation.
 // [[Rcpp::export]]
-void do_simulation(int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize) {
+DataFrame do_simulation(int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize) {
 
     // prepare output paths etc
     std::vector<std::string> outpath = identifyOutpath(foodClusters, clusterDispersal);
@@ -256,4 +256,12 @@ void do_simulation(int genmax, int tmax, int foodClusters, double clusterDispers
 
     // evolve population
     evolve_pop(genmax, tmax, pop, food, outpath);
+
+    // create data frame and return
+    DataFrame df_evolved_pop = DataFrame::create(
+        Named("gen") = std::vector<int> (pop.nAgents, genmax),
+        Named("energy") = pop.energy,
+        Named("p_ars") = pop.trait);
+
+    return df_evolved_pop;
 }
