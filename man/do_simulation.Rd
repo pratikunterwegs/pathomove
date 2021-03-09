@@ -4,9 +4,11 @@
 \alias{do_simulation}
 \title{Runs the sociality model simulation.}
 \usage{
-do_simulation(genmax, tmax, foodClusters, clusterDispersal, landsize)
+do_simulation(popsize, genmax, tmax, foodClusters, clusterDispersal, landsize)
 }
 \arguments{
+\item{popsize}{The population size.}
+
 \item{genmax}{The maximum number of generations per simulation.}
 
 \item{tmax}{The number of timesteps per generation.}
