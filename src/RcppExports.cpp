@@ -19,24 +19,37 @@ BEGIN_RCPP
 END_RCPP
 }
 // do_simulation
-DataFrame do_simulation(int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize);
-RcppExport SEXP _socialitymodel_do_simulation(SEXP genmaxSEXP, SEXP tmaxSEXP, SEXP foodClustersSEXP, SEXP clusterDispersalSEXP, SEXP landsizeSEXP) {
+DataFrame do_simulation(int popsize, int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize);
+RcppExport SEXP _socialitymodel_do_simulation(SEXP popsizeSEXP, SEXP genmaxSEXP, SEXP tmaxSEXP, SEXP foodClustersSEXP, SEXP clusterDispersalSEXP, SEXP landsizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type popsize(popsizeSEXP);
     Rcpp::traits::input_parameter< int >::type genmax(genmaxSEXP);
     Rcpp::traits::input_parameter< int >::type tmax(tmaxSEXP);
     Rcpp::traits::input_parameter< int >::type foodClusters(foodClustersSEXP);
     Rcpp::traits::input_parameter< double >::type clusterDispersal(clusterDispersalSEXP);
     Rcpp::traits::input_parameter< double >::type landsize(landsizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(do_simulation(genmax, tmax, foodClusters, clusterDispersal, landsize));
+    rcpp_result_gen = Rcpp::wrap(do_simulation(popsize, genmax, tmax, foodClusters, clusterDispersal, landsize));
+    return rcpp_result_gen;
+END_RCPP
+}
+// export_pop
+DataFrame export_pop(int popsize);
+RcppExport SEXP _socialitymodel_export_pop(SEXP popsizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type popsize(popsizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(export_pop(popsize));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_socialitymodel_export_test_landscapes", (DL_FUNC) &_socialitymodel_export_test_landscapes, 4},
-    {"_socialitymodel_do_simulation", (DL_FUNC) &_socialitymodel_do_simulation, 5},
+    {"_socialitymodel_do_simulation", (DL_FUNC) &_socialitymodel_do_simulation, 6},
+    {"_socialitymodel_export_pop", (DL_FUNC) &_socialitymodel_export_pop, 1},
     {NULL, NULL, 0}
 };
 
