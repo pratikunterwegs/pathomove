@@ -231,7 +231,7 @@ void export_test_landscapes(int foodClusters, double clusterDispersal, double la
 //' @param landsize The size of the landscape as a numeric (double).
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
-DataFrame do_simulation(int popsize, int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize) {
+DataFrame do_simulation(int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize) {
 
     // prepare landscape
     Resources food;
@@ -242,11 +242,8 @@ DataFrame do_simulation(int popsize, int genmax, int tmax, int foodClusters, dou
 
     // prepare population
     Population pop;
-    if (popsize != pop.nAgents) {
-        pop.setSize(popsize);
-    }
     pop.setTrait();
-    std::cout << popsize << "agents over " << genmax << " gens of " << tmax << " timesteps\n";
+    std::cout << pop.nAgents << " agents over " << genmax << " gens of " << tmax << " timesteps\n";
 
     // evolve population
     evolve_pop(genmax, tmax, pop, food);
