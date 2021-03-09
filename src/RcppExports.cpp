@@ -19,17 +19,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // do_simulation
-void do_simulation(int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize);
+DataFrame do_simulation(int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize);
 RcppExport SEXP _socialitymodel_do_simulation(SEXP genmaxSEXP, SEXP tmaxSEXP, SEXP foodClustersSEXP, SEXP clusterDispersalSEXP, SEXP landsizeSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type genmax(genmaxSEXP);
     Rcpp::traits::input_parameter< int >::type tmax(tmaxSEXP);
     Rcpp::traits::input_parameter< int >::type foodClusters(foodClustersSEXP);
     Rcpp::traits::input_parameter< double >::type clusterDispersal(clusterDispersalSEXP);
     Rcpp::traits::input_parameter< double >::type landsize(landsizeSEXP);
-    do_simulation(genmax, tmax, foodClusters, clusterDispersal, landsize);
-    return R_NilValue;
+    rcpp_result_gen = Rcpp::wrap(do_simulation(genmax, tmax, foodClusters, clusterDispersal, landsize));
+    return rcpp_result_gen;
 END_RCPP
 }
 
