@@ -112,14 +112,10 @@ void evolve_pop(int genmax, int tmax,
 
     for(int gen = 0; gen < genmax; gen++) {
 
-        std::cout << "\ngen = " << gen << "\n";
-
         pop.initPos(food);
         Network pbsn;
         pbsn.initAssociations(pop.nAgents);
         for (int t = 0; t < tmax; t++) {
-
-//            std::cout << t << " ";
 
             pop.move(food);
 
