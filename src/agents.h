@@ -21,7 +21,7 @@
 struct Population {
 public:
     Population() :
-        nAgents (100),
+        nAgents (1000),
         coordX (nAgents, 50.0),
         coordY (nAgents, 50.0),
         energy (nAgents, 0.000001),
@@ -43,7 +43,6 @@ public:
     bgi::rtree< value, bgi::quadratic<16> > agentRtree;
 
     // funs for pop
-    void setSize(const int newPopSize);
     void setTrait ();
     void initPos(Resources food);
     void move(Resources food);
@@ -52,15 +51,6 @@ public:
     // for network
     void updatePbsn(Network &pbsn);
 };
-
-void Population::setSize(const int newPopSize) {
-    nAgents = newPopSize;
-    coordX = coordY = std::vector<double> (newPopSize, 50.0);
-    energy = std::vector<double> (newPopSize, 0.000001);
-    trait = std::vector<double> (newPopSize, 0.0);
-    counter = std::vector<int> (newPopSize, 0);
-
-}
 
 void Population::initPos(Resources food) {
     for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
