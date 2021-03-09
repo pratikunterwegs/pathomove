@@ -19,13 +19,21 @@ export_test_landscapes <- function(foodClusters, clusterDispersal, landsize, rep
 #' @description Run the simulation using parameters passed as
 #' arguments to the corresponding R function.
 #' 
+#' @param popsize The population size.
 #' @param genmax The maximum number of generations per simulation.
 #' @param tmax The number of timesteps per generation.
 #' @param foodClusters Number of clusters around which food is generated.
 #' @param clusterDispersal How dispersed food is around the cluster centre.
 #' @param landsize The size of the landscape as a numeric (double).
 #' @return A data frame of the evolved population traits.
-do_simulation <- function(genmax, tmax, foodClusters, clusterDispersal, landsize) {
-    .Call(`_socialitymodel_do_simulation`, genmax, tmax, foodClusters, clusterDispersal, landsize)
+do_simulation <- function(popsize, genmax, tmax, foodClusters, clusterDispersal, landsize) {
+    .Call(`_socialitymodel_do_simulation`, popsize, genmax, tmax, foodClusters, clusterDispersal, landsize)
+}
+
+#' Export a population.
+#'
+#' @param popsize The population size.
+export_pop <- function(popsize) {
+    .Call(`_socialitymodel_export_pop`, popsize)
 }
 
