@@ -1,12 +1,16 @@
 # check function
 
 library(socialitymodel)
-library(data.table)
+
+a = socialitymodel::export_pop(101)
 
 # sim works
-a = socialitymodel::do_simulation(genmax = 1000, 
-              tmax = 100, foodClusters = 10, clusterDispersal = 0.1,
-              landsize = 100)
+a = socialitymodel::do_simulation(
+  popsize = 101,
+  genmax = 10, 
+  tmax = 100, foodClusters = 10, clusterDispersal = 0.1,
+  landsize = 100
+)
 
 landsize = 100
 
