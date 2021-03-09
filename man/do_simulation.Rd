@@ -18,7 +18,7 @@ do_simulation(genmax, tmax, foodClusters, clusterDispersal, landsize)
 \item{landsize}{The size of the landscape as a numeric (double).}
 }
 \value{
-Nothing. Runs simulation.
+A data frame of the evolved population traits.
 }
 \description{
 Run the simulation using parameters passed as
