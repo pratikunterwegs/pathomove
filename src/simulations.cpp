@@ -229,7 +229,7 @@ void export_test_landscapes(int foodClusters, double clusterDispersal, double la
 //' @param foodClusters Number of clusters around which food is generated.
 //' @param clusterDispersal How dispersed food is around the cluster centre.
 //' @param landsize The size of the landscape as a numeric (double).
-//' @return Nothing. Runs simulation.
+//' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
 DataFrame do_simulation(int popsize, int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize) {
 
