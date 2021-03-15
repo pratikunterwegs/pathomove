@@ -1,20 +1,31 @@
 # check function
 
 library(socialitymodel)
+library(ggplot2)
 
 a = socialitymodel::export_pop(101)
 
 # sim works
 a = socialitymodel::do_simulation(
-  popsize = 101,
-  genmax = 10, 
-  tmax = 100, foodClusters = 10, clusterDispersal = 0.1,
+  popsize = 10000,
+  genmax = 1000, 
+  tmax = 100, foodClusters = 1, clusterDispersal = 0.1,
   landsize = 100
 )
 
-landsize = 100
+ggplot(a)+
+  geom_jitter(aes(p_ars, energy), size = 0.1,
+              alpha = 0.2)+
+  scale_y_log10()
 
+ggplot(a)+
+  geom_histogram(aes(p_ars))+
+  coord_cartesian(xlim = c(0, 1))
+
+landsize = 100
+popsize = 1000
 # make parameter file
+library(data.table)
 params = CJ(
   genmax = 1000,
   tmax = 100,
@@ -25,6 +36,7 @@ params = CJ(
 
 data = Map(function(g, tm, cl, d) {
   do_simulation(
+    popsize = popsize,
     genmax = g,
     tmax = tm,
     foodClusters = cl,
@@ -45,7 +57,7 @@ data2 = data2[, unlist(trait, recursive = F),
               by = names(params)]
 
 ggplot(data2)+
-  geom_histogram(aes(V1))+
-  facet_grid(foodClusters ~ clusterDispersal,
+  geom_histogram(aes(V1, fill = factor(replicate)))+
+  facet_grid(replicate ~ foodClusters,
              labeller = label_both)+
   xlim(0, 1)
