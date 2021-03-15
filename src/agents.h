@@ -38,6 +38,7 @@ public:
     std::vector<double> energy;
     std::vector<double> trait;
     std::vector<int> counter;
+    std::vector<int> associations;
 
     // position rtree
     bgi::rtree< value, bgi::quadratic<16> > agentRtree;
@@ -51,6 +52,7 @@ public:
     void Reproduce();
     // for network
     void updatePbsn(Network &pbsn);
+    void competitionCosts(const double competitionCost);
 };
 
 void Population::initPop(int popsize) {
@@ -99,12 +101,22 @@ void Population::updatePbsn(Network &pbsn) {
 
             if(distance(coordX[i], coordY[i], coordX[j], coordY[j]) < range) {
                 pbsn.associations[i][j]++;
+                // add to associations
+                associations[i]++;
             }
         }
     }
 }
 
-void Population::move(Resources food) {
+void Population::competitionCosts(const double competitionCost) {
+    
+    // reduce energy by competition cost
+    for(int i = 0; i < nAgents; i++) {
+        energy[i] -= (associations[i] * competitionCost);
+    }
+}
+
+void Population::move(Resources food, const double moveCost) {
 
     double heading;
     double landsize = food.dSize;
@@ -138,7 +150,7 @@ void Population::move(Resources food) {
         coordY[i] = fmod(landsize + coordY[i], landsize);
         
         // add a cost
-        energy[i] -= (stepSize * 0.001);
+        energy[i] -= (stepSize * moveCost);
     }
 }
 
