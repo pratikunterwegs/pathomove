@@ -26,7 +26,7 @@ void evolve_pop(int genmax, int tmax,
         pbsn.initAssociations(pop.nAgents);
         for (int t = 0; t < tmax; t++) {
 
-            pop.move(food);
+            pop.move(food, 0.0001);
 
             // update pbsn only in last n gens
             if(gen == (genmax - 1)) {
@@ -50,6 +50,8 @@ void evolve_pop(int genmax, int tmax,
         }
         // generation ends here
 
+        // subtract competition costs
+        pop.competitionCosts(0.0001);
         // reproduce
         pop.Reproduce();
 
