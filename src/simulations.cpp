@@ -148,8 +148,8 @@ DataFrame do_simulation(int popsize, int genmax, int tmax, int foodClusters, dou
      /// export landscape
 
     // prepare population
-    Population pop;
-    pop.initPop(popsize);
+    Population pop (popsize);
+    // pop.initPop(popsize);
     pop.setTrait();
     Rcpp::Rcout << pop.nAgents << " agents over " << genmax << " gens of " << tmax << " timesteps\n";
 
@@ -174,8 +174,8 @@ DataFrame do_simulation(int popsize, int genmax, int tmax, int foodClusters, dou
 // [[Rcpp::export]]
 DataFrame export_pop(int popsize) {
     Rcpp::Rcout << "in export function";
-    Population pop;
-    pop.initPop(popsize);
+    Population pop (popsize);
+    // pop.initPop(popsize);
     pop.setTrait();
 
     DataFrame df_pop = DataFrame::create(
