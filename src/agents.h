@@ -20,17 +20,19 @@
 // Agent class
 struct Population {
 public:
-//    Population() :
-//        nAgents (100),
-//        coordX (nAgents, 50.0),
-//        coordY (nAgents, 50.0),
-//        energy (nAgents, 0.000001),
-//        // one trait
-//        trait(nAgents, 0.0),
-//        counter(nAgents, 0)
+   Population(const int popsize) :
+       nAgents (popsize),
+       coordX (popsize, 50.0),
+       coordY (popsize, 50.0),
+       energy (popsize, 0.000001),
+       // one trait
+       trait(popsize, 0.0),
+       counter(popsize, 0),
+       // associations
+       associations(popsize, 0)
 
-//    {}
-//    ~Population() {}
+   {}
+   ~Population() {}
 
     int nAgents = 0;
     std::vector<double> coordX;
@@ -47,7 +49,7 @@ public:
     void initPop (int popsize);
     void setTrait ();
     void initPos(Resources food);
-    void move(Resources food);
+    void move(Resources food, const double moveCost);
     void normaliseIntake();
     void Reproduce();
     // for network
@@ -55,14 +57,15 @@ public:
     void competitionCosts(const double competitionCost);
 };
 
-void Population::initPop(int popsize) {
-    nAgents = popsize;
-    coordX = std::vector<double> (popsize, 50.0);
-    coordY = std::vector<double> (popsize, 50.0);
-    energy = std::vector<double> (popsize, 0.000001);
-    trait = std::vector<double> (popsize, 0.5);
-    counter = std::vector<int> (popsize, 0);
-}
+// void Population::initPop(int popsize) {
+//     nAgents = popsize;
+//     coordX = std::vector<double> (popsize, 50.0);
+//     coordY = std::vector<double> (popsize, 50.0);
+//     energy = std::vector<double> (popsize, 0.000001);
+//     trait = std::vector<double> (popsize, 0.5);
+//     counter = std::vector<int> (popsize, 0);
+//     associations = std::vector<int> (popsize, 0);
+// }
 
 void Population::initPos(Resources food) {
     for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
