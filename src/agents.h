@@ -56,7 +56,7 @@ public:
     void normaliseIntake();
     void Reproduce();
     // for network
-    void updatePbsn(Network &pbsn);
+    void updatePbsn(Network &pbsn, const double range);
     void competitionCosts(const double competitionCost);
 };
 
@@ -175,9 +175,9 @@ std::vector<int> findNearItems(size_t individual, Resources &food, Population &p
     if (food.nAvailable > 0) {
         std::vector<value> nearItems;
         point currentLoc = point(pop.coordX[individual], pop.coordY[individual]);
-        box bbox(point(pop.coordX[individual] - range,
-                       pop.coordY[individual] - range),
-                 point(pop.coordX[individual] + range, pop.coordY[individual] + range));
+        box bbox(point(pop.coordX[individual] - distance,
+                       pop.coordY[individual] - distance),
+                 point(pop.coordX[individual] + distance, pop.coordY[individual] + distance));
 
         food.rtree.query(
                     bgi::within(bbox) &&
@@ -191,9 +191,9 @@ std::vector<int> findNearItems(size_t individual, Resources &food, Population &p
     return itemID;
 }
 
-void forage(size_t individual, Resources &food, Population &pop){
+void forage(size_t individual, Resources &food, Population &pop, const double distance){
     // find nearest item ids
-    std::vector<int> theseItems = findNearItems(individual, food, pop);
+    std::vector<int> theseItems = findNearItems(individual, food, pop, distance);
 
     // check near items count
     if(theseItems.size() > 0) {
