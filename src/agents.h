@@ -104,7 +104,7 @@ double distance(double x1, double y1, double x2, double y2) {
 }
 
 // to update pbsn
-void Population::updatePbsn(Network &pbsn) {
+void Population::updatePbsn(Network &pbsn, const double range) {
 
     // focal agents
     for(size_t i = 0; i < static_cast<size_t>(nAgents - 1); i++) {
@@ -167,7 +167,8 @@ void Population::move(Resources food, const double moveCost) {
     }
 }
 
-std::vector<int> findNearItems(size_t individual, Resources &food, Population &pop){
+std::vector<int> findNearItems(size_t individual, Resources &food, Population &pop,
+    const double distance){
     // search nearest item only if any are available
     std::vector<int> itemID;
 
