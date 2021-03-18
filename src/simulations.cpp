@@ -30,12 +30,12 @@ void evolve_pop(int genmax, int tmax,
 
             // update pbsn only in last n gens
             if(gen == (genmax - 1)) {
-                pop.updatePbsn(pbsn);
+                pop.updatePbsn(pbsn, 2.0);
             }
 
             for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++)
             {
-                forage(i, food, pop);
+                forage(i, food, pop, 2.0);
                 food.countAvailable();
             }
 
