@@ -7,10 +7,6 @@
 #include <cassert>
 #include <algorithm>
 #include <iostream>
-// #include "agents.h"
-#define BOOST_TEST_MODULE MyTest
-#include <boost/test/unit_test.hpp>
-
 #include "parameters.h"
 #include "landscape.h"
 #include "network.h"
@@ -59,23 +55,6 @@ public:
     void updatePbsn(Network &pbsn, const double range);
     void competitionCosts(const double competitionCost);
 };
-
-// void Population::initPop(int popsize) {
-//     nAgents = popsize;
-//     coordX = std::vector<double> (popsize, 50.0);
-//     coordY = std::vector<double> (popsize, 50.0);
-//     energy = std::vector<double> (popsize, 0.000001);
-//     trait = std::vector<double> (popsize, 0.5);
-//     counter = std::vector<int> (popsize, 0);
-//     associations = std::vector<int> (popsize, 0);
-// }
-BOOST_AUTO_TEST_CASE(test_associations) {
-    // check associations have length n agents
-    Population testPop (23);
-    BOOST_CHECK_EQUAL (testPop.nAgents, 23);
-    BOOST_CHECK_EQUAL (testPop.nAgents, testPop.associations.size());
-    
-}
 
 void Population::initPos(Resources food) {
     for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
