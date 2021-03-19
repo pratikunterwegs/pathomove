@@ -19,9 +19,7 @@ check_prepare_cluster <- function(
         echo "snevo exists, updating"
         cd snevo
         git remote update
-        if git status --porcelain;
-          # nothing
-        else
+        if ! [[ git status --porcelain ]];
           git pull; 
           chmod +x bash/install_snevo.sh; 
           ./bash/install_snevo.sh
