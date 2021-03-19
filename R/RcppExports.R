@@ -11,7 +11,7 @@
 #' @param replicates How many replicates.
 #' @return Nothing. Runs simulation.
 export_test_landscapes <- function(foodClusters, clusterDispersal, landsize, replicates) {
-    invisible(.Call(`_socialitymodel_export_test_landscapes`, foodClusters, clusterDispersal, landsize, replicates))
+    invisible(.Call(`_snevo_export_test_landscapes`, foodClusters, clusterDispersal, landsize, replicates))
 }
 
 #' Runs the sociality model simulation.
@@ -27,13 +27,13 @@ export_test_landscapes <- function(foodClusters, clusterDispersal, landsize, rep
 #' @param landsize The size of the landscape as a numeric (double).
 #' @return A data frame of the evolved population traits.
 do_simulation <- function(popsize, genmax, tmax, foodClusters, clusterDispersal, landsize) {
-    .Call(`_socialitymodel_do_simulation`, popsize, genmax, tmax, foodClusters, clusterDispersal, landsize)
+    .Call(`_snevo_do_simulation`, popsize, genmax, tmax, foodClusters, clusterDispersal, landsize)
 }
 
 #' Export a population.
 #'
 #' @param popsize The population size.
 export_pop <- function(popsize) {
-    .Call(`_socialitymodel_export_pop`, popsize)
+    .Call(`_snevo_export_pop`, popsize)
 }
 
