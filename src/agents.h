@@ -26,7 +26,6 @@ public:
        energy (popsize, 0.000001),
        // one trait
        trait(popsize, 0.0),
-       counter(popsize, 0),
        // associations
        associations(popsize, 0)
 
@@ -116,18 +115,8 @@ void Population::move(Resources food, const double moveCost) {
 
     for(size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
 
-        // get heading checking for counter
-        if (counter[i] > 0) {
-            // use ars step size
-            stepSize = gsl_ran_gamma(r, stepSizeArs, stepSizeSdArs);
-            // pay cost
-            energy[i] -= (moveCost * stepSize);
-            heading = etaArs * gsl_ran_gaussian(r, 1.0);
-            counter[i] -- ;
-        } else {
-            stepSize = gsl_ran_gamma(r, indivStepSize, indivStepSizeSd);
-            heading = etaCrw * gsl_ran_gaussian(r, 1.0);
-        }
+        stepSize = gsl_ran_gamma(r, indivStepSize, trait); // individual strategy is the deviation in step size
+        heading = etaCrw * gsl_ran_gaussian(r, 1.0);
 
         // get radians
         heading = heading * M_PI / 180.0;
@@ -183,11 +172,6 @@ void forage(size_t individual, Resources &food, Population &pop, const double di
         for (size_t i = 0; i < theseItems.size(); i++){
             if(food.counter[theseItems[i]] == 0) {
                 thisItem = theseItems[i]; // if available pick this item
-
-                // also query the probability of switching movement mode
-                if(gsl_ran_bernoulli(r, pop.trait[individual]) == 1) {
-                    pop.counter[individual] = searchTime;
-                }
 
                 break;
             }
