@@ -20,9 +20,10 @@ check_prepare_cluster <- function(
         cd snevo
         git remote update
         if git status --porcelain;
-          then
-          git pull
-          chmod +x bash/install_snevo.sh
+          # nothing
+        else
+          git pull; 
+          chmod +x bash/install_snevo.sh; 
           ./bash/install_snevo.sh
         fi
     else 
