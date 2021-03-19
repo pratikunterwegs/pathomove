@@ -2,6 +2,8 @@
 ^\.Rproj\.user$
 ^\.github$
 ^data$
+^bash$
+^scripts$
 ^.*\.Rmd$
 ^sociality_model_cpp$
 ^.*\.sh$
