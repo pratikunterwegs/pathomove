@@ -19,7 +19,7 @@ Imports:
     Rcpp,
     assertthat,
     data.table,
-    glue,
-    ssh
+    glue
 Suggests: 
-    testthat
+    testthat,
+    ssh
