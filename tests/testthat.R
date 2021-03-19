@@ -1,4 +1,4 @@
 library(testthat)
-library(socialitymodel)
+library(snevo)
 
-test_check("socialitymodel")
+test_check("snevo")
