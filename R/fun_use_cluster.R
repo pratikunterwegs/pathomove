@@ -36,8 +36,8 @@ use_cluster <- function(
   )
 
   # replace n array with length of parameter file
-  n_array <- length(readLines(parameter_file))
-  gsub(pattern = "n_array", n_array, job_shell_script)
+  n_array <- length(readLines(parameter_file)) - 1
+  job_shell_script = gsub(pattern = "n_array", n_array, job_shell_script)
 
   # check that last line is Rscript
   assertthat::assert_that(
