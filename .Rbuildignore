@@ -3,6 +3,7 @@
 ^\.github$
 ^data$
 ^bash$
+^python$
 ^scripts$
 ^.*\.Rmd$
 ^sociality_model_cpp$
