@@ -20,8 +20,8 @@ int main(int argc, char *argv[])
     const double dispersal = std::stod(cliArgs[4]);
     const double landsize = std::stod(cliArgs[5]);
     //        std::string rep = cliArgs[5];a
-//    do_simulation(genmax, tmax, clusters, dispersal);
-    export_test_landscapes(clusters, dispersal, 3, landsize);
+//    do_simulation(genmax, tmax, clusters, dispersal, landsize);
+//    export_test_landscapes(clusters, dispersal, landsize, 3);
 
     return 0;
 
