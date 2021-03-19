@@ -11,6 +11,10 @@
 #include "landscape.h"
 #include "network.h"
 
+#include <Rcpp.h>
+
+using namespace Rcpp;
+
 // EtaCRW=0.7 #the weight of the CRW component in the BCRW used to model the Indiv movement
 // StpSize_ind=7 #Mean step lengths of individuals;
 // StpStd_ind=5 # Sandard deviations of step lengths of individuals
