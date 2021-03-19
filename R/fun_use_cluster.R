@@ -19,12 +19,6 @@ use_cluster <- function(
   # connect to server
   s <- ssh::ssh_connect(ssh_con, passwd = password)
 
-  # check for folder and if not clone
-  check_prepare_cluster(
-    ssh_con = ssh_con,
-    password = password
-  )
-
   # transfer parameter file
   ssh::scp_upload(
     s,
@@ -37,7 +31,7 @@ use_cluster <- function(
 
   # check flexible array creation
   assertthat::assert_that(
-    length(grep(pattern = "n_array", x = job_shell_script) > 0),
+    length(grep(pattern = "n_array", x = job_shell_script)) > 0),
     msg = "use_cluster: n_array cannot be flexibly created"
   )
 
