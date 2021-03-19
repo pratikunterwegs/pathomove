@@ -93,5 +93,8 @@ doc
 # ignore password
 data/password.txt
 
+# bash scripts
+bash/job*
+
 # ignore Makefile
 Makefile
