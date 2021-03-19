@@ -1,15 +1,17 @@
 # check function
 
-library(socialitymodel)
+library(snevo)
 library(ggplot2)
 
-a = socialitymodel::export_pop(101)
+a = snevo::export_pop(101)
 
 # sim works
-a = socialitymodel::do_simulation(
-  popsize = 10000,
-  genmax = 1000, 
-  tmax = 100, foodClusters = 1, clusterDispersal = 0.1,
+a = snevo::do_simulation(
+  popsize = 100,
+  genmax = 100, 
+  tmax = 10, 
+  foodClusters = 1, 
+  clusterDispersal = 0.1,
   landsize = 100
 )
 
