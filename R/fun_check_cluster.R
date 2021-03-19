@@ -14,17 +14,23 @@ check_prepare_cluster <- function(
 
   # prepare check and fail case clone
   cluster_check <- glue::glue(
-    'if [[ -d "snevo" ]]; then
+   'if [[ -d "snevo" ]]; then
        echo "snevo exists, updating"
        cd snevo
-       git pull
-       chmod +x bash/install_snevo.sh
-       ./bash/install_snevo.sh
-       else 
+       git remote update
+       if [[ `git status --porcelain` ]]; then
+          git pull
+          chmod +x bash/install_snevo.sh
+          ./bash/install_snevo.sh
+       else
+          # No changes
+       fi
+    else 
        echo "snevo does not exist, cloning"
        git clone https://github.com/pratikunterwegs/snevo.git snevo
        chmod +x bash/install_snevo.sh
        ./bash/install_snevo.sh
+       git checkout --bash/install_snevo.sh 
     fi'
   )
   # check for folder snevo
