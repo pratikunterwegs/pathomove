@@ -1,4 +1,4 @@
-# A continuous-space discrete-item movement model
+# A continuous-space discrete-item movement model in `Rcpp`
 
 <!-- badges: start -->
   [![R build status](https://github.com/pratikunterwegs/snevo/workflows/R-CMD-check/badge.svg)](https://github.com/pratikunterwegs/snevo/actions)
