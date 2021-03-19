@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // export_test_landscapes
 void export_test_landscapes(int foodClusters, double clusterDispersal, double landsize, int replicates);
-RcppExport SEXP _socialitymodel_export_test_landscapes(SEXP foodClustersSEXP, SEXP clusterDispersalSEXP, SEXP landsizeSEXP, SEXP replicatesSEXP) {
+RcppExport SEXP _snevo_export_test_landscapes(SEXP foodClustersSEXP, SEXP clusterDispersalSEXP, SEXP landsizeSEXP, SEXP replicatesSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type foodClusters(foodClustersSEXP);
@@ -20,7 +20,7 @@ END_RCPP
 }
 // do_simulation
 DataFrame do_simulation(int popsize, int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize);
-RcppExport SEXP _socialitymodel_do_simulation(SEXP popsizeSEXP, SEXP genmaxSEXP, SEXP tmaxSEXP, SEXP foodClustersSEXP, SEXP clusterDispersalSEXP, SEXP landsizeSEXP) {
+RcppExport SEXP _snevo_do_simulation(SEXP popsizeSEXP, SEXP genmaxSEXP, SEXP tmaxSEXP, SEXP foodClustersSEXP, SEXP clusterDispersalSEXP, SEXP landsizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -36,7 +36,7 @@ END_RCPP
 }
 // export_pop
 DataFrame export_pop(int popsize);
-RcppExport SEXP _socialitymodel_export_pop(SEXP popsizeSEXP) {
+RcppExport SEXP _snevo_export_pop(SEXP popsizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -47,13 +47,13 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_socialitymodel_export_test_landscapes", (DL_FUNC) &_socialitymodel_export_test_landscapes, 4},
-    {"_socialitymodel_do_simulation", (DL_FUNC) &_socialitymodel_do_simulation, 6},
-    {"_socialitymodel_export_pop", (DL_FUNC) &_socialitymodel_export_pop, 1},
+    {"_snevo_export_test_landscapes", (DL_FUNC) &_snevo_export_test_landscapes, 4},
+    {"_snevo_do_simulation", (DL_FUNC) &_snevo_do_simulation, 6},
+    {"_snevo_export_pop", (DL_FUNC) &_snevo_export_pop, 1},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_socialitymodel(DllInfo *dll) {
+RcppExport void R_init_snevo(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }
