@@ -14,7 +14,7 @@ check_prepare_cluster <- function(
 
   # prepare check and fail case clone
   cluster_check <- glue::glue(
-   'if [[ -d "snevo" ]]; then
+    'if [[ -d "snevo" ]]; then
         echo "snevo exists, updating";
         cd snevo;
         git remote update;
