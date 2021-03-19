@@ -14,7 +14,7 @@ using namespace Rcpp;
 
 // function to evolve population
 void evolve_pop(int genmax, int tmax,
-                Population &pop, Resources &food)
+                Population &pop, Resources &food, Network &pbsn)
 {
     // set seed
     gsl_rng_set(r, seed);
@@ -22,8 +22,6 @@ void evolve_pop(int genmax, int tmax,
     for(int gen = 0; gen < genmax; gen++) {
 
         pop.initPos(food);
-        Network pbsn;
-        pbsn.initAssociations(pop.nAgents);
         for (int t = 0; t < tmax; t++) {
 
             pop.move(food, 0.0001);
@@ -138,7 +136,7 @@ void export_test_landscapes(int foodClusters, double clusterDispersal, double la
 //' @param landsize The size of the landscape as a numeric (double).
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
-DataFrame do_simulation(int popsize, int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize) {
+List do_simulation(int popsize, int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize) {
 
     // prepare landscape
     Resources food;
@@ -153,19 +151,33 @@ DataFrame do_simulation(int popsize, int genmax, int tmax, int foodClusters, dou
     pop.setTrait();
     Rcpp::Rcout << pop.nAgents << " agents over " << genmax << " gens of " << tmax << " timesteps\n";
 
-    // evolve population
-    evolve_pop(genmax, tmax, pop, food);
+    // prepare social network struct
+    Network pbsn;
+    pbsn.initAssociations(pop.nAgents);
 
-    // create data frame and return
+    // evolve population
+    evolve_pop(genmax, tmax, pop, food, pbsn);
+
+    Rcpp::Rcout << "done evolving, preparing data\n";
+
+    // create data frame of evolved traits and return
     DataFrame df_evolved_pop = DataFrame::create(
         Named("energy") = pop.energy,
         Named("p_ars") = pop.trait
-     );
+    );
 
+    // create data frame of associations
+    DataFrame df_evolved_assocs = returnPbsn(pop, pbsn);
 
-    Rcpp::Rcout << "done evolving\n";
+    // wrap into list
+    List dataList = List::create(
+        Named("trait_data") = df_evolved_pop,
+        Named("pbsn") = df_evolved_assocs
+    );
 
-    return df_evolved_pop;
+    Rcpp::Rcout << "data prepared\n";
+
+    return dataList;
 }
 
 //' Export a population.
