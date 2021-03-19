@@ -29,9 +29,9 @@ check_prepare_cluster <- function(
        echo "snevo does not exist, cloning"
        git clone https://github.com/pratikunterwegs/snevo.git snevo
        chmod +x bash/install_snevo.sh
-       ./bash/install_snevo.sh
-       git checkout --bash/install_snevo.sh 
-    fi'
+       ./bash/install_snevo.sh 
+    fi
+    git checkout --bash/install_snevo.sh'
   )
   # check for folder snevo
   ssh::ssh_exec_wait(s, command = cluster_check)
