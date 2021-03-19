@@ -14,7 +14,7 @@ check_prepare_cluster <- function(
 
   # prepare check and fail case clone
   cluster_check <- glue::glue(
-    'if [[ -d "snevo" ]]; then
+   'if [[ -d "snevo" ]]; then
        echo "snevo exists, updating"
        cd snevo
        git remote update
@@ -22,8 +22,6 @@ check_prepare_cluster <- function(
           git pull
           chmod +x bash/install_snevo.sh
           ./bash/install_snevo.sh
-       else
-          # No changes
        fi
     else 
        echo "snevo does not exist, cloning"
@@ -31,7 +29,7 @@ check_prepare_cluster <- function(
        chmod +x bash/install_snevo.sh
        ./bash/install_snevo.sh 
     fi
-    git checkout --bash/install_snevo.sh'
+    git checkout -- bash/install_snevo.sh'
   )
   # check for folder snevo
   ssh::ssh_exec_wait(s, command = cluster_check)
