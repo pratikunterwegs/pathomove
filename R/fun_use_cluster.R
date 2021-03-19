@@ -52,8 +52,10 @@ use_cluster <- function(
   )
 
   # write to full job
-  job_name <- glue::glue('bash/job_script_\\
-                        {gsub(pattern = " |:", replacement = "_", Sys.time())}.sh')
+  job_name <- glue::glue(
+    'bash/job_script_\\
+    {gsub(pattern = " |:", replacement = "_", Sys.time())}.sh'
+  )
   writeLines(
     job_shell_script,
     con = job_name
@@ -63,7 +65,7 @@ use_cluster <- function(
   ssh::scp_upload(
     s,
     job_name,
-    to = "snevo"
+    to = "snevo/bash"
   )
 
   # run on cluster
