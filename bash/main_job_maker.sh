@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --time=00:30:00
-#SBATCH --partition=gelifes
+#SBATCH --partition=regular
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --job-name=snevo_simulation
@@ -9,4 +9,5 @@
 
 pwd
 module load R/3.6.1-foss-2018a
+cd snevo
 Rscript some rscript here ${SLURM_ARRAY_TASK_ID}
