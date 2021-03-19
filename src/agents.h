@@ -238,12 +238,9 @@ void Population::Reproduce() {
             }
         }
     }
-
     // swap vectors
     std::swap(trait, newTrait);
     newTrait.clear();
-
-
 }
 
 #endif // AGENTS_H
