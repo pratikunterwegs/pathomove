@@ -89,3 +89,6 @@ Meta
 
 inst/doc
 doc
+
+# ignore Makefile
+Makefile
