@@ -26,8 +26,25 @@ use_cluster <- function(
     password = password
   )
   
+  # transfer parameter file
+  ssh::scp_upload(
+    s,
+    files = parameter_file,
+    to = "snevo"
+  )
+  
   # modify template job to use correct R script
   job_shell_script = readLines(template_job)
+  
+  # check flexible array creation
+  assertthat::assert_that(
+    length(grep(pattern = "n_array", x = job_shell_script) > 0),
+    msg = "use_cluster: n_array cannot be flexibly created"
+  )
+  
+  # replace n array with length of parameter file
+  n_array = length(readLines(parameter_file))
+  gsub(pattern = "n_array", n_array, job_shell_script)
   
   # check that last line is Rscript
   assertthat::assert_that(
