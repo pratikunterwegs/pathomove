@@ -90,5 +90,8 @@ Meta
 inst/doc
 doc
 
+# ignore password
+data/password.txt
+
 # ignore Makefile
 Makefile
