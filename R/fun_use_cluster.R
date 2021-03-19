@@ -48,7 +48,7 @@ use_cluster <- function(
   # last line is R script command, replace this
   last_line <- length(job_shell_script)
   job_shell_script[last_line] <- glue::glue(
-    "Rscript --slave -e scripts/{script} {parameter_file} ${{SLURM_ARRAY_TASK_ID}}"
+    "Rscript --slave -e /scripts/{script} {parameter_file} ${{SLURM_ARRAY_TASK_ID}}"
   )
 
   # write to full job
