@@ -185,6 +185,35 @@ void forage(size_t individual, Resources &food, Population &pop, const double di
     }
 }
 
+DataFrame returnPbsn (Population &pop, Network &pbsn) {
+
+    std::vector<int> focalAgent;
+    std::vector<int> subfocalAgent;
+    std::vector<int> pbsnAssociations;
+
+    // focal agents
+    for(size_t i = 0; i < static_cast<size_t>(pop.nAgents - 1); i++) {
+        // make vector of proximate agents
+        // move j along the size of associations expected for i
+        for(size_t j = i + 1; j < pbsn.associations[i].size(); j++) {
+
+            if(pbsn.associations[i][j] > 0) {
+                focalAgent.push_back(i);
+                subfocalAgent.push_back(j);
+                pbsnAssociations.push_back(pbsn.associations[i][j]);
+            }
+        }
+    }
+
+    DataFrame pbsnData = DataFrame::create(
+        Named("id_x") = focalAgent,
+        Named("id_y") = subfocalAgent,
+        Named("associations") = pbsnAssociations
+    );
+
+    return pbsnData;
+}
+
 /// minor function to normalise vector
 void Population::normaliseIntake() {
     // sort vec fitness
