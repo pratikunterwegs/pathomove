@@ -11,18 +11,17 @@
 #' @return Writes a parameter file.
 #' @export
 #'
-make_parameter_file = function(
-  generations = 1000,
-  popsize = 1000,
-  tmax = 100,
-  clusters = seq(1, 10),
-  spread = seq(1, 5),
-  replicates = 10,
-  which_file = "this_file.csv"
-) {
-  
+make_parameter_file <- function(
+                                generations = 1000,
+                                popsize = 1000,
+                                tmax = 100,
+                                clusters = seq(1, 10),
+                                spread = seq(1, 5),
+                                replicates = 10,
+                                which_file = "this_file.csv") {
+
   # make combinations
-  parameters = data.table::CJ(
+  parameters <- data.table::CJ(
     generations,
     popsize,
     tmax,
@@ -30,11 +29,10 @@ make_parameter_file = function(
     spread,
     replicate = seq(replicates)
   )
-  
+
   # write file
   data.table::fwrite(
     parameters,
     file = which_file
   )
-  
 }
