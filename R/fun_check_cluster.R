@@ -18,9 +18,13 @@ check_prepare_cluster <- function(
        echo "snevo exists, updating"
        cd snevo
        git pull
+       chmod +x bash/install_snevo.sh
+       ./install_snevo.sh
        else 
        echo "snevo does not exist, cloning"
        git clone https://github.com/pratikunterwegs/snevo.git snevo
+       chmod +x bash/install_snevo.sh
+       ./install_snevo.sh
     fi'
   )
   # check for folder snevo
