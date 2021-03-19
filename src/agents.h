@@ -233,9 +233,6 @@ void Population::Reproduce() {
         if (gsl_ran_bernoulli(r, mProb) == 1) {
             newTrait[a] += gsl_ran_cauchy(r, mShift);
 
-            if (newTrait[a] >= 1.0) {
-                newTrait[a] = 0.99;
-            }
             if (newTrait[a] <= 0.0) {
                 newTrait[a] = 0.00001;
             }
