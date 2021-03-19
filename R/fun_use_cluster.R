@@ -31,7 +31,7 @@ use_cluster <- function(
 
   # check flexible array creation
   assertthat::assert_that(
-    length(grep(pattern = "n_array", x = job_shell_script)) > 0),
+    length(grep(pattern = "n_array", x = job_shell_script)) > 0,
     msg = "use_cluster: n_array cannot be flexibly created"
   )
 
