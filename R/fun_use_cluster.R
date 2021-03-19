@@ -71,7 +71,10 @@ use_cluster <- function(
   # run on cluster
   ssh::ssh_exec_wait(
     s,
-    command = glue::glue("sbatch {job_name}")
+    command = c(
+      glue::glue("sbatch {job_name}"),
+      glue::glue("rm {job_name}")
+    )
   )
   ssh::ssh_disconnect(s)
 }
