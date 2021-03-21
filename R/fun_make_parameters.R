@@ -22,11 +22,11 @@ make_parameter_file <- function(
 
   # make combinations
   parameters <- data.table::CJ(
-    generations,
+    genmax,
     popsize,
     tmax,
-    clusters,
-    spread,
+    foodClusters,
+    clusterDispersal,
     replicate = seq(replicates)
   )
 
