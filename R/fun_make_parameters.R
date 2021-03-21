@@ -29,6 +29,13 @@ make_parameter_file <- function(
     spread,
     replicate = seq(replicates)
   )
+  
+  # edit names
+  data.table::setnames(
+    parameters,
+    old = c("generations", "clusters", "clusters"),
+    new = c("genmax", "foodClusters", "clusterDispersal")
+  )
 
   # write file
   data.table::fwrite(
