@@ -1,22 +1,22 @@
 #' Write parameters as CSV.
 #'
-#' @param generations Max generations.
 #' @param popsize Max population size.
 #' @param tmax Timesteps.
-#' @param clusters Food clusters.
-#' @param spread Spread of food clusters.
 #' @param replicates How many replicates.
 #' @param which_file Which file to write to.
+#' @param genmax Max generation.
+#' @param foodClusters How many clusters.
+#' @param clusterDispersal How spread out food is.
 #'
 #' @return Writes a parameter file.
 #' @export
 #'
 make_parameter_file <- function(
-                                generations = 1000,
+                                genmax = 1000,
                                 popsize = 1000,
                                 tmax = 100,
-                                clusters = seq(1, 10),
-                                spread = seq(1, 5),
+                                foodClusters = seq(1, 10),
+                                clusterDispersal = seq(1, 5),
                                 replicates = 10,
                                 which_file = "this_file.csv") {
 
@@ -28,13 +28,6 @@ make_parameter_file <- function(
     clusters,
     spread,
     replicate = seq(replicates)
-  )
-  
-  # edit names
-  data.table::setnames(
-    parameters,
-    old = c("generations", "clusters", "clusters"),
-    new = c("genmax", "foodClusters", "clusterDispersal")
   )
 
   # write file

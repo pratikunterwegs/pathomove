@@ -5,25 +5,25 @@
 \title{Write parameters as CSV.}
 \usage{
 make_parameter_file(
-  generations = 1000,
+  genmax = 1000,
   popsize = 1000,
   tmax = 100,
-  clusters = seq(1, 10),
-  spread = seq(1, 5),
+  foodClusters = seq(1, 10),
+  clusterDispersal = seq(1, 5),
   replicates = 10,
   which_file = "this_file.csv"
 )
 }
 \arguments{
-\item{generations}{Max generations.}
+\item{genmax}{Max generation.}
 
 \item{popsize}{Max population size.}
 
 \item{tmax}{Timesteps.}
 
-\item{clusters}{Food clusters.}
+\item{foodClusters}{How many clusters.}
 
-\item{spread}{Spread of food clusters.}
+\item{clusterDispersal}{How spread out food is.}
 
 \item{replicates}{How many replicates.}
 
