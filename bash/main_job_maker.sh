@@ -10,4 +10,6 @@
 pwd
 module load R/3.6.1-foss-2018a
 cd snevo
+echo "now in" 
+pwd
 Rscript some rscript here ${SLURM_ARRAY_TASK_ID}
