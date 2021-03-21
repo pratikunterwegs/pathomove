@@ -6,7 +6,7 @@ param_file = args[1]
 
 row_n = as.numeric(args[2])
 
-params = read.csv(paste0("../",param_file))
+params = read.csv(param_file)
 
 # run simulation
 data_evolved_pop = snevo::do_simulation(
@@ -37,7 +37,7 @@ output_file = Reduce(
   )
 )
 output_file = glue::glue(
-  '../data/output/{output_file}.Rdata'
+  'data/output/{output_file}.Rdata'
 )
 
 # save
