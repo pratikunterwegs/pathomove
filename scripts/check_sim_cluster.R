@@ -6,6 +6,14 @@ param_file = args[1]
 
 row_n = as.numeric(args[2])
 
+message(
+  paste("which file = ", param_file)
+)
+
+message(
+  paste("which row = ", row_n)
+)
+
 params = read.csv(param_file)
 
 library(snevo)
