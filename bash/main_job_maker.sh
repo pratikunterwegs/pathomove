@@ -8,7 +8,7 @@
 #SBATCH --mem=500
 
 pwd
-module load R/3.6.1-foss-2018a
+ml load R/4.0.0-foss-2020a
 cd snevo
 echo "now in" 
 pwd
