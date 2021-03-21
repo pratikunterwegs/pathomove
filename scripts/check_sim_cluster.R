@@ -34,7 +34,7 @@ these_params = unlist(params[row_n,])
 # append list of params
 data_evolved_pop = append(
   data_evolved_pop,
-  params = these_params
+  these_params
 )
 
 # name of rdata file
