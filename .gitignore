@@ -98,3 +98,6 @@ bash/job*
 
 # ignore Makefile
 Makefile
+
+# allow parameters
+!data/parameters/*
