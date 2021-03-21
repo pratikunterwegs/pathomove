@@ -8,8 +8,10 @@ row_n = as.numeric(args[2])
 
 params = read.csv(param_file)
 
+library(snevo)
+
 # run simulation
-data_evolved_pop = snevo::do_simulation(
+data_evolved_pop = do_simulation(
   popsize = params$popsize[row_n],
   genmax = params$genmax[row_n], 
   tmax = params$tmax[row_n], 
