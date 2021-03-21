@@ -1,4 +1,4 @@
-generations,popsize,tmax,clusters,spread,replicate
+genmax,popsize,tmax,foodClusters,clusterDispersal,replicate
 1000,1000,100,10,5,1
 1000,1000,100,10,5,2
 1000,1000,100,10,5,3
