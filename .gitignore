@@ -93,6 +93,9 @@ doc
 # ignore password
 data/password.txt
 
+# ignore other data
+data/output
+
 # bash scripts
 bash/job*
 
