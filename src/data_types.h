@@ -9,32 +9,39 @@
 #include "agents.h"
 #include "network.h"
 
-#include <Rcpp.h>
-
-using namespace Rcpp;
-
 // define a struct holding a vector of data frames which holds generation wise data
 struct genData {
 public:
-    genData():
-        std::vector<Rcpp::DataFrame> genDataVec,
-        std:::vector<int> gen
-    {}
-    ~genData() {}
+    std::vector<std::vector<double> > genEnergyVec;
+    std::vector<std::vector<double> > genTraitVec;
+    std::vector<int> gens;
 
     void updateGenData (Population &pop, const int gen);
+    Rcpp::List getGenData ();
 };
 
 // function to update gendata
-void genData::updateGenData (Population &pop, const int gen) {
-
+void genData::updateGenData (Population &pop, const int gen_) {
     // get pop data
-    // create data frame of evolved traits and return
-    DataFrame pop_data = DataFrame::create(
-        Named("energy") = pop.energy,
-        Named("trait") = pop.trait
+    genEnergyVec.push_back(pop.energy);
+    genTraitVec.push_back(pop.trait);
+    gens.push_back(gen_);
+}
+
+// function to return gen data as an rcpp list
+Rcpp::List genData::getGenData() {
+    Rcpp::List genDataList (gens.size());
+    for (size_t i = 0; i < gens.size(); i++)
+    {
+        genDataList[i] = DataFrame::create(
+            Named("energy") = genEnergyVec[i],
+            Named("trait") = genTraitVec[i]
+        );
+    }
+    List dataToReturn = List::create(
+        Named("pop_data") = genDataList,
+        Named("gens") = gens
     );
 
-    genDataVec.push_back(df_evolved_pop);
-    gen.push_back(gen);
+    return dataToReturn;
 }
