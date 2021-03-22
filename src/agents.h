@@ -120,7 +120,7 @@ void Population::move(Resources food, const double moveCost) {
     for(size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
 
         stepSize = gsl_ran_gamma(r, indivStepSize, trait[i]); // individual strategy is the deviation in step size
-        heading = etaCrw * gsl_ran_gaussian(r, 1.0);
+        heading = etaCrw * gsl_ran_gaussian(r, 3.0);
 
         // get radians
         heading = heading * M_PI / 180.0;
@@ -274,6 +274,11 @@ void Population::Reproduce() {
     // swap vectors
     std::swap(trait, newTrait);
     newTrait.clear();
+
+    // swap energy
+    std::vector<double> tmpEnergy (nAgents, 0.000001);
+    std::swap(energy, tmpEnergy);
+    tmpEnergy.clear();
 }
 
 #endif // AGENTS_H

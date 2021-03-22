@@ -23,7 +23,7 @@ use_cluster <- function(
   ssh::scp_upload(
     s,
     files = parameter_file,
-    to = "snevo"
+    to = "snevo/data/parameters"
   )
 
   # modify template job to use correct R script

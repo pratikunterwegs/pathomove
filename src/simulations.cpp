@@ -7,36 +7,33 @@
 #include "landscape.h"
 #include "agents.h"
 #include "network.h"
+#include "data_types.h"
 
 #include <Rcpp.h>
 
 using namespace Rcpp;
 
 // function to evolve population
-void evolve_pop(int genmax, int tmax,
+Rcpp::List evolve_pop(int genmax, int tmax,
                 Population &pop, Resources &food, Network &pbsn)
 {
+    // make generation data
+    genData thisGenData;
     // set seed
     gsl_rng_set(r, seed);
-
     for(int gen = 0; gen < genmax; gen++) {
-
         pop.initPos(food);
         for (int t = 0; t < tmax; t++) {
-
             pop.move(food, 0.0001);
-
-            // update pbsn only in last n gens
+            // update pbsn and path only in last n gens
             if(gen == (genmax - 1)) {
                 pop.updatePbsn(pbsn, 2.0);
             }
-
             for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++)
             {
                 forage(i, food, pop, 2.0);
                 food.countAvailable();
             }
-
             //decrement food counter by one
             for (size_t j = 0; j < static_cast<size_t>(food.nItems); j++)
             {
@@ -47,13 +44,14 @@ void evolve_pop(int genmax, int tmax,
             // timestep ends here
         }
         // generation ends here
-
+        // update gendata
+        thisGenData.updateGenData(pop, gen);
         // subtract competition costs
         pop.competitionCosts(0.0001);
         // reproduce
         pop.Reproduce();
-
     }
+    return thisGenData.getGenData();
 }
 
 //' Make landscapes with discrete food items in clusters.
@@ -156,22 +154,16 @@ List do_simulation(int popsize, int genmax, int tmax, int foodClusters, double c
     pbsn.initAssociations(pop.nAgents);
 
     // evolve population
-    evolve_pop(genmax, tmax, pop, food, pbsn);
+    Rcpp::List fullGenData = evolve_pop(genmax, tmax, pop, food, pbsn);
 
     Rcpp::Rcout << "done evolving, preparing data\n";
-
-    // create data frame of evolved traits and return
-    DataFrame df_evolved_pop = DataFrame::create(
-        Named("energy") = pop.energy,
-        Named("p_ars") = pop.trait
-    );
 
     // create data frame of associations
     DataFrame df_evolved_assocs = returnPbsn(pop, pbsn);
 
     // wrap into list
     List dataList = List::create(
-        Named("trait_data") = df_evolved_pop,
+        Named("trait_data_gens") = fullGenData,
         Named("pbsn") = df_evolved_assocs
     );
 

@@ -38,7 +38,8 @@ HEADERS += \
     ../src/agents.h \
     ../src/landscape.h \
     ../src/network.h \
-    ../src/parameters.h
+    ../src/parameters.h \
+    ../src/data_types.h
 
 QMAKE_CXXFLAGS += $$RCPPWARNING $$RCPPFLAGS $$RCPPINCL
 QMAKE_LIBS += $$RLDFLAGS $$RBLAS $$RLAPACK $$RCPPLIBS
