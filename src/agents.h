@@ -274,6 +274,11 @@ void Population::Reproduce() {
     // swap vectors
     std::swap(trait, newTrait);
     newTrait.clear();
+
+    // swap energy
+    std::vector<double> tmpEnergy (nAgents, 0.000001);
+    std::swap(energy, tmpEnergy);
+    tmpEnergy.clear();
 }
 
 #endif // AGENTS_H
