@@ -14,11 +14,11 @@
 using namespace Rcpp;
 
 // function to evolve population
-genData evolve_pop(int genmax, int tmax,
+Rcpp::List evolve_pop(int genmax, int tmax,
                 Population &pop, Resources &food, Network &pbsn)
 {
     // make generation data
-    genData thisGenData();
+    genData thisGenData;
     // set seed
     gsl_rng_set(r, seed);
     for(int gen = 0; gen < genmax; gen++) {
@@ -45,13 +45,13 @@ genData evolve_pop(int genmax, int tmax,
         }
         // generation ends here
         // update gendata
-        updateGenData(pop, gen);
+        thisGenData.updateGenData(pop, gen);
         // subtract competition costs
         pop.competitionCosts(0.0001);
         // reproduce
         pop.Reproduce();
     }
-    return thisGenData;
+    return thisGenData.getGenData();
 }
 
 //' Make landscapes with discrete food items in clusters.
@@ -154,7 +154,7 @@ List do_simulation(int popsize, int genmax, int tmax, int foodClusters, double c
     pbsn.initAssociations(pop.nAgents);
 
     // evolve population
-    genData fullGenData = evolve_pop(genmax, tmax, pop, food, pbsn);
+    Rcpp::List fullGenData = evolve_pop(genmax, tmax, pop, food, pbsn);
 
     Rcpp::Rcout << "done evolving, preparing data\n";
 
