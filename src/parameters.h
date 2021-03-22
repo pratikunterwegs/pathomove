@@ -17,7 +17,7 @@ unsigned seed = static_cast<unsigned> (std::chrono::system_clock::now().time_sin
 std::mt19937 rng;
 
 // movement
-const double indivStepSize = 2.0;
+const double indivStepSize = 0.5;
 const double indivStepSizeSd = 0.2;
 
 const double stepSizeArs = 0.5;
