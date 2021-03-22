@@ -12,50 +12,6 @@
 
 using namespace Rcpp;
 
-// path structure
-Struct Path {
-public:
-    path (const int timesteps, Population &pop, const int whichId):
-       coordX (timesteps, 0.0),
-       coordY (timeteps, 0.0),
-       energy (timesteps, 0.000001),
-       trait (pop.trait[whichId]),
-       whichID (whichId)
-    {}
-    ~path() {}
-    std::vector<double> coordX;
-    std::vector<double> coordY;
-    std::vector<double> energy;
-    const double trait;
-
-    void updatePath (Population &pop);
-    List getPath();
-}
-
-// update path
-void Path::updatePath (Population &pop, const int timestep) {
-    coordX[timestep] = pop.coordX[whichId];
-    coordY[timestep] = pop.coordY[whichId];
-    energy[timestep] = pop.energy[whichId];
-    trait = pop.trait[whichId];
-}
-
-// return path
-List Path::getPath() {
-    // create data frame of evolved traits and return
-    DataFrame df_example_path = DataFrame::create(
-        Named("x") = coordX,
-        Named("y") = coordY,
-        Named("energy") = energy
-    );
-    // wrap into list
-    List pathDataList = List::create(
-        Named("path") = df_example_path,
-        Named("trait") = trait
-    );
-    return pathDataList;
-}
-
 // function to evolve population
 void evolve_pop(int genmax, int tmax,
                 Population &pop, Resources &food, Network &pbsn)
