@@ -74,8 +74,8 @@ void export_test_landscapes(int foodClusters, double clusterDispersal, double la
     for(int i = 0; i < replicates; i++) {
 
         // make a landscape
-        Resources tmpFood;
-        tmpFood.initResources(foodClusters, clusterDispersal, landsize);
+        Resources tmpFood(1000, 100.0);
+        tmpFood.initResources(foodClusters, clusterDispersal);
 
         // get unique id
         auto now = std::chrono::system_clock::now();
@@ -134,11 +134,11 @@ void export_test_landscapes(int foodClusters, double clusterDispersal, double la
 //' @param landsize The size of the landscape as a numeric (double).
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
-List do_simulation(int popsize, int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize) {
+Rcpp::List do_simulation(int popsize, int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize) {
 
     // prepare landscape
-    Resources food;
-    food.initResources(foodClusters, clusterDispersal, landsize);
+    Resources food (3000, 300.0);
+    food.initResources(foodClusters, clusterDispersal);
     food.countAvailable();
     Rcpp::Rcout << "landscape with " << foodClusters << " clusters\n";
      /// export landscape
