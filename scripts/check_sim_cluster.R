@@ -22,10 +22,11 @@ library(snevo)
 data_evolved_pop = do_simulation(
   popsize = params$popsize[row_n],
   genmax = params$genmax[row_n], 
-  tmax = params$tmax[row_n], 
+  tmax = params$tmax[row_n],
+  nFood = params$nFood[row_n],
   foodClusters = params$foodClusters[row_n], 
   clusterDispersal = params$clusterDispersal[row_n],
-  landsize = 100
+  landsize = params$landsize[row_n]
 )
 
 # get params as named vector
