@@ -5,6 +5,7 @@ test_that("simulation works", {
 
   # check function runes
   data_evolved_pop <- snevo::do_simulation(
+    nFood = 300,
     popsize = popsize,
     genmax = 10,
     tmax = 10,
