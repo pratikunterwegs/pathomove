@@ -4,12 +4,20 @@
 \alias{export_test_landscapes}
 \title{Make landscapes with discrete food items in clusters.}
 \usage{
-export_test_landscapes(foodClusters, clusterDispersal, landsize, replicates)
+export_test_landscapes(
+  foodClusters,
+  clusterDispersal,
+  nFood,
+  landsize,
+  replicates
+)
 }
 \arguments{
 \item{foodClusters}{Number of clusters around which food is generated.}
 
 \item{clusterDispersal}{How dispersed food is around the cluster centre.}
+
+\item{nFood}{The number of food items.}
 
 \item{landsize}{The size of the landscape as a numeric (double).}
 
