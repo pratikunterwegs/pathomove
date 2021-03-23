@@ -22,9 +22,9 @@ typedef std::pair<point, unsigned> value;
 // items class
 struct Resources {
 public:
-    Resources() :
-    nItems(1000),
-    dSize(10.0),
+    Resources(const int nItemsInit, const double landsize) :
+    nItems(nItemsInit),
+    dSize(landsize),
     coordX(nItems, 0.0),
     coordY(nItems, 0.0),
     counter(nItems, 0),
@@ -49,10 +49,7 @@ public:
 
 };
 
-void Resources::initResources(const int nCentres, const double dDispersal, const double landsize) {
-
-    dSize = landsize;
-
+void Resources::initResources(const int nCentres, const double dDispersal) {
     // generate n central items
     std::vector<double> centreCoordX (nCentres);
     std::vector<double> centreCoordY (nCentres);
