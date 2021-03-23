@@ -19,7 +19,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // do_simulation
-List do_simulation(int popsize, int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize);
+Rcpp::List do_simulation(int popsize, int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize);
 RcppExport SEXP _snevo_do_simulation(SEXP popsizeSEXP, SEXP genmaxSEXP, SEXP tmaxSEXP, SEXP foodClustersSEXP, SEXP clusterDispersalSEXP, SEXP landsizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
