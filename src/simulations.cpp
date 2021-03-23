@@ -60,11 +60,13 @@ Rcpp::List evolve_pop(int genmax, int tmax,
 //'
 //' @param foodClusters Number of clusters around which food is generated.
 //' @param clusterDispersal How dispersed food is around the cluster centre.
+//' @param nFood The number of food items.
 //' @param landsize The size of the landscape as a numeric (double).
 //' @param replicates How many replicates.
 //' @return Nothing. Runs simulation.
 // [[Rcpp::export]]
-void export_test_landscapes(int foodClusters, double clusterDispersal, double landsize, int replicates) {
+void export_test_landscapes(int foodClusters, double clusterDispersal,
+                            int nFood, double landsize, int replicates) {
     // outpath is data/test_landscape
 
     // assumes path/type already prepared
@@ -74,7 +76,7 @@ void export_test_landscapes(int foodClusters, double clusterDispersal, double la
     for(int i = 0; i < replicates; i++) {
 
         // make a landscape
-        Resources tmpFood(1000, 100.0);
+        Resources tmpFood(nFood, landsize);
         tmpFood.initResources(foodClusters, clusterDispersal);
 
         // get unique id
@@ -129,15 +131,17 @@ void export_test_landscapes(int foodClusters, double clusterDispersal, double la
 //' @param popsize The population size.
 //' @param genmax The maximum number of generations per simulation.
 //' @param tmax The number of timesteps per generation.
+//' @param nFood The number of food items.
 //' @param foodClusters Number of clusters around which food is generated.
 //' @param clusterDispersal How dispersed food is around the cluster centre.
 //' @param landsize The size of the landscape as a numeric (double).
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
-Rcpp::List do_simulation(int popsize, int genmax, int tmax, int foodClusters, double clusterDispersal, double landsize) {
+Rcpp::List do_simulation(int popsize, int genmax, int tmax, 
+    int nFood, int foodClusters, double clusterDispersal, double landsize) {
 
     // prepare landscape
-    Resources food (3000, 300.0);
+    Resources food (nFood, landsize);
     food.initResources(foodClusters, clusterDispersal);
     food.countAvailable();
     Rcpp::Rcout << "landscape with " << foodClusters << " clusters\n";
