@@ -220,6 +220,7 @@ DataFrame returnPbsn (Population &pop, Network &pbsn) {
 
 /// minor function to normalise vector
 void Population::normaliseIntake() {
+    // deal with negatives
     for(size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
         if (energy[i] < 0.000001) {
             energy[i] = 0.000001;
@@ -230,8 +231,7 @@ void Population::normaliseIntake() {
     // sort vec fitness
     std::vector<double> vecFitness = energy;
     std::sort(vecFitness.begin(), vecFitness.end());
-    // get min and max fitness
-    double minFitness = vecFitness[0];
+    // scale to max fitness
     double maxFitness = vecFitness[vecFitness.size()-1];
     // rescale
     for(size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
