@@ -119,7 +119,7 @@ void Population::move(Resources food, const double moveCost) {
 
     for(size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
 
-        stepSize = gsl_ran_gamma(r, indivStepSize, trait[i]); // individual strategy is the deviation in step size
+        stepSize = gsl_ran_gamma(r, trait[i], indivStepSizeSd); // individual strategy is the deviation in step size
         heading = etaCrw * gsl_ran_gaussian(r, 3.0);
 
         // get radians
