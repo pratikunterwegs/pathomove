@@ -7,11 +7,12 @@
 #'
 #' @param foodClusters Number of clusters around which food is generated.
 #' @param clusterDispersal How dispersed food is around the cluster centre.
+#' @param nFood The number of food items.
 #' @param landsize The size of the landscape as a numeric (double).
 #' @param replicates How many replicates.
 #' @return Nothing. Runs simulation.
-export_test_landscapes <- function(foodClusters, clusterDispersal, landsize, replicates) {
-    invisible(.Call(`_snevo_export_test_landscapes`, foodClusters, clusterDispersal, landsize, replicates))
+export_test_landscapes <- function(foodClusters, clusterDispersal, nFood, landsize, replicates) {
+    invisible(.Call(`_snevo_export_test_landscapes`, foodClusters, clusterDispersal, nFood, landsize, replicates))
 }
 
 #' Runs the sociality model simulation.
@@ -22,12 +23,13 @@ export_test_landscapes <- function(foodClusters, clusterDispersal, landsize, rep
 #' @param popsize The population size.
 #' @param genmax The maximum number of generations per simulation.
 #' @param tmax The number of timesteps per generation.
+#' @param nFood The number of food items.
 #' @param foodClusters Number of clusters around which food is generated.
 #' @param clusterDispersal How dispersed food is around the cluster centre.
 #' @param landsize The size of the landscape as a numeric (double).
 #' @return A data frame of the evolved population traits.
-do_simulation <- function(popsize, genmax, tmax, foodClusters, clusterDispersal, landsize) {
-    .Call(`_snevo_do_simulation`, popsize, genmax, tmax, foodClusters, clusterDispersal, landsize)
+do_simulation <- function(popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize) {
+    .Call(`_snevo_do_simulation`, popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize)
 }
 
 #' Export a population.
