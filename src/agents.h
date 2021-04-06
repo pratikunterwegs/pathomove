@@ -23,13 +23,15 @@ using namespace Rcpp;
 // Agent class
 struct Population {
 public:
-   Population(const int popsize) :
+   Population(const int popsize, const int beginTrait) :
        nAgents (popsize),
        coordX (popsize, 50.0),
        coordY (popsize, 50.0),
        energy (popsize, 0.000001),
        // one trait
-       trait(popsize, 0.0),
+       trait(popsize, beginTrait),
+       // count stationary behaviour
+       counter (popsize, 0),
        // associations
        associations(popsize, 0)
 
@@ -49,7 +51,7 @@ public:
 
     // funs for pop
     void initPop (int popsize);
-    void setTrait ();
+    void setTrait (const int maxTrait);
     void initPos(Resources food);
     void move(Resources food, const double moveCost);
     void normaliseIntake();
@@ -66,17 +68,10 @@ void Population::initPos(Resources food) {
     }
 }
 
-void Population::setTrait() {
+void Population::setTrait(const int maxTrait) {
     for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-        trait[i] = gsl_rng_uniform(r);
+        trait[i] = gsl_rng_uniform_int(r, maxTrait);
     }
-
-    // scale trait
-    sort(trait.begin(), trait.end());
-    for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-        trait[i] = trait[i] / trait[nAgents - 1];
-    }
-
 }
 
 // distance function without wrapping
@@ -118,8 +113,10 @@ void Population::move(Resources food, const double moveCost) {
     double stepSize;
 
     for(size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
+        // check if individual wants to move, ie, stopCounter  = 0
+        if (counter[i] == 0) {
 
-        stepSize = gsl_ran_gamma(r, trait[i], indivStepSizeSd); // individual strategy is the deviation in step size
+        stepSize = gsl_ran_gamma(r, indivStepSize, indivStepSizeSd); // individual strategy is the deviation in step size
         heading = etaCrw * gsl_ran_gaussian(r, 3.0);
 
         // get radians
@@ -136,6 +133,11 @@ void Population::move(Resources food, const double moveCost) {
         
         // add a cost
         energy[i] -= (stepSize * moveCost);
+        }
+        // if stopCounter not zero, reduce stopCounter
+        else {
+            counter[i] --;
+        }
     }
 }
 
@@ -181,9 +183,12 @@ void forage(size_t individual, Resources &food, Population &pop, const double di
             }
         }
 
-        // if item available
+        // if item available then consume it
+        // also stop the agent here for as many steps as its trait determines
         if (thisItem > -1) {
+            pop.counter[individual] = pop.trait[individual];
             pop.energy[individual] += 1.0;
+            // remove the food item from the landscape for a brief time
             food.counter[thisItem] = regenTime;
         }
     }
@@ -257,13 +262,19 @@ void Population::Reproduce() {
     counter = std::vector<int> (nAgents);
     assert(static_cast<int>(counter.size()) == nAgents && "counter size wrong");
 
-    // mutate trait
+    // mutate trait: trait shifts up or down with an equal prob
+    // trait mutation prob is mProb, in a two step process
     for (size_t a = 0; static_cast<int>(a) < nAgents; a++) {
         if (gsl_ran_bernoulli(r, mProb) == 1) {
-            newTrait[a] += gsl_ran_cauchy(r, mShift);
-
-            if (newTrait[a] <= 0.0) {
-                newTrait[a] = 0.00001;
+            // mutation set, now increase or decrease
+            if (gsl_ran_bernoulli(r, 0.5) == 1) {
+                newTrait[a] = trait[a] + 1;
+            } else {
+                newTrait[a] = trait[a] - 1;
+            }
+            // no negative traits
+            if (newTrait[a] < 0) {
+                newTrait[a] = 0;
             }
         }
     }
