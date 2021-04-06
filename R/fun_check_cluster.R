@@ -17,6 +17,7 @@ check_prepare_cluster <- function(
     'if [[ -d "snevo" ]]; then
         echo "snevo exists, updating";
         cd snevo;
+        git checkout -- .;
         git remote update;
         if [[ ! `git status --porcelain` ]]; then
             git pull; 
