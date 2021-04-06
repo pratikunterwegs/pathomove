@@ -15,7 +15,7 @@ snevo::make_parameter_file(
   genmax = 500,
   foodClusters = round(2^seq(7))[-1],
   clusterDispersal = 2 ^ seq(3),
-  replicates = 10,
+  replicates = 3,
   which_file = "data/parameters/parameters_full.csv"
 )
 
