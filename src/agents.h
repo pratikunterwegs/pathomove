@@ -266,10 +266,12 @@ void Population::Reproduce() {
     // trait mutation prob is mProb, in a two step process
     for (size_t a = 0; static_cast<int>(a) < nAgents; a++) {
         if (gsl_ran_bernoulli(r, mProb) == 1) {
-            // mutation set, get step
-            double m_size = gsl_ran_cauchy(r, mShift);
-            int m_size_ = static_cast<int>(round(m_size));
-            newTrait[a] += m_size_;
+            // mutation set, now increase or decrease
+            if (gsl_ran_bernoulli(r, 0.5) == 1) {
+                newTrait[a] = trait[a] + 1;
+            } else {
+                newTrait[a] = trait[a] - 1;
+            }
             // no negative traits
             if (newTrait[a] < 0) {
                 newTrait[a] = 0;
