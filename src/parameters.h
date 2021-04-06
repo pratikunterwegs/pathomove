@@ -30,6 +30,7 @@ const double moveCost = 0.001;
 
 // agents
 // const double range = 2.0;
+const double pCheck = 1.0;
 
 // landscape
 const int regenTime = 5;
