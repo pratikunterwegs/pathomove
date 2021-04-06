@@ -5,7 +5,7 @@
 #SBATCH --ntasks=1
 #SBATCH --job-name=snevo_simulation
 #SBATCH --array=1-n_array
-#SBATCH --output=/home/p287218/snevo/data/output/snevo_output_%a.log
+#SBATCH --output=/home/p284074/snevo/data/output/snevo_output_%a.log
 #SBATCH --mem=500
 
 pwd
