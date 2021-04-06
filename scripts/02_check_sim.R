@@ -2,6 +2,7 @@
 
 library(snevo)
 library(ggplot2)
+library(data.table)
 
 a = snevo::export_pop(101)
 
@@ -10,19 +11,35 @@ a = snevo::do_simulation(
   popsize = 100,
   genmax = 100, 
   tmax = 10, 
+  nFood = 1000,
   foodClusters = 1, 
   clusterDispersal = 0.1,
   landsize = 100
 )
 
-ggplot(a)+
-  geom_jitter(aes(p_ars, energy), size = 0.1,
-              alpha = 0.2)+
-  scale_y_log10()
+b = a[[1]]
+d = Map(function(df, g) {
+  df$gen = g
+  return(df)
+}, b[["pop_data"]], b[["gens"]])
 
-ggplot(a)+
-  geom_histogram(aes(p_ars))+
-  coord_cartesian(xlim = c(0, 1))
+d = rbindlist(d)
+
+# explore evo
+d_summary = d[,.N, by = c("gen", "trait")]
+
+ggplot(d_summary)+
+  geom_tile(aes(
+    gen, 
+    factor(trait), 
+    fill = N
+  ))+
+  scale_fill_distiller(
+    palette = "Reds",
+    direction = -1
+  )
+
+# run more sims
 
 landsize = 100
 popsize = 1000
@@ -41,6 +58,7 @@ data = Map(function(g, tm, cl, d) {
     popsize = popsize,
     genmax = g,
     tmax = tm,
+    nFood = 3000,
     foodClusters = cl,
     clusterDispersal = d,
     landsize = landsize
