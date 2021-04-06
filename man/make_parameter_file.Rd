@@ -8,6 +8,8 @@ make_parameter_file(
   genmax = 1000,
   popsize = 1000,
   tmax = 100,
+  nFood = 3000,
+  landsize = 300,
   foodClusters = seq(1, 10),
   clusterDispersal = seq(1, 5),
   replicates = 10,
@@ -20,6 +22,10 @@ make_parameter_file(
 \item{popsize}{Max population size.}
 
 \item{tmax}{Timesteps.}
+
+\item{nFood}{N food items, integer.}
+
+\item{landsize}{Landscape size, double value.}
 
 \item{foodClusters}{How many clusters.}
 
