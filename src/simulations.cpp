@@ -148,9 +148,9 @@ Rcpp::List do_simulation(int popsize, int genmax, int tmax,
      /// export landscape
 
     // prepare population
-    Population pop (popsize);
+    Population pop (popsize, 0);
     // pop.initPop(popsize);
-    pop.setTrait();
+    pop.setTrait(10);
     Rcpp::Rcout << pop.nAgents << " agents over " << genmax << " gens of " << tmax << " timesteps\n";
 
     // prepare social network struct
@@ -182,9 +182,9 @@ Rcpp::List do_simulation(int popsize, int genmax, int tmax,
 // [[Rcpp::export]]
 DataFrame export_pop(int popsize) {
     Rcpp::Rcout << "in export function";
-    Population pop (popsize);
+    Population pop (popsize, 2);
     // pop.initPop(popsize);
-    pop.setTrait();
+    pop.setTrait(10);
 
     DataFrame df_pop = DataFrame::create(
                 Named("trait") = pop.trait,
