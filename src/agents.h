@@ -257,10 +257,13 @@ void Population::Reproduce() {
     for (size_t a = 0; static_cast<int>(a) < nAgents; a++) {
         if (gsl_ran_bernoulli(r, mProb) == 1) {
             // mutation set, now increase or decrease
-            newTrait[a] = gsl_ran_gaussian(r, mShift);
+            newTrait[a] = trait[a] + gsl_ran_gaussian(r, mShift);
             // no negative traits
             if (newTrait[a] < 0) {
-                newTrait[a] = 0;
+                newTrait[a] = 0.0;
+            }
+            if (newTrait[a] > 1) {
+                newTrait[a] = 1.0;
             }
         }
     }
