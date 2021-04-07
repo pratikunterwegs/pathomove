@@ -8,16 +8,16 @@ a = snevo::export_pop(101)
 
 # sim works
 a = snevo::do_simulation(
-  popsize = 100,
-  genmax = 100, 
-  tmax = 10, 
+  popsize = 1000,
+  genmax = 50, 
+  tmax = 100, 
   nFood = 1000,
   foodClusters = 1, 
   clusterDispersal = 0.1,
   landsize = 100
 )
 
-b = a[[1]]
+b = a[["trait_data_gens"]]
 d = Map(function(df, g) {
   df$gen = g
   return(df)
@@ -26,17 +26,18 @@ d = Map(function(df, g) {
 d = rbindlist(d)
 
 # explore evo
-d_summary = d[,.N, by = c("gen", "trait")]
+d[, trait_round := round(trait, 2)]
+d_summary = d[,.N, by = c("gen", "trait_round")]
 
 ggplot(d_summary)+
   geom_tile(aes(
     gen, 
-    factor(trait), 
+    trait_round, 
     fill = N
   ))+
   scale_fill_distiller(
     palette = "Reds",
-    direction = -1
+    direction = 1
   )
 
 # run more sims
