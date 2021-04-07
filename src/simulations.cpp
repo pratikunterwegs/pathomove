@@ -23,25 +23,47 @@ Rcpp::List evolve_pop(int genmax, int tmax,
     gsl_rng_set(r, seed);
     for(int gen = 0; gen < genmax; gen++) {
         pop.initPos(food);
-        for (int t = 0; t < tmax; t++) {
-            pop.move(food, 0.0001);
-            // update pbsn and path only in last n gens
-            if(gen == (genmax - 1)) {
-                pop.updatePbsn(pbsn, 2.0);
-            }
-            for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++)
-            {
-                forage(i, food, pop, 2.0);
+
+        double total_act = std::accumulate(pop.trait.begin(), pop.trait.end(), 0.0);
+        double trait_array[pop.nAgents];
+        std::copy(pop.trait.begin(), pop.trait.end(), trait_array);
+        double time = 0.0;
+        double feed_time = 0.0;
+        double it_t = 0.0;
+        size_t id;
+        double increment = 0.1;
+
+        // lookup table for discrete distr
+        gsl_ran_discrete_t*g = gsl_ran_discrete_preproc(static_cast<size_t>(pop.nAgents), trait_array);
+
+        for(; time < static_cast<double>(tmax); ) {
+            time += gsl_ran_exponential(r, total_act);
+
+            /// foraging dynamic
+            if (time > regenTime) {
+                // count available food items
                 food.countAvailable();
-            }
-            //decrement food counter by one
-            for (size_t j = 0; j < static_cast<size_t>(food.nItems); j++)
-            {
-                if(food.counter[j] > 0) {
-                    food.counter[j] --;
+                for (size_t j = 0; j < static_cast<size_t>(food.nItems); j++)
+                {
+                    if(food.counter[j] > 0.0) {
+                        food.counter[j] -= time;
+                    }
                 }
+                // pop forages
+                for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++) {
+                    forage(i, food, pop, 2.0);
+                }
+                // update population pbsn
+                pop.updatePbsn(pbsn, 2.0);
+                feed_time += 1.0;
             }
-            // timestep ends here
+
+            /// movement dynamic
+            if (time > it_t) {
+                id = gsl_ran_discrete(r, g);
+                pop.move(id, food, moveCost);
+                it_t = (std::floor(time / increment) * increment) + increment;
+            }
         }
         // generation ends here
         // update gendata
@@ -150,7 +172,7 @@ Rcpp::List do_simulation(int popsize, int genmax, int tmax,
     // prepare population
     Population pop (popsize, 0);
     // pop.initPop(popsize);
-    pop.setTrait(10);
+    pop.setTrait();
     Rcpp::Rcout << pop.nAgents << " agents over " << genmax << " gens of " << tmax << " timesteps\n";
 
     // prepare social network struct
@@ -184,7 +206,7 @@ DataFrame export_pop(int popsize) {
     Rcpp::Rcout << "in export function";
     Population pop (popsize, 2);
     // pop.initPop(popsize);
-    pop.setTrait(10);
+    pop.setTrait();
 
     DataFrame df_pop = DataFrame::create(
                 Named("trait") = pop.trait,
