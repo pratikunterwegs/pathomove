@@ -37,7 +37,7 @@ const double regenTime = 3.0;
 const double foodEnergy = 1.0;
 
 // mutation params
-const double mShift = 0.001;
+const double mShift = 0.01;
 const double mProb = 0.01;
 
 #endif // PARAMETERS_H
