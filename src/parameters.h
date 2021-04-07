@@ -33,10 +33,11 @@ const double moveCost = 0.001;
 const double pCheck = 1.0;
 
 // landscape
-const int regenTime = 3;
+const double regenTime = 3.0;
+const double foodEnergy = 1.0;
 
 // mutation params
-const double mShift = 0.01f;
-const double mProb = 0.001f;
+const double mShift = 0.01;
+const double mProb = 0.01;
 
 #endif // PARAMETERS_H
