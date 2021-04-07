@@ -28,10 +28,10 @@ data = lapply(file_list, function(l) {
     })
   )
   data_tmp = data.table::rbindlist(data_tmp)[, energy := NULL]
-  data_tmp$trait_round = plyr::round_any(data_tmp$trait, 0.01)
+  # data_tmp$trait_round = plyr::round_any(data_tmp$trait, 0.01)
   data_summary = data_tmp[, .N, by = c("foodClusters", 
                                    "clusterDispersal", "replicate",
-                                   "trait_round", "gen")]
+                                   "trait", "gen")]
 })
 
 # bind and check
@@ -51,14 +51,16 @@ head(data)
 # data_summary$trait_round = as.numeric(data_summary$trait_round)
 
 # plot and check
-ggplot(data[foodClusters == 3])+
+ggplot(data[foodClusters == 16])+
   geom_tile(
-    aes(gen, trait_round,
+    aes(gen, trait,
         fill = N)
   )+
-  ylim(0, 1)+
+  coord_cartesian(
+    ylim = c(0, 10)
+  )+
   scale_fill_distiller(
-    palette = "Spectral", direction = 1
+    palette = "Reds", direction = 1
   )+
   facet_grid(clusterDispersal~replicate, labeller = label_both)
 
