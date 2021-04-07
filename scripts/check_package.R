@@ -8,14 +8,15 @@ snevo::check_prepare_cluster(
   password = password
 )
 
-# prepare parameters
+  # prepare parameters
 snevo::make_parameter_file(
   nFood = 3000,
+  popsize = 3000,
   landsize = 300,
-  genmax = 500,
-  foodClusters = round(2^seq(7))[-1],
-  clusterDispersal = 2 ^ seq(3),
-  replicates = 3,
+  genmax = 1000,
+  foodClusters = 100,
+  clusterDispersal = 2,
+  replicates = 10,
   which_file = "data/parameters/parameters_full.csv"
 )
 
