@@ -27,7 +27,7 @@ public:
     dSize(landsize),
     coordX(nItems, 0.0),
     coordY(nItems, 0.0),
-    counter(nItems, 0),
+    counter(nItems, 0.0),
     nAvailable(nItems),
     whichAvailable(nItems)
     {}
