@@ -23,7 +23,7 @@ using namespace Rcpp;
 // Agent class
 struct Population {
 public:
-   Population(const int popsize, const int beginTrait) :
+   Population(const int popsize, const double beginTrait) :
        nAgents (popsize),
        coordX (popsize, 50.0),
        coordY (popsize, 50.0),
@@ -51,9 +51,9 @@ public:
 
     // funs for pop
     void initPop (int popsize);
-    void setTrait (const int maxTrait);
+    void setTrait ();
     void initPos(Resources food);
-    void move(Resources food, const double moveCost);
+    void move(size_t id, Resources food, const double moveCost);
     void normaliseIntake();
     void Reproduce();
     // for network
@@ -68,9 +68,9 @@ void Population::initPos(Resources food) {
     }
 }
 
-void Population::setTrait(const int maxTrait) {
+void Population::setTrait() {
     for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-        trait[i] = gsl_rng_uniform_int(r, maxTrait);
+        trait[i] = gsl_rng_uniform(r);
     }
 }
 
@@ -106,39 +106,29 @@ void Population::competitionCosts(const double competitionCost) {
     }
 }
 
-void Population::move(Resources food, const double moveCost) {
+void Population::move(size_t id, Resources food, const double moveCost) {
 
     double heading;
     double landsize = food.dSize;
     double stepSize;
 
-    for(size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-        // check if individual wants to move, ie, stopCounter  = 0
-        if (counter[i] == 0) {
+    stepSize = gsl_ran_gamma(r, indivStepSize, indivStepSizeSd); // individual strategy is the deviation in step size
+    heading = etaCrw * gsl_ran_gaussian(r, 3.0);
 
-        stepSize = gsl_ran_gamma(r, indivStepSize, indivStepSizeSd); // individual strategy is the deviation in step size
-        heading = etaCrw * gsl_ran_gaussian(r, 3.0);
+    // get radians
+    heading = heading * M_PI / 180.0;
 
-        // get radians
-        heading = heading * M_PI / 180.0;
+    // figure out the next position
+    coordX[id] = coordX[id] + (stepSize * cos(heading));
+    coordY[id] = coordY[id] + (stepSize * sin(heading));
 
-        // figure out the next position
-        coordX[i] = coordX[i] + (stepSize * cos(heading));
-        coordY[i] = coordY[i] + (stepSize * sin(heading));
+    // make the move on the wrapped landscape
+    coordX[id] = fmod(landsize + coordX[id], landsize);
 
-        // make the move on the wrapped landscape
-        coordX[i] = fmod(landsize + coordX[i], landsize);
+    coordY[id] = fmod(landsize + coordY[id], landsize);
 
-        coordY[i] = fmod(landsize + coordY[i], landsize);
-        
-        // add a cost
-        energy[i] -= (stepSize * moveCost);
-        }
-        // if stopCounter not zero, reduce stopCounter
-        else {
-            counter[i] --;
-        }
-    }
+    // add a cost
+    energy[id] -= (stepSize * moveCost);
 }
 
 std::vector<int> findNearItems(size_t individual, Resources &food, Population &pop,
@@ -187,7 +177,7 @@ void forage(size_t individual, Resources &food, Population &pop, const double di
         // also stop the agent here for as many steps as its trait determines
         if (thisItem > -1) {
             pop.counter[individual] = pop.trait[individual];
-            pop.energy[individual] += 1.0;
+            pop.energy[individual] += foodEnergy;
             // remove the food item from the landscape for a brief time
             food.counter[thisItem] = regenTime;
         }
@@ -267,11 +257,7 @@ void Population::Reproduce() {
     for (size_t a = 0; static_cast<int>(a) < nAgents; a++) {
         if (gsl_ran_bernoulli(r, mProb) == 1) {
             // mutation set, now increase or decrease
-            if (gsl_ran_bernoulli(r, 0.5) == 1) {
-                newTrait[a] = trait[a] + 1;
-            } else {
-                newTrait[a] = trait[a] - 1;
-            }
+            newTrait[a] = gsl_ran_gaussian(r, mShift);
             // no negative traits
             if (newTrait[a] < 0) {
                 newTrait[a] = 0;
