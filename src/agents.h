@@ -131,6 +131,19 @@ void Population::move(size_t id, Resources food, const double moveCost) {
     energy[id] -= (stepSize * moveCost);
 }
 
+double wrappedDistance(boost::geometry::model::point<float, 2, bg::cs::cartesian> rTreeLoc,
+                       double queryX, double queryY, double landsize) {
+    double rtreeX = rTreeLoc.get<0>();
+    double rtreeY = rTreeLoc.get<1>();
+
+    double distanceX = fabs( fmod( (rtreeX - queryX), landsize ) );
+    double distanceY = fabs( fmod( (rtreeY - queryY), landsize ) );
+
+    double wrD = std::sqrt( (distanceX * distanceX) + (distanceY * distanceY) );
+
+    return wrD;
+}
+
 std::vector<int> findNearItems(size_t individual, Resources &food, Population &pop,
     const double distance){
     // search nearest item only if any are available
@@ -145,7 +158,8 @@ std::vector<int> findNearItems(size_t individual, Resources &food, Population &p
 
         food.rtree.query(
                     bgi::within(bbox) &&
-                    bgi::satisfies([&](value const& v) {return bg::distance(v.first, currentLoc) < 2;}),
+                    bgi::satisfies([&](value const& v) {return wrappedDistance(v.first, pop.coordX[individual],
+                                                        pop.coordY[individual], food.dSize) < distance;}),
                     std::back_inserter(nearItems));
 
         for(size_t i = 0; i < nearItems.size(); i++){
