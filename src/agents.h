@@ -57,7 +57,7 @@ public:
     void normaliseIntake();
     void Reproduce();
     // for network
-    void updatePbsn(Network &pbsn, const double range);
+    void updatePbsn(Network &pbsn, const double range, const double landsize);
     void competitionCosts(const double competitionCost);
 };
 
@@ -75,13 +75,18 @@ void Population::setTrait() {
 }
 
 // distance function without wrapping
-double distance(double x1, double y1, double x2, double y2) {
+double wrappedDistanceAgents(double x1, double y1, double x2, double y2, double landsize) {
 
-    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+    double distanceX = fabs( fmod( (x1 - x2), landsize ) );
+    double distanceY = fabs( fmod( (y1 - y2), landsize ) );
+
+    double wrD = std::sqrt( (distanceX * distanceX) + (distanceY * distanceY) );
+
+    return wrD;
 }
 
 // to update pbsn
-void Population::updatePbsn(Network &pbsn, const double range) {
+void Population::updatePbsn(Network &pbsn, const double range, const double landsize) {
 
     // focal agents
     for(size_t i = 0; i < static_cast<size_t>(nAgents - 1); i++) {
@@ -89,7 +94,7 @@ void Population::updatePbsn(Network &pbsn, const double range) {
         // move j along the size of associations expected for i
         for(size_t j = i + 1; j < pbsn.associations[i].size(); j++) {
 
-            if(distance(coordX[i], coordY[i], coordX[j], coordY[j]) < range) {
+            if(wrappedDistanceAgents(coordX[i], coordY[i], coordX[j], coordY[j], landsize) < range) {
                 pbsn.associations[i][j]++;
                 // add to associations
                 associations[i]++;
@@ -151,7 +156,6 @@ std::vector<int> findNearItems(size_t individual, Resources &food, Population &p
 
     if (food.nAvailable > 0) {
         std::vector<value> nearItems;
-        point currentLoc = point(pop.coordX[individual], pop.coordY[individual]);
         box bbox(point(pop.coordX[individual] - distance,
                        pop.coordY[individual] - distance),
                  point(pop.coordX[individual] + distance, pop.coordY[individual] + distance));
@@ -271,13 +275,10 @@ void Population::Reproduce() {
     for (size_t a = 0; static_cast<int>(a) < nAgents; a++) {
         if (gsl_ran_bernoulli(r, mProb) == 1) {
             // mutation set, now increase or decrease
-            newTrait[a] = trait[a] + gsl_ran_gaussian(r, mShift);
+            newTrait[a] = trait[a] + gsl_ran_cauchy(r, mShift);
             // no negative traits
             if (newTrait[a] < 0) {
                 newTrait[a] = 0.0;
-            }
-            if (newTrait[a] > 1) {
-                newTrait[a] = 1.0;
             }
         }
     }
