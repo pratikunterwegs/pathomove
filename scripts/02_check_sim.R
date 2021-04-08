@@ -8,22 +8,23 @@ a = snevo::export_pop(101)
 
 # sim works
 a = snevo::do_simulation(
-  popsize = 1000,
+  popsize = 100,
   genmax = 50, 
   tmax = 100, 
-  nFood = 1000,
+  nFood = 5000,
   foodClusters = 1, 
-  clusterDispersal = 0.1,
+  clusterDispersal = 10,
   landsize = 100
 )
 
-b = a[["trait_data_gens"]]
+b = a[["trait_data"]]
 d = Map(function(df, g) {
   df$gen = g
   return(df)
 }, b[["pop_data"]], b[["gens"]])
 
 d = rbindlist(d)
+hist(d$energy)
 
 # explore evo
 d[, trait_round := round(trait, 2)]
@@ -36,9 +37,10 @@ ggplot(d_summary)+
     fill = N
   ))+
   scale_fill_distiller(
-    palette = "Reds",
     direction = 1
   )
+
+sn = a[["network_measures"]]
 
 # run more sims
 
