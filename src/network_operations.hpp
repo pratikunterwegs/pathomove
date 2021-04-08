@@ -5,12 +5,12 @@
 #include <Rcpp.h>
 #include "agents.h"
 
+Rcpp::Environment igraph("package:igraph");
+Rcpp::Function graph_from_df = igraph["graph.data.frame"];
+Rcpp::Function graph_diameter = igraph["diameter"];
+
 /// function to make igraph network from pbsn
 std::vector<double> networkMeasures(Network &pbsn, Population &pop) {
-
-    Rcpp::Environment igraph("package:igraph");
-    Rcpp::Function graph_from_df = igraph["graph.data.frame"];
-    Rcpp::Function graph_diameter = igraph["diameter"];
 
     Rcpp::DataFrame pbsn_data = returnPbsn(pop, pbsn);
 
