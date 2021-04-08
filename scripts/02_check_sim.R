@@ -9,13 +9,23 @@ a = snevo::export_pop(101)
 # sim works
 a = snevo::do_simulation(
   popsize = 100,
-  genmax = 50, 
+  genmax = 1000, 
   tmax = 100, 
   nFood = 5000,
   foodClusters = 1, 
   clusterDispersal = 10,
   landsize = 100
 )
+
+b = a[["network_measures"]]
+
+ggplot(b,
+  aes(
+      gen, interactions
+    )
+  )+
+  geom_point()+
+  geom_path()
 
 b = a[["trait_data"]]
 d = Map(function(df, g) {
