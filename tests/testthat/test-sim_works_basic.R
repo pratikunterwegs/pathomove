@@ -26,12 +26,12 @@ test_that("simulation works", {
 
   # check elements are data frames
   invisible(
-    lapply(data_evolved_pop$trait_data_gens$pop_data, 
+    lapply(data_evolved_pop$trait_data$pop_data, 
            testthat::expect_is, class = "data.frame")
   )
 
   # check trait data has popsize rows, checking only one df for now
   testthat::expect_identical(
-    nrow(data_evolved_pop[["trait_data_gens"]]$pop_data[[1]]), as.integer(popsize)
+    nrow(data_evolved_pop[["trait_data"]]$pop_data[[1]]), as.integer(popsize)
   )
 })
