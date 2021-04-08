@@ -7,6 +7,7 @@
 #include "landscape.h"
 #include "agents.h"
 #include "network.h"
+#include "network_operations.hpp"
 #include "data_types.h"
 
 #include <Rcpp.h>
@@ -19,6 +20,7 @@ Rcpp::List evolve_pop(int genmax, double tmax,
 {
     // make generation data
     genData thisGenData;
+    networkData thisNetworkData;
     // set seed
     gsl_rng_set(r, seed);
     for(int gen = 0; gen < genmax; gen++) {
@@ -68,12 +70,16 @@ Rcpp::List evolve_pop(int genmax, double tmax,
         // generation ends here
         // update gendata
         thisGenData.updateGenData(pop, gen);
+        thisNetworkData.updateNetworkData(pop, gen, pbsn);
         // subtract competition costs
         pop.competitionCosts(0.0001);
         // reproduce
         pop.Reproduce();
     }
-    return thisGenData.getGenData();
+    return Rcpp::List::create(
+                Named("trait_data") = thisGenData.getGenData(),
+                Named("network_measures") = thisNetworkData.getNetworkData()
+            );
 }
 
 //' Make landscapes with discrete food items in clusters.
@@ -179,23 +185,12 @@ Rcpp::List do_simulation(int popsize, int genmax, int tmax,
     Network pbsn;
     pbsn.initAssociations(pop.nAgents);
 
-    // evolve population
-    Rcpp::List fullGenData = evolve_pop(genmax, tmax, pop, food, pbsn);
-
-    Rcpp::Rcout << "done evolving, preparing data\n";
-
-    // create data frame of associations
-    DataFrame df_evolved_assocs = returnPbsn(pop, pbsn);
-
-    // wrap into list
-    List dataList = List::create(
-        Named("trait_data_gens") = fullGenData,
-        Named("pbsn") = df_evolved_assocs
-    );
+    // evolve population and store data
+    Rcpp::List evoSimData = evolve_pop(genmax, tmax, pop, food, pbsn);
 
     Rcpp::Rcout << "data prepared\n";
 
-    return dataList;
+    return evoSimData;
 }
 
 //' Export a population.
