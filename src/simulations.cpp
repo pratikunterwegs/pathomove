@@ -14,7 +14,7 @@
 using namespace Rcpp;
 
 // function to evolve population
-Rcpp::List evolve_pop(int genmax, int tmax,
+Rcpp::List evolve_pop(int genmax, double tmax,
                 Population &pop, Resources &food, Network &pbsn)
 {
     // make generation data
@@ -36,7 +36,7 @@ Rcpp::List evolve_pop(int genmax, int tmax,
         // lookup table for discrete distr
         gsl_ran_discrete_t*g = gsl_ran_discrete_preproc(static_cast<size_t>(pop.nAgents), trait_array);
 
-        for(; time < static_cast<double>(tmax); ) {
+        for(; time < tmax; ) {
             time += gsl_ran_exponential(r, total_act);
 
             /// foraging dynamic
@@ -54,7 +54,7 @@ Rcpp::List evolve_pop(int genmax, int tmax,
                     forage(i, food, pop, 2.0);
                 }
                 // update population pbsn
-                pop.updatePbsn(pbsn, 2.0);
+                pop.updatePbsn(pbsn, 2.0, food.dSize);
                 feed_time += 1.0;
             }
 
