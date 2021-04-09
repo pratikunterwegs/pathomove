@@ -39,33 +39,39 @@ Rcpp::List evolve_pop(int genmax, double tmax,
         gsl_ran_discrete_t*g = gsl_ran_discrete_preproc(static_cast<size_t>(pop.nAgents), trait_array);
 
         for(; time < tmax; ) {
+            //increment time
             time += gsl_ran_exponential(r, total_act);
+            /// movement dynamic
+            if (time > it_t) {
+                id = gsl_ran_discrete(r, g);
+                if (pop.counter[id] - stop)
+                pop.move(id, food, moveCost);
+                it_t = (std::floor(time / increment) * increment) + increment;
+            }
 
-            /// foraging dynamic
-            if (time > regenTime) {
-                // count available food items
-                food.countAvailable();
-                for (size_t j = 0; j < static_cast<size_t>(food.nItems); j++)
-                {
-                    if(food.counter[j] > 0.0) {
-                        food.counter[j] -= time;
-                    }
+            // check which food is available and reduce regeneration time
+            food.countAvailable();
+            for (size_t j = 0; j < static_cast<size_t>(food.nItems); j++)
+            {
+                if(food.counter[j] > 0.0) {
+                    food.counter[j] -= time;
                 }
+                if(food.counter[j] < 0.0) {
+                    food.counter[j] = 0.0;
+                }
+            }
+            
+            // when time has advanced by more than an increment,
+            // all agents forage and the PBSN is updated
+            if (time > feed_time + increment) {
+                feed_time = feed_time + time; // increase time here
                 // pop forages
                 for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++) {
                     forage(i, food, pop, 2.0);
                 }
                 // update population pbsn
                 pop.updatePbsn(pbsn, 2.0, food.dSize);
-                feed_time += 1.0;
-            }
-
-            /// movement dynamic
-            if (time > it_t) {
-                id = gsl_ran_discrete(r, g);
-                pop.move(id, food, moveCost);
-                it_t = (std::floor(time / increment) * increment) + increment;
-            }
+            }            
         }
         // generation ends here
         // update gendata
