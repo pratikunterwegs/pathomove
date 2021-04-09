@@ -97,12 +97,26 @@ data_network = melt(data_network,
                                 "clusterDispersal", "replicate"))
 
 # plot and check
-ggplot(data_network,
+ggplot(data_network[variable != "interactions",],
        aes(x = gen,
            group = interaction(variable, replicate)
        ))+
-  geom_path(
-    aes(y = value
+  geom_line(
+    aes(y = value,
+        colour = variable
     )
   )+
-  facet_wrap(~variable, scales = "free_y")
+  scale_x_sqrt(
+  )+
+  theme_classic()+
+  coord_cartesian(
+    xlim = c(5, 250),
+    ylim = c(0, 25)
+  )+
+  theme(
+    strip.background = element_blank(),
+    strip.text = element_text(face = "italic", hjust = 0)
+  )+
+  facet_wrap(foodClusters ~ clusterDispersal, 
+             labeller = label_wrap_gen(multi_line=FALSE),
+             scale = "free", nrow = 3)
