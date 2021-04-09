@@ -9,6 +9,7 @@
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/index/rtree.hpp>
+#include <Rcpp.h>
 
 // make namespaces
 namespace bg = boost::geometry;
@@ -46,7 +47,6 @@ public:
     // funs to init with nCentres
     void initResources(const int nCentres, const double dDispersal);
     void countAvailable();
-
 };
 
 void Resources::initResources(const int nCentres, const double dDispersal) {
@@ -94,6 +94,25 @@ void Resources::countAvailable() {
         nAvailable += counter[i] == 0 ? 1 : 0;
         whichAvailable.push_back(i);
     }
+}
+
+/// function to export landscape as matrix
+//' @param nItems How many items.
+//' @param landsize Size as a numeric (double).
+//' @param nClusters How many clusters, an integer value.
+//' @param clusterDispersal Dispersal of items around cluster centres.
+//' @return A data frame of the evolved population traits.
+// [[Rcpp::export]]
+Rcpp::DataFrame get_test_landscape(
+    const int nItems, const double landsize,
+    const int nClusters, const double clusterDispersal) {
+    Resources thisLandscape (nItems, landsize);
+    thisLandscape.initResources(nClusters, clusterDispersal);
+
+    return Rcpp::DataFrame::create(
+        Rcpp::Named("x") = thisLandscape.coordX,
+        Rcpp::Named("y") = thisLandscape.coordY
+    );
 }
 
 #endif // LANDSCAPE_H
