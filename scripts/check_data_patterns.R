@@ -8,8 +8,8 @@ file_list = list.files("data/output/", pattern = "Rdata", full.names = T)
 # load and add params to data
 data = lapply(file_list, function(l) {
   load(l)
-  data_tmp = data_evolved_pop$trait_data_gens$pop_data
-  gens = data_evolved_pop$trait_data_gens$gens
+  data_tmp = data_evolved_pop$trait_data$pop_data
+  gens = data_evolved_pop$trait_data$gens
   data_tmp = Map(function(df, g) {
     df$gen = g
     df
@@ -28,10 +28,11 @@ data = lapply(file_list, function(l) {
     })
   )
   data_tmp = data.table::rbindlist(data_tmp)[, energy := NULL]
-  # data_tmp$trait_round = plyr::round_any(data_tmp$trait, 0.01)
+  data_tmp$trait = tanh(data_tmp$trait * 20)
+  data_tmp$trait_round = plyr::round_any(data_tmp$trait, 0.01)
   data_summary = data_tmp[, .N, by = c("foodClusters", 
                                    "clusterDispersal", "replicate",
-                                   "trait", "gen")]
+                                   "trait_round", "gen")]
 })
 
 # bind and check
@@ -51,18 +52,18 @@ head(data)
 # data_summary$trait_round = as.numeric(data_summary$trait_round)
 
 # plot and check
-ggplot(data[foodClusters == 16])+
+ggplot(data[gen %% 10 == 0 && trait_round < 2])+
   geom_tile(
-    aes(gen, trait,
+    aes(gen, trait_round,
         fill = N)
   )+
   coord_cartesian(
-    ylim = c(0, 10)
+    ylim = c(0, 2)
   )+
   scale_fill_distiller(
     palette = "Reds", direction = 1
   )+
-  facet_grid(clusterDispersal~replicate, labeller = label_both)
+  facet_wrap(~replicate, labeller = label_both)
 
 #### check associations ####
 # load and add params to data
