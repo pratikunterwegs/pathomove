@@ -31,7 +31,7 @@ public:
        // one trait
        trait(popsize, beginTrait),
        // count stationary behaviour
-       counter (popsize, 0),
+       counter (popsize, 0.0),
        // associations
        associations(popsize, 0)
 
@@ -43,7 +43,7 @@ public:
     std::vector<double> coordY;
     std::vector<double> energy;
     std::vector<double> trait;
-    std::vector<int> counter;
+    std::vector<double> counter;
     std::vector<int> associations;
 
     // position rtree
@@ -194,7 +194,7 @@ void forage(size_t individual, Resources &food, Population &pop, const double di
         // if item available then consume it
         // also stop the agent here for as many steps as its trait determines
         if (thisItem > -1) {
-            pop.counter[individual] = pop.trait[individual];
+            pop.counter[individual] = stopTime;
             pop.energy[individual] += foodEnergy;
             // remove the food item from the landscape for a brief time
             food.counter[thisItem] = regenTime;
