@@ -267,7 +267,7 @@ void Population::Reproduce() {
     }
     // reset counter
     assert(newTrait.size() == trait.size() && "traits different size");
-    counter = std::vector<int> (nAgents);
+    counter = std::vector<double> (nAgents);
     assert(static_cast<int>(counter.size()) == nAgents && "counter size wrong");
 
     // mutate trait: trait shifts up or down with an equal prob
