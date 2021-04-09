@@ -54,7 +54,7 @@ Rcpp::List evolve_pop(int genmax, double tmax,
                 // pick an agent to move
                 id = gsl_ran_discrete(r, g);
                 // if that agent can move, move it
-                if (!pop.counter[id] > 0.0) {
+                if (!(pop.counter[id] > 0.0)) {
                     pop.move(id, food, moveCost);
                 }
                 it_t = (std::floor(time / increment) * increment) + increment;
