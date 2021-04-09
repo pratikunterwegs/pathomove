@@ -25,7 +25,7 @@ const double stepSizeSdArs = 0.05;
 
 const double etaCrw = 50.0; // three degrees heading sd = 2.0 when correlated, fewer turns
 const double etaArs = 120.0;
-const int searchTime = 5;
+const double stopTime = 2.0;
 const double moveCost = 0.001;
 
 // agents
