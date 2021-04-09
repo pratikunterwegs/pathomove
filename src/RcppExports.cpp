@@ -5,18 +5,18 @@
 
 using namespace Rcpp;
 
-// export_test_landscapes
-void export_test_landscapes(int foodClusters, double clusterDispersal, int nFood, double landsize, int replicates);
-RcppExport SEXP _snevo_export_test_landscapes(SEXP foodClustersSEXP, SEXP clusterDispersalSEXP, SEXP nFoodSEXP, SEXP landsizeSEXP, SEXP replicatesSEXP) {
+// get_test_landscape
+Rcpp::DataFrame get_test_landscape(const int nItems, const double landsize, const int nClusters, const double clusterDispersal);
+RcppExport SEXP _snevo_get_test_landscape(SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterDispersalSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type foodClusters(foodClustersSEXP);
-    Rcpp::traits::input_parameter< double >::type clusterDispersal(clusterDispersalSEXP);
-    Rcpp::traits::input_parameter< int >::type nFood(nFoodSEXP);
-    Rcpp::traits::input_parameter< double >::type landsize(landsizeSEXP);
-    Rcpp::traits::input_parameter< int >::type replicates(replicatesSEXP);
-    export_test_landscapes(foodClusters, clusterDispersal, nFood, landsize, replicates);
-    return R_NilValue;
+    Rcpp::traits::input_parameter< const int >::type nItems(nItemsSEXP);
+    Rcpp::traits::input_parameter< const double >::type landsize(landsizeSEXP);
+    Rcpp::traits::input_parameter< const int >::type nClusters(nClustersSEXP);
+    Rcpp::traits::input_parameter< const double >::type clusterDispersal(clusterDispersalSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_test_landscape(nItems, landsize, nClusters, clusterDispersal));
+    return rcpp_result_gen;
 END_RCPP
 }
 // do_simulation
@@ -49,7 +49,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_snevo_export_test_landscapes", (DL_FUNC) &_snevo_export_test_landscapes, 5},
+    {"_snevo_get_test_landscape", (DL_FUNC) &_snevo_get_test_landscape, 4},
     {"_snevo_do_simulation", (DL_FUNC) &_snevo_do_simulation, 7},
     {"_snevo_export_pop", (DL_FUNC) &_snevo_export_pop, 1},
     {NULL, NULL, 0}
