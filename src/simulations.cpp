@@ -43,9 +43,20 @@ Rcpp::List evolve_pop(int genmax, double tmax,
             time += gsl_ran_exponential(r, total_act);
             /// movement dynamic
             if (time > it_t) {
+
+                // reduce counter for all
+                for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++) {
+                    pop.counter[i] -= time;
+                    if (pop.counter[i] < 0.0) {
+                        pop.counter[i] = 0.0;
+                    }
+                }
+                // pick an agent to move
                 id = gsl_ran_discrete(r, g);
-                if (pop.counter[id] - stop)
-                pop.move(id, food, moveCost);
+                // if that agent can move, move it
+                if (!pop.counter[id] > 0.0) {
+                    pop.move(id, food, moveCost);
+                }
                 it_t = (std::floor(time / increment) * increment) + increment;
             }
 
@@ -60,7 +71,7 @@ Rcpp::List evolve_pop(int genmax, double tmax,
                     food.counter[j] = 0.0;
                 }
             }
-            
+
             // when time has advanced by more than an increment,
             // all agents forage and the PBSN is updated
             if (time > feed_time + increment) {
