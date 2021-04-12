@@ -15,6 +15,7 @@ struct genData {
 public:
     std::vector<std::vector<double> > genEnergyVec;
     std::vector<std::vector<double> > genTraitVec;
+    std::vector<std::vector<int> > genAssocVec;
     std::vector<int> gens;
 
     void updateGenData (Population &pop, const int gen);
@@ -37,12 +38,15 @@ void genData::updateGenData (Population &pop, const int gen_) {
     // get pop data
     genEnergyVec.push_back(pop.energy);
     genTraitVec.push_back(pop.trait);
+    genAssocVec.push_back(pop.associations);
     gens.push_back(gen_);
 }
 
 void networkData::updateNetworkData(Population &pop, const int gen, Network &pbsn) {
 
     std::vector<double> tmpNetworkData = networkMeasures(pbsn, pop);
+
+    assert (tmpNetworkData.size() == 3 && "wrong size network measures");
 
     interactions.push_back(tmpNetworkData[0]);
     diameter.push_back(tmpNetworkData[1]);
@@ -57,7 +61,8 @@ Rcpp::List genData::getGenData() {
     {
         genDataList[i] = DataFrame::create(
             Named("energy") = genEnergyVec[i],
-            Named("trait") = genTraitVec[i]
+            Named("trait") = genTraitVec[i],
+            Named("associations") = genAssocVec[i]
         );
     }
     List dataToReturn = List::create(
