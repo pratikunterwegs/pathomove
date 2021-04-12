@@ -17,11 +17,12 @@ std::vector<double> networkMeasures(Network &pbsn, Population &pop) {
     List graph = graph_from_df(pbsn_data, Named("directed")=false);
 
     SEXP diameter = graph_diameter(graph, Named("directed")=false);
-    Rcpp::NumericVector vDiam(diameter);
 
-    return std::vector<double> { static_cast<double>(pbsn_data.nrows()), 
-        vDiam[0],
-        vDiam[0] * (pop.nAgents / static_cast<double>(pbsn_data.nrows()))
+    Rcpp::NumericVector vDiam (diameter);
+
+    return std::vector<double> { static_cast<double>(pbsn_data.nrows()), // interactions
+        vDiam[0], // diameter
+        vDiam[0] * (pop.nAgents / static_cast<double>(pbsn_data.nrows())) // global efficiency
     };
 }
 
