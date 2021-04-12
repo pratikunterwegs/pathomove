@@ -33,7 +33,7 @@ const double moveCost = 0.001;
 const double pCheck = 1.0;
 
 // landscape
-const double regenTime = 3.0;
+const double regenTime = 10.0;
 const double foodEnergy = 1.0;
 
 // mutation params
