@@ -23,9 +23,10 @@ Rcpp::List evolve_pop(int genmax, double tmax,
     networkData thisNetworkData;
     // set seed
     gsl_rng_set(r, seed);
+    // random starting position only in first generation
+    pop.initPos(food);
     for(int gen = 0; gen < genmax; gen++) {
-        pop.initPos(food);
-
+        // set up gillespie loop
         double total_act = std::accumulate(pop.trait.begin(), pop.trait.end(), 0.0);
         double trait_array[pop.nAgents];
         std::copy(pop.trait.begin(), pop.trait.end(), trait_array);
