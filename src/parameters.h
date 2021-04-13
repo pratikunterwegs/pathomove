@@ -23,6 +23,8 @@ const double indivStepSizeSd = 0.2;
 const double stopTime = 2.0;
 const double moveCost = 0.001;
 
+const double etaCrw = 45.0; // standard turning angle
+
 // agents
 // const double range = 2.0;
 const double pCheck = 1.0;
