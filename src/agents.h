@@ -59,6 +59,7 @@ public:
     // for network
     void updatePbsn(Network &pbsn, const double range, const double landsize);
     void competitionCosts(const double competitionCost);
+    void updateRtree();
 };
 
 void Population::initPos(Resources food) {
@@ -83,6 +84,19 @@ double wrappedDistanceAgents(double x1, double y1, double x2, double y2, double 
     double wrD = std::sqrt( (distanceX * distanceX) + (distanceY * distanceY) );
 
     return wrD;
+}
+
+// to update agent Rtree
+void Population::updateRtree () {
+    // initialise rtree
+    bgi::rtree< value, bgi::quadratic<16> > tmpRtree;
+    for (int i = 0; i < nAgents; ++i)
+    {
+        point p = point(coordX[i], coordY[i]);
+        tmpRtree.insert(std::make_pair(p, i));
+    }
+    std::swap(agentRtree, tmpRtree);
+    tmpRtree.clear();
 }
 
 // to update pbsn
@@ -111,17 +125,60 @@ void Population::competitionCosts(const double competitionCost) {
     }
 }
 
-void Population::move(size_t id, Resources food, const double moveCost) {
+double wrappedDistance(boost::geometry::model::point<float, 2, bg::cs::cartesian> rTreeLoc,
+                       double queryX, double queryY, double landsize) {
+    double rtreeX = rTreeLoc.get<0>();
+    double rtreeY = rTreeLoc.get<1>();
+
+    double distanceX = fabs( fmod( (rtreeX - queryX), landsize ) );
+    double distanceY = fabs( fmod( (rtreeY - queryY), landsize ) );
+
+    double wrD = std::sqrt( (distanceX * distanceX) + (distanceY * distanceY) );
+
+    return wrD;
+}
+
+void Population::move(size_t id, Resources food, const double moveCost,
+    const bool collective, const double sensoryRange) {
 
     double heading;
     double landsize = food.dSize;
     double stepSize;
 
-    stepSize = gsl_ran_gamma(r, indivStepSize, indivStepSizeSd); // individual strategy is the deviation in step size
-    heading = etaCrw * gsl_ran_gaussian(r, 3.0);
+    // if collective, move towards a random agent (the first) within range
+    if (collective) {
+        updateRtree();
+        std::vector<int> agentId;
+        std::vector<value> nearAgents;
+        box box bbox(point(pop.coordX[id] - sensoryRange,
+                       pop.coordY[id] - sensoryRange),
+                 point(pop.coordX[id] + sensoryRange, pop.coordY[id] + sensoryRange));
+        agentRtree.query(
+                    bgi::within(bbox) &&
+                    bgi::satisfies([&](value const& v) {return wrappedDistance(v.first, pop.coordX[individual],
+                                                        pop.coordY[individual], food.dSize) < sensoryRange;}),
+                    std::back_inserter(nearAgents));
+        
+        if (nearAgents.size() > 0) {
+            size_t neighbour = nearAgents[0].second;
+            static const double TWOPI = 6.2831853071795865;
+            // static const double RAD2DEG = 57.2957795130823209;
+            // if (a1 = b1 and a2 = b2) throw an error 
+            double theta = atan2(pop.coordX[id] - pop.coordX[neighbour], 
+                pop.coordY[id] - pop.coordY[neighbour]);
+            if (theta < 0.0)
+                theta += TWOPI;
+            heading = theta;
+        }
+    }
+    else {
+        // deviation in step size
+        heading = etaCrw * gsl_ran_gaussian(r, 3.0);
+        // get radians
+        heading = heading * M_PI / 180.0;
+    }
 
-    // get radians
-    heading = heading * M_PI / 180.0;
+    stepSize = gsl_ran_gamma(r, indivStepSize, indivStepSizeSd); // individual strategy is the 
 
     // figure out the next position
     coordX[id] = coordX[id] + (stepSize * cos(heading));
@@ -136,18 +193,7 @@ void Population::move(size_t id, Resources food, const double moveCost) {
     energy[id] -= (stepSize * moveCost);
 }
 
-double wrappedDistance(boost::geometry::model::point<float, 2, bg::cs::cartesian> rTreeLoc,
-                       double queryX, double queryY, double landsize) {
-    double rtreeX = rTreeLoc.get<0>();
-    double rtreeY = rTreeLoc.get<1>();
 
-    double distanceX = fabs( fmod( (rtreeX - queryX), landsize ) );
-    double distanceY = fabs( fmod( (rtreeY - queryY), landsize ) );
-
-    double wrD = std::sqrt( (distanceX * distanceX) + (distanceY * distanceY) );
-
-    return wrD;
-}
 
 std::vector<int> findNearItems(size_t individual, Resources &food, Population &pop,
     const double distance){
@@ -196,6 +242,11 @@ void forage(size_t individual, Resources &food, Population &pop, const double di
         if (thisItem > -1) {
             pop.counter[individual] = stopTime;
             pop.energy[individual] += foodEnergy;
+
+            // agent moves to where item was
+            pop.coordX[individual] = food.coordX[thisItem];
+            pop.coordY[individual] = food.coordY[thisItem];
+
             // remove the food item from the landscape for a brief time
             food.counter[thisItem] = food.regenTime;
         }
