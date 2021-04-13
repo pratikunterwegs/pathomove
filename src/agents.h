@@ -14,6 +14,14 @@
 #include <Rcpp.h>
 
 using namespace Rcpp;
+// make namespaces
+namespace bg = boost::geometry;
+namespace bgi = boost::geometry::index;
+
+// apparently some types
+typedef bg::model::point<float, 2, bg::cs::cartesian> point;
+typedef bg::model::box<point> box;
+typedef std::pair<point, unsigned> value;
 
 // EtaCRW=0.7 #the weight of the CRW component in the BCRW used to model the Indiv movement
 // StpSize_ind=7 #Mean step lengths of individuals;
@@ -53,7 +61,8 @@ public:
     void initPop (int popsize);
     void setTrait ();
     void initPos(Resources food);
-    void move(size_t id, Resources food, const double moveCost);
+    void move(size_t id, Resources food, const double moveCost, const bool collective,
+        const double sensoryRange);
     void normaliseIntake();
     void Reproduce();
     // for network
@@ -150,13 +159,13 @@ void Population::move(size_t id, Resources food, const double moveCost,
         updateRtree();
         std::vector<int> agentId;
         std::vector<value> nearAgents;
-        box box bbox(point(pop.coordX[id] - sensoryRange,
-                       pop.coordY[id] - sensoryRange),
-                 point(pop.coordX[id] + sensoryRange, pop.coordY[id] + sensoryRange));
+        box bbox(point(coordX[id] - sensoryRange,
+                       coordY[id] - sensoryRange),
+                 point(coordX[id] + sensoryRange, coordY[id] + sensoryRange));
         agentRtree.query(
                     bgi::within(bbox) &&
-                    bgi::satisfies([&](value const& v) {return wrappedDistance(v.first, pop.coordX[individual],
-                                                        pop.coordY[individual], food.dSize) < sensoryRange;}),
+                    bgi::satisfies([&](value const& v) {return wrappedDistance(v.first, coordX[id],
+                                                        coordY[id], food.dSize) < sensoryRange;}),
                     std::back_inserter(nearAgents));
         
         if (nearAgents.size() > 0) {
@@ -164,13 +173,14 @@ void Population::move(size_t id, Resources food, const double moveCost,
             static const double TWOPI = 6.2831853071795865;
             // static const double RAD2DEG = 57.2957795130823209;
             // if (a1 = b1 and a2 = b2) throw an error 
-            double theta = atan2(pop.coordX[id] - pop.coordX[neighbour], 
-                pop.coordY[id] - pop.coordY[neighbour]);
+            double theta = atan2(coordX[id] - coordX[neighbour], 
+                coordY[id] - coordY[neighbour]);
             if (theta < 0.0)
                 theta += TWOPI;
             heading = theta;
         }
     }
+    // pick a turning angle otherwise
     else {
         // deviation in step size
         heading = etaCrw * gsl_ran_gaussian(r, 3.0);
