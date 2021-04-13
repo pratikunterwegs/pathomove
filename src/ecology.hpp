@@ -1,6 +1,4 @@
-#ifndef ECOLOGY_HPP
-#define ECOLOGY_HPP
-
+#pragma once
 #include <vector>
 #include <random>
 #include <iostream>
