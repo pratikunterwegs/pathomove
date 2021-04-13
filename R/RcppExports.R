@@ -22,9 +22,11 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterDispersal) {
 #' @param foodClusters Number of clusters around which food is generated.
 #' @param clusterDispersal How dispersed food is around the cluster centre.
 #' @param landsize The size of the landscape as a numeric (double).
+#' @param regenTime Regeneration time of items.
+#' @competitionCost Cost of associations.
 #' @return A data frame of the evolved population traits.
-do_simulation <- function(popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize) {
-    .Call(`_snevo_do_simulation`, popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize)
+do_simulation <- function(popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, regenTime, competitionCost) {
+    .Call(`_snevo_do_simulation`, popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, regenTime, competitionCost)
 }
 
 #' Export a population.

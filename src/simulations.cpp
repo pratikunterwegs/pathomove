@@ -16,7 +16,8 @@ using namespace Rcpp;
 
 // function to evolve population
 Rcpp::List evolve_pop(int genmax, double tmax,
-                Population &pop, Resources &food, Network &pbsn)
+                Population &pop, Resources &food, Network &pbsn,
+                double competitionCost)
 {
     // make generation data
     genData thisGenData;
@@ -90,7 +91,7 @@ Rcpp::List evolve_pop(int genmax, double tmax,
         thisGenData.updateGenData(pop, gen);
         thisNetworkData.updateNetworkData(pop, gen, pbsn);
         // subtract competition costs
-        pop.competitionCosts(0.0001);
+        pop.competitionCosts(competitionCost);
         // reproduce
         pop.Reproduce();
     }
@@ -112,13 +113,16 @@ Rcpp::List evolve_pop(int genmax, double tmax,
 //' @param foodClusters Number of clusters around which food is generated.
 //' @param clusterDispersal How dispersed food is around the cluster centre.
 //' @param landsize The size of the landscape as a numeric (double).
+//' @param regenTime Regeneration time of items.
+//' @competitionCost Cost of associations.
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
 Rcpp::List do_simulation(int popsize, int genmax, int tmax, 
-    int nFood, int foodClusters, double clusterDispersal, double landsize) {
+    int nFood, int foodClusters, double clusterDispersal, double landsize,
+    double regenTime, double competitionCost) {
 
     // prepare landscape
-    Resources food (nFood, landsize, 2.0);
+    Resources food (nFood, landsize, regenTime);
     food.initResources(foodClusters, clusterDispersal);
     food.countAvailable();
     Rcpp::Rcout << "landscape with " << foodClusters << " clusters\n";
@@ -135,7 +139,7 @@ Rcpp::List do_simulation(int popsize, int genmax, int tmax,
     pbsn.initAssociations(pop.nAgents);
 
     // evolve population and store data
-    Rcpp::List evoSimData = evolve_pop(genmax, tmax, pop, food, pbsn);
+    Rcpp::List evoSimData = evolve_pop(genmax, tmax, pop, food, pbsn, competitionCost);
 
     Rcpp::Rcout << "data prepared\n";
 

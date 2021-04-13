@@ -20,8 +20,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // do_simulation
-Rcpp::List do_simulation(int popsize, int genmax, int tmax, int nFood, int foodClusters, double clusterDispersal, double landsize);
-RcppExport SEXP _snevo_do_simulation(SEXP popsizeSEXP, SEXP genmaxSEXP, SEXP tmaxSEXP, SEXP nFoodSEXP, SEXP foodClustersSEXP, SEXP clusterDispersalSEXP, SEXP landsizeSEXP) {
+Rcpp::List do_simulation(int popsize, int genmax, int tmax, int nFood, int foodClusters, double clusterDispersal, double landsize, double regenTime, double competitionCost);
+RcppExport SEXP _snevo_do_simulation(SEXP popsizeSEXP, SEXP genmaxSEXP, SEXP tmaxSEXP, SEXP nFoodSEXP, SEXP foodClustersSEXP, SEXP clusterDispersalSEXP, SEXP landsizeSEXP, SEXP regenTimeSEXP, SEXP competitionCostSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -32,7 +32,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type foodClusters(foodClustersSEXP);
     Rcpp::traits::input_parameter< double >::type clusterDispersal(clusterDispersalSEXP);
     Rcpp::traits::input_parameter< double >::type landsize(landsizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(do_simulation(popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize));
+    Rcpp::traits::input_parameter< double >::type regenTime(regenTimeSEXP);
+    Rcpp::traits::input_parameter< double >::type competitionCost(competitionCostSEXP);
+    rcpp_result_gen = Rcpp::wrap(do_simulation(popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, regenTime, competitionCost));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -50,7 +52,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_snevo_get_test_landscape", (DL_FUNC) &_snevo_get_test_landscape, 4},
-    {"_snevo_do_simulation", (DL_FUNC) &_snevo_do_simulation, 7},
+    {"_snevo_do_simulation", (DL_FUNC) &_snevo_do_simulation, 9},
     {"_snevo_export_pop", (DL_FUNC) &_snevo_export_pop, 1},
     {NULL, NULL, 0}
 };
