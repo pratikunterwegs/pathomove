@@ -10,14 +10,18 @@ a = snevo::export_pop(101)
 
 # sim works
 a = snevo::do_simulation(
-  popsize = 50,
-  genmax = 25, 
+  popsize = 500,
+  genmax = 250, 
   tmax = 100, 
   nFood = 500,
-  foodClusters = 500, 
-  clusterDispersal = 10,
-  landsize = 50
+  foodClusters = 10, 
+  clusterDispersal = 0.125,
+  landsize = 25,
+  competitionCost = 0,
+  regenTime = 0
 )
+
+x11()
 
 b = a[["network_measures"]]
 
