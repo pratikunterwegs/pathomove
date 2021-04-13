@@ -9,6 +9,7 @@
 #include "network.h"
 #include "network_operations.hpp"
 #include "data_types.h"
+#include "ecology.hpp"
 
 #include <Rcpp.h>
 
