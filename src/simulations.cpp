@@ -118,7 +118,7 @@ Rcpp::List do_simulation(int popsize, int genmax, int tmax,
     int nFood, int foodClusters, double clusterDispersal, double landsize) {
 
     // prepare landscape
-    Resources food (nFood, landsize);
+    Resources food (nFood, landsize, 2.0);
     food.initResources(foodClusters, clusterDispersal);
     food.countAvailable();
     Rcpp::Rcout << "landscape with " << foodClusters << " clusters\n";
