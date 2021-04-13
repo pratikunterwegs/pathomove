@@ -7,7 +7,7 @@ library(ggplot2)
 library(data.table)
 
 a = snevo::export_pop(101)
-
+a
 # sim works
 a = snevo::do_simulation(
   popsize = 500,
@@ -18,7 +18,8 @@ a = snevo::do_simulation(
   clusterDispersal = 0.125,
   landsize = 25,
   competitionCost = 0,
-  regenTime = 0
+  regenTime = 0, 
+  collective = T
 )
 
 x11()
@@ -52,7 +53,7 @@ ggplot(d_summary)+
     trait_round, 
     fill = N
   ))+
-  scale_fill_viridis_c()+
+  scale_fill_viridis_c(option = "E")+
   coord_cartesian(ylim = c(0, 1))
 
 ## check associations and trait
