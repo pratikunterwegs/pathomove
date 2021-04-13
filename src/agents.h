@@ -197,7 +197,7 @@ void forage(size_t individual, Resources &food, Population &pop, const double di
             pop.counter[individual] = stopTime;
             pop.energy[individual] += foodEnergy;
             // remove the food item from the landscape for a brief time
-            food.counter[thisItem] = regenTime;
+            food.counter[thisItem] = food.regenTime;
         }
     }
 }
