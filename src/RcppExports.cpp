@@ -5,6 +5,24 @@
 
 using namespace Rcpp;
 
+// getMovement
+Rcpp::List getMovement(const int popsize, const double landsize, const int nFood, const int nClusters, const double clusterDispersal, const double regenTime, const bool collective, const double tmax);
+RcppExport SEXP _snevo_getMovement(SEXP popsizeSEXP, SEXP landsizeSEXP, SEXP nFoodSEXP, SEXP nClustersSEXP, SEXP clusterDispersalSEXP, SEXP regenTimeSEXP, SEXP collectiveSEXP, SEXP tmaxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type popsize(popsizeSEXP);
+    Rcpp::traits::input_parameter< const double >::type landsize(landsizeSEXP);
+    Rcpp::traits::input_parameter< const int >::type nFood(nFoodSEXP);
+    Rcpp::traits::input_parameter< const int >::type nClusters(nClustersSEXP);
+    Rcpp::traits::input_parameter< const double >::type clusterDispersal(clusterDispersalSEXP);
+    Rcpp::traits::input_parameter< const double >::type regenTime(regenTimeSEXP);
+    Rcpp::traits::input_parameter< const bool >::type collective(collectiveSEXP);
+    Rcpp::traits::input_parameter< const double >::type tmax(tmaxSEXP);
+    rcpp_result_gen = Rcpp::wrap(getMovement(popsize, landsize, nFood, nClusters, clusterDispersal, regenTime, collective, tmax));
+    return rcpp_result_gen;
+END_RCPP
+}
 // get_test_landscape
 Rcpp::DataFrame get_test_landscape(const int nItems, const double landsize, const int nClusters, const double clusterDispersal);
 RcppExport SEXP _snevo_get_test_landscape(SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterDispersalSEXP) {
@@ -52,6 +70,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_snevo_getMovement", (DL_FUNC) &_snevo_getMovement, 8},
     {"_snevo_get_test_landscape", (DL_FUNC) &_snevo_get_test_landscape, 4},
     {"_snevo_do_simulation", (DL_FUNC) &_snevo_do_simulation, 10},
     {"_snevo_export_pop", (DL_FUNC) &_snevo_export_pop, 1},
