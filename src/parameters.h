@@ -20,11 +20,6 @@ std::mt19937 rng;
 const double indivStepSize = 1.0;
 const double indivStepSizeSd = 0.2;
 
-const double stepSizeArs = 0.5;
-const double stepSizeSdArs = 0.05;
-
-const double etaCrw = 50.0; // three degrees heading sd = 2.0 when correlated, fewer turns
-const double etaArs = 120.0;
 const double stopTime = 2.0;
 const double moveCost = 0.001;
 
