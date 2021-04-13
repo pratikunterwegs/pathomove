@@ -23,7 +23,8 @@ typedef std::pair<point, unsigned> value;
 // items class
 struct Resources {
 public:
-    Resources(const int nItemsInit, const double landsize) :
+    Resources(const int nItemsInit, const double landsize,
+        double regenTime) :
     nItems(nItemsInit),
     dSize(landsize),
     coordX(nItems, 0.0),
@@ -47,6 +48,7 @@ public:
     // funs to init with nCentres
     void initResources(const int nCentres, const double dDispersal);
     void countAvailable();
+    void setRegenTime(double newRegenTime);
 };
 
 void Resources::initResources(const int nCentres, const double dDispersal) {
@@ -94,6 +96,10 @@ void Resources::countAvailable() {
         nAvailable += counter[i] == 0 ? 1 : 0;
         whichAvailable.push_back(i);
     }
+}
+
+void Resources::setRegenTime (double newRegenTime) {
+    regenTime = newRegenTime;
 }
 
 /// function to export landscape as matrix
