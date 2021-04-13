@@ -31,6 +31,7 @@ public:
     coordY(nItems, 0.0),
     counter(nItems, 0.0),
     nAvailable(nItems),
+    regenTime(2.0),
     whichAvailable(nItems)
     {}
     ~Resources() {}
@@ -41,6 +42,7 @@ public:
     std::vector<double> coordY;
     std::vector<int> counter;
     int nAvailable;
+    double regenTime;
     std::vector<size_t> whichAvailable;
     // make rtree
     bgi::rtree< value, bgi::quadratic<16> > rtree;
@@ -112,7 +114,7 @@ void Resources::setRegenTime (double newRegenTime) {
 Rcpp::DataFrame get_test_landscape(
     const int nItems, const double landsize,
     const int nClusters, const double clusterDispersal) {
-    Resources thisLandscape (nItems, landsize);
+    Resources thisLandscape (nItems, landsize, 0.0);
     thisLandscape.initResources(nClusters, clusterDispersal);
 
     return Rcpp::DataFrame::create(
