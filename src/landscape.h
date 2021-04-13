@@ -31,7 +31,7 @@ public:
     coordY(nItems, 0.0),
     counter(nItems, 0.0),
     nAvailable(nItems),
-    regenTime(2.0),
+    regenTime(regenTime),
     whichAvailable(nItems)
     {}
     ~Resources() {}
