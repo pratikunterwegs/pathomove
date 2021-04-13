@@ -17,7 +17,7 @@ unsigned seed = static_cast<unsigned> (std::chrono::system_clock::now().time_sin
 std::mt19937 rng;
 
 // movement
-const double indivStepSize = 2.0;
+const double indivStepSize = 1.0;
 const double indivStepSizeSd = 0.2;
 
 const double stepSizeArs = 0.5;
@@ -33,7 +33,6 @@ const double moveCost = 0.001;
 const double pCheck = 1.0;
 
 // landscape
-const double regenTime = 10.0;
 const double foodEnergy = 1.0;
 
 // mutation params
