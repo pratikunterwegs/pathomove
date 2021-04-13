@@ -105,6 +105,8 @@ void Resources::setRegenTime (double newRegenTime) {
 }
 
 /// function to export landscape as matrix
+//' Returns a test landscape.
+//'
 //' @param nItems How many items.
 //' @param landsize Size as a numeric (double).
 //' @param nClusters How many clusters, an integer value.
