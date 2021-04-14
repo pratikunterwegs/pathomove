@@ -23,22 +23,20 @@
 //' @param nClusters Number of clusters around which food is generated.
 //' @param clusterDispersal How dispersed food is around the cluster centre.
 //' @param landsize The size of the landscape as a numeric (double).
-//' @param regenTime Regeneration time of items.
 //' @param collective Whether to move collectively.
 //' @return A list with data frames of the population movement.
 // [[Rcpp::export]]
 Rcpp::List getMovement (const int popsize, const double landsize,
                         const int nFood, const int nClusters,
                         const double clusterDispersal,
-                        const double regenTime,
                         const bool collective,
                         const double tmax) {
 
     Population pop (popsize, 0.0);
     pop.setTrait();
 
-    Resources landscape (nFood, landsize, regenTime);
-    landscape.initResources(nClusters, clusterDispersal);
+    Resources landscape (nFood, landsize, nClusters, clusterDispersal);
+    landscape.initResources();
 
     pop.initPos(landscape);
 
@@ -82,15 +80,6 @@ Rcpp::List getMovement (const int popsize, const double landsize,
 
         // check which food is available and reduce regeneration time
         landscape.countAvailable();
-        for (size_t j = 0; j < static_cast<size_t>(landscape.nItems); j++)
-        {
-            if(landscape.counter[j] > 0.0) {
-                landscape.counter[j] -= time;
-            }
-            if(landscape.counter[j] < 0.0) {
-                landscape.counter[j] = 0.0;
-            }
-        }
 
         // when time has advanced by more than an increment,
         // all agents forage and the data is updated
