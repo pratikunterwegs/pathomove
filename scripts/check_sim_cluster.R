@@ -26,7 +26,10 @@ data_evolved_pop = do_simulation(
   nFood = params$nFood[row_n],
   foodClusters = params$foodClusters[row_n], 
   clusterDispersal = params$clusterDispersal[row_n],
-  landsize = params$landsize[row_n]
+  landsize = params$landsize[row_n],
+  collective = params$collective[row_n],
+  competitionCost = params$collective[row_n],
+  nScenes = params$nScenes[row_n]
 )
 
 # get params as named vector
