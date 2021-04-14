@@ -9,6 +9,9 @@
 #' @param clusterDispersal How spread out food is.
 #' @param nFood N food items, integer.
 #' @param landsize Landscape size, double value.
+#' @param collective Whether movement is collective-aware.
+#' @param competitionCost The cost of competition.
+#' @param nScenes How many scenes.
 #'
 #' @return Writes a parameter file.
 #' @export
@@ -21,6 +24,9 @@ make_parameter_file <- function(
   landsize = 300,
   foodClusters = seq(1, 10),
   clusterDispersal = seq(1, 5),
+  collective = FALSE,
+  competitionCost = 0.1,
+  nScenes = 10,
   replicates = 10,
   which_file = "this_file.csv"
 ) {
@@ -34,6 +40,9 @@ make_parameter_file <- function(
     tmax,
     foodClusters,
     clusterDispersal,
+    collective,
+    competitionCost,
+    nScenes,
     replicate = seq(replicates)
   )
 
