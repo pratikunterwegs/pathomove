@@ -39,7 +39,7 @@ Rcpp::List evolve_pop(int genmax, double tmax,
         double it_t = 0.0;
         size_t id;
         double increment = 0.01;
-
+        bool pbsn_ready = false;
         // lookup table for discrete distr
         gsl_ran_discrete_t*g = gsl_ran_discrete_preproc(static_cast<size_t>(pop.nAgents), trait_array);
 
@@ -67,7 +67,7 @@ Rcpp::List evolve_pop(int genmax, double tmax,
                 }
 
                 // update network halfway
-                if (time > (tmax / 2.0)) {
+                if ((time > (tmax / 2.0)) && !pbsn_ready) {
                     // update population pbsn
                     pop.updatePbsn(pbsn, 2.0, food.dSize);
                 }
@@ -89,8 +89,6 @@ Rcpp::List evolve_pop(int genmax, double tmax,
             food.initResources();
 
         }
-
-
         // generation ends here
         // update gendata
         thisGenData.updateGenData(pop, gen);
