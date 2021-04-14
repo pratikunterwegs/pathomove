@@ -16,10 +16,10 @@ a = snevo::do_simulation(
   nFood = 500,
   foodClusters = 10, 
   clusterDispersal = 0.125,
-  landsize = 25,
+  landsize = 10,
   competitionCost = 0,
-  regenTime = 0, 
-  collective = T
+  collective = T,
+  nScenes = 3
 )
 
 x11()
@@ -31,7 +31,9 @@ ggplot(b,
       gen, global_efficiency
     )
   )+
-  geom_point()+
+  geom_point(
+    shape = 1
+  )+
   geom_path()
 
 b = a[["trait_data"]]
@@ -53,7 +55,7 @@ ggplot(d_summary)+
     trait_round, 
     fill = N
   ))+
-  scale_fill_viridis_c(option = "E")+
+  scale_fill_viridis_c(option = "H")+
   coord_cartesian(ylim = c(0, 1))
 
 ## check associations and trait
