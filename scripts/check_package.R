@@ -12,10 +12,13 @@ snevo::check_prepare_cluster(
 snevo::make_parameter_file(
   nFood = 1000,
   popsize = 3000,
-  landsize = 300,
+  landsize = c(100, 300),
   genmax = 5000,
   foodClusters = 100,
   clusterDispersal = 2,
+  collective = c(TRUE, FALSE),
+  competitionCost = 0.1,
+  nScenes = 10,
   replicates = 25,
   which_file = "data/parameters/parameters_full.csv"
 )
