@@ -17,9 +17,10 @@ using namespace Rcpp;
 
 // function to evolve population
 Rcpp::List evolve_pop(int genmax, double tmax,
-                Population &pop, Resources &food, Network &pbsn,
-                double competitionCost,
-                const bool collective)
+                      Population &pop, Resources &food, Network &pbsn,
+                      double competitionCost,
+                      const bool collective,
+                      const int scenes)
 {
     // make generation data
     genData thisGenData;
@@ -37,57 +38,59 @@ Rcpp::List evolve_pop(int genmax, double tmax,
         double feed_time = 0.0;
         double it_t = 0.0;
         size_t id;
-        double increment = 0.1;
+        double increment = 0.01;
 
         // lookup table for discrete distr
         gsl_ran_discrete_t*g = gsl_ran_discrete_preproc(static_cast<size_t>(pop.nAgents), trait_array);
 
-        for(; time < tmax; ) {
-            //increment time
-            time += gsl_ran_exponential(r, total_act);
-            /// movement dynamic
-            if (time > it_t) {
+        for (int sc = 0; sc < scenes; sc++) {
+            for(; time < tmax; ) {
+                //increment time
+                time += gsl_ran_exponential(r, total_act);
+                /// movement dynamic
+                if (time > it_t) {
 
-                // reduce counter for all
-                for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++) {
-                    pop.counter[i] -= time;
-                    if (pop.counter[i] < 0.0) {
-                        pop.counter[i] = 0.0;
+                    // reduce counter for all
+                    for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++) {
+                        pop.counter[i] -= time;
+                        if (pop.counter[i] < 0.0) {
+                            pop.counter[i] = 0.0;
+                        }
+                    }
+                    // pick an agent to move
+                    id = gsl_ran_discrete(r, g);
+                    // if that agent can move, move it
+                    if (!(pop.counter[id] > 0.0)) {
+                        pop.move(id, food, moveCost, collective, 1.0);
+                    }
+                    it_t = (std::floor(time / increment) * increment) + increment;
+                }
+
+                // update network halfway
+                if (time > (tmax / 2.0)) {
+                    // update population pbsn
+                    pop.updatePbsn(pbsn, 2.0, food.dSize);
+                }
+
+                // check which food is available
+                food.countAvailable();
+
+                // when time has advanced by more than an increment,
+                // all agents forage and the PBSN is updated
+                if (time > (feed_time + increment)) {
+                    feed_time = feed_time + time; // increase time here
+                    // pop forages
+                    for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++) {
+                        forage(i, food, pop, 2.0);
                     }
                 }
-                // pick an agent to move
-                id = gsl_ran_discrete(r, g);
-                // if that agent can move, move it
-                if (!(pop.counter[id] > 0.0)) {
-                    pop.move(id, food, moveCost, collective, 1.0);
-                }
-                it_t = (std::floor(time / increment) * increment) + increment;
             }
+            // scene ends here, make new landscape
+            food.initResources();
 
-            // check which food is available and reduce regeneration time
-            food.countAvailable();
-            for (size_t j = 0; j < static_cast<size_t>(food.nItems); j++)
-            {
-                if(food.counter[j] > 0.0) {
-                    food.counter[j] -= time;
-                }
-                if(food.counter[j] < 0.0) {
-                    food.counter[j] = 0.0;
-                }
-            }
-
-            // when time has advanced by more than an increment,
-            // all agents forage and the PBSN is updated
-            if (time > feed_time + increment) {
-                feed_time = feed_time + time; // increase time here
-                // pop forages
-                for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++) {
-                    forage(i, food, pop, 2.0);
-                }
-                // update population pbsn
-                pop.updatePbsn(pbsn, 2.0, food.dSize);
-            }            
         }
+
+
         // generation ends here
         // update gendata
         thisGenData.updateGenData(pop, gen);
@@ -115,21 +118,22 @@ Rcpp::List evolve_pop(int genmax, double tmax,
 //' @param foodClusters Number of clusters around which food is generated.
 //' @param clusterDispersal How dispersed food is around the cluster centre.
 //' @param landsize The size of the landscape as a numeric (double).
-//' @param regenTime Regeneration time of items.
 //' @param competitionCost Cost of associations.
 //' @param collective Whether to move collectively.
+//' @param nScenes How many scenes.
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
 Rcpp::List do_simulation(int popsize, int genmax, int tmax, 
-    int nFood, int foodClusters, double clusterDispersal, double landsize,
-    double regenTime, double competitionCost, const bool collective) {
+                         int nFood, int foodClusters, double clusterDispersal, double landsize,
+                         double competitionCost, const bool collective,
+                         const int nScenes) {
 
     // prepare landscape
-    Resources food (nFood, landsize, regenTime);
-    food.initResources(foodClusters, clusterDispersal);
+    Resources food (nFood, landsize, foodClusters, clusterDispersal);
+    food.initResources();
     food.countAvailable();
     Rcpp::Rcout << "landscape with " << foodClusters << " clusters\n";
-     /// export landscape
+    /// export landscape
 
     // prepare population
     Population pop (popsize, 0);
@@ -142,7 +146,7 @@ Rcpp::List do_simulation(int popsize, int genmax, int tmax,
     pbsn.initAssociations(pop.nAgents);
 
     // evolve population and store data
-    Rcpp::List evoSimData = evolve_pop(genmax, tmax, pop, food, pbsn, competitionCost, collective);
+    Rcpp::List evoSimData = evolve_pop(genmax, tmax, pop, food, pbsn, competitionCost, collective, nScenes);
 
     Rcpp::Rcout << "data prepared\n";
 
