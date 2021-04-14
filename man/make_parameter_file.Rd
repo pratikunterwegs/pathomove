@@ -12,6 +12,9 @@ make_parameter_file(
   landsize = 300,
   foodClusters = seq(1, 10),
   clusterDispersal = seq(1, 5),
+  collective = FALSE,
+  competitionCost = 0.1,
+  nScenes = 10,
   replicates = 10,
   which_file = "this_file.csv"
 )
@@ -30,6 +33,12 @@ make_parameter_file(
 \item{foodClusters}{How many clusters.}
 
 \item{clusterDispersal}{How spread out food is.}
+
+\item{collective}{Whether movement is collective-aware.}
+
+\item{competitionCost}{The cost of competition.}
+
+\item{nScenes}{How many scenes.}
 
 \item{replicates}{How many replicates.}
 
