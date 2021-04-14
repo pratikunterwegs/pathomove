@@ -23,42 +23,43 @@ typedef std::pair<point, unsigned> value;
 // items class
 struct Resources {
 public:
-    Resources(const int nItemsInit, const double landsize,
-        double regenTime) :
-    nItems(nItemsInit),
-    dSize(landsize),
-    coordX(nItems, 0.0),
-    coordY(nItems, 0.0),
-    counter(nItems, 0.0),
-    nAvailable(nItems),
-    regenTime(regenTime),
-    whichAvailable(nItems)
+    Resources(const int nItemsInit,
+              const double landsize,
+              const int nClusters,
+              const double clusterDispersal) :
+        nItems(nItemsInit),
+        dSize(landsize),
+        nClusters(nClusters),
+        clusterDispersal(clusterDispersal),
+        coordX(nItems, 0.0),
+        coordY(nItems, 0.0),
+        available(nItems, true),
+        nAvailable(nItems)
     {}
     ~Resources() {}
 
     int nItems;
     double dSize;
+    int nClusters;
+    double clusterDispersal;
     std::vector<double> coordX;
     std::vector<double> coordY;
-    std::vector<int> counter;
+    std::vector<bool> available;
     int nAvailable;
-    double regenTime;
-    std::vector<size_t> whichAvailable;
     // make rtree
     bgi::rtree< value, bgi::quadratic<16> > rtree;
 
     // funs to init with nCentres
-    void initResources(const int nCentres, const double dDispersal);
+    void initResources();
     void countAvailable();
-    void setRegenTime(double newRegenTime);
 };
 
-void Resources::initResources(const int nCentres, const double dDispersal) {
+void Resources::initResources() {
     // generate n central items
-    std::vector<double> centreCoordX (nCentres);
-    std::vector<double> centreCoordY (nCentres);
+    std::vector<double> centreCoordX (nClusters);
+    std::vector<double> centreCoordY (nClusters);
 
-    for(size_t i = 0; i < static_cast<size_t>(nCentres); i++) {
+    for(size_t i = 0; i < static_cast<size_t>(nClusters); i++) {
 
         centreCoordX[i] = /*dist(rng);*/gsl_rng_uniform(r) * dSize;
         centreCoordY[i] = /*dist(rng);*/gsl_rng_uniform(r) * dSize;
@@ -69,10 +70,10 @@ void Resources::initResources(const int nCentres, const double dDispersal) {
     }
 
     // generate items around
-    for(int i = nCentres; i < nItems; i++) {
+    for(int i = nClusters; i < nItems; i++) {
 
-        coordX[i] = (centreCoordX[(i % nCentres)] + gsl_ran_gaussian(r, dDispersal));
-        coordY[i] = (centreCoordY[(i % nCentres)] + gsl_ran_gaussian(r, dDispersal));
+        coordX[i] = (centreCoordX[(i % nClusters)] + gsl_ran_gaussian(r, clusterDispersal));
+        coordY[i] = (centreCoordY[(i % nClusters)] + gsl_ran_gaussian(r, clusterDispersal));
 
         // wrap
         coordX[i] = fmod(dSize + coordX[i], dSize);
@@ -92,16 +93,10 @@ void Resources::initResources(const int nCentres, const double dDispersal) {
 
 void Resources::countAvailable() {
     nAvailable = 0;
-    whichAvailable.clear();
     // counter set to max regeneration value on foraging
     for (size_t i = 0; i < static_cast<size_t>(nItems); i++){
-        nAvailable += counter[i] == 0 ? 1 : 0;
-        whichAvailable.push_back(i);
+        nAvailable += available[i] ? 1 : 0;
     }
-}
-
-void Resources::setRegenTime (double newRegenTime) {
-    regenTime = newRegenTime;
 }
 
 /// function to export landscape as matrix
@@ -114,15 +109,15 @@ void Resources::setRegenTime (double newRegenTime) {
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
 Rcpp::DataFrame get_test_landscape(
-    const int nItems, const double landsize,
-    const int nClusters, const double clusterDispersal) {
-    Resources thisLandscape (nItems, landsize, 0.0);
-    thisLandscape.initResources(nClusters, clusterDispersal);
+        const int nItems, const double landsize,
+        const int nClusters, const double clusterDispersal) {
+    Resources thisLandscape (nItems, landsize, nClusters, clusterDispersal);
+    thisLandscape.initResources();
 
     return Rcpp::DataFrame::create(
-        Rcpp::Named("x") = thisLandscape.coordX,
-        Rcpp::Named("y") = thisLandscape.coordY
-    );
+                Rcpp::Named("x") = thisLandscape.coordX,
+                Rcpp::Named("y") = thisLandscape.coordY
+            );
 }
 
 #endif // LANDSCAPE_H
