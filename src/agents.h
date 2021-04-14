@@ -151,6 +151,9 @@ void Population::move(size_t id, Resources food, const double moveCost,
     const bool collective, const double sensoryRange) {
 
     double heading;
+    heading = etaCrw * gsl_ran_gaussian(r, 3.0);
+    // get radians
+    heading = heading * M_PI / 180.0;
     double landsize = food.dSize;
     double stepSize;
 
@@ -179,13 +182,6 @@ void Population::move(size_t id, Resources food, const double moveCost,
                 theta += TWOPI;
             heading = theta;
         }
-    }
-    // pick a turning angle otherwise
-    else {
-        // deviation in step size
-        heading = etaCrw * gsl_ran_gaussian(r, 3.0);
-        // get radians
-        heading = heading * M_PI / 180.0;
     }
 
     stepSize = gsl_ran_gamma(r, indivStepSize, indivStepSizeSd); // individual strategy is the 
@@ -240,7 +236,7 @@ void forage(size_t individual, Resources &food, Population &pop, const double di
 
         // now check them
         for (size_t i = 0; i < theseItems.size(); i++){
-            if(food.counter[theseItems[i]] == 0) {
+            if(food.available[i]) {
                 thisItem = theseItems[i]; // if available pick this item
 
                 break;
@@ -258,7 +254,7 @@ void forage(size_t individual, Resources &food, Population &pop, const double di
             pop.coordY[individual] = food.coordY[thisItem];
 
             // remove the food item from the landscape for a brief time
-            food.counter[thisItem] = food.regenTime;
+            food.available[thisItem] = false;
         }
     }
 }
