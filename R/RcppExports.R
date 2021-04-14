@@ -11,11 +11,10 @@
 #' @param nClusters Number of clusters around which food is generated.
 #' @param clusterDispersal How dispersed food is around the cluster centre.
 #' @param landsize The size of the landscape as a numeric (double).
-#' @param regenTime Regeneration time of items.
 #' @param collective Whether to move collectively.
 #' @return A list with data frames of the population movement.
-getMovement <- function(popsize, landsize, nFood, nClusters, clusterDispersal, regenTime, collective, tmax) {
-    .Call(`_snevo_getMovement`, popsize, landsize, nFood, nClusters, clusterDispersal, regenTime, collective, tmax)
+getMovement <- function(popsize, landsize, nFood, nClusters, clusterDispersal, collective, tmax) {
+    .Call(`_snevo_getMovement`, popsize, landsize, nFood, nClusters, clusterDispersal, collective, tmax)
 }
 
 #' Returns a test landscape.
@@ -41,12 +40,12 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterDispersal) {
 #' @param foodClusters Number of clusters around which food is generated.
 #' @param clusterDispersal How dispersed food is around the cluster centre.
 #' @param landsize The size of the landscape as a numeric (double).
-#' @param regenTime Regeneration time of items.
 #' @param competitionCost Cost of associations.
 #' @param collective Whether to move collectively.
+#' @param nScenes How many scenes.
 #' @return A data frame of the evolved population traits.
-do_simulation <- function(popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, regenTime, competitionCost, collective) {
-    .Call(`_snevo_do_simulation`, popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, regenTime, competitionCost, collective)
+do_simulation <- function(popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, competitionCost, collective, nScenes) {
+    .Call(`_snevo_do_simulation`, popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, competitionCost, collective, nScenes)
 }
 
 #' Export a population.

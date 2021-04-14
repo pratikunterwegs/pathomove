@@ -6,8 +6,8 @@
 using namespace Rcpp;
 
 // getMovement
-Rcpp::List getMovement(const int popsize, const double landsize, const int nFood, const int nClusters, const double clusterDispersal, const double regenTime, const bool collective, const double tmax);
-RcppExport SEXP _snevo_getMovement(SEXP popsizeSEXP, SEXP landsizeSEXP, SEXP nFoodSEXP, SEXP nClustersSEXP, SEXP clusterDispersalSEXP, SEXP regenTimeSEXP, SEXP collectiveSEXP, SEXP tmaxSEXP) {
+Rcpp::List getMovement(const int popsize, const double landsize, const int nFood, const int nClusters, const double clusterDispersal, const bool collective, const double tmax);
+RcppExport SEXP _snevo_getMovement(SEXP popsizeSEXP, SEXP landsizeSEXP, SEXP nFoodSEXP, SEXP nClustersSEXP, SEXP clusterDispersalSEXP, SEXP collectiveSEXP, SEXP tmaxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -16,10 +16,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int >::type nFood(nFoodSEXP);
     Rcpp::traits::input_parameter< const int >::type nClusters(nClustersSEXP);
     Rcpp::traits::input_parameter< const double >::type clusterDispersal(clusterDispersalSEXP);
-    Rcpp::traits::input_parameter< const double >::type regenTime(regenTimeSEXP);
     Rcpp::traits::input_parameter< const bool >::type collective(collectiveSEXP);
     Rcpp::traits::input_parameter< const double >::type tmax(tmaxSEXP);
-    rcpp_result_gen = Rcpp::wrap(getMovement(popsize, landsize, nFood, nClusters, clusterDispersal, regenTime, collective, tmax));
+    rcpp_result_gen = Rcpp::wrap(getMovement(popsize, landsize, nFood, nClusters, clusterDispersal, collective, tmax));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -38,8 +37,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // do_simulation
-Rcpp::List do_simulation(int popsize, int genmax, int tmax, int nFood, int foodClusters, double clusterDispersal, double landsize, double regenTime, double competitionCost, const bool collective);
-RcppExport SEXP _snevo_do_simulation(SEXP popsizeSEXP, SEXP genmaxSEXP, SEXP tmaxSEXP, SEXP nFoodSEXP, SEXP foodClustersSEXP, SEXP clusterDispersalSEXP, SEXP landsizeSEXP, SEXP regenTimeSEXP, SEXP competitionCostSEXP, SEXP collectiveSEXP) {
+Rcpp::List do_simulation(int popsize, int genmax, int tmax, int nFood, int foodClusters, double clusterDispersal, double landsize, double competitionCost, const bool collective, const int nScenes);
+RcppExport SEXP _snevo_do_simulation(SEXP popsizeSEXP, SEXP genmaxSEXP, SEXP tmaxSEXP, SEXP nFoodSEXP, SEXP foodClustersSEXP, SEXP clusterDispersalSEXP, SEXP landsizeSEXP, SEXP competitionCostSEXP, SEXP collectiveSEXP, SEXP nScenesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -50,10 +49,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type foodClusters(foodClustersSEXP);
     Rcpp::traits::input_parameter< double >::type clusterDispersal(clusterDispersalSEXP);
     Rcpp::traits::input_parameter< double >::type landsize(landsizeSEXP);
-    Rcpp::traits::input_parameter< double >::type regenTime(regenTimeSEXP);
     Rcpp::traits::input_parameter< double >::type competitionCost(competitionCostSEXP);
     Rcpp::traits::input_parameter< const bool >::type collective(collectiveSEXP);
-    rcpp_result_gen = Rcpp::wrap(do_simulation(popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, regenTime, competitionCost, collective));
+    Rcpp::traits::input_parameter< const int >::type nScenes(nScenesSEXP);
+    rcpp_result_gen = Rcpp::wrap(do_simulation(popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, competitionCost, collective, nScenes));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -70,7 +69,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_snevo_getMovement", (DL_FUNC) &_snevo_getMovement, 8},
+    {"_snevo_getMovement", (DL_FUNC) &_snevo_getMovement, 7},
     {"_snevo_get_test_landscape", (DL_FUNC) &_snevo_get_test_landscape, 4},
     {"_snevo_do_simulation", (DL_FUNC) &_snevo_do_simulation, 10},
     {"_snevo_export_pop", (DL_FUNC) &_snevo_export_pop, 1},
