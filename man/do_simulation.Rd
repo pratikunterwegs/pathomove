@@ -12,9 +12,9 @@ do_simulation(
   foodClusters,
   clusterDispersal,
   landsize,
-  regenTime,
   competitionCost,
-  collective
+  collective,
+  nScenes
 )
 }
 \arguments{
@@ -32,11 +32,11 @@ do_simulation(
 
 \item{landsize}{The size of the landscape as a numeric (double).}
 
-\item{regenTime}{Regeneration time of items.}
-
 \item{competitionCost}{Cost of associations.}
 
 \item{collective}{Whether to move collectively.}
+
+\item{nScenes}{How many scenes.}
 }
 \value{
 A data frame of the evolved population traits.

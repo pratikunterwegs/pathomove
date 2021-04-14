@@ -10,7 +10,6 @@ getMovement(
   nFood,
   nClusters,
   clusterDispersal,
-  regenTime,
   collective,
   tmax
 )
@@ -25,8 +24,6 @@ getMovement(
 \item{nClusters}{Number of clusters around which food is generated.}
 
 \item{clusterDispersal}{How dispersed food is around the cluster centre.}
-
-\item{regenTime}{Regeneration time of items.}
 
 \item{collective}{Whether to move collectively.}
 
