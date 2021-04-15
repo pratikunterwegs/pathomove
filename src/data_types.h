@@ -18,6 +18,7 @@ public:
     std::vector<std::vector<double> > genEnergyVec;
     std::vector<std::vector<double> > genTraitVec;
     std::vector<std::vector<int> > genAssocVec;
+    std::vector<std::vector<int> > genDegreeVec;
     std::vector<int> gens;
 
     void updateGenData (Population &pop, const int gen);
@@ -91,6 +92,7 @@ void genData::updateGenData (Population &pop, const int gen_) {
     genEnergyVec.push_back(pop.energy);
     genTraitVec.push_back(pop.trait);
     genAssocVec.push_back(pop.associations);
+    genDegreeVec.push_back(pop.degree);
     gens.push_back(gen_);
 }
 
@@ -114,7 +116,8 @@ Rcpp::List genData::getGenData() {
         genDataList[i] = DataFrame::create(
             Named("energy") = genEnergyVec[i],
             Named("trait") = genTraitVec[i],
-            Named("associations") = genAssocVec[i]
+            Named("associations") = genAssocVec[i],
+            Named("degree") = genDegreeVec[i]
         );
     }
     List dataToReturn = List::create(
