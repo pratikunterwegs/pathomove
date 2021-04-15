@@ -18,83 +18,82 @@
 //' @description Run the movement component on a starter population.
 //'
 //' @param popsize The population size.
-//' @param tmax The number of timesteps per generation.
+//' @param tmax The integer number of timesteps per scene.
 //' @param nFood The number of food items.
 //' @param nClusters Number of clusters around which food is generated.
 //' @param clusterDispersal How dispersed food is around the cluster centre.
 //' @param landsize The size of the landscape as a numeric (double).
 //' @param collective Whether to move collectively.
+//' @param sensoryRange The sensory range of agents.
+//' @param maxAct The maximum acitivity.
+//' @param activityRatio The ratio of activity levels of inactive individuals relative to active individuals.
+//' @param pInactive The proportion of inactive individuals in the population.
+//' @param scenes Number of scenes.
 //' @return A list with data frames of the population movement.
 // [[Rcpp::export]]
-Rcpp::List getMovement (const int popsize, const double landsize,
-                        const int nFood, const int nClusters,
-                        const double clusterDispersal,
-                        const bool collective,
-                        const double tmax) {
+Rcpp::List do_eco_sim (const int popsize, const double landsize,
+                       const int nFood, const int nClusters,
+                       const double clusterDispersal,
+                       const double maxAct,
+                       const double activityRatio,
+                       const double pInactive,
+                       const bool collective,
+                       const double sensoryRange,
+                       const double tmax,
+                       const int scenes) {
 
     Population pop (popsize, 0.0);
-    pop.setTrait();
+    pop.setTraitBimodal(maxAct, activityRatio, pInactive);
 
     Resources landscape (nFood, landsize, nClusters, clusterDispersal);
     landscape.initResources();
+
+    Network pbsn;
+    pbsn.initAssociations(popsize);
+
+    genData thisGenData;
 
     pop.initPos(landscape);
 
     gsl_rng_set(r, seed);
 
-    moveData thisMoveData;
-
-    double total_act = std::accumulate(pop.trait.begin(), pop.trait.end(), 0.0);
-    double trait_array[pop.nAgents];
-    std::copy(pop.trait.begin(), pop.trait.end(), trait_array);
-    double time = 0.0;
-    double feed_time = 0.0;
-    double it_t = 0.0;
-    size_t id;
-    double increment = 0.1;
-
-    // lookup table for discrete distr
-    gsl_ran_discrete_t*g = gsl_ran_discrete_preproc(static_cast<size_t>(pop.nAgents), trait_array);
-
-    for(; time < tmax; ) {
-        //increment time
-        time += gsl_ran_exponential(r, total_act);
-        /// movement dynamic
-        if (time > it_t) {
-
-            // reduce counter for all
-            for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++) {
-                pop.counter[i] -= time;
-                if (pop.counter[i] < 0.0) {
-                    pop.counter[i] = 0.0;
-                }
-            }
-            // pick an agent to move
-            id = gsl_ran_discrete(r, g);
-            // if that agent can move, move it
-            if (!(pop.counter[id] > 0.0)) {
-                pop.move(id, landscape, moveCost, collective, 1.0);
-            }
-            it_t = (std::floor(time / increment) * increment) + increment;
-        }
-
-        // check which food is available and reduce regeneration time
-        landscape.countAvailable();
-
-        // when time has advanced by more than an increment,
-        // all agents forage and the data is updated
-        if (time > feed_time + increment) {
-            feed_time = feed_time + time; // increase time here
-            // pop forages
-            for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++) {
-                forage(i, landscape, pop, 2.0);
-            }
-
-            thisMoveData.updateMoveData(pop, static_cast<int>(std::floor(time)));
-
-        }
+    std::vector<int> shuffleVec (pop.nAgents, 0);
+    for (int i = 0; i < pop.nAgents; ++i) {
+        shuffleVec[i] = i;
     }
 
-    return thisMoveData.getMoveData();
+    for(int s = 0; s < scenes; s++) {
+        landscape.initResources();
+        for(int t = 0; t < tmax; t++) {
 
+            landscape.countAvailable();
+
+            std::random_shuffle(shuffleVec.begin(), shuffleVec.end());
+            // reduce counter for all
+            for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++) {
+                size_t id = shuffleVec[i];
+                if (gsl_ran_bernoulli(r, pop.trait[id]) == 1) {
+                    // move if counter is okay
+                    if (!(pop.counter[id] > 0.0)) {
+                        pop.move(id, landscape, moveCost, collective, sensoryRange);
+                    }
+                    pop.counter[id] -= 1.0;
+                    if (pop.counter[id] < 0.0) {
+                        pop.counter[id] = 0.0;
+                    }
+                    
+                }
+                forage(id, landscape, pop, sensoryRange);
+                pop.countNeighbours(id, sensoryRange, landsize);
+            }
+        }
+        thisGenData.updateGenData(pop, s);
+
+        // reset population associations
+        pop.associations = std::vector<int> (pop.nAgents, 0);
+    }
+
+    return Rcpp::List::create(
+                Named("trait_data") = thisGenData.getGenData()
+            );
 }
