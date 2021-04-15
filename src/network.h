@@ -17,12 +17,12 @@ public:
 void Network::initAssociations(int nVertices){
 
     nAgents = nVertices;
-    associations = std::vector<std::vector<int> > (nAgents - 1, std::vector<int> (nAgents - 1, 0));
-    for(size_t i = 0; i < static_cast<size_t>(nAgents - 1); i ++) {
-        associations[i] = (std::vector<int> (nAgents - (i + 1), 0));
+    associations = std::vector<std::vector<int> > (nAgents, std::vector<int> (nAgents, 0)); // a square-ish matrix
+    for(size_t i = 0; i < static_cast<size_t>(nAgents); i ++) {
+        associations[i] = (std::vector<int> (nAgents - (i), 0));
     }
 
-    // check size
+    // check size along top
     assert(static_cast<int>(associations[0].size()) == (nAgents - 1) && "association triangle is wrong");
 }
 
