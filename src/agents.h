@@ -60,6 +60,7 @@ public:
     // funs for pop
     void initPop (int popsize);
     void setTrait ();
+    void setTraitBimodal (const double maxAct, const double ratio, const double proportion);
     void initPos(Resources food);
     void move(size_t id, Resources food, const double moveCost, const bool collective,
         const double sensoryRange);
@@ -69,6 +70,7 @@ public:
     void updatePbsn(Network &pbsn, const double range, const double landsize);
     void competitionCosts(const double competitionCost);
     void updateRtree();
+    void countNeighbours (size_t id, const double sensoryRange, const double landsize);
 };
 
 void Population::initPos(Resources food) {
@@ -81,6 +83,17 @@ void Population::initPos(Resources food) {
 void Population::setTrait() {
     for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
         trait[i] = gsl_rng_uniform(r);
+    }
+}
+
+void Population::setTraitBimodal(const double maxAct, const double ratio, const double proportion) {
+    trait = std::vector<double> (nAgents, maxAct);
+    // int nInactive = static_cast<int>(std::floor(proportion * static_cast<double>(nAgents)));
+    for (int z = 0; z < nAgents; z++)
+    {
+        if(gsl_ran_bernoulli(r, proportion) == 1) {
+            trait[z] = ratio * maxAct;
+        }
     }
 }
 
@@ -119,8 +132,6 @@ void Population::updatePbsn(Network &pbsn, const double range, const double land
 
             if(wrappedDistanceAgents(coordX[i], coordY[i], coordX[j], coordY[j], landsize) < range) {
                 pbsn.associations[i][j]++;
-                // add to associations
-                associations[i]++;
             }
         }
     }
@@ -199,7 +210,26 @@ void Population::move(size_t id, Resources food, const double moveCost,
     energy[id] -= (stepSize * moveCost);
 }
 
-
+// check neighbours
+void Population::countNeighbours (size_t id,
+                                  const double sensoryRange,
+                                  const double landsize) {
+    updateRtree();
+    std::vector<int> agentId;
+    std::vector<value> nearAgents;
+    box bbox(point(coordX[id] - sensoryRange,
+                    coordY[id] - sensoryRange),
+                point(coordX[id] + sensoryRange, coordY[id] + sensoryRange));
+    agentRtree.query(
+                bgi::within(bbox) &&
+                bgi::satisfies([&](value const& v) {return wrappedDistance(v.first, coordX[id],
+                                                    coordY[id], landsize) < sensoryRange;}),
+                std::back_inserter(nearAgents));
+    for(size_t i = 0; i < nearAgents.size(); i++){
+            agentId.push_back(nearAgents[i].second); // store item ids
+        }
+    associations[id] += agentId.size();
+}
 
 std::vector<int> findNearItems(size_t individual, Resources &food, Population &pop,
     const double distance){
