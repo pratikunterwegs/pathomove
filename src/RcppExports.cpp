@@ -5,9 +5,9 @@
 
 using namespace Rcpp;
 
-// getMovement
-Rcpp::List getMovement(const int popsize, const double landsize, const int nFood, const int nClusters, const double clusterDispersal, const bool collective, const double tmax);
-RcppExport SEXP _snevo_getMovement(SEXP popsizeSEXP, SEXP landsizeSEXP, SEXP nFoodSEXP, SEXP nClustersSEXP, SEXP clusterDispersalSEXP, SEXP collectiveSEXP, SEXP tmaxSEXP) {
+// do_eco_sim
+Rcpp::List do_eco_sim(const int popsize, const double landsize, const int nFood, const int nClusters, const double clusterDispersal, const double maxAct, const double activityRatio, const double pInactive, const bool collective, const double sensoryRange, const double tmax, const int scenes);
+RcppExport SEXP _snevo_do_eco_sim(SEXP popsizeSEXP, SEXP landsizeSEXP, SEXP nFoodSEXP, SEXP nClustersSEXP, SEXP clusterDispersalSEXP, SEXP maxActSEXP, SEXP activityRatioSEXP, SEXP pInactiveSEXP, SEXP collectiveSEXP, SEXP sensoryRangeSEXP, SEXP tmaxSEXP, SEXP scenesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -16,9 +16,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int >::type nFood(nFoodSEXP);
     Rcpp::traits::input_parameter< const int >::type nClusters(nClustersSEXP);
     Rcpp::traits::input_parameter< const double >::type clusterDispersal(clusterDispersalSEXP);
+    Rcpp::traits::input_parameter< const double >::type maxAct(maxActSEXP);
+    Rcpp::traits::input_parameter< const double >::type activityRatio(activityRatioSEXP);
+    Rcpp::traits::input_parameter< const double >::type pInactive(pInactiveSEXP);
     Rcpp::traits::input_parameter< const bool >::type collective(collectiveSEXP);
+    Rcpp::traits::input_parameter< const double >::type sensoryRange(sensoryRangeSEXP);
     Rcpp::traits::input_parameter< const double >::type tmax(tmaxSEXP);
-    rcpp_result_gen = Rcpp::wrap(getMovement(popsize, landsize, nFood, nClusters, clusterDispersal, collective, tmax));
+    Rcpp::traits::input_parameter< const int >::type scenes(scenesSEXP);
+    rcpp_result_gen = Rcpp::wrap(do_eco_sim(popsize, landsize, nFood, nClusters, clusterDispersal, maxAct, activityRatio, pInactive, collective, sensoryRange, tmax, scenes));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -69,7 +74,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_snevo_getMovement", (DL_FUNC) &_snevo_getMovement, 7},
+    {"_snevo_do_eco_sim", (DL_FUNC) &_snevo_do_eco_sim, 12},
     {"_snevo_get_test_landscape", (DL_FUNC) &_snevo_get_test_landscape, 4},
     {"_snevo_do_simulation", (DL_FUNC) &_snevo_do_simulation, 10},
     {"_snevo_export_pop", (DL_FUNC) &_snevo_export_pop, 1},

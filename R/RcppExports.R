@@ -6,15 +6,20 @@
 #' @description Run the movement component on a starter population.
 #'
 #' @param popsize The population size.
-#' @param tmax The number of timesteps per generation.
+#' @param tmax The integer number of timesteps per scene.
 #' @param nFood The number of food items.
 #' @param nClusters Number of clusters around which food is generated.
 #' @param clusterDispersal How dispersed food is around the cluster centre.
 #' @param landsize The size of the landscape as a numeric (double).
 #' @param collective Whether to move collectively.
+#' @param sensoryRange The sensory range of agents.
+#' @param maxAct The maximum acitivity.
+#' @param activityRatio The ratio of activity levels of inactive individuals relative to active individuals.
+#' @param pInactive The proportion of inactive individuals in the population.
+#' @param scenes Number of scenes.
 #' @return A list with data frames of the population movement.
-getMovement <- function(popsize, landsize, nFood, nClusters, clusterDispersal, collective, tmax) {
-    .Call(`_snevo_getMovement`, popsize, landsize, nFood, nClusters, clusterDispersal, collective, tmax)
+do_eco_sim <- function(popsize, landsize, nFood, nClusters, clusterDispersal, maxAct, activityRatio, pInactive, collective, sensoryRange, tmax, scenes) {
+    .Call(`_snevo_do_eco_sim`, popsize, landsize, nFood, nClusters, clusterDispersal, maxAct, activityRatio, pInactive, collective, sensoryRange, tmax, scenes)
 }
 
 #' Returns a test landscape.
