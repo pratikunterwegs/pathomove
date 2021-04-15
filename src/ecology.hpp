@@ -86,7 +86,10 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
                 forage(id, landscape, pop, sensoryRange);
                 pop.countNeighbours(id, sensoryRange, landsize);
             }
+
+            pop.updatePbsn(pbsn, sensoryRange, landsize);
         }
+        pop.degree = getDegree(pbsn, pop);
         thisGenData.updateGenData(pop, s);
 
         // reset population associations
@@ -95,5 +98,5 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
 
     return Rcpp::List::create(
                 Named("trait_data") = thisGenData.getGenData()
-            );
+    );
 }
