@@ -41,7 +41,8 @@ public:
        // count stationary behaviour
        counter (popsize, 0.0),
        // associations
-       associations(popsize, 0)
+       associations(popsize, 0),
+       degree(popsize, 0)
 
    {}
    ~Population() {}
@@ -52,7 +53,8 @@ public:
     std::vector<double> energy;
     std::vector<double> trait;
     std::vector<double> counter;
-    std::vector<int> associations;
+    std::vector<int> associations; // number of total interactions
+    std::vector<int> degree;
 
     // position rtree
     bgi::rtree< value, bgi::quadratic<16> > agentRtree;
@@ -125,7 +127,7 @@ void Population::updateRtree () {
 void Population::updatePbsn(Network &pbsn, const double range, const double landsize) {
 
     // focal agents
-    for(size_t i = 0; i < static_cast<size_t>(nAgents - 1); i++) {
+    for(size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
         // make vector of proximate agents
         // move j along the size of associations expected for i
         for(size_t j = i + 1; j < pbsn.associations[i].size(); j++) {
@@ -300,12 +302,11 @@ DataFrame returnPbsn (Population &pop, Network &pbsn) {
         // make vector of proximate agents
         // move j along the size of associations expected for i
         for(size_t j = i + 1; j < pbsn.associations[i].size(); j++) {
-
-            if(pbsn.associations[i][j] > 0) {
-                focalAgent.push_back(i);
-                subfocalAgent.push_back(j);
-                pbsnAssociations.push_back(pbsn.associations[i][j]);
-            }
+        // if(pbsn.associations[i][j] > 0) {
+            focalAgent.push_back(i);
+            subfocalAgent.push_back(j);
+            pbsnAssociations.push_back(pbsn.associations[i][j]);
+        
         }
     }
 
