@@ -36,8 +36,10 @@ SOURCES += \
 
 HEADERS += \
     ../src/agents.h \
+    ../src/ecology.hpp \
     ../src/landscape.h \
     ../src/network.h \
+    ../src/network_operations.hpp \
     ../src/parameters.h \
     ../src/data_types.h
 
