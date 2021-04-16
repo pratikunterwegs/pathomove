@@ -9,6 +9,7 @@ Rcpp::Environment igraph("package:igraph");
 Rcpp::Function graph_from_df = igraph["graph.data.frame"];
 Rcpp::Function graph_diameter = igraph["diameter"];
 Rcpp::Function graph_degree = igraph["degree"];
+Rcpp::Function graph_from_adjmat = igraph["graph.adjacency"];
 
 /// function to make igraph network from pbsn
 std::vector<double> networkMeasures(Network &pbsn, Population &pop) {
@@ -27,11 +28,11 @@ std::vector<double> networkMeasures(Network &pbsn, Population &pop) {
     };
 }
 
-std::vector<int> getDegree(Network &pbsn, Population &pop) {
-    Rcpp::DataFrame pbsn_data = returnPbsn(pop, pbsn);
-    List graph = graph_from_df(pbsn_data, Named("directed")=false);
+std::vector<int> getDegree(Network &pbsn) {
+    // Rcpp::DataFrame pbsn_data = returnPbsn(pop, pbsn);
+    List graph = graph_from_adjmat(pbsn.adjacencyMatrix, Named("diag")=false, Named("weighted")=true);
 
-    SEXP degree = graph_degree(graph);
+    SEXP degree = graph_degree(graph, Named("loops")=false);
 
     std::vector<int> vDeg = Rcpp::as< std::vector<int> >(degree);
 
