@@ -9,8 +9,8 @@ library(ggplot2)
 library(data.table)
 
 a = snevo::do_eco_sim(
-    popsize = 100,
-    landsize = 10,
+    popsize = 25,
+    landsize = 5,
     nFood = 100,
     nClusters = 20,
     clusterDispersal = 0.1,
@@ -23,6 +23,17 @@ a = snevo::do_eco_sim(
     scenes = 10
 )
 
+b = a[["pbsn"]]
+b = b[b$associations > 0,]
+
+library(igraph)
+g = graph.adjacency(b, weighted = TRUE, mode = "undirected")
+g = simplify(g, remove.loops = TRUE)
+plot(g, vertex.size = 10)
+
+d = degree(g, loops = F)
+length(d)
+# trait to gen
 b = a[["trait_data"]]
 b$gens
 d = Map(function(df, sc) {
@@ -30,7 +41,6 @@ d = Map(function(df, sc) {
     df
 }, b$pop_data, b$gens)
 d = rbindlist(d)
-hist(d$trait)
 
 d_summary = d[,list(
     mean_assoc = mean(associations),
