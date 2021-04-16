@@ -130,10 +130,14 @@ void Population::updatePbsn(Network &pbsn, const double range, const double land
     for(size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
         // make vector of proximate agents
         // move j along the size of associations expected for i
-        for(size_t j = i + 1; j < pbsn.associations[i].size(); j++) {
+        // returns the upper right triangle
+        // no problems for now with the simple network measures required here
+        // but may become an issue later
+        for(size_t j = i; j < pbsn.associations[i].size(); j++) {
 
             if(wrappedDistanceAgents(coordX[i], coordY[i], coordX[j], coordY[j], landsize) < range) {
                 pbsn.associations[i][j]++;
+                pbsn.adjacencyMatrix (i, j) += 1;
             }
         }
     }
@@ -298,10 +302,10 @@ DataFrame returnPbsn (Population &pop, Network &pbsn) {
     std::vector<int> pbsnAssociations;
 
     // focal agents
-    for(size_t i = 0; i < static_cast<size_t>(pop.nAgents - 1); i++) {
+    for(size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++) {
         // make vector of proximate agents
         // move j along the size of associations expected for i
-        for(size_t j = i + 1; j < pbsn.associations[i].size(); j++) {
+        for(size_t j = i; j < pbsn.associations[i].size(); j++) {
         // if(pbsn.associations[i][j] > 0) {
             focalAgent.push_back(i);
             subfocalAgent.push_back(j);
