@@ -50,6 +50,7 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
 
     Network pbsn;
     pbsn.initAssociations(popsize);
+    pbsn.initAdjMat (popsize);
 
     genData thisGenData;
 
@@ -64,6 +65,9 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
 
     for(int s = 0; s < scenes; s++) {
         landscape.initResources();
+
+        // reset population associations
+        pop.associations = std::vector<int> (pop.nAgents, 0);
         for(int t = 0; t < tmax; t++) {
 
             landscape.countAvailable();
@@ -89,14 +93,12 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
 
             pop.updatePbsn(pbsn, sensoryRange, landsize);
         }
-        pop.degree = getDegree(pbsn, pop);
+        pop.degree = getDegree(pbsn);
         thisGenData.updateGenData(pop, s);
-
-        // reset population associations
-        pop.associations = std::vector<int> (pop.nAgents, 0);
     }
 
     return Rcpp::List::create(
-                Named("trait_data") = thisGenData.getGenData()
+                Named("trait_data") = thisGenData.getGenData(),
+                Named("pbsn") = pbsn.adjacencyMatrix
     );
 }
