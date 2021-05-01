@@ -31,21 +31,21 @@ typedef std::pair<point, unsigned> value;
 // Agent class
 struct Population {
 public:
-   Population(const int popsize, const double beginTrait) :
-       nAgents (popsize),
-       coordX (popsize, 50.0),
-       coordY (popsize, 50.0),
-       energy (popsize, 0.000001),
-       // one trait
-       trait(popsize, beginTrait),
-       // count stationary behaviour
-       counter (popsize, 0.0),
-       // associations
-       associations(popsize, 0),
-       degree(popsize, 0)
+    Population(const int popsize, const double beginTrait) :
+        nAgents (popsize),
+        coordX (popsize, 50.0),
+        coordY (popsize, 50.0),
+        energy (popsize, 0.000001),
+        // one trait
+        trait(popsize, beginTrait),
+        // count stationary behaviour
+        counter (popsize, 0.0),
+        // associations
+        associations(popsize, 0),
+        degree(popsize, 0)
 
-   {}
-   ~Population() {}
+    {}
+    ~Population() {}
 
     int nAgents = 0;
     std::vector<double> coordX;
@@ -65,14 +65,14 @@ public:
     void setTraitBimodal (const double maxAct, const double ratio, const double proportion);
     void initPos(Resources food);
     void move(size_t id, Resources food, const double moveCost, const bool collective,
-        const double sensoryRange);
+              const double sensoryRange);
     void normaliseIntake();
     void Reproduce();
     // for network
     void updatePbsn(Network &pbsn, const double range, const double landsize);
     void competitionCosts(const double competitionCost);
     void updateRtree();
-    void countNeighbours (size_t id, const double sensoryRange, const double landsize);
+    void countNeighbours (size_t id, const double sensoryRange);
 };
 
 void Population::initPos(Resources food) {
@@ -165,13 +165,12 @@ double wrappedDistance(boost::geometry::model::point<float, 2, bg::cs::cartesian
 }
 
 void Population::move(size_t id, Resources food, const double moveCost,
-    const bool collective, const double sensoryRange) {
+                      const bool collective, const double sensoryRange) {
 
     double heading;
     heading = etaCrw * gsl_ran_gaussian(r, 3.0);
     // get radians
     heading = heading * M_PI / 180.0;
-    double landsize = food.dSize;
     double stepSize;
 
     // if collective, move towards a random agent (the first) within range
@@ -186,31 +185,30 @@ void Population::move(size_t id, Resources food, const double moveCost,
                     bgi::within(bbox) &&
                     bgi::satisfies([&](value const& v) {return wrappedDistance(v.first, coordX[id],
                                                         coordY[id], food.dSize) < sensoryRange;}),
-                    std::back_inserter(nearAgents));
+                std::back_inserter(nearAgents));
         
         if (nearAgents.size() > 0) {
             size_t neighbour = nearAgents[0].second;
             static const double TWOPI = 6.2831853071795865;
             // static const double RAD2DEG = 57.2957795130823209;
-            // if (a1 = b1 and a2 = b2) throw an error 
-            double theta = atan2(coordX[id] - coordX[neighbour], 
-                coordY[id] - coordY[neighbour]);
+            // if (a1 = b1 and a2 = b2) throw an error
+            double theta = atan2(coordX[id] - coordX[neighbour],
+                                 coordY[id] - coordY[neighbour]);
             if (theta < 0.0)
                 theta += TWOPI;
             heading = theta;
         }
     }
 
-    stepSize = gsl_ran_gamma(r, indivStepSize, indivStepSizeSd); // individual strategy is the 
+    stepSize = gsl_ran_gamma(r, indivStepSize, indivStepSizeSd); // individual strategy is the
 
     // figure out the next position
-    coordX[id] = coordX[id] + (stepSize * cos(heading));
-    coordY[id] = coordY[id] + (stepSize * sin(heading));
+    coordX[id] = coordX[id] + (stepSize * std::cos(heading));
+    coordY[id] = coordY[id] + (stepSize * std::sin(heading));
 
-    // make the move on the wrapped landscape
-    coordX[id] = fmod(landsize + coordX[id], landsize);
-
-    coordY[id] = fmod(landsize + coordY[id], landsize);
+    // bounce agents off the landscape limits
+    coordX[id] = coordX[id] > food.dSize ? food.dSize - (food.dSize / 25.0) : coordX[id];
+    coordY[id] = coordY[id] > food.dSize ? food.dSize - (food.dSize / 25.0) : coordY[id];
 
     // add a cost
     energy[id] -= (stepSize * moveCost);
@@ -218,27 +216,26 @@ void Population::move(size_t id, Resources food, const double moveCost,
 
 // check neighbours
 void Population::countNeighbours (size_t id,
-                                  const double sensoryRange,
-                                  const double landsize) {
+                                  const double sensoryRange) {
     updateRtree();
     std::vector<int> agentId;
     std::vector<value> nearAgents;
     box bbox(point(coordX[id] - sensoryRange,
-                    coordY[id] - sensoryRange),
-                point(coordX[id] + sensoryRange, coordY[id] + sensoryRange));
+                   coordY[id] - sensoryRange),
+             point(coordX[id] + sensoryRange, coordY[id] + sensoryRange));
     agentRtree.query(
                 bgi::within(bbox) &&
-                bgi::satisfies([&](value const& v) {return wrappedDistance(v.first, coordX[id],
-                                                    coordY[id], landsize) < sensoryRange;}),
-                std::back_inserter(nearAgents));
+                bgi::satisfies([&](value const& v) {return bg::distance(v.first, point(coordX[id], coordY[id]))
+                                                    < sensoryRange;}),
+            std::back_inserter(nearAgents));
     for(size_t i = 0; i < nearAgents.size(); i++){
-            agentId.push_back(nearAgents[i].second); // store item ids
-        }
+        agentId.push_back(nearAgents[i].second); // store item ids
+    }
     associations[id] += agentId.size();
 }
 
 std::vector<int> findNearItems(size_t individual, Resources &food, Population &pop,
-    const double distance){
+                               const double distance){
     // search nearest item only if any are available
     std::vector<int> itemID;
 
@@ -250,9 +247,9 @@ std::vector<int> findNearItems(size_t individual, Resources &food, Population &p
 
         food.rtree.query(
                     bgi::within(bbox) &&
-                    bgi::satisfies([&](value const& v) {return wrappedDistance(v.first, pop.coordX[individual],
-                                                        pop.coordY[individual], food.dSize) < distance;}),
-                    std::back_inserter(nearItems));
+                    bgi::satisfies([&](value const& v) {return bg::distance(v.first, point(pop.coordX[individual], pop.coordY[individual]))
+                                                        < distance;}),
+                std::back_inserter(nearItems));
 
         for(size_t i = 0; i < nearItems.size(); i++){
             itemID.push_back(nearItems[i].second); // store item ids
@@ -306,19 +303,19 @@ DataFrame returnPbsn (Population &pop, Network &pbsn) {
         // make vector of proximate agents
         // move j along the size of associations expected for i
         for(size_t j = i; j < pbsn.associations[i].size(); j++) {
-        // if(pbsn.associations[i][j] > 0) {
+            // if(pbsn.associations[i][j] > 0) {
             focalAgent.push_back(i);
             subfocalAgent.push_back(j);
             pbsnAssociations.push_back(pbsn.associations[i][j]);
-        
+
         }
     }
 
     DataFrame pbsnData = DataFrame::create(
-        Named("id_x") = focalAgent,
-        Named("id_y") = subfocalAgent,
-        Named("associations") = pbsnAssociations
-    );
+                Named("id_x") = focalAgent,
+                Named("id_y") = subfocalAgent,
+                Named("associations") = pbsnAssociations
+            );
 
     return pbsnData;
 }
