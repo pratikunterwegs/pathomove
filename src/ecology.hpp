@@ -88,7 +88,7 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
                     
                 }
                 forage(id, landscape, pop, sensoryRange);
-                pop.countNeighbours(id, sensoryRange, landsize);
+                pop.countNeighbours(id, sensoryRange);
             }
 
             pop.updatePbsn(pbsn, sensoryRange, landsize);
