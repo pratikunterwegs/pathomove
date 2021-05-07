@@ -79,6 +79,9 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
 
         // set up gillespie loop
         double total_act = std::accumulate(pop.trait.begin(), pop.trait.end(), 0.0); // prelim only
+        double trait_array[popsize];
+        std::copy(pop.trait.begin(), pop.trait.end(), trait_array);
+        gsl_ran_discrete_t*g = gsl_ran_discrete_preproc(static_cast<size_t>(popsize), );
         double time = 0.0;
         double eat_time = 0.0;
         double it_t = 0.0;
@@ -96,45 +99,50 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
                     tmpQueue.push_back(i);
                 }                   
             }
-            total_act = std::accumulate(tmpAct.begin(),tmpAct.end(), 0.0);
 
-            double trait_array[static_cast<int>(tmpAct.size())];
-            std::copy(tmpAct.begin(), tmpAct.end(), trait_array);
+            // check if anyone can move
+            if (tmpAct.size() > 0) {
+                // prepare rates
+                total_act = std::accumulate(tmpAct.begin(),tmpAct.end(), 0.0);
 
-            gsl_ran_discrete_t*g = gsl_ran_discrete_preproc(tmpAct.size(), trait_array);
-        
+                double trait_array[static_cast<int>(tmpAct.size())];
+                std::copy(tmpAct.begin(), tmpAct.end(), trait_array);
 
-            double dt = gsl_ran_exponential(r, total_act);
-            time += dt;
+                g = gsl_ran_discrete_preproc(tmpAct.size(), trait_array);
 
-            // decrease counters for all
-            for(int i = 0; i < pop.nAgents; i++) {
-                if(pop.counter[i] > 0.0) {
-                    pop.counter[i] -= dt;
+                // main dynamics
+                double dt = gsl_ran_exponential(r, total_act);
+                time += dt;
+
+                // decrease counters for all
+                for(int i = 0; i < pop.nAgents; i++) {
+                    if(pop.counter[i] > 0.0) {
+                        pop.counter[i] -= dt;
+                    }
+                    if(pop.counter[i] < 0.0) {
+                        pop.counter[i] = 0.0;
+                    }                 
                 }
-                if(pop.counter[i] < 0.0) {
-                    pop.counter[i] = 0.0;
-                }                 
-            }
 
-            // do move
-            if (time > it_t) {
-                id = gsl_ran_discrete(r, g);
-                // which individual to move, not the same as index of rate vec
-                size_t id_to_move = static_cast<size_t>(tmpQueue[id]);
-                pop.move(id_to_move, landscape, moveCost, collective, sensoryRange);
-                it_t = (std::floor(time / increment) * increment) + increment;
-            }
-
-            // forage, count neighbours, and update pbsn at save points
-            if (time > eat_time) {
-                // add vec shuffle
-                for (int i = 0; i < pop.nAgents; i++) {
-                    pop.forage(static_cast<size_t> (i), landscape, sensoryRange, stopTime);
-                    pop.countNeighbours(i, sensoryRange);
+                // do move
+                if (time > it_t) {
+                    id = gsl_ran_discrete(r, g);
+                    // which individual to move, not the same as index of rate vec
+                    size_t id_to_move = static_cast<size_t>(tmpQueue[id]);
+                    pop.move(id_to_move, landscape, moveCost, collective, sensoryRange);
+                    it_t = (std::floor(time / increment) * increment) + increment;
                 }
-                pop.updatePbsn(pbsn, sensoryRange, landsize);
-                eat_time += increment;
+
+                // forage, count neighbours, and update pbsn at save points
+                if (time > eat_time) {
+                    // add vec shuffle
+                    for (int i = 0; i < pop.nAgents; i++) {
+                        pop.forage(static_cast<size_t> (i), landscape, sensoryRange, stopTime);
+                        pop.countNeighbours(i, sensoryRange);
+                    }
+                    pop.updatePbsn(pbsn, sensoryRange, landsize);
+                    eat_time += increment;
+                }
             }
         }
         pop.degree = getDegree(pbsn);
