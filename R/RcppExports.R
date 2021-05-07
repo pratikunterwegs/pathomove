@@ -13,13 +13,14 @@
 #' @param landsize The size of the landscape as a numeric (double).
 #' @param collective Whether to move collectively.
 #' @param sensoryRange The sensory range of agents.
-#' @param maxAct The maximum acitivity.
+#' @param stopTime The time (double) that individuals stop after finding food.
+#' @param maxAct The maximum activity.
 #' @param activityRatio The ratio of activity levels of inactive individuals relative to active individuals.
 #' @param pInactive The proportion of inactive individuals in the population.
 #' @param scenes Number of scenes.
 #' @return A list with data frames of the population movement.
-do_eco_sim <- function(popsize, landsize, nFood, nClusters, clusterDispersal, maxAct, activityRatio, pInactive, collective, sensoryRange, tmax, scenes) {
-    .Call(`_snevo_do_eco_sim`, popsize, landsize, nFood, nClusters, clusterDispersal, maxAct, activityRatio, pInactive, collective, sensoryRange, tmax, scenes)
+do_eco_sim <- function(popsize, landsize, nFood, nClusters, clusterDispersal, maxAct, activityRatio, pInactive, collective, sensoryRange, stopTime, tmax, scenes) {
+    .Call(`_snevo_do_eco_sim`, popsize, landsize, nFood, nClusters, clusterDispersal, maxAct, activityRatio, pInactive, collective, sensoryRange, stopTime, tmax, scenes)
 }
 
 #' Returns a test landscape.
