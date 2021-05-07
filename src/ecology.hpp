@@ -39,6 +39,7 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
                        const double pInactive,
                        const bool collective,
                        const double sensoryRange,
+                       const double stopTime,
                        const double tmax,
                        const int scenes) {
 
@@ -88,22 +89,47 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
         // lookup table for discrete distr
         gsl_ran_discrete_t*g = gsl_ran_discrete_preproc(static_cast<size_t>(pop.nAgents), trait_array);
         for(; time < tmax; ) {
-            time += gsl_ran_exponential(r, total_act);
+            // populate rate vector
+            std::vector<double> tmpAct;
+            std::vector<int> tmpQueue;
+            for(int i = 0; i < pop.nAgents; i++) {
+                if(!(pop.counter[i] > 0.0)) {
+                    tmpAct.push_back(pop.trait[i]);
+                    tmpQueue.push_back(i);
+                }                   
+            }
+            total_act = std::accumulate(tmpAct.begin(),tmpAct.end(), 0.0);
+
+            double dt = gsl_ran_exponential(r, total_act);
+            time += dt;
+
+            // decrease counters for all
+            for(int i = 0; i < pop.nAgents; i++) {
+                if(pop.counter[i] > 0.0) {
+                    pop.counter[i] -= dt;
+                }
+                if(pop.counter[i] < 0.0) {
+                    pop.counter[i] = 0.0;
+                }                 
+            }
 
             // do move
             if (time > it_t) {
                 id = gsl_ran_discrete(r, g);
-                pop.move(id, landscape, moveCost, collective, sensoryRange);
+                // which individual to move, not the same as index of rate vec
+                size_t id_to_move = static_cast<size_t>(tmpQueue[id]);
+                pop.move(id_to_move, landscape, moveCost, collective, sensoryRange);
                 it_t = (std::floor(time / increment) * increment) + increment;
             }
 
             // forage, count neighbours, and update pbsn at save points
             if (time > eat_time) {
+                // add vec shuffle
                 for (int i = 0; i < pop.nAgents; i++) {
-                    forage(static_cast<size_t> (i), landscape, pop, sensoryRange);
+                    pop.forage(static_cast<size_t> (i), landscape, sensoryRange, stopTime);
                     pop.countNeighbours(i, sensoryRange);
-                    pop.updatePbsn(pbsn, sensoryRange, landsize);
                 }
+                pop.updatePbsn(pbsn, sensoryRange, landsize);
                 eat_time += increment;
             }
         }
