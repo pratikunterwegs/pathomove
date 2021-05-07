@@ -1,6 +1,6 @@
 # check function
-devtools::build()
 Rcpp::compileAttributes()
+devtools::build()
 # devtools::document()
 devtools::install()
 
@@ -9,18 +9,19 @@ library(ggplot2)
 library(data.table)
 
 a = snevo::do_eco_sim(
-    popsize = 500,
-    landsize = 50,
-    nFood = 2000,
+    popsize = 200,
+    landsize = 10,
+    nFood = 1000,
     nClusters = 200,
     clusterDispersal = 0.1,
-    maxAct = 0.12,
-    activityRatio = 1,
+    maxAct = 0.8,
+    activityRatio = 0.125,
     pInactive = 0.5,
     collective = FALSE,
-    sensoryRange = 1,
-    tmax = 10,
-    scenes = 10
+    sensoryRange = 50 / 100,
+    stopTime = 1.0,
+    tmax = 100,
+    scenes = 15
 )
 
 b = a[["pbsn"]]
@@ -28,7 +29,7 @@ b = a[["pbsn"]]
 library(igraph)
 g = graph.adjacency(b, weighted = TRUE, mode = "undirected")
 g = simplify(g, remove.loops = TRUE)
-plot(g, vertex.size = 3, label.cex = 0)
+plot(g, vertex.size = 10)
 
 d = degree(g, loops = F)
 length(d)
@@ -45,9 +46,8 @@ d = rbindlist(d)
 ggplot(d)+
     geom_jitter(
         aes(as.factor(scene),
-            associations),
-        size = 0.2,
-        alpha = 0.2
+            associations,
+            colour = factor(trait))
     )
 
 # melt
