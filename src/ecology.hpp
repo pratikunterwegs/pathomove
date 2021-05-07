@@ -52,7 +52,7 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
     pbsn.initAssociations(popsize);
     pbsn.initAdjMat (popsize);
 
-    genData thisGenData;
+    genData thisEcoData;
 
     pop.initPos(landscape);
 
@@ -66,39 +66,53 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
     for(int s = 0; s < scenes; s++) {
         landscape.initResources();
 
-        // reset population associations
+        // reset population associations and degree
         pop.associations = std::vector<int> (pop.nAgents, 0);
-        for(int t = 0; t < tmax; t++) {
+        pop.degree = std::vector<int> (pop.nAgents, 0);
+        pop.energy = std::vector<double> (pop.nAgents, 0.0);
 
-            landscape.countAvailable();
+        // reset pbsn
+        pbsn.initAssociations(popsize);
+        pbsn.initAdjMat(popsize);
 
-            std::random_shuffle(shuffleVec.begin(), shuffleVec.end());
-            // reduce counter for all
-            for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++) {
-                size_t id = shuffleVec[i];
-                if (gsl_ran_bernoulli(r, pop.trait[id]) == 1) {
-                    // move if counter is okay
-                    if (!(pop.counter[id] > 0.0)) {
-                        pop.move(id, landscape, moveCost, collective, sensoryRange);
-                    }
-                    pop.counter[id] -= 1.0;
-                    if (pop.counter[id] < 0.0) {
-                        pop.counter[id] = 0.0;
-                    }
-                    
-                }
-                forage(id, landscape, pop, sensoryRange);
-                pop.countNeighbours(id, sensoryRange);
+        // set up gillespie loop
+        double total_act = std::accumulate(pop.trait.begin(), pop.trait.end(), 0.0);
+        double trait_array[pop.nAgents];
+        std::copy(pop.trait.begin(), pop.trait.end(), trait_array);
+        double time = 0.0;
+        double eat_time = 0.0;
+        double it_t = 0.0;
+        size_t id;
+        double increment = 0.1;
+
+        // lookup table for discrete distr
+        gsl_ran_discrete_t*g = gsl_ran_discrete_preproc(static_cast<size_t>(pop.nAgents), trait_array);
+        for(; time < tmax; ) {
+            time += gsl_ran_exponential(r, total_act);
+
+            // do move
+            if (time > it_t) {
+                id = gsl_ran_discrete(r, g);
+                pop.move(id, landscape, moveCost, collective, sensoryRange);
+                it_t = (std::floor(time / increment) * increment) + increment;
             }
 
-            pop.updatePbsn(pbsn, sensoryRange, landsize);
+            // forage, count neighbours, and update pbsn at save points
+            if (time > eat_time) {
+                for (int i = 0; i < pop.nAgents; i++) {
+                    forage(static_cast<size_t> (i), landscape, pop, sensoryRange);
+                    pop.countNeighbours(i, sensoryRange);
+                    pop.updatePbsn(pbsn, sensoryRange, landsize);
+                }
+                eat_time += increment;
+            }
         }
         pop.degree = getDegree(pbsn);
-        thisGenData.updateGenData(pop, s);
+        thisEcoData.updateGenData(pop, s);
     }
 
     return Rcpp::List::create(
-                Named("trait_data") = thisGenData.getGenData(),
+                Named("trait_data") = thisEcoData.getGenData(),
                 Named("pbsn") = pbsn.adjacencyMatrix
     );
 }
