@@ -81,7 +81,7 @@ Rcpp::List evolve_pop(int genmax, double tmax,
                     feed_time = feed_time + time; // increase time here
                     // pop forages
                     for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++) {
-                        forage(i, food, pop, 2.0);
+                        pop.forage(i, food, 2.0, 2.0);
                     }
                 }
             }
