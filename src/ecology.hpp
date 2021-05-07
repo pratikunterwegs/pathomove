@@ -25,7 +25,8 @@
 //' @param landsize The size of the landscape as a numeric (double).
 //' @param collective Whether to move collectively.
 //' @param sensoryRange The sensory range of agents.
-//' @param maxAct The maximum acitivity.
+//' @param stopTime The time (double) that individuals stop after finding food.
+//' @param maxAct The maximum activity.
 //' @param activityRatio The ratio of activity levels of inactive individuals relative to active individuals.
 //' @param pInactive The proportion of inactive individuals in the population.
 //' @param scenes Number of scenes.
