@@ -89,6 +89,9 @@ void Resources::initResources() {
     }
     std::swap(rtree, tmpRtree);
     tmpRtree.clear();
+
+    // set all to available
+    available = std::vector<bool> (nItems, true);
 }
 
 void Resources::countAvailable() {
