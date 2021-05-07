@@ -1,7 +1,7 @@
 # check function
 devtools::build()
 Rcpp::compileAttributes()
-devtools::document()
+# devtools::document()
 devtools::install()
 
 library(snevo)
@@ -9,14 +9,14 @@ library(ggplot2)
 library(data.table)
 
 a = snevo::do_eco_sim(
-    popsize = 25,
-    landsize = 5,
-    nFood = 100,
-    nClusters = 20,
+    popsize = 500,
+    landsize = 50,
+    nFood = 2000,
+    nClusters = 200,
     clusterDispersal = 0.1,
-    maxAct = 1,
-    activityRatio = 0.1,
-    pInactive = 0.8,
+    maxAct = 0.12,
+    activityRatio = 1,
+    pInactive = 0.5,
     collective = FALSE,
     sensoryRange = 1,
     tmax = 10,
@@ -24,15 +24,15 @@ a = snevo::do_eco_sim(
 )
 
 b = a[["pbsn"]]
-b = b[b$associations > 0,]
 
 library(igraph)
 g = graph.adjacency(b, weighted = TRUE, mode = "undirected")
 g = simplify(g, remove.loops = TRUE)
-plot(g, vertex.size = 10)
+plot(g, vertex.size = 3, label.cex = 0)
 
 d = degree(g, loops = F)
 length(d)
+hist(d)
 # trait to gen
 b = a[["trait_data"]]
 b$gens
@@ -42,19 +42,29 @@ d = Map(function(df, sc) {
 }, b$pop_data, b$gens)
 d = rbindlist(d)
 
-d_summary = d[,list(
-    mean_assoc = mean(associations),
-    sd_assoc = sd(associations)
-), by = c("scene", "trait")]
+ggplot(d)+
+    geom_jitter(
+        aes(as.factor(scene),
+            associations),
+        size = 0.2,
+        alpha = 0.2
+    )
 
-ggplot(d_summary)+
-geom_pointrange(
-    aes(
-        scene, mean_assoc,
-        ymin = mean_assoc - sd_assoc,
-        ymax = mean_assoc + sd_assoc,
-        colour = factor(trait)
+# melt
+data = melt(d, id.vars = c("trait", "scene"))
+
+data_summary = data[,.(mean = mean(value), 
+          sd = sd(value)), 
+    by = c("scene", "trait", "variable")]
+
+ggplot(data_summary)+
+    geom_pointrange(
+        aes(
+            scene, mean,
+            ymin = mean - sd,
+            ymax = mean + sd,
+            colour = factor(trait)
     ),
     position = position_dodge(width = 0.2)
-)
-facet_grid(~scene)
+)+
+facet_wrap(~variable, scales = "free")
