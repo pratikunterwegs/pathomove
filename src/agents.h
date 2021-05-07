@@ -66,6 +66,7 @@ public:
     void initPos(Resources food);
     void move(size_t id, Resources food, const double moveCost, const bool collective,
               const double sensoryRange);
+    void forage(size_t individual, Resources &food, const double distance, const double stopTime);
     void normaliseIntake();
     void Reproduce();
     // for network
@@ -258,7 +259,7 @@ std::vector<int> findNearItems(size_t individual, Resources &food, Population &p
     return itemID;
 }
 
-void forage(size_t individual, Resources &food, Population &pop, const double distance){
+void Population::forage(size_t individual, Resources &food, const double distance, const double stopTime){
     // find nearest item ids
     std::vector<int> theseItems = findNearItems(individual, food, pop, distance);
 
