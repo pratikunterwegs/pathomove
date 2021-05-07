@@ -78,9 +78,7 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
         pbsn.initAdjMat(popsize);
 
         // set up gillespie loop
-        double total_act = std::accumulate(pop.trait.begin(), pop.trait.end(), 0.0);
-        double trait_array[pop.nAgents];
-        std::copy(pop.trait.begin(), pop.trait.end(), trait_array);
+        double total_act = std::accumulate(pop.trait.begin(), pop.trait.end(), 0.0); // prelim only
         double time = 0.0;
         double eat_time = 0.0;
         double it_t = 0.0;
@@ -88,7 +86,6 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
         double increment = 0.1;
 
         // lookup table for discrete distr
-        gsl_ran_discrete_t*g = gsl_ran_discrete_preproc(static_cast<size_t>(pop.nAgents), trait_array);
         for(; time < tmax; ) {
             // populate rate vector
             std::vector<double> tmpAct;
@@ -100,6 +97,12 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
                 }                   
             }
             total_act = std::accumulate(tmpAct.begin(),tmpAct.end(), 0.0);
+
+            double trait_array[static_cast<int>(tmpAct.size())];
+            std::copy(tmpAct.begin(), tmpAct.end(), trait_array);
+
+            gsl_ran_discrete_t*g = gsl_ran_discrete_preproc(tmpAct.size(), trait_array);
+        
 
             double dt = gsl_ran_exponential(r, total_act);
             time += dt;
