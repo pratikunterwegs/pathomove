@@ -67,6 +67,9 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
 
     for(int s = 0; s < scenes; s++) {
         landscape.initResources();
+        landscape.countAvailable();
+
+        std::cout << "n items avail init = " << landscape.nAvailable << "\n";
 
         // reset population associations and degree
         pop.associations = std::vector<int> (pop.nAgents, 0);
@@ -79,9 +82,9 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
 
         // set up gillespie loop
         double total_act = std::accumulate(pop.trait.begin(), pop.trait.end(), 0.0); // prelim only
-        double trait_array[popsize];
-        std::copy(pop.trait.begin(), pop.trait.end(), trait_array);
-        gsl_ran_discrete_t*g = gsl_ran_discrete_preproc(static_cast<size_t>(popsize), );
+        double trait_array_init[popsize];
+        std::copy(pop.trait.begin(), pop.trait.end(), trait_array_init);
+        gsl_ran_discrete_t*g = gsl_ran_discrete_preproc(static_cast<size_t>(popsize), trait_array_init);
         double time = 0.0;
         double eat_time = 0.0;
         double it_t = 0.0;
@@ -94,10 +97,10 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
             std::vector<double> tmpAct;
             std::vector<int> tmpQueue;
             for(int i = 0; i < pop.nAgents; i++) {
-                if(!(pop.counter[i] > 0.0)) {
+                if(pop.counter[i] < (increment / 100.0)) {
                     tmpAct.push_back(pop.trait[i]);
                     tmpQueue.push_back(i);
-                }                   
+                }
             }
 
             // check if anyone can move
@@ -107,7 +110,6 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
 
                 double trait_array[static_cast<int>(tmpAct.size())];
                 std::copy(tmpAct.begin(), tmpAct.end(), trait_array);
-
                 g = gsl_ran_discrete_preproc(tmpAct.size(), trait_array);
 
                 // main dynamics
@@ -144,9 +146,34 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
                     eat_time += increment;
                 }
             }
+            // forcibly increment time 
+            else {
+                time += increment;
+                // decrease counters for all
+                for(int i = 0; i < pop.nAgents; i++) {
+                    if(pop.counter[i] > 0.0) {
+                        pop.counter[i] -= increment;
+                    }
+                    if(pop.counter[i] < 0.0) {
+                        pop.counter[i] = 0.0;
+                    }                 
+                }
+                // update PBSN and others even if nobody has moved
+                for (int i = 0; i < pop.nAgents; i++) {
+                        pop.forage(static_cast<size_t> (i), landscape, sensoryRange, stopTime);
+                        pop.countNeighbours(i, sensoryRange);
+                    }
+                pop.updatePbsn(pbsn, sensoryRange, landsize);
+                eat_time += increment;
+            }
         }
         pop.degree = getDegree(pbsn);
         thisEcoData.updateGenData(pop, s);
+
+        landscape.countAvailable();
+
+        std::cout << "n items avail end scene = " << landscape.nAvailable << "\n";
+
     }
 
     return Rcpp::List::create(
