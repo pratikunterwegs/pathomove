@@ -66,6 +66,7 @@ public:
     void initPos(Resources food);
     void move(size_t id, Resources food, const double moveCost, const bool collective,
               const double sensoryRange);
+    std::vector<int> findNearItems(size_t individual, Resources &food, const double distance);
     void forage(size_t individual, Resources &food, const double distance, const double stopTime);
     void normaliseIntake();
     void Reproduce();
@@ -235,20 +236,20 @@ void Population::countNeighbours (size_t id,
     associations[id] += agentId.size();
 }
 
-std::vector<int> findNearItems(size_t individual, Resources &food, Population &pop,
+std::vector<int> Population::findNearItems(size_t individual, Resources &food, 
                                const double distance){
     // search nearest item only if any are available
     std::vector<int> itemID;
 
     if (food.nAvailable > 0) {
         std::vector<value> nearItems;
-        box bbox(point(pop.coordX[individual] - distance,
-                       pop.coordY[individual] - distance),
-                 point(pop.coordX[individual] + distance, pop.coordY[individual] + distance));
+        box bbox(point(coordX[individual] - distance,
+                       coordY[individual] - distance),
+                 point(coordX[individual] + distance, coordY[individual] + distance));
 
         food.rtree.query(
                     bgi::within(bbox) &&
-                    bgi::satisfies([&](value const& v) {return bg::distance(v.first, point(pop.coordX[individual], pop.coordY[individual]))
+                    bgi::satisfies([&](value const& v) {return bg::distance(v.first, point(coordX[individual], coordY[individual]))
                                                         < distance;}),
                 std::back_inserter(nearItems));
 
@@ -261,7 +262,7 @@ std::vector<int> findNearItems(size_t individual, Resources &food, Population &p
 
 void Population::forage(size_t individual, Resources &food, const double distance, const double stopTime){
     // find nearest item ids
-    std::vector<int> theseItems = findNearItems(individual, food, pop, distance);
+    std::vector<int> theseItems = findNearItems(individual, food, distance);
 
     // check near items count
     if(theseItems.size() > 0) {
@@ -280,12 +281,12 @@ void Population::forage(size_t individual, Resources &food, const double distanc
         // if item available then consume it
         // also stop the agent here for as many steps as its trait determines
         if (thisItem > -1) {
-            pop.counter[individual] = stopTime;
-            pop.energy[individual] += foodEnergy;
+            counter[individual] = stopTime;
+            energy[individual] += foodEnergy;
 
             // agent moves to where item was
-            pop.coordX[individual] = food.coordX[thisItem];
-            pop.coordY[individual] = food.coordY[thisItem];
+            coordX[individual] = food.coordX[thisItem];
+            coordY[individual] = food.coordY[thisItem];
 
             // remove the food item from the landscape for a brief time
             food.available[thisItem] = false;
