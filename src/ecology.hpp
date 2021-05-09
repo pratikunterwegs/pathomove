@@ -76,6 +76,10 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
         pop.degree = std::vector<int> (pop.nAgents, 0);
         pop.energy = std::vector<double> (pop.nAgents, 0.0);
 
+        // reset counter and positions
+        pop.counter = std::vector<double> (pop.nAgents, 0.0);
+        pop.initPos(landscape);
+
         // reset pbsn
         pbsn.initAssociations(popsize);
         pbsn.initAdjMat(popsize);
@@ -158,13 +162,16 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
                         pop.counter[i] = 0.0;
                     }                 
                 }
-                // update PBSN and others even if nobody has moved
-                for (int i = 0; i < pop.nAgents; i++) {
+                // forage, count neighbours, and update pbsn at save points
+                if (time > eat_time) {
+                    // add vec shuffle
+                    for (int i = 0; i < pop.nAgents; i++) {
                         pop.forage(static_cast<size_t> (i), landscape, sensoryRange, stopTime);
                         pop.countNeighbours(i, sensoryRange);
                     }
-                pop.updatePbsn(pbsn, sensoryRange, landsize);
-                eat_time += increment;
+                    pop.updatePbsn(pbsn, sensoryRange, landsize);
+                    eat_time += increment;
+                }
             }
         }
         pop.degree = getDegree(pbsn);
@@ -173,7 +180,6 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
         landscape.countAvailable();
 
         std::cout << "n items avail end scene = " << landscape.nAvailable << "\n";
-
     }
 
     return Rcpp::List::create(
