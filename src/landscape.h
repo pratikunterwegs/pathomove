@@ -98,7 +98,9 @@ void Resources::countAvailable() {
     nAvailable = 0;
     // counter set to max regeneration value on foraging
     for (size_t i = 0; i < static_cast<size_t>(nItems); i++){
-        nAvailable += available[i] ? 1 : 0;
+        if(available[i]) {
+            nAvailable ++;
+        }
     }
 }
 
