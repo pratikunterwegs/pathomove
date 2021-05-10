@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <cassert>
-
+#include <Rcpp.h>
 struct Network {
 public:
 
