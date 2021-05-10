@@ -1,24 +1,28 @@
 #ifndef LANDSCAPE_H
 #define LANDSCAPE_H
 
+// [[Rcpp::depends(BH)]]
+
+// Enable C++11 via this plugin to suppress 'long long' errors
+// [[Rcpp::plugins("cpp14")]]
+
+#include <vector>
+#include <Rcpp.h>
+#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/point.hpp>
+#include <boost/geometry/index/rtree.hpp>
+using namespace Rcpp;
+
 #include "parameters.h"
 #include <vector>
 #include <algorithm>
 #include <functional>
 
-// boost geometry libraries using boost headers R
-// [[Rcpp::plugins(cpp14)]]
-// [[Rcpp::depends(BH)]]
-
-#include <boost/geometry.hpp>
-#include <boost/geometry/geometries/geometries.hpp>
-#include <boost/geometry/geometries/point.hpp>
-#include <boost/geometry/index/rtree.hpp>
-#include <Rcpp.h>
-
 // apparently some types
-typedef boost::geometry::model::point<float, 2, boost::geometry::cs::cartesian> point;
-typedef boost::geometry::model::box<point> box;
+namespace bg = boost::geometry;
+namespace bgi = boost::geometry::index;
+typedef bg::model::point<float, 2, bg::cs::cartesian> point;
+typedef bg::model::box<point> box;
 typedef std::pair<point, unsigned> value;
 
 // items class
@@ -48,7 +52,7 @@ public:
     std::vector<bool> available;
     int nAvailable;
     // make rtree
-    boost::geometry::index::rtree< value, boost::geometry::index::quadratic<16> > rtree;
+    bgi::rtree< value, bgi::quadratic<16> > rtree;
 
     // funs to init with nCentres
     void initResources();
@@ -85,7 +89,7 @@ void Resources::initResources() {
     }
 
     // initialise rtree
-    boost::geometry::index::rtree< value, boost::geometry::index::quadratic<16> > tmpRtree;
+    bgi::rtree< value, bgi::quadratic<16> > tmpRtree;
     for (int i = 0; i < nItems; ++i)
     {
         point p = point(coordX[i], coordY[i]);
