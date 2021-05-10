@@ -11,20 +11,6 @@
 #include "landscape.h"
 #include "network.h"
 
-#include <Rcpp.h>
-
-using namespace Rcpp;
-
-// apparently some types
-typedef boost::geometry::model::point<float, 2, boost::geometry::cs::cartesian> point;
-typedef boost::geometry::model::box<point> box;
-typedef std::pair<point, unsigned> value;
-
-// EtaCRW=0.7 #the weight of the CRW component in the BCRW used to model the Indiv movement
-// StpSize_ind=7 #Mean step lengths of individuals;
-// StpStd_ind=5 # Sandard deviations of step lengths of individuals
-// Kappa_ind=3 #oncentration parameters of von Mises directional distributions used for individuals' movement
-
 // Agent class
 struct Population {
 public:
@@ -54,7 +40,7 @@ public:
     std::vector<int> degree;
 
     // position rtree
-    boost::geometry::index::rtree< value, boost::geometry::index::quadratic<16> > agentRtree;
+    bgi::rtree< value, bgi::quadratic<16> > agentRtree;
 
     // funs for pop
     void initPop (int popsize);
@@ -125,7 +111,7 @@ double distanceAgents(double x1, double y1, double x2, double y2) {
 // to update agent Rtree
 void Population::updateRtree () {
     // initialise rtree
-    boost::geometry::index::rtree< value, boost::geometry::index::quadratic<16> > tmpRtree;
+    bgi::rtree< value, bgi::quadratic<16> > tmpRtree;
     for (int i = 0; i < nAgents; ++i)
     {
         point p = point(coordX[i], coordY[i]);
@@ -166,7 +152,7 @@ void Population::competitionCosts(const double competitionCost) {
 }
 
 // function for wrapped distance agents using rtree
-double wrappedDistance(boost::geometry::model::point<float, 2, boost::geometry::cs::cartesian> rTreeLoc,
+double wrappedDistance(bg::model::point<float, 2, bg::cs::cartesian> rTreeLoc,
                        double queryX, double queryY, double landsize) {
     double rtreeX = rTreeLoc.get<0>();
     double rtreeY = rTreeLoc.get<1>();
@@ -203,8 +189,8 @@ void Population::move(size_t id, Resources food, const double moveCost,
                        coordY[id] - sensoryRange),
                  point(coordX[id] + sensoryRange, coordY[id] + sensoryRange));
         agentRtree.query(
-                    boost::geometry::index::within(bbox) &&
-                    boost::geometry::index::satisfies([&](value const& v) {return boost::geometry::distance(v.first, point(coordX[id],
+                    bgi::within(bbox) &&
+                    bgi::satisfies([&](value const& v) {return bg::distance(v.first, point(coordX[id],
                                                         coordY[id])) < sensoryRange;}),
                 std::back_inserter(nearAgents));
         
@@ -245,8 +231,8 @@ void Population::countNeighbours (size_t id,
                    coordY[id] - sensoryRange),
              point(coordX[id] + sensoryRange, coordY[id] + sensoryRange));
     agentRtree.query(
-                boost::geometry::index::within(bbox) &&
-                boost::geometry::index::satisfies([&](value const& v) {return boost::geometry::distance(v.first, point(coordX[id], coordY[id]))
+                bgi::within(bbox) &&
+                bgi::satisfies([&](value const& v) {return bg::distance(v.first, point(coordX[id], coordY[id]))
                                                     < sensoryRange;}),
             std::back_inserter(nearAgents));
     associations[id] += nearAgents.size();
@@ -264,8 +250,8 @@ std::vector<int> Population::findNearItems(size_t individual, Resources &food,
                  point(coordX[individual] + distance, coordY[individual] + distance));
 
         food.rtree.query(
-                    boost::geometry::index::within(bbox) &&
-                    boost::geometry::index::satisfies([&](value const& v) {return boost::geometry::distance(v.first, point(coordX[individual],                                      coordY[individual])) < distance;}),
+                    bgi::within(bbox) &&
+                    bgi::satisfies([&](value const& v) {return bg::distance(v.first, point(coordX[individual],                                      coordY[individual])) < distance;}),
                 std::back_inserter(nearItems));
 
         for(size_t i = 0; i < nearItems.size(); i++){
