@@ -42,43 +42,10 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// do_simulation
-Rcpp::List do_simulation(int popsize, int genmax, int tmax, int nFood, int foodClusters, double clusterDispersal, double landsize, double competitionCost, const bool collective, const int nScenes);
-RcppExport SEXP _snevo_do_simulation(SEXP popsizeSEXP, SEXP genmaxSEXP, SEXP tmaxSEXP, SEXP nFoodSEXP, SEXP foodClustersSEXP, SEXP clusterDispersalSEXP, SEXP landsizeSEXP, SEXP competitionCostSEXP, SEXP collectiveSEXP, SEXP nScenesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type popsize(popsizeSEXP);
-    Rcpp::traits::input_parameter< int >::type genmax(genmaxSEXP);
-    Rcpp::traits::input_parameter< int >::type tmax(tmaxSEXP);
-    Rcpp::traits::input_parameter< int >::type nFood(nFoodSEXP);
-    Rcpp::traits::input_parameter< int >::type foodClusters(foodClustersSEXP);
-    Rcpp::traits::input_parameter< double >::type clusterDispersal(clusterDispersalSEXP);
-    Rcpp::traits::input_parameter< double >::type landsize(landsizeSEXP);
-    Rcpp::traits::input_parameter< double >::type competitionCost(competitionCostSEXP);
-    Rcpp::traits::input_parameter< const bool >::type collective(collectiveSEXP);
-    Rcpp::traits::input_parameter< const int >::type nScenes(nScenesSEXP);
-    rcpp_result_gen = Rcpp::wrap(do_simulation(popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, competitionCost, collective, nScenes));
-    return rcpp_result_gen;
-END_RCPP
-}
-// export_pop
-DataFrame export_pop(int popsize);
-RcppExport SEXP _snevo_export_pop(SEXP popsizeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type popsize(popsizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(export_pop(popsize));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_snevo_do_eco_sim", (DL_FUNC) &_snevo_do_eco_sim, 13},
     {"_snevo_get_test_landscape", (DL_FUNC) &_snevo_get_test_landscape, 4},
-    {"_snevo_do_simulation", (DL_FUNC) &_snevo_do_simulation, 10},
-    {"_snevo_export_pop", (DL_FUNC) &_snevo_export_pop, 1},
     {NULL, NULL, 0}
 };
 

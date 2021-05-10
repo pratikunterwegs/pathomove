@@ -34,30 +34,3 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterDispersal) {
     .Call(`_snevo_get_test_landscape`, nItems, landsize, nClusters, clusterDispersal)
 }
 
-#' Runs the sociality model simulation.
-#'
-#' @description Run the simulation using parameters passed as
-#' arguments to the corresponding R function.
-#' 
-#' @param popsize The population size.
-#' @param genmax The maximum number of generations per simulation.
-#' @param tmax The number of timesteps per generation.
-#' @param nFood The number of food items.
-#' @param foodClusters Number of clusters around which food is generated.
-#' @param clusterDispersal How dispersed food is around the cluster centre.
-#' @param landsize The size of the landscape as a numeric (double).
-#' @param competitionCost Cost of associations.
-#' @param collective Whether to move collectively.
-#' @param nScenes How many scenes.
-#' @return A data frame of the evolved population traits.
-do_simulation <- function(popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, competitionCost, collective, nScenes) {
-    .Call(`_snevo_do_simulation`, popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, competitionCost, collective, nScenes)
-}
-
-#' Export a population.
-#'
-#' @param popsize The population size.
-export_pop <- function(popsize) {
-    .Call(`_snevo_export_pop`, popsize)
-}
-
