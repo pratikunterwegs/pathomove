@@ -4,6 +4,7 @@
 ^data$
 ^bash$
 ^python$
+^figures$
 ^scripts$
 ^.*\.Rmd$
 ^sociality_model_cpp$
