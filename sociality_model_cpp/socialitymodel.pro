@@ -46,8 +46,8 @@ HEADERS += \
 QMAKE_CXXFLAGS += $$RCPPWARNING $$RCPPFLAGS $$RCPPINCL
 QMAKE_LIBS += $$RLDFLAGS $$RBLAS $$RLAPACK $$RCPPLIBS
 
-LIBS += -L/usr/local/lib -lgsl -lgslcblas -lm \
-        -lboost_system
+#LIBS += -L/usr/local/lib -lgsl -lgslcblas -lm \
+#        -lboost_system
 
 
 # Default rules for deployment.
