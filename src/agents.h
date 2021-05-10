@@ -78,24 +78,26 @@ public:
 };
 
 void Population::initPos(Resources food) {
+    std::uniform_real_distribution<double> agent_ran_pos(0.0, food.dSize);
     for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-        coordX[i] = gsl_rng_uniform(r) * food.dSize;
-        coordY[i] = gsl_rng_uniform(r) * food.dSize;
+        coordX[i] = agent_ran_pos(rng);
+        coordY[i] = agent_ran_pos(rng);
     }
 }
 
 void Population::setTrait() {
+    std::uniform_real_distribution<double> agent_ran_trait(0.0, 1.0);
     for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-        trait[i] = gsl_rng_uniform(r);
+        trait[i] = agent_ran_trait(rng);
     }
 }
 
 void Population::setTraitBimodal(const double maxAct, const double ratio, const double proportion) {
     trait = std::vector<double> (nAgents, maxAct);
-    // int nInactive = static_cast<int>(std::floor(proportion * static_cast<double>(nAgents)));
+    std::bernoulli_distribution is_inactive(proportion);
     for (int z = 0; z < nAgents; z++)
     {
-        if(gsl_ran_bernoulli(r, proportion) == 1) {
+        if(is_inactive(rng)) {
             trait[z] = ratio * maxAct;
         }
     }
@@ -180,12 +182,17 @@ double wrappedDistance(boost::geometry::model::point<float, 2, bg::cs::cartesian
     return wrD;
 }
 
+// angle distribution
+std::cauchy_distribution<double> agent_move_angle(etaCrw, 0.01);
+// stepsize disribution
+std::gamma_distribution<double> agent_move_dist(1.0, 0.1);
+
 /// population movement function
 void Population::move(size_t id, Resources food, const double moveCost,
                       const bool collective, const double sensoryRange) {
 
     double heading;
-    heading = etaCrw * gsl_ran_gaussian(r, 3.0);
+    heading = agent_move_angle(rng);
     // get radians
     heading = heading * M_PI / 180.0;
     double stepSize;
@@ -217,15 +224,15 @@ void Population::move(size_t id, Resources food, const double moveCost,
         }
     }
 
-    stepSize = gsl_ran_gamma(r, food / 100.0, food / 25.0); // individual strategy is the
+    stepSize = agent_move_dist(rng);
 
     // figure out the next position
     coordX[id] = coordX[id] + (stepSize * std::cos(heading));
     coordY[id] = coordY[id] + (stepSize * std::sin(heading));
 
     // bounce agents off the landscape limits
-    coordX[id] = (coordX[id] > food.dSize) ? food.dSize - (food.dSize / 25.0) : coordX[id];
-    coordY[id] = (coordY[id] > food.dSize) ? food.dSize - (food.dSize / 25.0) : coordY[id];
+    coordX[id] = (coordX[id] > food.dSize) ? (food.dSize - (food.dSize / 100.0)) : coordX[id];
+    coordY[id] = (coordY[id] > food.dSize) ? (food.dSize - (food.dSize / 100.0)) : coordY[id];
 
     // add a cost
     energy[id] -= (stepSize * moveCost);
@@ -353,6 +360,11 @@ void Population::normaliseIntake() {
     }
 }
 
+// mutation probability and size distribution
+std::bernoulli_distribution mutation_happens(mProb);
+std::gamma_distribution<double> mutation_size(0.01, mShift);
+
+// fun for replication
 void Population::Reproduce() {
     //normalise intake
     normaliseIntake();
@@ -374,9 +386,9 @@ void Population::Reproduce() {
     // mutate trait: trait shifts up or down with an equal prob
     // trait mutation prob is mProb, in a two step process
     for (size_t a = 0; static_cast<int>(a) < nAgents; a++) {
-        if (gsl_ran_bernoulli(r, mProb) == 1) {
+        if (mutation_happens(rng)) {
             // mutation set, now increase or decrease
-            newTrait[a] = trait[a] + gsl_ran_cauchy(r, mShift);
+            newTrait[a] = trait[a] + mutation_size(rng);
             // no negative traits
             if (newTrait[a] < 0) {
                 newTrait[a] = 0.0;
