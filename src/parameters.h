@@ -22,7 +22,7 @@ const double indivStepSizeSd = 0.2;
 
 const double moveCost = 0.001;
 
-const double etaCrw = 45.0; // standard turning angle
+const double etaCrw = 40.0; // standard turning angle
 
 // agents
 // const double range = 2.0;
