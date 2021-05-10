@@ -14,13 +14,10 @@
 #include <Rcpp.h>
 
 using namespace Rcpp;
-// make namespaces
-namespace bg = boost::geometry;
-namespace bgi = boost::geometry::index;
 
 // apparently some types
-typedef bg::model::point<float, 2, bg::cs::cartesian> point;
-typedef bg::model::box<point> box;
+typedef boost::geometry::model::point<float, 2, boost::geometry::cs::cartesian> point;
+typedef boost::geometry::model::box<point> box;
 typedef std::pair<point, unsigned> value;
 
 // EtaCRW=0.7 #the weight of the CRW component in the BCRW used to model the Indiv movement
@@ -57,7 +54,7 @@ public:
     std::vector<int> degree;
 
     // position rtree
-    bgi::rtree< value, bgi::quadratic<16> > agentRtree;
+    boost::geometry::index::rtree< value, boost::geometry::index::quadratic<16> > agentRtree;
 
     // funs for pop
     void initPop (int popsize);
@@ -71,7 +68,7 @@ public:
     void normaliseIntake();
     void Reproduce();
     // for network
-    void updatePbsn(Network &pbsn, const double range, const double landsize);
+    void updatePbsn(Network &pbsn, const double range);
     void competitionCosts(const double competitionCost);
     void updateRtree();
     void countNeighbours (size_t id, const double sensoryRange);
@@ -115,7 +112,7 @@ double wrappedDistanceAgents(double x1, double y1, double x2, double y2, double 
 }
 
 // distance without wrapping
-double distanceAgents(double x1, double y1, double x2, double y2, double landsize) {
+double distanceAgents(double x1, double y1, double x2, double y2) {
 
     double distanceX = x1 - x2;
     double distanceY = y1 - y2;
@@ -128,7 +125,7 @@ double distanceAgents(double x1, double y1, double x2, double y2, double landsiz
 // to update agent Rtree
 void Population::updateRtree () {
     // initialise rtree
-    bgi::rtree< value, bgi::quadratic<16> > tmpRtree;
+    boost::geometry::index::rtree< value, boost::geometry::index::quadratic<16> > tmpRtree;
     for (int i = 0; i < nAgents; ++i)
     {
         point p = point(coordX[i], coordY[i]);
@@ -139,7 +136,7 @@ void Population::updateRtree () {
 }
 
 // to update pbsn
-void Population::updatePbsn(Network &pbsn, const double range, const double landsize) {
+void Population::updatePbsn(Network &pbsn, const double range) {
 
     updateRtree();
 
@@ -152,7 +149,7 @@ void Population::updatePbsn(Network &pbsn, const double range, const double land
         // but may become an issue later
         for(size_t j = i; j < pbsn.associations[i].size(); j++) {
 
-            if(distanceAgents(coordX[i], coordY[i], coordX[j], coordY[j], landsize) < range) {
+            if(distanceAgents(coordX[i], coordY[i], coordX[j], coordY[j]) < range) {
                 pbsn.associations[i][j]++;
                 pbsn.adjacencyMatrix (i, j) += 1;
             }
@@ -169,7 +166,7 @@ void Population::competitionCosts(const double competitionCost) {
 }
 
 // function for wrapped distance agents using rtree
-double wrappedDistance(boost::geometry::model::point<float, 2, bg::cs::cartesian> rTreeLoc,
+double wrappedDistance(boost::geometry::model::point<float, 2, boost::geometry::cs::cartesian> rTreeLoc,
                        double queryX, double queryY, double landsize) {
     double rtreeX = rTreeLoc.get<0>();
     double rtreeY = rTreeLoc.get<1>();
@@ -206,9 +203,9 @@ void Population::move(size_t id, Resources food, const double moveCost,
                        coordY[id] - sensoryRange),
                  point(coordX[id] + sensoryRange, coordY[id] + sensoryRange));
         agentRtree.query(
-                    bgi::within(bbox) &&
-                    bgi::satisfies([&](value const& v) {return bg::distance(v.first, coordX[id],
-                                                        coordY[id]) < sensoryRange;}),
+                    boost::geometry::index::within(bbox) &&
+                    boost::geometry::index::satisfies([&](value const& v) {return boost::geometry::distance(v.first, point(coordX[id],
+                                                        coordY[id])) < sensoryRange;}),
                 std::back_inserter(nearAgents));
         
         if (nearAgents.size() > 0) {
@@ -248,8 +245,8 @@ void Population::countNeighbours (size_t id,
                    coordY[id] - sensoryRange),
              point(coordX[id] + sensoryRange, coordY[id] + sensoryRange));
     agentRtree.query(
-                bgi::within(bbox) &&
-                bgi::satisfies([&](value const& v) {return bg::distance(v.first, point(coordX[id], coordY[id]))
+                boost::geometry::index::within(bbox) &&
+                boost::geometry::index::satisfies([&](value const& v) {return boost::geometry::distance(v.first, point(coordX[id], coordY[id]))
                                                     < sensoryRange;}),
             std::back_inserter(nearAgents));
     associations[id] += nearAgents.size();
@@ -267,8 +264,8 @@ std::vector<int> Population::findNearItems(size_t individual, Resources &food,
                  point(coordX[individual] + distance, coordY[individual] + distance));
 
         food.rtree.query(
-                    bgi::within(bbox) &&
-                    bgi::satisfies([&](value const& v) {return bg::distance(v.first, point(coordX[individual],                                      coordY[individual])) < distance;}),
+                    boost::geometry::index::within(bbox) &&
+                    boost::geometry::index::satisfies([&](value const& v) {return boost::geometry::distance(v.first, point(coordX[individual],                                      coordY[individual])) < distance;}),
                 std::back_inserter(nearItems));
 
         for(size_t i = 0; i < nearItems.size(); i++){
