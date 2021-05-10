@@ -5,20 +5,20 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
+
 // boost geometry libraries using boost headers R
+// [[Rcpp::plugins(cpp14)]]
 // [[Rcpp::depends(BH)]]
+
 #include <boost/geometry.hpp>
+#include <boost/geometry/geometries/geometries.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/index/rtree.hpp>
 #include <Rcpp.h>
 
-// make namespaces
-namespace bg = boost::geometry;
-namespace bgi = boost::geometry::index;
-
 // apparently some types
-typedef bg::model::point<float, 2, bg::cs::cartesian> point;
-typedef bg::model::box<point> box;
+typedef boost::geometry::model::point<float, 2, boost::geometry::cs::cartesian> point;
+typedef boost::geometry::model::box<point> box;
 typedef std::pair<point, unsigned> value;
 
 // items class
@@ -48,7 +48,7 @@ public:
     std::vector<bool> available;
     int nAvailable;
     // make rtree
-    bgi::rtree< value, bgi::quadratic<16> > rtree;
+    boost::geometry::index::rtree< value, boost::geometry::index::quadratic<16> > rtree;
 
     // funs to init with nCentres
     void initResources();
@@ -85,7 +85,7 @@ void Resources::initResources() {
     }
 
     // initialise rtree
-    bgi::rtree< value, bgi::quadratic<16> > tmpRtree;
+    boost::geometry::index::rtree< value, boost::geometry::index::quadratic<16> > tmpRtree;
     for (int i = 0; i < nItems; ++i)
     {
         point p = point(coordX[i], coordY[i]);
