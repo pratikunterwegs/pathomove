@@ -1,8 +1,9 @@
 # check function
 Rcpp::compileAttributes()
 devtools::build()
-# devtools::document()
+sink(file = "install_output.log")
 devtools::install()
+sink()
 
 library(snevo)
 library(ggplot2)
