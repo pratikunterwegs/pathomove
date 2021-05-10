@@ -60,7 +60,7 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
 
     // set seed
     unsigned seed = static_cast<unsigned> (std::chrono::system_clock::now().time_since_epoch().count());
-    rng(seed);
+    rng.seed(seed);
 
     std::vector<int> shuffleVec (pop.nAgents, 0);
     for (int i = 0; i < pop.nAgents; ++i) {
@@ -113,10 +113,9 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
             // check if anyone can move
             if (tmpAct.size() > 0) {
                 // prepare rates
-                total_act = std::accumulate(tmpAct.begin(),tmpAct.end(), 0.0);
+                double total_act = std::accumulate(tmpAct.begin(),tmpAct.end(), 0.0);
 
-                double total_act = std::accumulate(pop.trait.begin(), pop.trait.end(), 0.0);
-                std::discrete_distribution<> dist_agent_moves(pop.trait.begin(), pop.trait.end());
+                std::discrete_distribution<> dist_agent_moves(tmpAct.begin(), tmpAct.end());
                 std::exponential_distribution<double> event_time_dist(total_act);
                 // double trait_array[static_cast<int>(tmpAct.size())];
                 // std::copy(tmpAct.begin(), tmpAct.end(), trait_array);
@@ -152,7 +151,7 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
                         pop.forage(static_cast<size_t> (i), landscape, sensoryRange, stopTime);
                         pop.countNeighbours(i, sensoryRange);
                     }
-                    pop.updatePbsn(pbsn, sensoryRange, landsize);
+                    pop.updatePbsn(pbsn, sensoryRange);
                     eat_time += increment;
                 }
             }
@@ -175,7 +174,7 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
                         pop.forage(static_cast<size_t> (i), landscape, sensoryRange, stopTime);
                         pop.countNeighbours(i, sensoryRange);
                     }
-                    pop.updatePbsn(pbsn, sensoryRange, landsize);
+                    pop.updatePbsn(pbsn, sensoryRange);
                     eat_time += increment;
                 }
             }
