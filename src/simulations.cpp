@@ -26,77 +26,20 @@ Rcpp::List evolve_pop(int genmax, double tmax,
     genData thisGenData;
     networkData thisNetworkData;
     // set seed
-    gsl_rng_set(r, seed);
+    // gsl_rng_set(r, seed);
     // random starting position only in first generation
     pop.initPos(food);
     for(int gen = 0; gen < genmax; gen++) {
-        // set up gillespie loop
-        double total_act = std::accumulate(pop.trait.begin(), pop.trait.end(), 0.0);
-        double trait_array[pop.nAgents];
-        std::copy(pop.trait.begin(), pop.trait.end(), trait_array);
-        double time = 0.0;
-        double feed_time = 0.0;
-        double it_t = 0.0;
-        size_t id;
-        double increment = 0.01;
-        bool pbsn_ready = false;
-        // lookup table for discrete distr
-        gsl_ran_discrete_t*g = gsl_ran_discrete_preproc(static_cast<size_t>(pop.nAgents), trait_array);
-
-        for (int sc = 0; sc < scenes; sc++) {
-            for(; time < tmax; ) {
-                //increment time
-                time += gsl_ran_exponential(r, total_act);
-                /// movement dynamic
-                if (time > it_t) {
-
-                    // reduce counter for all
-                    for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++) {
-                        pop.counter[i] -= time;
-                        if (pop.counter[i] < 0.0) {
-                            pop.counter[i] = 0.0;
-                        }
-                    }
-                    // pick an agent to move
-                    id = gsl_ran_discrete(r, g);
-                    // if that agent can move, move it
-                    if (!(pop.counter[id] > 0.0)) {
-                        pop.move(id, food, moveCost, collective, 1.0);
-                    }
-                    it_t = (std::floor(time / increment) * increment) + increment;
-                }
-
-                // update network halfway
-                if ((time > (tmax / 2.0)) && !pbsn_ready) {
-                    // update population pbsn
-                    pop.updatePbsn(pbsn, 2.0, food.dSize);
-                }
-
-                // check which food is available
-                food.countAvailable();
-
-                // when time has advanced by more than an increment,
-                // all agents forage and the PBSN is updated
-                if (time > (feed_time + increment)) {
-                    feed_time = feed_time + time; // increase time here
-                    // pop forages
-                    for (size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++) {
-                        pop.forage(i, food, 2.0, 2.0);
-                    }
-                }
-            }
-            // scene ends here, make new landscape
-            food.initResources();
-
+        
         }
         // generation ends here
         // update gendata
-        thisGenData.updateGenData(pop, gen);
-        thisNetworkData.updateNetworkData(pop, gen, pbsn);
-        // subtract competition costs
-        pop.competitionCosts(competitionCost);
-        // reproduce
-        pop.Reproduce();
+        // thisGenData.updateGenData(pop, gen);
+        // thisNetworkData.updateNetworkData(pop, gen, pbsn);
+        // // subtract competition costs
+        // pop.competitionCosts(competitionCost);
+        // // reproduce
+        // pop.Reproduce();
     }
     return Rcpp::List::create(
                 Named("trait_data") = thisGenData.getGenData(),
