@@ -1,4 +1,1 @@
-CXXSTD = -std=c++17
-
-PKG_LIBS = -I /usr/libgsl -lgsl -lgslcblas -lm \
-           -lboost_system
+CXXSTD = -std=c++14
