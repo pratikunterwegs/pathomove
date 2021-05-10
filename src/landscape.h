@@ -5,7 +5,8 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
-// boost geometry libraries
+// boost geometry libraries using boost headers R
+// [[Rcpp::depends(BH)]]
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/index/rtree.hpp>
@@ -59,10 +60,13 @@ void Resources::initResources() {
     std::vector<double> centreCoordX (nClusters);
     std::vector<double> centreCoordY (nClusters);
 
+    std::uniform_real_distribution<double> item_ran_pos(0.0, dSize);
+    std::normal_distribution<double> item_cluster_spread(0.0, clusterDispersal);
+
     for(size_t i = 0; i < static_cast<size_t>(nClusters); i++) {
 
-        centreCoordX[i] = /*dist(rng);*/gsl_rng_uniform(r) * dSize;
-        centreCoordY[i] = /*dist(rng);*/gsl_rng_uniform(r) * dSize;
+        centreCoordX[i] = item_ran_pos(rng);
+        centreCoordY[i] = item_ran_pos(rng);
 
         // also add to main set
         coordX[i] = centreCoordX[i];
@@ -72,8 +76,8 @@ void Resources::initResources() {
     // generate items around
     for(int i = nClusters; i < nItems; i++) {
 
-        coordX[i] = (centreCoordX[(i % nClusters)] + gsl_ran_gaussian(r, clusterDispersal));
-        coordY[i] = (centreCoordY[(i % nClusters)] + gsl_ran_gaussian(r, clusterDispersal));
+        coordX[i] = (centreCoordX[(i % nClusters)] + item_cluster_spread(rng));
+        coordY[i] = (centreCoordY[(i % nClusters)] + item_cluster_spread(rng));
 
         // wrap
         coordX[i] = fmod(dSize + coordX[i], dSize);
