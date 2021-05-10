@@ -15,12 +15,14 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Depends:igraph
 LinkingTo: 
-    Rcpp
+    Rcpp,
+    BH
 Imports: 
     Rcpp,
     assertthat,
     data.table,
-    glue
+    glue,
+    BH
 Suggests: 
     testthat,
     ssh
