@@ -16,36 +16,36 @@
 using namespace Rcpp;
 
 // function to evolve population
-Rcpp::List evolve_pop(int genmax, double tmax,
-                      Population &pop, Resources &food, Network &pbsn,
-                      double competitionCost,
-                      const bool collective,
-                      const int scenes)
-{
-    // make generation data
-    genData thisGenData;
-    networkData thisNetworkData;
-    // set seed
-    // gsl_rng_set(r, seed);
-    // random starting position only in first generation
-    pop.initPos(food);
-    for(int gen = 0; gen < genmax; gen++) {
+// Rcpp::List evolve_pop(int genmax, double tmax,
+//                       Population &pop, Resources &food, Network &pbsn,
+//                       double competitionCost,
+//                       const bool collective,
+//                       const int scenes)
+// {
+//     // make generation data
+//     genData thisGenData;
+//     networkData thisNetworkData;
+//     // set seed
+//     // gsl_rng_set(r, seed);
+//     // random starting position only in first generation
+//     pop.initPos(food);
+//     for(int gen = 0; gen < genmax; gen++) {
         
-        }
-        // generation ends here
-        // update gendata
-        // thisGenData.updateGenData(pop, gen);
-        // thisNetworkData.updateNetworkData(pop, gen, pbsn);
-        // // subtract competition costs
-        // pop.competitionCosts(competitionCost);
-        // // reproduce
-        // pop.Reproduce();
-    }
-    return Rcpp::List::create(
-                Named("trait_data") = thisGenData.getGenData(),
-                Named("network_measures") = thisNetworkData.getNetworkData()
-            );
-}
+//         }
+//         // generation ends here
+//         // update gendata
+//         // thisGenData.updateGenData(pop, gen);
+//         // thisNetworkData.updateNetworkData(pop, gen, pbsn);
+//         // // subtract competition costs
+//         // pop.competitionCosts(competitionCost);
+//         // // reproduce
+//         // pop.Reproduce();
+// //    }
+//     return Rcpp::List::create(
+//                 Named("trait_data") = thisGenData.getGenData(),
+//                 Named("network_measures") = thisNetworkData.getNetworkData()
+//             );
+// }
 
 //' Runs the sociality model simulation.
 //'
@@ -63,51 +63,49 @@ Rcpp::List evolve_pop(int genmax, double tmax,
 //' @param collective Whether to move collectively.
 //' @param nScenes How many scenes.
 //' @return A data frame of the evolved population traits.
-// [[Rcpp::export]]
-Rcpp::List do_simulation(int popsize, int genmax, int tmax, 
-                         int nFood, int foodClusters, double clusterDispersal, double landsize,
-                         double competitionCost, const bool collective,
-                         const int nScenes) {
+// Rcpp::List do_simulation(int popsize, int genmax, int tmax, 
+//                          int nFood, int foodClusters, double clusterDispersal, double landsize,
+//                          double competitionCost, const bool collective,
+//                          const int nScenes) {
 
-    // prepare landscape
-    Resources food (nFood, landsize, foodClusters, clusterDispersal);
-    food.initResources();
-    food.countAvailable();
-    Rcpp::Rcout << "landscape with " << foodClusters << " clusters\n";
-    /// export landscape
+//     // prepare landscape
+//     Resources food (nFood, landsize, foodClusters, clusterDispersal);
+//     food.initResources();
+//     food.countAvailable();
+//     Rcpp::Rcout << "landscape with " << foodClusters << " clusters\n";
+//     /// export landscape
 
-    // prepare population
-    Population pop (popsize, 0);
-    // pop.initPop(popsize);
-    pop.setTrait();
-    Rcpp::Rcout << pop.nAgents << " agents over " << genmax << " gens of " << tmax << " timesteps\n";
+//     // prepare population
+//     Population pop (popsize, 0);
+//     // pop.initPop(popsize);
+//     pop.setTrait();
+//     Rcpp::Rcout << pop.nAgents << " agents over " << genmax << " gens of " << tmax << " timesteps\n";
 
-    // prepare social network struct
-    Network pbsn;
-    pbsn.initAssociations(pop.nAgents);
+//     // prepare social network struct
+//     Network pbsn;
+//     pbsn.initAssociations(pop.nAgents);
 
-    // evolve population and store data
-    Rcpp::List evoSimData = evolve_pop(genmax, tmax, pop, food, pbsn, competitionCost, collective, nScenes);
+//     // evolve population and store data
+//     Rcpp::List evoSimData = evolve_pop(genmax, tmax, pop, food, pbsn, competitionCost, collective, nScenes);
 
-    Rcpp::Rcout << "data prepared\n";
+//     Rcpp::Rcout << "data prepared\n";
 
-    return evoSimData;
-}
+//     return evoSimData;
+// }
 
 //' Export a population.
 //'
 //' @param popsize The population size.
-// [[Rcpp::export]]
-DataFrame export_pop(int popsize) {
-    Rcpp::Rcout << "in export function";
-    Population pop (popsize, 2);
-    // pop.initPop(popsize);
-    pop.setTrait();
+// DataFrame export_pop(int popsize) {
+//     Rcpp::Rcout << "in export function";
+//     Population pop (popsize, 2);
+//     // pop.initPop(popsize);
+//     pop.setTrait();
 
-    DataFrame df_pop = DataFrame::create(
-                Named("trait") = pop.trait,
-                Named("energy") = pop.energy
-            );
+//     DataFrame df_pop = DataFrame::create(
+//                 Named("trait") = pop.trait,
+//                 Named("energy") = pop.energy
+//             );
 
-    return df_pop;
-}
+//     return df_pop;
+// }
