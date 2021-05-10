@@ -9,32 +9,33 @@ library(ggplot2)
 library(data.table)
 
 a = snevo::do_eco_sim(
-    popsize = 200,
-    landsize = 10,
-    nFood = 1000,
-    nClusters = 200,
-    clusterDispersal = 0.1,
-    maxAct = 0.8,
-    activityRatio = 0.125,
+    popsize = 500,
+    landsize = 100,
+    nFood = 500,
+    nClusters = 256,
+    clusterDispersal = 8,
+    maxAct = 1,
+    activityRatio = 0.5,
     pInactive = 0.5,
     collective = FALSE,
-    sensoryRange = 50 / 100,
-    stopTime = 1.0,
-    tmax = 100,
-    scenes = 15
+    sensoryRange = 1.0,
+    stopTime = 2,
+    tmax = 100.0,
+    scenes = 1
 )
+names(a)
 
 b = a[["pbsn"]]
 
 library(igraph)
 g = graph.adjacency(b, weighted = TRUE, mode = "undirected")
 g = simplify(g, remove.loops = TRUE)
-plot(g, vertex.size = 10)
+plot(g, vertex.size = 1)
 
 d = degree(g, loops = F)
 length(d)
 hist(d)
-# trait to gen
+    # trait to gen
 b = a[["trait_data"]]
 b$gens
 d = Map(function(df, sc) {
@@ -46,23 +47,25 @@ d = rbindlist(d)
 ggplot(d)+
     geom_jitter(
         aes(as.factor(scene),
-            associations,
-            colour = factor(trait))
-    )
+            energy,
+            colour = factor(trait)),
+        shape = 1
+    )+
+    scale_y_log10()
 
 # melt
 data = melt(d, id.vars = c("trait", "scene"))
 
-data_summary = data[,.(mean = mean(value), 
+data_summary = data[,.(median = median(value), 
           sd = sd(value)), 
     by = c("scene", "trait", "variable")]
 
 ggplot(data_summary)+
     geom_pointrange(
         aes(
-            scene, mean,
-            ymin = mean - sd,
-            ymax = mean + sd,
+            scene, median,
+            ymin = median - sd,
+            ymax = median + sd,
             colour = factor(trait)
     ),
     position = position_dodge(width = 0.2)
