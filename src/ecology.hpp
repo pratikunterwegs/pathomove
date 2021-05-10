@@ -58,7 +58,9 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
 
     pop.initPos(landscape);
 
-    gsl_rng_set(r, seed);
+    // set seed
+    unsigned seed = static_cast<unsigned> (std::chrono::system_clock::now().time_since_epoch().count());
+    rng(seed);
 
     std::vector<int> shuffleVec (pop.nAgents, 0);
     for (int i = 0; i < pop.nAgents; ++i) {
@@ -85,10 +87,11 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
         pbsn.initAdjMat(popsize);
 
         // set up gillespie loop
-        double total_act = std::accumulate(pop.trait.begin(), pop.trait.end(), 0.0); // prelim only
-        double trait_array_init[popsize];
-        std::copy(pop.trait.begin(), pop.trait.end(), trait_array_init);
-        gsl_ran_discrete_t*g = gsl_ran_discrete_preproc(static_cast<size_t>(popsize), trait_array_init);
+        
+        // double trait_array_init[popsize];
+        // std::copy(pop.trait.begin(), pop.trait.end(), trait_array_init);
+        // gsl_ran_discrete_t*g = gsl_ran_discrete_preproc(static_cast<size_t>(popsize), trait_array_init);
+        
         double time = 0.0;
         double eat_time = 0.0;
         double it_t = 0.0;
@@ -112,12 +115,15 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
                 // prepare rates
                 total_act = std::accumulate(tmpAct.begin(),tmpAct.end(), 0.0);
 
-                double trait_array[static_cast<int>(tmpAct.size())];
-                std::copy(tmpAct.begin(), tmpAct.end(), trait_array);
-                g = gsl_ran_discrete_preproc(tmpAct.size(), trait_array);
+                double total_act = std::accumulate(pop.trait.begin(), pop.trait.end(), 0.0);
+                std::discrete_distribution<> dist_agent_moves(pop.trait.begin(), pop.trait.end());
+                std::exponential_distribution<double> event_time_dist(total_act);
+                // double trait_array[static_cast<int>(tmpAct.size())];
+                // std::copy(tmpAct.begin(), tmpAct.end(), trait_array);
+                // g = gsl_ran_discrete_preproc(tmpAct.size(), trait_array);
 
                 // main dynamics
-                double dt = gsl_ran_exponential(r, total_act);
+                double dt = event_time_dist(rng);
                 time += dt;
 
                 // decrease counters for all
@@ -132,7 +138,7 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
 
                 // do move
                 if (time > it_t) {
-                    id = gsl_ran_discrete(r, g);
+                    id = dist_agent_moves(rng);
                     // which individual to move, not the same as index of rate vec
                     size_t id_to_move = static_cast<size_t>(tmpQueue[id]);
                     pop.move(id_to_move, landscape, moveCost, collective, sensoryRange);
