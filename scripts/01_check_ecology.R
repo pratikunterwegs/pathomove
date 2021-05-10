@@ -8,35 +8,36 @@ sink()
 library(snevo)
 library(ggplot2)
 library(data.table)
+library(igraph)
 
 a = snevo::do_eco_sim(
-    popsize = 500,
-    landsize = 100,
+    popsize = 200,
+    landsize = 20,
     nFood = 500,
-    nClusters = 256,
+    nClusters = 16,
     clusterDispersal = 8,
     maxAct = 1,
     activityRatio = 0.5,
     pInactive = 0.5,
     collective = FALSE,
     sensoryRange = 1.0,
-    stopTime = 2,
-    tmax = 100.0,
-    scenes = 1
+    stopTime = 1.0,
+    tmax = 50.0,
+    scenes = 10
 )
 names(a)
 
 b = a[["pbsn"]]
 
-library(igraph)
 g = graph.adjacency(b, weighted = TRUE, mode = "undirected")
 g = simplify(g, remove.loops = TRUE)
-plot(g, vertex.size = 1)
+plot.igraph(g, vertex.size = 5, edge.width = 2,layout=layout_with_fr, vertex.label = NA)
 
 d = degree(g, loops = F)
 length(d)
 hist(d)
-    # trait to gen
+
+# trait to gen
 b = a[["trait_data"]]
 b$gens
 d = Map(function(df, sc) {
@@ -51,8 +52,7 @@ ggplot(d)+
             energy,
             colour = factor(trait)),
         shape = 1
-    )+
-    scale_y_log10()
+    )
 
 # melt
 data = melt(d, id.vars = c("trait", "scene"))
@@ -69,6 +69,8 @@ ggplot(data_summary)+
             ymax = median + sd,
             colour = factor(trait)
     ),
-    position = position_dodge(width = 0.2)
+    position = position_dodge(width = 0.2),
+    shape = 0,
+    stroke = 2
 )+
 facet_wrap(~variable, scales = "free")
