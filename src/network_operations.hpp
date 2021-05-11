@@ -36,8 +36,6 @@ std::vector<int> getDegree(Network &pbsn) {
 
     std::vector<int> vDeg = Rcpp::as< std::vector<int> >(degree);
 
-    Rcout << "vedg size = " << vDeg.size() << "\n";
-
     return vDeg;
 }
 
