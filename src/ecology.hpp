@@ -55,6 +55,7 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
     pbsn.initAdjMat (popsize);
 
     genData thisEcoData;
+    moveData thismoveData;
 
     pop.initPos(landscape);
 
@@ -153,6 +154,11 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
                     }
                     pop.updatePbsn(pbsn, sensoryRange);
                     eat_time += increment;
+                    
+                    if(s == scenes - 1) {
+                        // update move data
+                        thisMoveData.updateMoveData(pop, static_cast<int>(std::floor(time)));
+                    }
                 }
             }
             // forcibly increment time 
@@ -189,6 +195,7 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
 
     return Rcpp::List::create(
                 Named("trait_data") = thisEcoData.getGenData(),
-                Named("pbsn") = pbsn.adjacencyMatrix
+                Named("pbsn") = pbsn.adjacencyMatrix,
+                Named("movedata") = thismoveData.getMoveData()
     );
 }
