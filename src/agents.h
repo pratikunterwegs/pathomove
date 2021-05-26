@@ -61,7 +61,7 @@ public:
     void updatePbsn(Network &pbsn, const double range);
     void competitionCosts(const double competitionCost);
     void updateRtree();
-    void countNeighbours (size_t id, const double sensoryRange);
+    int countNeighbours (size_t id, const double sensoryRange);
 };
 
 void Population::initPos(Resources food) {
@@ -177,6 +177,48 @@ double wrappedDistance(bg::model::point<float, 2, bg::cs::cartesian> rTreeLoc,
     return wrD;
 }
 
+// check neighbours
+int Population::countNeighbours (size_t id,
+                                  const double sensoryRange) {
+    updateRtree();
+    std::vector<int> agentId;
+    std::vector<value> nearAgents;
+    box bbox(point(coordX[id] - sensoryRange,
+                   coordY[id] - sensoryRange),
+             point(coordX[id] + sensoryRange, coordY[id] + sensoryRange));
+    agentRtree.query(
+                bgi::within(bbox) &&
+                bgi::satisfies([&](value const& v) {return bg::distance(v.first, point(coordX[id], coordY[id]))
+                                                    < sensoryRange;}),
+            std::back_inserter(nearAgents));
+    associations[id] += nearAgents.size();
+
+    return static_cast<int> (nearAgents.size());
+}
+
+std::vector<int> Population::findNearItems(size_t individual, Resources &food, 
+                               const double distance){
+    // search nearest item only if any are available
+    std::vector<int> itemID;
+
+    if (food.nAvailable > 0) {
+        std::vector<value> nearItems;
+        box bbox(point(coordX[individual] - distance,
+                       coordY[individual] - distance),
+                 point(coordX[individual] + distance, coordY[individual] + distance));
+
+        food.rtree.query(
+                    bgi::within(bbox) &&
+                    bgi::satisfies([&](value const& v) {return bg::distance(v.first, point(coordX[individual],                                      coordY[individual])) < distance;}),
+                std::back_inserter(nearItems));
+
+        for(size_t i = 0; i < nearItems.size(); i++){
+            itemID.push_back(nearItems[i].second); // store item ids
+        }
+    }
+    return itemID;
+}
+
 // angle distribution
 std::uniform_real_distribution<double> agent_move_angle(-90.0, 90.0);
 
@@ -238,51 +280,11 @@ void Population::move(size_t id, Resources food, const double moveCost,
     coordY[id] = coordY[id] + (sensoryRange * std::sin(heading));
 
     // bounce agents off the landscape limits
-    coordX[id] = (coordX[id] > food.dSize) ? (food.dSize - (food.dSize / 100.0)) : coordX[id];
-    coordY[id] = (coordY[id] > food.dSize) ? (food.dSize - (food.dSize / 100.0)) : coordY[id];
+    coordX[id] = (coordX[id] > food.dSize) ? (food.dSize - (food.dSize / 20.0)) : coordX[id];
+    coordY[id] = (coordY[id] > food.dSize) ? (food.dSize - (food.dSize / 20.0)) : coordY[id];
 
     // add a cost
     energy[id] -= (sensoryRange * moveCost);
-}
-
-// check neighbours
-void Population::countNeighbours (size_t id,
-                                  const double sensoryRange) {
-    updateRtree();
-    std::vector<int> agentId;
-    std::vector<value> nearAgents;
-    box bbox(point(coordX[id] - sensoryRange,
-                   coordY[id] - sensoryRange),
-             point(coordX[id] + sensoryRange, coordY[id] + sensoryRange));
-    agentRtree.query(
-                bgi::within(bbox) &&
-                bgi::satisfies([&](value const& v) {return bg::distance(v.first, point(coordX[id], coordY[id]))
-                                                    < sensoryRange;}),
-            std::back_inserter(nearAgents));
-    associations[id] += nearAgents.size();
-}
-
-std::vector<int> Population::findNearItems(size_t individual, Resources &food, 
-                               const double distance){
-    // search nearest item only if any are available
-    std::vector<int> itemID;
-
-    if (food.nAvailable > 0) {
-        std::vector<value> nearItems;
-        box bbox(point(coordX[individual] - distance,
-                       coordY[individual] - distance),
-                 point(coordX[individual] + distance, coordY[individual] + distance));
-
-        food.rtree.query(
-                    bgi::within(bbox) &&
-                    bgi::satisfies([&](value const& v) {return bg::distance(v.first, point(coordX[individual],                                      coordY[individual])) < distance;}),
-                std::back_inserter(nearItems));
-
-        for(size_t i = 0; i < nearItems.size(); i++){
-            itemID.push_back(nearItems[i].second); // store item ids
-        }
-    }
-    return itemID;
 }
 
 void Population::forage(size_t individual, Resources &food, const double distance, const int stopTime){
