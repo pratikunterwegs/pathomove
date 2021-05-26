@@ -40,8 +40,8 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
                        const double pInactive,
                        const bool collective,
                        const double sensoryRange,
-                       const double stopTime,
-                       const double tmax,
+                       const int stopTime,
+                       const int tmax,
                        const int scenes) {
 
     Population pop (popsize, 0.0);
@@ -55,7 +55,7 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
     pbsn.initAdjMat (popsize);
 
     genData thisEcoData;
-    moveData thismoveData;
+    moveData thisMoveData;
 
     pop.initPos(landscape);
 
@@ -71,131 +71,62 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
     for(int s = 0; s < scenes; s++) {
         landscape.initResources();
         landscape.countAvailable();
-
-        std::cout << "n items avail init = " << landscape.nAvailable << "\n";
-
         // reset population associations and degree
         pop.associations = std::vector<int> (pop.nAgents, 0);
         pop.degree = std::vector<int> (pop.nAgents, 0);
         pop.energy = std::vector<double> (pop.nAgents, 0.0);
 
         // reset counter and positions
-        pop.counter = std::vector<double> (pop.nAgents, 0.0);
+        pop.counter = std::vector<int> (pop.nAgents, 0);
         pop.initPos(landscape);
 
         // reset pbsn
         pbsn.initAssociations(popsize);
         pbsn.initAdjMat(popsize);
 
-        // set up gillespie loop
-        
-        // double trait_array_init[popsize];
-        // std::copy(pop.trait.begin(), pop.trait.end(), trait_array_init);
-        // gsl_ran_discrete_t*g = gsl_ran_discrete_preproc(static_cast<size_t>(popsize), trait_array_init);
-        
-        double time = 0.0;
-        double eat_time = 0.0;
-        double it_t = 0.0;
-        size_t id;
-        double increment = 0.1;
-
-        // lookup table for discrete distr
-        for(; time < tmax; ) {
-            // populate rate vector
-            std::vector<double> tmpAct;
-            std::vector<int> tmpQueue;
-            for(int i = 0; i < pop.nAgents; i++) {
-                if(pop.counter[i] < (increment / 100.0)) {
-                    tmpAct.push_back(pop.trait[i]);
-                    tmpQueue.push_back(i);
+        // no to gillespie loop
+        for (size_t t = 0; t < tmax; t++)
+        {
+            // movement section
+            for (size_t i = 0; i < pop.nAgents; i++)
+            {   
+                size_t id_to_move = shuffleVec[i];
+                // check if agent can move
+                if (pop.counter[id_to_move] == 0) {
+                    std::bernoulli_distribution p_move(pop.trait[id_to_move]);
+                    if (p_move(rng)) {
+                        pop.move(id_to_move, landscape, 0.0, collective, sensoryRange); // movecost hardcoded to 0
+                    }
+                } else if (pop.counter[id_to_move] > 0) {
+                    pop.counter[id_to_move] --;
                 }
             }
 
-            // check if anyone can move
-            if (tmpAct.size() > 0) {
-                // prepare rates
-                double total_act = std::accumulate(tmpAct.begin(),tmpAct.end(), 0.0);
-
-                std::discrete_distribution<> dist_agent_moves(tmpAct.begin(), tmpAct.end());
-                std::exponential_distribution<double> event_time_dist(total_act);
-                // double trait_array[static_cast<int>(tmpAct.size())];
-                // std::copy(tmpAct.begin(), tmpAct.end(), trait_array);
-                // g = gsl_ran_discrete_preproc(tmpAct.size(), trait_array);
-
-                // main dynamics
-                double dt = event_time_dist(rng);
-                time += dt;
-
-                // decrease counters for all
-                for(int i = 0; i < pop.nAgents; i++) {
-                    if(pop.counter[i] > 0.0) {
-                        pop.counter[i] -= dt;
-                    }
-                    if(pop.counter[i] < 0.0) {
-                        pop.counter[i] = 0.0;
-                    }                 
-                }
-
-                // do move
-                if (time > it_t) {
-                    id = dist_agent_moves(rng);
-                    // which individual to move, not the same as index of rate vec
-                    size_t id_to_move = static_cast<size_t>(tmpQueue[id]);
-                    pop.move(id_to_move, landscape, moveCost, collective, sensoryRange);
-                    it_t = (std::floor(time / increment) * increment) + increment;
-                }
-
-                // forage, count neighbours, and update pbsn at save points
-                if (time > eat_time) {
-                    // add vec shuffle
-                    for (int i = 0; i < pop.nAgents; i++) {
-                        pop.forage(static_cast<size_t> (i), landscape, sensoryRange, stopTime);
-                        pop.countNeighbours(i, sensoryRange);
-                    }
-                    pop.updatePbsn(pbsn, sensoryRange);
-                    eat_time += increment;
-                    
-                    if(s == scenes - 1) {
-                        // update move data
-                        thisMoveData.updateMoveData(pop, static_cast<int>(std::floor(time)));
-                    }
-                }
+            // foraging section
+            for (int i = 0; i < pop.nAgents; i++) {
+                size_t id_to_move = shuffleVec[i];
+                pop.forage(id_to_move, landscape, sensoryRange, stopTime);
+                pop.countNeighbours(id_to_move, sensoryRange);
             }
-            // forcibly increment time 
-            else {
-                time += increment;
-                // decrease counters for all
-                for(int i = 0; i < pop.nAgents; i++) {
-                    if(pop.counter[i] > 0.0) {
-                        pop.counter[i] -= increment;
-                    }
-                    if(pop.counter[i] < 0.0) {
-                        pop.counter[i] = 0.0;
-                    }                 
-                }
-                // forage, count neighbours, and update pbsn at save points
-                if (time > eat_time) {
-                    // add vec shuffle
-                    for (int i = 0; i < pop.nAgents; i++) {
-                        pop.forage(static_cast<size_t> (i), landscape, sensoryRange, stopTime);
-                        pop.countNeighbours(i, sensoryRange);
-                    }
-                    pop.updatePbsn(pbsn, sensoryRange);
-                    eat_time += increment;
-                }
+
+            // PBSN etc
+            pop.updatePbsn(pbsn, sensoryRange);
+            if(s == scenes - 1) {
+                // update move data
+                thisMoveData.updateMoveData(pop, static_cast<int>(std::floor(t)));
             }
+            
         }
+        // timestep ends here        
         pop.degree = getDegree(pbsn);
         thisEcoData.updateGenData(pop, s);
 
         landscape.countAvailable();
-
-        std::cout << "n items avail end scene = " << landscape.nAvailable << "\n";
     }
 
     return Rcpp::List::create(
                 Named("trait_data") = thisEcoData.getGenData(),
                 Named("pbsn") = pbsn.adjacencyMatrix,
-                Named("movedata") = thismoveData.getMoveData()
+                Named("movedata") = thisMoveData.getMoveData()
     );
 }
