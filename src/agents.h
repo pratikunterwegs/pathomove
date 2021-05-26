@@ -168,7 +168,7 @@ double wrappedDistance(bg::model::point<float, 2, bg::cs::cartesian> rTreeLoc,
 // angle distribution
 std::cauchy_distribution<double> agent_move_angle(etaCrw, 0.01);
 // stepsize disribution
-std::gamma_distribution<double> agent_move_dist(1.0, 0.1);
+// std::gamma_distribution<double> agent_move_dist(1.0, 0.1);
 
 /// population movement function
 void Population::move(size_t id, Resources food, const double moveCost,
@@ -178,7 +178,6 @@ void Population::move(size_t id, Resources food, const double moveCost,
     heading = agent_move_angle(rng);
     // get radians
     heading = heading * M_PI / 180.0;
-    double stepSize;
 
     // if collective, move towards a random agent (the first) within range
     if (collective) {
@@ -207,18 +206,16 @@ void Population::move(size_t id, Resources food, const double moveCost,
         }
     }
 
-    stepSize = agent_move_dist(rng);
-
     // figure out the next position
-    coordX[id] = coordX[id] + (stepSize * std::cos(heading));
-    coordY[id] = coordY[id] + (stepSize * std::sin(heading));
+    coordX[id] = coordX[id] + (sensoryRange * std::cos(heading));
+    coordY[id] = coordY[id] + (sensoryRange * std::sin(heading));
 
     // bounce agents off the landscape limits
     coordX[id] = (coordX[id] > food.dSize) ? (food.dSize - (food.dSize / 100.0)) : coordX[id];
     coordY[id] = (coordY[id] > food.dSize) ? (food.dSize - (food.dSize / 100.0)) : coordY[id];
 
     // add a cost
-    energy[id] -= (stepSize * moveCost);
+    energy[id] -= (sensoryRange * moveCost);
 }
 
 // check neighbours
