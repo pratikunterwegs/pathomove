@@ -20,7 +20,9 @@ public:
         coordY (popsize, 50.0),
         energy (popsize, 0.000001),
         // one trait
-        trait(popsize, beginTrait),
+        trait_1(popsize, beginTrait),
+        trait_2(popsize, beginTrait),
+        trait_3(popsize, beginTrait),
         // count stationary behaviour
         counter (popsize, 0),
         // associations
@@ -34,7 +36,9 @@ public:
     std::vector<double> coordX;
     std::vector<double> coordY;
     std::vector<double> energy;
-    std::vector<double> trait;
+    std::vector<double> trait_1;
+    std::vector<double> trait_2;
+    std::vector<double> trait_3;
     std::vector<double> counter;
     std::vector<int> associations; // number of total interactions
     std::vector<int> degree;
