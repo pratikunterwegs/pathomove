@@ -1,31 +1,50 @@
 # check function
 Rcpp::compileAttributes()
 devtools::build()
-sink(file = "install_output.log")
-devtools::install()
-sink()
+sink(file = "install_output.log"); devtools::install(); sink()
 
 library(snevo)
 library(ggplot2)
 library(data.table)
-library(igraph)
 
 a = snevo::do_eco_sim(
-    popsize = 200,
-    landsize = 20,
-    nFood = 500,
-    nClusters = 16,
+    popsize = 100,
+    landsize = 25,
+    nFood = 10,
+    nClusters = 1,
     clusterDispersal = 8,
     maxAct = 1,
-    activityRatio = 0.5,
+    activityRatio = 1,
     pInactive = 0.5,
     collective = FALSE,
     sensoryRange = 1.0,
-    stopTime = 1.0,
-    tmax = 50.0,
-    scenes = 10
+    stopTime = 3,
+    tmax = 1000,
+    scenes = 1
 )
 names(a)
+
+b = a[["movedata"]]
+b = Map(function(l, t) {
+    l$time = t
+    l
+}, b$move_data, seq(length(b$move_data)))
+b = rbindlist(b)
+
+ggplot(b)+
+    geom_path(
+        aes(x,Y,
+            group = factor(id),
+            colour = factor(trait)),
+        show.legend = F
+    )+
+    geom_point(
+        aes(x,Y,
+            col = factor(trait)
+        ),
+        size = 2,
+        shape = 1)+
+    scale_colour_viridis_d(option = "H", begin = 0.2, end = 0.8)
 
 b = a[["pbsn"]]
 
