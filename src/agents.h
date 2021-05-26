@@ -189,6 +189,24 @@ void Population::move(size_t id, Resources food, const double moveCost,
     // get radians
     heading = heading * M_PI / 180.0;
 
+    double distance;
+    // count neighbours
+    int neighbours = countNeighbours(id, sensoryRange);
+    // find nearby food
+    std::vector<int> theseItems = findNearItems(individual, food, distance);
+
+    // count available and not
+    int near_food_avail;
+    int near_food_latent;
+    for (size_t i = 0; i < theseItems.size(); i++)
+    {
+        if (food.available[theseItems[i]]) near_food_avail++;
+        else near_food_latent++;
+    }
+
+    // get distance as a resource selection function
+    distance = (trait_1 * near_food_avail) + (trait_2 * near_food_latent) + (trait_3 * neighbours);
+
     // if collective, move towards a random agent (the first) within range
     if (collective) {
         updateRtree();
