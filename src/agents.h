@@ -22,7 +22,7 @@ public:
         // one trait
         trait(popsize, beginTrait),
         // count stationary behaviour
-        counter (popsize, 0.0),
+        counter (popsize, 0),
         // associations
         associations(popsize, 0),
         degree(popsize, 0)
@@ -50,7 +50,7 @@ public:
     void move(size_t id, Resources food, const double moveCost, const bool collective,
               const double sensoryRange);
     std::vector<int> findNearItems(size_t individual, Resources &food, const double distance);
-    void forage(size_t individual, Resources &food, const double distance, const double stopTime);
+    void forage(size_t individual, Resources &food, const double distance, const int stopTime);
     void normaliseIntake();
     void Reproduce();
     // for network
@@ -166,9 +166,7 @@ double wrappedDistance(bg::model::point<float, 2, bg::cs::cartesian> rTreeLoc,
 }
 
 // angle distribution
-std::cauchy_distribution<double> agent_move_angle(etaCrw, 0.01);
-// stepsize disribution
-// std::gamma_distribution<double> agent_move_dist(1.0, 0.1);
+std::uniform_real_distribution<double> agent_move_angle(-180.0, 180.0);
 
 /// population movement function
 void Population::move(size_t id, Resources food, const double moveCost,
@@ -195,7 +193,6 @@ void Population::move(size_t id, Resources food, const double moveCost,
         
         if (nearAgents.size() > 0) {
             size_t neighbour = nearAgents[0].second;
-            static const double TWOPI = 6.2831853071795865;
             // static const double RAD2DEG = 57.2957795130823209;
             // if (a1 = b1 and a2 = b2) throw an error
             double theta = atan2(coordX[id] - coordX[neighbour],
@@ -258,7 +255,7 @@ std::vector<int> Population::findNearItems(size_t individual, Resources &food,
     return itemID;
 }
 
-void Population::forage(size_t individual, Resources &food, const double distance, const double stopTime){
+void Population::forage(size_t individual, Resources &food, const double distance, const int stopTime){
     // find nearest item ids
     std::vector<int> theseItems = findNearItems(individual, food, distance);
 
@@ -360,7 +357,7 @@ void Population::Reproduce() {
     }
     // reset counter
     assert(newTrait.size() == trait.size() && "traits different size");
-    counter = std::vector<double> (nAgents);
+    counter = std::vector<int> (nAgents);
     assert(static_cast<int>(counter.size()) == nAgents && "counter size wrong");
 
     // mutate trait: trait shifts up or down with an equal prob
