@@ -6,7 +6,7 @@
 using namespace Rcpp;
 
 // do_eco_sim
-Rcpp::List do_eco_sim(const int popsize, const double landsize, const int nFood, const int nClusters, const double clusterDispersal, const double maxAct, const double activityRatio, const double pInactive, const bool collective, const double sensoryRange, const double stopTime, const double tmax, const int scenes);
+Rcpp::List do_eco_sim(const int popsize, const double landsize, const int nFood, const int nClusters, const double clusterDispersal, const double maxAct, const double activityRatio, const double pInactive, const bool collective, const double sensoryRange, const int stopTime, const int tmax, const int scenes);
 RcppExport SEXP _snevo_do_eco_sim(SEXP popsizeSEXP, SEXP landsizeSEXP, SEXP nFoodSEXP, SEXP nClustersSEXP, SEXP clusterDispersalSEXP, SEXP maxActSEXP, SEXP activityRatioSEXP, SEXP pInactiveSEXP, SEXP collectiveSEXP, SEXP sensoryRangeSEXP, SEXP stopTimeSEXP, SEXP tmaxSEXP, SEXP scenesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -21,8 +21,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double >::type pInactive(pInactiveSEXP);
     Rcpp::traits::input_parameter< const bool >::type collective(collectiveSEXP);
     Rcpp::traits::input_parameter< const double >::type sensoryRange(sensoryRangeSEXP);
-    Rcpp::traits::input_parameter< const double >::type stopTime(stopTimeSEXP);
-    Rcpp::traits::input_parameter< const double >::type tmax(tmaxSEXP);
+    Rcpp::traits::input_parameter< const int >::type stopTime(stopTimeSEXP);
+    Rcpp::traits::input_parameter< const int >::type tmax(tmaxSEXP);
     Rcpp::traits::input_parameter< const int >::type scenes(scenesSEXP);
     rcpp_result_gen = Rcpp::wrap(do_eco_sim(popsize, landsize, nFood, nClusters, clusterDispersal, maxAct, activityRatio, pInactive, collective, sensoryRange, stopTime, tmax, scenes));
     return rcpp_result_gen;
