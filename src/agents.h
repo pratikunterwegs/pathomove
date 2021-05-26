@@ -39,7 +39,7 @@ public:
     std::vector<double> trait_1;
     std::vector<double> trait_2;
     std::vector<double> trait_3;
-    std::vector<double> counter;
+    std::vector<int> counter;
     std::vector<int> associations; // number of total interactions
     std::vector<int> degree;
 
@@ -82,7 +82,6 @@ void Population::setTrait() {
 }
 
 void Population::setTraitBimodal(const double maxAct, const double ratio, const double proportion) {
-    trait = std::vector<double> (nAgents, maxAct);
     std::bernoulli_distribution is_inactive(proportion);
     for (int z = 0; z < nAgents; z++)
     {
@@ -235,7 +234,7 @@ void Population::move(size_t id, Resources food, const double moveCost,
     // count neighbours
     int neighbours = countNeighbours(id, sensoryRange);
     // find nearby food
-    std::vector<int> theseItems = findNearItems(individual, food, distance);
+    std::vector<int> theseItems = findNearItems(id, food, distance);
 
     // count available and not
     int near_food_avail;
@@ -247,7 +246,7 @@ void Population::move(size_t id, Resources food, const double moveCost,
     }
 
     // get distance as a resource selection function
-    distance = (trait_1 * near_food_avail) + (trait_2 * near_food_latent) + (trait_3 * neighbours);
+    distance = (trait_1[id] * near_food_avail) + (trait_2[id] * near_food_latent) + (trait_3[id] * neighbours);
 
     // if collective, move towards a random agent (the first) within range
     if (collective) {
@@ -270,21 +269,21 @@ void Population::move(size_t id, Resources food, const double moveCost,
             double theta = atan2(coordX[id] - coordX[neighbour],
                                  coordY[id] - coordY[neighbour]);
             if (theta < 0.0)
-                theta += TWOPI;
+                theta += (M_PI * 2.0);
             heading = theta;
         }
     }
 
     // figure out the next position
-    coordX[id] = coordX[id] + (sensoryRange * std::cos(heading));
-    coordY[id] = coordY[id] + (sensoryRange * std::sin(heading));
+    coordX[id] = coordX[id] + (distance * std::cos(heading));
+    coordY[id] = coordY[id] + (distance * std::sin(heading));
 
     // bounce agents off the landscape limits
     coordX[id] = (coordX[id] > food.dSize) ? (food.dSize - (food.dSize / 20.0)) : coordX[id];
     coordY[id] = (coordY[id] > food.dSize) ? (food.dSize - (food.dSize / 20.0)) : coordY[id];
 
     // add a cost
-    energy[id] -= (sensoryRange * moveCost);
+    energy[id] -= (distance * moveCost);
 }
 
 void Population::forage(size_t individual, Resources &food, const double distance, const int stopTime){
@@ -382,31 +381,66 @@ void Population::Reproduce() {
     std::discrete_distribution<> weightedLottery(energy.begin(), energy.end());
 
     // get parent trait based on weighted lottery
-    std::vector<double> newTrait;
+    std::vector<double> newTrait_1;
+    std::vector<double> newTrait_2;
+    std::vector<double> newTrait_3;
     for (size_t a = 0; static_cast<int>(a) < nAgents; a++) {
-        newTrait.push_back(
-                    trait[static_cast<size_t>(weightedLottery(rng))]);
+        newTrait_1.push_back(
+                    trait_1[static_cast<size_t>(weightedLottery(rng))]);
+
+        newTrait_2.push_back(
+                    trait_2[static_cast<size_t>(weightedLottery(rng))]);
+
+        newTrait_3.push_back(
+                    trait_3[static_cast<size_t>(weightedLottery(rng))]);
     }
     // reset counter
-    assert(newTrait.size() == trait.size() && "traits different size");
-    counter = std::vector<int> (nAgents);
+    assert(newTrait_1.size() == trait_1.size() && "traits different size");
+    counter = std::vector<int> (nAgents, 0);
     assert(static_cast<int>(counter.size()) == nAgents && "counter size wrong");
 
     // mutate trait: trait shifts up or down with an equal prob
     // trait mutation prob is mProb, in a two step process
     for (size_t a = 0; static_cast<int>(a) < nAgents; a++) {
+        // weight for available food
         if (mutation_happens(rng)) {
             // mutation set, now increase or decrease
-            newTrait[a] = trait[a] + mutation_size(rng);
+            newTrait_1[a] = trait_1[a] + mutation_size(rng);
             // no negative traits
-            if (newTrait[a] < 0) {
-                newTrait[a] = 0.0;
+            if (newTrait_1[a] < 0) {
+                newTrait_1[a] = 0.0;
+            } else if (newTrait_1[a] > 1.0) {
+                newTrait_1[a] = 1.0;
+            }
+        }
+        // weight for unavailable food
+        if (mutation_happens(rng)) {
+            // mutation set, now increase or decrease
+            newTrait_2[a] = trait_2[a] + mutation_size(rng);
+            // no negative traits
+            if (newTrait_2[a] < 0) {
+                newTrait_2[a] = 0.0;
+            } else if (newTrait_2[a] > 1.0) {
+                newTrait_2[a] = 1.0;
+            }
+        }
+        // weight for agents
+        if (mutation_happens(rng)) {
+            // mutation set, now increase or decrease
+            newTrait_2[a] = trait_2[a] + mutation_size(rng);
+            // no negative traits
+            if (newTrait_2[a] < 0) {
+                newTrait_2[a] = 0.0;
+            } else if (newTrait_2[a] > 1.0) {
+                newTrait_2[a] = 1.0;
             }
         }
     }
     // swap vectors
-    std::swap(trait, newTrait);
-    newTrait.clear();
+    std::swap(trait_1, newTrait_1);
+    std::swap(trait_2, newTrait_2);
+    std::swap(trait_3, newTrait_3);
+    newTrait_1.clear(); newTrait_2.clear(); newTrait_3.clear();
 
     // swap energy
     std::vector<double> tmpEnergy (nAgents, 0.000001);
