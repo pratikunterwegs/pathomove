@@ -296,7 +296,7 @@ void Population::forage(size_t individual, Resources &food, const double distanc
 
         // now check them
         for (size_t i = 0; i < theseItems.size(); i++){
-            if(food.available[i]) {
+            if(food.available[theseItems[i]]) {
                 thisItem = theseItems[i]; // if available pick this item
                 break;
             }
