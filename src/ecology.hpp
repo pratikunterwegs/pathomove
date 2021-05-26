@@ -93,10 +93,7 @@ Rcpp::List do_eco_sim (const int popsize, const double landsize,
                 size_t id_to_move = shuffleVec[i];
                 // check if agent can move
                 if (pop.counter[id_to_move] == 0) {
-                    std::bernoulli_distribution p_move(pop.trait[id_to_move]);
-                    if (p_move(rng)) {
-                        pop.move(id_to_move, landscape, 0.0, collective, sensoryRange); // movecost hardcoded to 0
-                    }
+                    pop.move(id_to_move, landscape, 0.0, collective, sensoryRange); // movecost hardcoded to 0
                 } else if (pop.counter[id_to_move] > 0) {
                     pop.counter[id_to_move] --;
                 }
