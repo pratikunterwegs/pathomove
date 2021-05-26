@@ -178,7 +178,7 @@ double wrappedDistance(bg::model::point<float, 2, bg::cs::cartesian> rTreeLoc,
 }
 
 // angle distribution
-std::uniform_real_distribution<double> agent_move_angle(-180.0, 180.0);
+std::uniform_real_distribution<double> agent_move_angle(-90.0, 90.0);
 
 /// population movement function
 void Population::move(size_t id, Resources food, const double moveCost,
