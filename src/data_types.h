@@ -19,24 +19,27 @@ public:
     std::vector<std::vector<double> > genTrait_1Vec;
     std::vector<std::vector<double> > genTrait_2Vec;
     std::vector<std::vector<double> > genTrait_3Vec;
-    std::vector<std::vector<int> > genAssocVec;
-    std::vector<std::vector<int> > genDegreeVec;
+    std::vector<std::vector<double> > genTrait_4Vec;
+    std::vector<std::vector<double> > genTrait_5Vec;
+    std::vector<std::vector<double> > genTrait_6Vec;
+    // std::vector<std::vector<int> > genAssocVec;
+    // std::vector<std::vector<int> > genDegreeVec;
     std::vector<int> gens;
 
     void updateGenData (Population &pop, const int gen);
     Rcpp::List getGenData ();
 };
 
-struct networkData {
-public:
-    std::vector<int> interactions;
-    std::vector<double> diameter;
-    std::vector<double> global_efficiency;
-    std::vector<int> gens;
+// struct networkData {
+// public:
+//     std::vector<int> interactions;
+//     std::vector<double> diameter;
+//     std::vector<double> global_efficiency;
+//     std::vector<int> gens;
 
-    void updateNetworkData(Population &pop, const int gen, Network &pbsn);
-    Rcpp::DataFrame getNetworkData();
-};
+//     void updateNetworkData(Population &pop, const int gen, Network &pbsn);
+//     Rcpp::DataFrame getNetworkData();
+// };
 
 struct moveData {
 public:
@@ -44,6 +47,9 @@ public:
     std::vector<std::vector<double> > trait_1;
     std::vector<std::vector<double> > trait_2;
     std::vector<std::vector<double> > trait_3;
+    std::vector<std::vector<double> > trait_4;
+    std::vector<std::vector<double> > trait_5;
+    std::vector<std::vector<double> > trait_6;
     std::vector<std::vector<double> > coordX;
     std::vector<std::vector<double> > coordY;
     std::vector<std::vector<double> > energy;
@@ -65,6 +71,9 @@ void moveData::updateMoveData (Population &pop, const int timestep_) {
     trait_1.push_back(pop.trait_1);
     trait_2.push_back(pop.trait_2);
     trait_3.push_back(pop.trait_3);
+    trait_4.push_back(pop.trait_4);
+    trait_5.push_back(pop.trait_5);
+    trait_6.push_back(pop.trait_6);
     coordX.push_back(pop.coordX);
     coordY.push_back(pop.coordY);
     energy.push_back(pop.energy);
@@ -83,7 +92,10 @@ Rcpp::List moveData::getMoveData() {
             Named("Y") = coordY[i],
             Named("trait1") = trait_1[i],
             Named("trait2") = trait_2[i],
-            Named("trait3") = trait_3[i]
+            Named("trait3") = trait_3[i],
+            Named("trait4") = trait_4[i],
+            Named("trait5") = trait_5[i],
+            Named("trait6") = trait_6[i]
         );
     }
     List dataToReturn = List::create(
@@ -101,22 +113,25 @@ void genData::updateGenData (Population &pop, const int gen_) {
     genTrait_1Vec.push_back(pop.trait_1);
     genTrait_2Vec.push_back(pop.trait_2);
     genTrait_3Vec.push_back(pop.trait_3);
-    genAssocVec.push_back(pop.associations);
-    genDegreeVec.push_back(pop.degree);
+    genTrait_4Vec.push_back(pop.trait_4);
+    genTrait_5Vec.push_back(pop.trait_5);
+    genTrait_6Vec.push_back(pop.trait_6);
+    // genAssocVec.push_back(pop.associations);
+    // genDegreeVec.push_back(pop.degree);
     gens.push_back(gen_);
 }
 
-void networkData::updateNetworkData(Population &pop, const int gen, Network &pbsn) {
+// void networkData::updateNetworkData(Population &pop, const int gen, Network &pbsn) {
 
-    std::vector<double> tmpNetworkData = networkMeasures(pbsn, pop);
+//     std::vector<double> tmpNetworkData = networkMeasures(pbsn, pop);
 
-    assert (tmpNetworkData.size() == 3 && "wrong size network measures");
+//     assert (tmpNetworkData.size() == 3 && "wrong size network measures");
 
-    interactions.push_back(tmpNetworkData[0]);
-    diameter.push_back(tmpNetworkData[1]);
-    global_efficiency.push_back(tmpNetworkData[2]);
-    gens.push_back(gen);
-}
+//     interactions.push_back(tmpNetworkData[0]);
+//     diameter.push_back(tmpNetworkData[1]);
+//     global_efficiency.push_back(tmpNetworkData[2]);
+//     gens.push_back(gen);
+// }
 
 // function to return gen data as an rcpp list
 Rcpp::List genData::getGenData() {
@@ -128,8 +143,11 @@ Rcpp::List genData::getGenData() {
             Named("trait1") = genTrait_1Vec[i],
             Named("trait2") = genTrait_2Vec[i],
             Named("trait3") = genTrait_3Vec[i],
-            Named("associations") = genAssocVec[i],
-            Named("degree") = genDegreeVec[i]
+            Named("trait4") = genTrait_4Vec[i],
+            Named("trait5") = genTrait_5Vec[i],
+            Named("trait6") = genTrait_6Vec[i]
+            // Named("associations") = genAssocVec[i],
+            // Named("degree") = genDegreeVec[i]
         );
     }
     List dataToReturn = List::create(
@@ -141,15 +159,15 @@ Rcpp::List genData::getGenData() {
 }
 
 // function to return network data as a DataFrame
-Rcpp::DataFrame networkData::getNetworkData() {
-    Rcpp::DataFrame networkData = Rcpp::DataFrame::create(
-                Named("gen") = gens,
-                Named("interactions") = interactions,
-                Named("diameter") = diameter,
-                Named("global_efficiency") = global_efficiency
-            );
+// Rcpp::DataFrame networkData::getNetworkData() {
+//     Rcpp::DataFrame networkData = Rcpp::DataFrame::create(
+//                 Named("gen") = gens,
+//                 Named("interactions") = interactions,
+//                 Named("diameter") = diameter,
+//                 Named("global_efficiency") = global_efficiency
+//             );
 
-    return networkData;
-}
+//     return networkData;
+// }
 
 #endif  //
