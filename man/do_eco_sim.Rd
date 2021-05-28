@@ -15,6 +15,7 @@ do_eco_sim(
   pInactive,
   collective,
   sensoryRange,
+  stopTime,
   tmax,
   scenes
 )
@@ -30,7 +31,7 @@ do_eco_sim(
 
 \item{clusterDispersal}{How dispersed food is around the cluster centre.}
 
-\item{maxAct}{The maximum acitivity.}
+\item{maxAct}{The maximum activity.}
 
 \item{activityRatio}{The ratio of activity levels of inactive individuals relative to active individuals.}
 
@@ -39,6 +40,8 @@ do_eco_sim(
 \item{collective}{Whether to move collectively.}
 
 \item{sensoryRange}{The sensory range of agents.}
+
+\item{stopTime}{The time (double) that individuals stop after finding food.}
 
 \item{tmax}{The integer number of timesteps per scene.}
 

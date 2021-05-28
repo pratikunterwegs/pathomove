@@ -13,8 +13,10 @@ do_simulation(
   clusterDispersal,
   landsize,
   competitionCost,
+  sensoryRange,
   collective,
-  nScenes
+  nScenes,
+  stopTime
 )
 }
 \arguments{
@@ -34,9 +36,13 @@ do_simulation(
 
 \item{competitionCost}{Cost of associations.}
 
+\item{sensoryRange}{The sensory range.}
+
 \item{collective}{Whether to move collectively.}
 
 \item{nScenes}{How many scenes.}
+
+\item{stopTime}{The handling time.}
 }
 \value{
 A data frame of the evolved population traits.
