@@ -8,18 +8,18 @@ library(ggplot2)
 library(data.table)
 
 a = snevo::do_eco_sim(
-    popsize = 100,
-    landsize = 25,
+    popsize = 50,
+    landsize = 1000,
     nFood = 10,
     nClusters = 1,
     clusterDispersal = 8,
-    maxAct = 1,
-    activityRatio = 1,
+    maxAct = 0.01,
+    activityRatio = 0.2,
     pInactive = 0.5,
     collective = FALSE,
     sensoryRange = 1.0,
     stopTime = 3,
-    tmax = 1000,
+    tmax = 100,
     scenes = 1
 )
 names(a)
@@ -30,20 +30,19 @@ b = Map(function(l, t) {
     l
 }, b$move_data, seq(length(b$move_data)))
 b = rbindlist(b)
-
+b
 ggplot(b)+
+    # geom_path(
+    #     aes(x,Y,
+    #         group = factor(id)),
+    #     show.legend = F
+    # )+
     geom_path(
-        aes(x,Y,
-            group = factor(id),
-            colour = factor(trait)),
-        show.legend = F
-    )+
-    geom_point(
-        aes(x,Y,
-            col = factor(trait)
-        ),
-        size = 2,
-        shape = 1)+
+        aes(x,Y, col = interaction(trait1, trait2, trait3)),
+        show.legend = F,
+        # size = 2,
+        shape = 16)+
+    facet_wrap(~id)+
     scale_colour_viridis_d(option = "H", begin = 0.2, end = 0.8)
 
 b = a[["pbsn"]]
