@@ -26,11 +26,10 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterDispersal) {
 #' @param landsize The size of the landscape as a numeric (double).
 #' @param competitionCost Cost of associations.
 #' @param sensoryRange The sensory range.
-#' @param collective Whether to move collectively.
 #' @param nScenes How many scenes.
 #' @param stopTime The handling time.
 #' @return A data frame of the evolved population traits.
-do_simulation <- function(popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, competitionCost, sensoryRange, collective, nScenes, stopTime) {
-    .Call(`_snevo_do_simulation`, popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, competitionCost, sensoryRange, collective, nScenes, stopTime)
+do_simulation <- function(popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, competitionCost, sensoryRange, nScenes, stopTime) {
+    .Call(`_snevo_do_simulation`, popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, competitionCost, sensoryRange, nScenes, stopTime)
 }
 
