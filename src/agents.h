@@ -67,6 +67,19 @@ public:
     int countNeighbours (size_t id, const double sensoryRange);
 };
 
+// to update agent Rtree
+void Population::updateRtree () {
+    // initialise rtree
+    bgi::rtree< value, bgi::quadratic<16> > tmpRtree;
+    for (int i = 0; i < nAgents; ++i)
+    {
+        point p = point(coordX[i], coordY[i]);
+        tmpRtree.insert(std::make_pair(p, i));
+    }
+    std::swap(agentRtree, tmpRtree);
+    tmpRtree.clear();
+}
+
 void Population::initPos(Resources food) {
     std::uniform_real_distribution<double> agent_ran_pos(0.0, food.dSize);
     for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
