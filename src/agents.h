@@ -193,14 +193,13 @@ std::pair<int, std::vector<int> > Population::countNearby (
 }
 
 /// population movement function
-void Population::move(size_t id, Resources food, const double moveCost,
-                      const bool collective, const double sensoryRange) {
+void Population::move(size_t id, Resources food, const double moveCost, float sensoryRange) {
 
     double distance;
     // count neighbours
-    int neighbours = countNeighbours(id, sensoryRange);
+    int neighbours = (countNearby(agentRtree, id, sensoryRange)).first;
     // find nearby food
-    std::vector<int> theseItems = findNearItems(id, food, distance);
+    std::vector<int> theseItems = (countNearby(food.rtree, id, sensoryRange)).second;
 
     // count available and not
     int near_food_avail;
