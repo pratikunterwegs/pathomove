@@ -16,12 +16,7 @@
 struct genData {
 public:
     std::vector<std::vector<double> > genEnergyVec;
-    std::vector<std::vector<double> > genTrait_1Vec;
-    std::vector<std::vector<double> > genTrait_2Vec;
-    std::vector<std::vector<double> > genTrait_3Vec;
-    std::vector<std::vector<double> > genTrait_4Vec;
-    std::vector<std::vector<double> > genTrait_5Vec;
-    std::vector<std::vector<double> > genTrait_6Vec;
+    std::vector<std::vector<std::vector<float> > > traitMatrix;
     // std::vector<std::vector<int> > genAssocVec;
     // std::vector<std::vector<int> > genDegreeVec;
     std::vector<int> gens;
@@ -44,12 +39,6 @@ public:
 struct moveData {
 public:
     std::vector<std::vector<int> > id;
-    std::vector<std::vector<double> > trait_1;
-    std::vector<std::vector<double> > trait_2;
-    std::vector<std::vector<double> > trait_3;
-    std::vector<std::vector<double> > trait_4;
-    std::vector<std::vector<double> > trait_5;
-    std::vector<std::vector<double> > trait_6;
     std::vector<std::vector<double> > coordX;
     std::vector<std::vector<double> > coordY;
     std::vector<std::vector<double> > energy;
@@ -68,19 +57,13 @@ void moveData::updateMoveData (Population &pop, const int timestep_) {
     }
 
     id.push_back(idVec);
-    trait_1.push_back(pop.trait_1);
-    trait_2.push_back(pop.trait_2);
-    trait_3.push_back(pop.trait_3);
-    trait_4.push_back(pop.trait_4);
-    trait_5.push_back(pop.trait_5);
-    trait_6.push_back(pop.trait_6);
     coordX.push_back(pop.coordX);
     coordY.push_back(pop.coordY);
     energy.push_back(pop.energy);
     timestep.push_back(timestep_);
 }
 
-// function to return gen data as an rcpp list
+// function to return move data as an rcpp list
 Rcpp::List moveData::getMoveData() {
     Rcpp::List moveDataList (timestep.size());
     for (size_t i = 0; i < timestep.size(); i++)
@@ -89,13 +72,7 @@ Rcpp::List moveData::getMoveData() {
             Named("id") = id[i],
             Named("energy") = energy[i],
             Named("x") = coordX[i],
-            Named("Y") = coordY[i],
-            Named("trait1") = trait_1[i],
-            Named("trait2") = trait_2[i],
-            Named("trait3") = trait_3[i],
-            Named("trait4") = trait_4[i],
-            Named("trait5") = trait_5[i],
-            Named("trait6") = trait_6[i]
+            Named("Y") = coordY[i]
         );
     }
     List dataToReturn = List::create(
@@ -110,12 +87,7 @@ Rcpp::List moveData::getMoveData() {
 void genData::updateGenData (Population &pop, const int gen_) {
     // get pop data
     genEnergyVec.push_back(pop.energy);
-    genTrait_1Vec.push_back(pop.trait_1);
-    genTrait_2Vec.push_back(pop.trait_2);
-    genTrait_3Vec.push_back(pop.trait_3);
-    genTrait_4Vec.push_back(pop.trait_4);
-    genTrait_5Vec.push_back(pop.trait_5);
-    genTrait_6Vec.push_back(pop.trait_6);
+    traitMatrix.push_back(pop.traitMatrix);
     // genAssocVec.push_back(pop.associations);
     // genDegreeVec.push_back(pop.degree);
     gens.push_back(gen_);
@@ -140,12 +112,12 @@ Rcpp::List genData::getGenData() {
     {
         genDataList[i] = DataFrame::create(
             Named("energy") = genEnergyVec[i],
-            Named("trait1") = genTrait_1Vec[i],
-            Named("trait2") = genTrait_2Vec[i],
-            Named("trait3") = genTrait_3Vec[i],
-            Named("trait4") = genTrait_4Vec[i],
-            Named("trait5") = genTrait_5Vec[i],
-            Named("trait6") = genTrait_6Vec[i]
+            Named("trait1") = traitMatrix[i][0],
+            Named("trait2") = traitMatrix[i][1],
+            Named("trait3") = traitMatrix[i][2],
+            Named("trait4") = traitMatrix[i][3],
+            Named("trait5") = traitMatrix[i][4],
+            Named("trait6") = traitMatrix[i][5]
             // Named("associations") = genAssocVec[i],
             // Named("degree") = genDegreeVec[i]
         );
