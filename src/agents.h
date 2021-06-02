@@ -78,14 +78,10 @@ void Population::initPos(Resources food) {
 void Population::setTrait() {
     std::uniform_real_distribution<double> agent_ran_trait(0.0, 1.0);
     for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-        trait_1[i] = agent_ran_trait(rng);
-        trait_2[i] = agent_ran_trait(rng);
-        trait_3[i] = agent_ran_trait(rng);
-        trait_4[i] = agent_ran_trait(rng);
-        trait_5[i] = agent_ran_trait(rng);
-        trait_6[i] = agent_ran_trait(rng);
+        for(size_t j = 0; j < traitMatrix.size(); j++) {
+            traitMatrix[i][j] = agent_ran_trait(rng);
+        }
     }
-}
 
 void Population::setTraitBimodal(const double maxAct, const double ratio, const double proportion) {
     std::bernoulli_distribution is_inactive(proportion);
