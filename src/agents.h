@@ -326,7 +326,7 @@ std::vector<double> Population::normaliseIntake() {
 
 // mutation probability and size distribution
 std::bernoulli_distribution mutation_happens(mProb);
-std::normal_distribution<double> mutation_size(0.01, mShift);
+std::normal_distribution<float> mutation_size(0.0, mShift);
 
 // fun for replication
 void Population::Reproduce() {
