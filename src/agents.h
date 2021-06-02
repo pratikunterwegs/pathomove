@@ -337,75 +337,34 @@ void Population::Reproduce() {
     std::discrete_distribution<> weightedLottery(vecFitness.begin(), vecFitness.end());
 
     // get parent trait based on weighted lottery
-    std::vector<double> newTrait_1;
-    std::vector<double> newTrait_2;
-    std::vector<double> newTrait_3;
-    std::vector<double> newTrait_4;
-    std::vector<double> newTrait_5;
-    std::vector<double> newTrait_6;
-    for (size_t a = 0; static_cast<int>(a) < nAgents; a++) {
-        newTrait_1.push_back(
-                    trait_1[static_cast<size_t>(weightedLottery(rng))]);
-        newTrait_2.push_back(
-                    trait_2[static_cast<size_t>(weightedLottery(rng))]);
-        newTrait_3.push_back(
-                    trait_3[static_cast<size_t>(weightedLottery(rng))]);
-        newTrait_4.push_back(
-                    trait_4[static_cast<size_t>(weightedLottery(rng))]);
-        newTrait_5.push_back(
-                    trait_5[static_cast<size_t>(weightedLottery(rng))]);
-        newTrait_6.push_back(
-                    trait_6[static_cast<size_t>(weightedLottery(rng))]);
+    std::vector<std::vector<float> > tmpTraitMatrix (6, std::vector<float> (nAgents, 0.f));
+    for (int a = 0; a < traitMatrix.size(); a++) {
+        for (int j = 0; j < nAgents; ++j)
+        {
+            tmpTraitMatrix[a][j] = traitMatrix[a][static_cast<size_t>(weightedLottery(rng))];
+        }
     }
+    // check trait matrix size
+    assert(tmpTraitMatrix[0].size() == traitMatrix[0].size() && "trait matrices different size");
+    
     // reset counter
-    assert(newTrait_1.size() == trait_1.size() && "traits different size");
     counter = std::vector<int> (nAgents, 0);
     assert(static_cast<int>(counter.size()) == nAgents && "counter size wrong");
 
     // mutate trait: trait shifts up or down with an equal prob
     // trait mutation prob is mProb, in a two step process
-    for (size_t a = 0; static_cast<int>(a) < nAgents; a++) {
-        // weight for available food
-        if (mutation_happens(rng)) {
-            // mutation set, now increase or decrease
-            newTrait_1[a] = trait_1[a] + mutation_size(rng);
-        }
-        // weight for unavailable food
-        if (mutation_happens(rng)) {
-            // mutation set, now increase or decrease
-            newTrait_2[a] = trait_2[a] + mutation_size(rng);
-        }
-        // weight for agents
-        if (mutation_happens(rng)) {
-            // mutation set, now increase or decrease
-            newTrait_3[a] = trait_3[a] + mutation_size(rng);
-        }
-        // angle weight for food avail
-        if (mutation_happens(rng)) {
-            // mutation set, now increase or decrease
-            newTrait_4[a] = trait_4[a] + mutation_size(rng);
-        }
-        // angle weight for food n avail
-        if (mutation_happens(rng)) {
-            // mutation set, now increase or decrease
-            newTrait_5[a] = trait_5[a] + mutation_size(rng);
-        }
-        // angle weight for agents
-        if (mutation_happens(rng)) {
-            // mutation set, now increase or decrease
-            newTrait_6[a] = trait_6[a] + mutation_size(rng);
+    for (size_t a = 0; a < tmpTraitMatrix[a].size(); a++) {
+        for (int i = 0; i < nAgents; ++i)
+        {
+            if(mutation_happens(rng)) {
+                tmpTraitMatrix[a][i] = tmpTraitMatrix[a][i] + mutation_size(rng);
+            }
         }
     }
-    // swap vectors
-    std::swap(trait_1, newTrait_1);
-    std::swap(trait_2, newTrait_2);
-    std::swap(trait_3, newTrait_3);
-    std::swap(trait_4, newTrait_4);
-    std::swap(trait_5, newTrait_5);
-    std::swap(trait_6, newTrait_6);
-    newTrait_1.clear(); newTrait_2.clear(); newTrait_3.clear();
-    newTrait_4.clear(); newTrait_5.clear(); newTrait_6.clear();
 
+    // swap trait matrices
+    std::swap(traitMatrix, tmpTraitMatrix);
+    tmpTraitMatrix.clear();
     // swap energy
     std::vector<double> tmpEnergy (nAgents, 10.0);
     std::swap(energy, tmpEnergy);
