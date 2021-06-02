@@ -10,16 +10,15 @@ library(data.table)
 
 # sim work=e
 a = do_simulation(
-  popsize = 5,
+  popsize = 2,
   genmax = 2, 
-  tmax = 2, 
-  nFood = 1000,
+  tmax = 1, 
+  nFood = 4,
   foodClusters = 16, 
   clusterDispersal = 2,
-  landsize = 5,
-  competitionCost = 0,
-  sensoryRange = 5,
-  collective = F,
+  landsize = 1,
+  competitionCost = 2,
+  sensoryRange = 2,
   nScenes = 1,
   stopTime = 3
 )
