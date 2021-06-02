@@ -35,12 +35,7 @@ public:
     std::vector<double> coordX;
     std::vector<double> coordY;
     std::vector<double> energy;
-    std::vector<double> trait_1;
-    std::vector<double> trait_2;
-    std::vector<double> trait_3;
-    std::vector<double> trait_4;
-    std::vector<double> trait_5;
-    std::vector<double> trait_6;
+    std::vector<std::vector<float> > traitMatrix;
     std::vector<int> counter;
     std::vector<int> associations; // number of total interactions
     std::vector<int> degree;
