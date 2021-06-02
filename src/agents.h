@@ -210,12 +210,10 @@ void Population::move(size_t id, Resources food, const double moveCost, float se
         else near_food_latent++;
     }
     // get distance as a resource selection function
-    distance = (trait_1[id] * near_food_avail) + (trait_2[id] * neighbours) + 
-        trait_3[id];
+    distance = (traitMatrix[id][1] * near_food_avail) + (traitMatrix[id][2] * neighbours) + traitMatrix[id][3];
 
     double heading;
-    heading = (trait_4[id] * near_food_avail) + (trait_5[id] * neighbours) + 
-        trait_6[id];
+    heading = (traitMatrix[id][4] * near_food_avail) + (traitMatrix[id][5] * neighbours) + traitMatrix[id][6];
     heading = heading * M_PI / 180.0;
 
     // if collective, move towards a random agent (the first) within range
