@@ -20,13 +20,8 @@ public:
         coordX (popsize, 0.0),
         coordY (popsize, 0.0),
         energy (popsize, 1.0),
-        // one trait
-        trait_1(popsize, beginTrait),
-        trait_2(popsize, beginTrait),
-        trait_3(popsize, beginTrait),
-        trait_4(popsize, beginTrait),
-        trait_5(popsize, beginTrait),
-        trait_6(popsize, beginTrait),
+        // trait matrix -- 6 rows, n agent traits
+        traitMatrix (6, std::vector<float>(popsize)),
         // count stationary behaviour
         counter (popsize, 0),
         // associations
