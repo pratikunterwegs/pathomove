@@ -48,10 +48,16 @@ public:
     void setTrait ();
     void setTraitBimodal (const double maxAct, const double ratio, const double proportion);
     void initPos(Resources food);
-    void move(size_t id, Resources food, const double moveCost, const bool collective,
-              const double sensoryRange);
-    std::vector<int> findNearItems(size_t individual, Resources &food, const double distance);
-    void forage(size_t individual, Resources &food, const double distance, const int stopTime);
+
+    void competitionCosts(const double competitionCost);
+    void updateRtree();
+    std::pair<int, std::vector<int> > countNearby (
+        bgi::rtree< value, bgi::quadratic<16> > treeToQuery,
+        size_t id, float sensoryRange);
+
+    void move(size_t id, Resources food, const double moveCost, float sensoryRange);
+    void forage(size_t individual, Resources &food, float distance, const int stopTime);
+    
     std::vector<double> normaliseIntake();
     void Reproduce();
     // for network
