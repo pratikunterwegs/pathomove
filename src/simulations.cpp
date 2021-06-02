@@ -19,8 +19,7 @@ Rcpp::List evolve_pop(int genmax, double tmax,
                       Population &pop, 
                       Resources &food,
                       double competitionCost,
-                      const bool collective,
-                      const double sensoryRange,
+                      float sensoryRange,
                       const int scenes,
                       const int stopTime)
 {
@@ -57,14 +56,15 @@ Rcpp::List evolve_pop(int genmax, double tmax,
 
         // no to gillespie loop
         for (size_t t = 0; t < tmax; t++)
-        {
+        {   
+            pop.updateRtree();
             // movement section
             for (size_t i = 0; i < pop.nAgents; i++)
             {   
                 size_t id_to_move = shuffleVec[i];
                 // check if agent can move
                 if (pop.counter[id_to_move] == 0) {
-                    // pop.move(id_to_move, food, 0.0, collective, sensoryRange); // movecost hardcoded to 0
+                    // pop.move(id_to_move, food, 0.0, sensoryRange); // movecost hardcoded to 0
                 } else if (pop.counter[id_to_move] > 0) {
                     pop.counter[id_to_move] --;
                 }
@@ -74,7 +74,8 @@ Rcpp::List evolve_pop(int genmax, double tmax,
             for (int i = 0; i < pop.nAgents; i++) {
                 size_t id_to_move = shuffleVec[i];
                 pop.forage(id_to_move, food, sensoryRange, stopTime);
-                pop.countNeighbours(id_to_move, sensoryRange);
+                // count associations
+                pop.associations[id_to_move] += (pop.countNearby(pop.agentRtree, id_to_move, sensoryRange)).first;
             }
 
             // PBSN etc
@@ -83,22 +84,22 @@ Rcpp::List evolve_pop(int genmax, double tmax,
         // timestep ends here        
         // pop.degree = getDegree(pbsn);
 
-        food.countAvailable();
+        // food.countAvailable();
         }
         // generation ends here
         // update gendata
-        if ((gen == 0) | (gen % 10 == 0) | (gen == (genmax - 1))) {
-            thisGenData.updateGenData(pop, gen);
-        }
+        // if ((gen == 0) | (gen % 10 == 0) | (gen == (genmax - 1))) {
+        //     thisGenData.updateGenData(pop, gen);
+        // }
         // thisNetworkData.updateNetworkData(pop, gen, pbsn);
         // subtract competition costs
-        pop.competitionCosts(competitionCost);
+        // pop.competitionCosts(competitionCost);
         // reproduce
-        pop.Reproduce();
+        // pop.Reproduce();
     }
     // all gens end here
     return Rcpp::List::create(
-            Named("trait_data") = thisGenData.getGenData()
+            Named("trait_data") = "nothing here" //thisGenData.getGenData()
     );
 }
 
@@ -116,14 +117,13 @@ Rcpp::List evolve_pop(int genmax, double tmax,
 //' @param landsize The size of the landscape as a numeric (double).
 //' @param competitionCost Cost of associations.
 //' @param sensoryRange The sensory range.
-//' @param collective Whether to move collectively.
 //' @param nScenes How many scenes.
 //' @param stopTime The handling time.
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
 Rcpp::List do_simulation(int popsize, int genmax, int tmax, 
                          int nFood, int foodClusters, double clusterDispersal, double landsize,
-                         double competitionCost, const double sensoryRange, const bool collective,
+                         double competitionCost, float sensoryRange,
                          const int nScenes, const int stopTime) {
 
     // prepare landscape
@@ -144,9 +144,7 @@ Rcpp::List do_simulation(int popsize, int genmax, int tmax,
     // pbsn.initAssociations(pop.nAgents);
 
     // evolve population and store data
-    Rcpp::List evoSimData = evolve_pop(genmax, tmax, pop, food,
-                                        competitionCost, sensoryRange, 
-                                        collective, nScenes, stopTime);
+    Rcpp::List evoSimData = evolve_pop(genmax, tmax, pop, food, competitionCost, sensoryRange, nScenes, stopTime);
 
     Rcpp::Rcout << "data prepared\n";
 
