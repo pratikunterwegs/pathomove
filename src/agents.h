@@ -162,44 +162,34 @@ void Population::competitionCosts(const double competitionCost) {
     }
 }
 
-// check neighbours
-int Population::countNeighbours (size_t id,
-                                 const double sensoryRange) {
-    std::vector<int> agentId;
-    std::vector<value> nearAgents;
-    box bbox(point(coordX[id] - 1.0, coordY[id] - 1.0),
-             point(coordX[id] + 1.0, coordY[id] + 1.0));
-    
-    Rcpp::Rcout << "id = " << id << "\n";
-    Rcpp::Rcout << "box = " << bg::wkt<box>(bbox) << "\n";
-    // query for a simple box
-    agentRtree.query(bgi::intersects(bbox), std::back_inserter(nearAgents));
+// general function for items or agents within distance
+std::pair<int, std::vector<int> > Population::countNearby (
+    bgi::rtree< value, bgi::quadratic<16> > treeToQuery,
+    size_t id, float sensoryRange) {
 
-    BOOST_FOREACH(value const& v, nearAgents) {
+    std::vector<int> entityId;
+    std::vector<value> nearEntities;
+    
+    Rcpp::Rcout << "id = " << id << " at " << bg::wkt<point> (point(coordX[id], coordY[id])) << "\n";
+
+    // query for a simple box
+    treeToQuery.query(bgi::satisfies([&](value const& v) {
+        return bg::distance(v.first, point(coordX[id], coordY[id])) < sensoryRange;}),
+        std::back_inserter(nearEntities));
+
+    BOOST_FOREACH(value const& v, nearEntities) {
         Rcpp::Rcout << bg::wkt<point> (v.first) << " - " << v.second << "\n";
-        agentId.push_back(v.second);
+        entityId.push_back(v.second);
     }
     associations[id] += nearAgents.size();
 
-    return static_cast<int> (nearAgents.size());
-}
+    nearEntities.clear();
 
-std::vector<int> Population::findNearItems(size_t individual, Resources &food, 
-                                const double sensoryRange){
-    // search nearest item only if any are available
-    std::vector<int> itemID;
-    std::vector<value> nearItems;
-    box bbox(point(coordX[individual] - sensoryRange,
-                   coordY[individual] - sensoryRange),
-             point(coordX[individual] + sensoryRange, 
-                   coordY[individual] + sensoryRange));
+    Rcpp::Rcout << "near agents = " << entityId.size() << "\n";
 
-    food.rtree.query(bgi::intersects(bbox), std::back_inserter(nearItems));
-
-    for(size_t i = 0; i < nearItems.size(); i++){
-        itemID.push_back(nearItems[i].second); // store item ids
-    }
-    return itemID;
+    // first element is number of near entities
+    // second is the identity of entities
+    return std::pair<int, std::vector<int> > {entityId.size(), entityId};
 }
 
 /// population movement function
