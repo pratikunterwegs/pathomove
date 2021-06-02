@@ -254,9 +254,9 @@ void Population::move(size_t id, Resources food, const double moveCost, float se
     energy[id] -= (distance * moveCost);
 }
 
-void Population::forage(size_t individual, Resources &food, const double distance, const int stopTime){
+void Population::forage(size_t id, Resources &food, float sensoryRange, const int stopTime){
     // find nearest item ids
-    std::vector<int> theseItems = findNearItems(individual, food, distance);
+    std::vector<int> theseItems = (countNearby(food.rtree, id, sensoryRange)).second;
 
     int thisItem;
 
@@ -272,8 +272,8 @@ void Population::forage(size_t individual, Resources &food, const double distanc
 
         // check selected item is available
         assert(food.available[thisItem] && "forage error: item not available");
-        counter[individual] = stopTime;
-        energy[individual] += 10.0;
+        counter[id] = stopTime;
+        energy[id] += 10.0;
 
         // remove the food item from the landscape
         food.available[thisItem] = false;
