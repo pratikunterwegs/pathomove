@@ -3,29 +3,22 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-#include "parameters.h"
-#include "landscape.h"
-#include "agents.h"
-#include "network.h"
-#include "network_operations.hpp"
-#include "data_types.h"
+#include "simulations.h"
 
 #include <Rcpp.h>
 
 using namespace Rcpp;
 
 // function to evolve population
-Rcpp::List evolve_pop(int genmax, double tmax,
-                      Population &pop, 
-                      Resources &food,
-                      double competitionCost,
-                      float sensoryRange,
-                      const int scenes,
-                      const int stopTime)
+void evolve_pop(int genmax, double tmax,
+                Population &pop,
+                Resources &food,
+                genData &thisGenData,
+                double competitionCost,
+                float sensoryRange,
+                const int scenes,
+                const int stopTime)
 {
-    // make generation data
-    genData thisGenData;
-    // networkData thisNetworkData;
 
     // set seed
     unsigned seed = static_cast<unsigned> (std::chrono::system_clock::now().time_since_epoch().count());
@@ -40,51 +33,51 @@ Rcpp::List evolve_pop(int genmax, double tmax,
     for(int gen = 0; gen < genmax; gen++) {
         // go over scenes
         for(int s = 0; s < scenes; s++) {
-        food.initResources();
-        food.countAvailable();
-        // reset population associations and degree
-        // pop.associations = std::vector<int> (pop.nAgents, 0);
-        // pop.degree = std::vector<int> (pop.nAgents, 0);
+            food.initResources();
+            food.countAvailable();
+            // reset population associations and degree
+            // pop.associations = std::vector<int> (pop.nAgents, 0);
+            // pop.degree = std::vector<int> (pop.nAgents, 0);
 
-        // reset counter and positions
-        pop.counter = std::vector<int> (pop.nAgents, 0);
-        pop.initPos(food);
+            // reset counter and positions
+            pop.counter = std::vector<int> (pop.nAgents, 0);
+            pop.initPos(food);
 
-        // reset pbsn
-        // pbsn.initAssociations(pop.nAgents);
-        // pbsn.initAdjMat(pop.nAgents);
+            // reset pbsn
+            // pbsn.initAssociations(pop.nAgents);
+            // pbsn.initAdjMat(pop.nAgents);
 
-        // no to gillespie loop
-        for (size_t t = 0; t < tmax; t++)
-        {   
-            pop.updateRtree();
-            // movement section
-            for (size_t i = 0; i < pop.nAgents; i++)
-            {   
-                size_t id_to_move = shuffleVec[i];
-                // check if agent can move
-                if (pop.counter[id_to_move] == 0) {
-                    // pop.move(id_to_move, food, 0.0, sensoryRange); // movecost hardcoded to 0
-                } else if (pop.counter[id_to_move] > 0) {
-                    pop.counter[id_to_move] --;
+            // no to gillespie loop
+            for (size_t t = 0; t < tmax; t++)
+            {
+                pop.updateRtree();
+                // movement section
+                for (size_t i = 0; i < pop.nAgents; i++)
+                {
+                    size_t id_to_move = shuffleVec[i];
+                    // check if agent can move
+                    if (pop.counter[id_to_move] == 0) {
+                        pop.move(id_to_move, food, 0.0, sensoryRange); // movecost hardcoded to 0
+                    } else if (pop.counter[id_to_move] > 0) {
+                        pop.counter[id_to_move] --;
+                    }
                 }
+
+                // foraging section
+                for (int i = 0; i < pop.nAgents; i++) {
+                    size_t id_to_move = shuffleVec[i];
+                    pop.forage(id_to_move, food, sensoryRange, stopTime);
+                    // count associations
+                    pop.associations[id_to_move] += (pop.countNearby(pop.agentRtree, id_to_move, sensoryRange)).first;
+                }
+
+                // PBSN etc
+                // pop.updatePbsn(pbsn, sensoryRange);
             }
+            // timestep ends here
+            // pop.degree = getDegree(pbsn);
 
-            // foraging section
-            for (int i = 0; i < pop.nAgents; i++) {
-                size_t id_to_move = shuffleVec[i];
-                pop.forage(id_to_move, food, sensoryRange, stopTime);
-                // count associations
-                pop.associations[id_to_move] += (pop.countNearby(pop.agentRtree, id_to_move, sensoryRange)).first;
-            }
-
-            // PBSN etc
-            // pop.updatePbsn(pbsn, sensoryRange);            
-        }
-        // timestep ends here        
-        // pop.degree = getDegree(pbsn);
-
-        // food.countAvailable();
+            // food.countAvailable();
         }
         // generation ends here
         // update gendata
@@ -98,9 +91,7 @@ Rcpp::List evolve_pop(int genmax, double tmax,
         // pop.Reproduce();
     }
     // all gens end here
-    return Rcpp::List::create(
-            Named("trait_data") = "nothing here" //thisGenData.getGenData()
-    );
+
 }
 
 //' Runs the sociality model simulation.
@@ -139,14 +130,16 @@ Rcpp::List do_simulation(int popsize, int genmax, int tmax,
     pop.setTrait();
     Rcpp::Rcout << pop.nAgents << " agents over " << genmax << " gens of " << tmax << " timesteps\n";
 
+    // prepare data structure
+    genData thisGenData;
     // prepare social network struct
     // Network pbsn;
     // pbsn.initAssociations(pop.nAgents);
 
     // evolve population and store data
-    Rcpp::List evoSimData = evolve_pop(genmax, tmax, pop, food, competitionCost, sensoryRange, nScenes, stopTime);
+    evolve_pop(genmax, tmax, pop, food, thisGenData, competitionCost, sensoryRange, nScenes, stopTime);
 
     Rcpp::Rcout << "data prepared\n";
 
-    return evoSimData;
+    return Rcpp::List::create(Named("this") = 1.f);
 }
