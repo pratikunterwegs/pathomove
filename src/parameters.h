@@ -2,29 +2,9 @@
 #define PARAMETERS_H
 
 #include <random>
-// gsl libs
-// #include <stdio.h>
-// #include <gsl/gsl_rng.h>
-// #include <gsl/gsl_randist.h>
 #include <chrono>
 
-// make a gsl rng and a regular rng
-//const gsl_rng_type * T;
-// gsl_rng * r = gsl_rng_alloc (gsl_rng_taus);
-
-std::mt19937 rng;
-
-// movement
-const double indivStepSize = 1.0;
-const double indivStepSizeSd = 0.2;
-
-const double moveCost = 0.001;
-
-const double etaCrw = 40.0; // standard turning angle
-
-// agents
-// const double range = 2.0;
-const double pCheck = 1.0;
+extern std::mt19937 rng;
 
 // landscape
 const double foodEnergy = 1.0;
