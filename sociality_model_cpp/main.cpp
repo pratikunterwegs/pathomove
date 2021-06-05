@@ -4,34 +4,45 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-#include "../src/parameters.h"
-#include "../src/landscape.h"
-#include "../src/network.h"
-#include "../src/agents.h"
-#include "../src/network_operations.hpp"
-#include "../src/simulations.cpp"
-
-void test_wrapped_distance () {
-    // check for correct case
-    bgi::rtree< value, bgi::quadratic<16> > tmpRtree;
-    point p = point(0.1, 0.1);
-    tmpRtree.insert(std::make_pair(p, 1));
-    double unwrapped_dist = wrappedDistance(p, 0.2, 0.1, 10.0);
-
-    assert( fabs((unwrapped_dist - 0.1) < 0.0001) && "regular distance not working" );
-
-    double wrapped_dist = wrappedDistance(p, -0.1, 0.1, 10.0);
-
-    assert( fabs((wrapped_dist - 0.2) < 0.0001) && "wrapped distance not working");
-    std::cout << wrapped_dist - 0.2 << "\n"; // not really 0 because floats
-    std::cout << "wrapped distance test passes\n";
-}
+#include "../src/simulations.h"
 
 int main(int argc, char *argv[])
 {
     // process cliargs
     std::vector<std::string> cliArgs(argv, argv+argc);
-    test_wrapped_distance();
+
+    int nFood = 5;
+    float landsize = 5.0f;
+    int foodClusters = 2;
+    float clusterDispersal = 1.0f;
+    int popsize = 5;
+    int genmax = 1;
+    int tmax = 2;
+    float competitionCost = 0.f;
+    float sensoryRange = 3.f;
+    int nScenes = 1;
+    int stopTime = 1;
+
+    // prepare landscape
+    Resources food (nFood, landsize, foodClusters, clusterDispersal);
+    food.initResources();
+    food.countAvailable();
+    std::cout << "landscape with " << foodClusters << " clusters\n";
+    /// export landscape
+
+    // prepare population
+    Population pop (popsize, 0);
+    // pop.initPop(popsize);
+    pop.setTrait();
+    std::cout << pop.nAgents << " agents over " << genmax << " gens of " << tmax << " timesteps\n";
+
+    genData thisGenData;
+    // prepare social network struct
+    // Network pbsn;
+    // pbsn.initAssociations(pop.nAgents);
+
+    // evolve population and store data
+    evolve_pop(genmax, tmax, pop, food, thisGenData, competitionCost, sensoryRange, nScenes, stopTime);
 
     return 0;
 }
