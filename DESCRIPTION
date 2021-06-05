@@ -16,7 +16,8 @@ RoxygenNote: 7.1.1
 Depends:igraph
 LinkingTo: 
     Rcpp,
-    BH
+    BH,
+    testthat
 Imports: 
     Rcpp,
     assertthat,
@@ -25,4 +26,5 @@ Imports:
     BH
 Suggests: 
     testthat,
-    ssh
+    ssh,
+    xml2
