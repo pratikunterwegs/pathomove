@@ -13,7 +13,8 @@
 struct genData {
 public:
     std::vector<std::vector<double> > genEnergyVec;
-    std::vector<std::vector<std::vector<float> > > traitMatrix;
+    std::vector<std::vector<float> > genCoefFoodVec;
+    std::vector<std::vector<float> > genCoefNbrsVec;
     // std::vector<std::vector<int> > genAssocVec;
     // std::vector<std::vector<int> > genDegreeVec;
     std::vector<int> gens;
