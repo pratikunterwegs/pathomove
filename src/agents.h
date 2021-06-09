@@ -17,9 +17,9 @@ public:
         nAgents (popsize),
         coordX (popsize, 0.0),
         coordY (popsize, 0.0),
-        energy (popsize, 1.0),
-        // trait matrix -- 6 rows, n agent traits
-        traitMatrix (6, std::vector<float>(popsize)),
+        energy (popsize, 0.001),
+        coef_nbrs (popsize, 1.f),
+        coef_food (popsize, 1.f),
         // count stationary behaviour
         counter (popsize, 0),
         // associations
@@ -33,7 +33,8 @@ public:
     std::vector<double> coordX;
     std::vector<double> coordY;
     std::vector<double> energy;
-    std::vector<std::vector<float> > traitMatrix;
+    std::vector<float> coef_nbrs;
+    std::vector<float> coef_food;
     std::vector<int> counter;
     std::vector<int> associations; // number of total interactions
     std::vector<int> degree;
