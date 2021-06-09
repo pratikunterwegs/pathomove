@@ -9,14 +9,14 @@ library(ggplot2)
 library(data.table)
 
 # sim work=e
-a = do_simulation(
-  popsize = 2,
-  genmax = 2, 
-  tmax = 1, 
-  nFood = 4,
+a = snevo::do_simulation(
+  popsize = 100,
+  genmax = 500, 
+  tmax = 25, 
+  nFood = 500,
   foodClusters = 16, 
-  clusterDispersal = 2,
-  landsize = 1,
+  clusterDispersal = 4,
+  landsize = 10,
   competitionCost = 2,
   sensoryRange = 2,
   nScenes = 1,
@@ -25,28 +25,26 @@ a = do_simulation(
 
 names(a)
 
-b = a[["trait_data"]]
 d = Map(function(df, g) {
   df$gen = g
   return(df)
-}, b[["pop_data"]], b[["gens"]])
+}, a[["pop_data"]], a[["gens"]])
 
 d = rbindlist(d)
 hist(d$energy)
 
 # explore evo
-d[, sprintf("trait%i", seq(6)) := lapply(.SD, round, 1),
-  .SDcols = sprintf("trait%i", seq(6))]
 # summarise trait per gen
 d_summary = melt(d, id.vars = "gen", 
-                  measure.vars = sprintf("trait%i", seq(6)),
+                  measure.vars = c("coef_food", "coef_nbrs"),
                   variable.name = "trait")
-d_summary = d_summary[,.N, by = c("gen", "trait", "value")]
+d_summary[, v_round := plyr::round_any(value, 0.01)]
+d_summary = d_summary[,.N, by = c("gen", "trait", "v_round")]
 
 ggplot(d_summary)+
   geom_tile(aes(
     gen, 
-    value, 
+    v_round, 
     fill = N
   ))+
   scale_fill_viridis_c(option = "H")+
