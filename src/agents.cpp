@@ -8,6 +8,8 @@
 #include <boost/foreach.hpp>
 #include "agents.h"
 
+std::cauchy_distribution<double> def_move_angle(0.0, 20.0);
+
 // to update agent Rtree
 void Population::updateRtree () {
     // initialise rtree
@@ -32,10 +34,9 @@ void Population::initPos(Resources food) {
 
 void Population::setTrait() {
     std::uniform_real_distribution<double> agent_ran_trait(0.0, 1.0);
-    for (size_t i = 0; i < traitMatrix.size(); i++) {
-        for(size_t j = 0; j < nAgents; j++) {
-            traitMatrix[i][j] = agent_ran_trait(rng);
-        }
+    for(size_t i = 0; i < nAgents; i++) {
+        coef_food[i] = agent_ran_trait(rng);
+        coef_nbrs[i] = agent_ran_trait(rng);
     }
 }
 
@@ -81,7 +82,7 @@ std::pair<int, std::vector<int> > Population::countNearby (
     std::vector<int> entityId;
     std::vector<value> nearEntities;
     
-    std::cout << "id = " << id << " at " << bg::wkt<point> (point(coordX[id], coordY[id])) << "\n";
+    // std::cout << "id = " << id << " at " << bg::wkt<point> (point(coordX[id], coordY[id])) << "\n";
 
     // query for a simple box
     treeToQuery.query(bgi::satisfies([&](value const& v) {
@@ -89,13 +90,13 @@ std::pair<int, std::vector<int> > Population::countNearby (
         std::back_inserter(nearEntities));
 
     BOOST_FOREACH(value const& v, nearEntities) {
-        std::cout << bg::wkt<point> (v.first) << " - " << v.second << "\n";
+        // std::cout << bg::wkt<point> (v.first) << " - " << v.second << "\n";
         entityId.push_back(v.second);
     }
 
     nearEntities.clear();
 
-    std::cout << "near agents = " << entityId.size() << "\n\n";
+    // std::cout << "near agents = " << entityId.size() << "\n\n";
 
     // first element is number of near entities
     // second is the identity of entities
@@ -118,10 +119,10 @@ void Population::move(size_t id, Resources food, const double moveCost, float se
         if (food.available[theseItems[i]]) near_food_avail++;
     }
     // get distance as a resource selection function
-    distance = (traitMatrix[id][1] * near_food_avail) + (traitMatrix[id][2] * neighbours) + traitMatrix[id][3];
+    distance = (coef_food[id] * near_food_avail) + (coef_nbrs[id] * neighbours) + 0.1;
 
     double heading;
-    heading = (traitMatrix[id][4] * near_food_avail) + (traitMatrix[id][5] * neighbours) + traitMatrix[id][6];
+    heading = def_move_angle(rng);
     heading = heading * M_PI / 180.0;
 
     // figure out the next position
@@ -139,7 +140,8 @@ void Population::move(size_t id, Resources food, const double moveCost, float se
 void Population::forage(size_t id, Resources &food, float sensoryRange, const int stopTime){
     // find nearest item ids
     std::vector<int> theseItems = (countNearby(food.rtree, id, sensoryRange)).second;
-
+    // energy[id] = static_cast<double> (theseItems.size());
+    // counter[id] = stopTime;
     int thisItem = -1;
 
     // check near items count
@@ -156,7 +158,7 @@ void Population::forage(size_t id, Resources &food, float sensoryRange, const in
             // check selected item is available
             assert(food.available[thisItem] && "forage error: item not available");
             counter[id] = stopTime;
-            energy[id] += 10.0;
+            energy[id] += 1.0;
 
             // remove the food item from the landscape
             food.available[thisItem] = false;
@@ -221,15 +223,12 @@ void Population::Reproduce() {
     std::discrete_distribution<> weightedLottery(vecFitness.begin(), vecFitness.end());
 
     // get parent trait based on weighted lottery
-    std::vector<std::vector<float> > tmpTraitMatrix (6, std::vector<float> (nAgents, 0.f));
-    for (int a = 0; a < traitMatrix.size(); a++) {
-        for (int j = 0; j < nAgents; ++j)
-        {
-            tmpTraitMatrix[a][j] = traitMatrix[a][static_cast<size_t>(weightedLottery(rng))];
-        }
+    std::vector<float> tmp_coef_food (nAgents, 0.f);
+    std::vector<float> tmp_coef_nbrs (nAgents, 0.f);
+    for (int a = 0; a < nAgents; a++) {
+        tmp_coef_nbrs[a] = coef_nbrs[static_cast<size_t>(weightedLottery(rng))];
+        tmp_coef_food[a] = coef_food[static_cast<size_t>(weightedLottery(rng))];
     }
-    // check trait matrix size
-    assert(tmpTraitMatrix[0].size() == traitMatrix[0].size() && "trait matrices different size");
     
     // reset counter
     counter = std::vector<int> (nAgents, 0);
@@ -237,20 +236,21 @@ void Population::Reproduce() {
 
     // mutate trait: trait shifts up or down with an equal prob
     // trait mutation prob is mProb, in a two step process
-    for (size_t a = 0; a < tmpTraitMatrix[a].size(); a++) {
-        for (int i = 0; i < nAgents; ++i)
-        {
-            if(mutation_happens(rng)) {
-                tmpTraitMatrix[a][i] = tmpTraitMatrix[a][i] + mutation_size(rng);
-            }
+    for (int a = 0; a < nAgents; a++) {
+        if(mutation_happens(rng)) {
+            tmp_coef_food[a] = tmp_coef_food[a] + mutation_size(rng);
+        }
+        if(mutation_happens(rng)) {
+            tmp_coef_nbrs[a] = tmp_coef_nbrs[a] + mutation_size(rng);
         }
     }
 
     // swap trait matrices
-    std::swap(traitMatrix, tmpTraitMatrix);
-    tmpTraitMatrix.clear();
+    coef_food =  tmp_coef_food;
+    coef_nbrs = tmp_coef_nbrs;
+    tmp_coef_nbrs.clear(); tmp_coef_food.clear();
     // swap energy
-    std::vector<double> tmpEnergy (nAgents, 10.0);
+    std::vector<double> tmpEnergy (nAgents, 0.001);
     std::swap(energy, tmpEnergy);
     tmpEnergy.clear();
 }
