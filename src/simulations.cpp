@@ -56,8 +56,8 @@ void evolve_pop(int genmax, double tmax,
                 {
                     size_t id_to_move = shuffleVec[i];
                     // check if agent can move
-                    if (pop.counter[id_to_move] == 0) {
-                        pop.move(id_to_move, food, 0.0, sensoryRange); // movecost hardcoded to 0
+                    if (pop.counter[id_to_move] <= 0) {
+                        pop.move(id_to_move, food, competitionCost /*this is the movement cost! */, sensoryRange); // movecost hardcoded to 0
                     } else if (pop.counter[id_to_move] > 0) {
                         pop.counter[id_to_move] --;
                     }
@@ -81,14 +81,14 @@ void evolve_pop(int genmax, double tmax,
         }
         // generation ends here
         // update gendata
-        // if ((gen == 0) | (gen % 10 == 0) | (gen == (genmax - 1))) {
-        //     thisGenData.updateGenData(pop, gen);
-        // }
+        if ((gen == 0) | (gen % 10 == 0) | (gen == (genmax - 1))) {
+            thisGenData.updateGenData(pop, gen);
+        }
         // thisNetworkData.updateNetworkData(pop, gen, pbsn);
         // subtract competition costs
         // pop.competitionCosts(competitionCost);
         // reproduce
-        // pop.Reproduce();
+        pop.Reproduce();
     }
     // all gens end here
 
@@ -141,5 +141,5 @@ Rcpp::List do_simulation(int popsize, int genmax, int tmax,
 
     Rcpp::Rcout << "data prepared\n";
 
-    return Rcpp::List::create(Named("this") = 1.f);
+    return thisGenData.getGenData();
 }
