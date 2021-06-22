@@ -17,13 +17,13 @@ Depends:igraph
 LinkingTo: 
     Rcpp,
     BH,
+    RcppGSL,
     testthat
 Imports: 
     Rcpp,
     assertthat,
     data.table,
-    glue,
-    BH
+    glue
 Suggests: 
     testthat,
     ssh,
