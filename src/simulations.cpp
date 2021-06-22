@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-#include "simulations.h"
+#include "simulations.hpp"
 
 #include <Rcpp.h>
 

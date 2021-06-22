@@ -6,7 +6,7 @@
 #include <iostream>
 #include <random>
 #include <boost/foreach.hpp>
-#include "agents.h"
+#include "agents.hpp"
 
 std::cauchy_distribution<double> def_move_angle(0.0, 20.0);
 

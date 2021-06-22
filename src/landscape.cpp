@@ -4,7 +4,7 @@
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/index/rtree.hpp>
 using namespace Rcpp;
-#include "landscape.h"
+#include "landscape.hpp"
 #include <vector>
 #include <algorithm>
 #include <functional>

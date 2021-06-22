@@ -1,5 +1,5 @@
 
-#include "data_types.h"
+#include "data_types.hpp"
 
 // function to update move
 void moveData::updateMoveData (Population &pop, const int timestep_) {
