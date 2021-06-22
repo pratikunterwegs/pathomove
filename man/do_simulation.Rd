@@ -14,7 +14,6 @@ do_simulation(
   landsize,
   competitionCost,
   sensoryRange,
-  collective,
   nScenes,
   stopTime
 )
@@ -37,8 +36,6 @@ do_simulation(
 \item{competitionCost}{Cost of associations.}
 
 \item{sensoryRange}{The sensory range.}
-
-\item{collective}{Whether to move collectively.}
 
 \item{nScenes}{How many scenes.}
 
