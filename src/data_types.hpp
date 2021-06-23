@@ -6,13 +6,13 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-#include "agents.h"
-#include "network.h"
+#include "agents.hpp"
+#include "network.hpp"
 
 // define a struct holding a vector of data frames which holds generation wise data
 struct genData {
 public:
-    std::vector<std::vector<double> > genEnergyVec;
+    std::vector<std::vector<float> > genEnergyVec;
     std::vector<std::vector<float> > genCoefFoodVec;
     std::vector<std::vector<float> > genCoefNbrsVec;
     // std::vector<std::vector<int> > genAssocVec;
@@ -26,9 +26,9 @@ public:
 struct moveData {
 public:
     std::vector<std::vector<int> > id;
-    std::vector<std::vector<double> > coordX;
-    std::vector<std::vector<double> > coordY;
-    std::vector<std::vector<double> > energy;
+    std::vector<std::vector<float> > coordX;
+    std::vector<std::vector<float> > coordY;
+    std::vector<std::vector<float> > energy;
     std::vector<int> timestep;
 
     void updateMoveData (Population &pop, const int timestep);

@@ -6,9 +6,8 @@
 #include <iostream>
 #include <random>
 #include <boost/foreach.hpp>
+#include "landscape.hpp"
 #include "agents.hpp"
-
-std::cauchy_distribution<double> def_move_angle(0.0, 20.0);
 
 // to update agent Rtree
 void Population::updateRtree () {
@@ -23,29 +22,35 @@ void Population::updateRtree () {
     tmpRtree.clear();
 }
 
+// uniform distribution for agent position
+std::uniform_real_distribution<float> agent_ran_pos(0.0f, 1.f);
+
+// function for initial positions
 void Population::initPos(Resources food) {
-    std::uniform_real_distribution<double> agent_ran_pos(0.0, food.dSize);
     for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-        coordX[i] = agent_ran_pos(rng);
-        coordY[i] = agent_ran_pos(rng);
+        coordX[i] = agent_ran_pos(rng) * food.dSize;
+        coordY[i] = agent_ran_pos(rng) * food.dSize;
     }
     updateRtree();
 }
 
+// unifrom distribution for agent trait
+std::uniform_real_distribution<float> agent_ran_trait(0.0, 1.0);
+
+// set agent trait
 void Population::setTrait() {
-    std::uniform_real_distribution<double> agent_ran_trait(0.0, 1.0);
     for(size_t i = 0; i < nAgents; i++) {
         coef_food[i] = agent_ran_trait(rng);
         coef_nbrs[i] = agent_ran_trait(rng);
     }
 }
 
-float get_distance(float x1, float x2) {
-    return fabs(x1 - x2);
+float get_distance(float x1, float x2, float y1, float y2) {
+    return std::sqrt(std::pow((x1 - x2), 2) + std::pow((y1 - y2), 2));
 }
 
 // to update pbsn
-// void Population::updatePbsn(Network &pbsn, const double range) {
+// void Population::updatePbsn(Network &pbsn, const float range) {
 
 //     updateRtree();
 
@@ -66,7 +71,8 @@ float get_distance(float x1, float x2) {
 //     }
 // }
 
-void Population::competitionCosts(const double competitionCost) {
+// function for competition costs
+void Population::competitionCosts(const float competitionCost) {
     
     // reduce energy by competition cost
     for(int i = 0; i < nAgents; i++) {
@@ -77,7 +83,8 @@ void Population::competitionCosts(const double competitionCost) {
 // general function for items or agents within distance
 std::pair<int, std::vector<int> > Population::countNearby (
     bgi::rtree< value, bgi::quadratic<16> > treeToQuery,
-    size_t id, float sensoryRange) {
+    size_t id, float sensoryRange,
+    const float xloc, const float yloc) {
 
     std::vector<int> entityId;
     std::vector<value> nearEntities;
@@ -86,7 +93,7 @@ std::pair<int, std::vector<int> > Population::countNearby (
 
     // query for a simple box
     treeToQuery.query(bgi::satisfies([&](value const& v) {
-        return bg::distance(v.first, point(coordX[id], coordY[id])) < sensoryRange;}),
+        return bg::distance(v.first, point(xloc, yloc)) < sensoryRange;}),
         std::back_inserter(nearEntities));
 
     BOOST_FOREACH(value const& v, nearEntities) {
@@ -104,43 +111,71 @@ std::pair<int, std::vector<int> > Population::countNearby (
 }
 
 /// population movement function
-void Population::move(size_t id, Resources food, const double moveCost, float sensoryRange) {
+void Population::move(size_t id, Resources food, const float moveCost, float sensoryRange) {
 
-    double distance;
-    // count neighbours
-    int neighbours = (countNearby(agentRtree, id, sensoryRange)).first;
-    // find nearby food
-    std::vector<int> theseItems = (countNearby(food.rtree, id, sensoryRange)).second;
+    float angle = 0.f;
+    float twopi = 2.f * M_PI;
+    
+    // what increment for 4 samples in a circle around the agent
+    float increment = twopi / 4.0f;
 
-    // count available and not
-    int near_food_avail;
-    for (size_t i = 0; i < theseItems.size(); i++)
-    {
-        if (food.available[theseItems[i]]) near_food_avail++;
+    // first assess current location
+    float sampleX = coordX[id];
+    float sampleY = coordY[id]; 
+    float foodHere = static_cast<float>(countNearby(
+            food.rtree, id, sensoryRange, sampleX, sampleY
+        ).first);
+    float nbrsHere = static_cast<float>(countNearby(
+            agentRtree, id, sensoryRange, sampleX, sampleY
+        ).first);;
+
+    // get suitability current
+    float suitabilityHere = (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere);
+
+    float newX, newY;
+
+    // now sample at four locations around
+    for(float theta = 0.f; theta < twopi - increment; theta += increment) {
+
+        sampleX = coordX[id] + (sensoryRange * static_cast<float>(cos(theta)));
+        sampleY = coordY[id] + (sensoryRange * static_cast<float>(sin(theta)));
+
+        foodHere = static_cast<float>(countNearby(
+            food.rtree, id, sensoryRange, sampleX, sampleY
+        ).first);
+
+        nbrsHere = static_cast<float>(countNearby(
+            agentRtree, id, sensoryRange, sampleX, sampleY
+        ).first);
+
+        float new_suitabilityHere = (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere);
+
+        if (new_suitabilityHere > suitabilityHere) {
+            
+            newX = sampleX; newY = sampleY;
+            suitabilityHere = new_suitabilityHere;
+        }
     }
-    // get distance as a resource selection function
-    distance = (coef_food[id] * near_food_avail) + (coef_nbrs[id] * neighbours) + 0.1;
 
-    double heading;
-    heading = def_move_angle(rng);
-    heading = heading * M_PI / 180.0;
+    // crudely wrap movement
+    if((newX > food.dSize) | (newX < 0.f)) {
+        newX = std::fabs(std::fmod(newX, food.dSize));
+    }
+    if((newY > food.dSize) | (newY < 0.f)) {
+        newY = std::fabs(std::fmod(newY, food.dSize));
+    }
 
-    // figure out the next position
-    coordX[id] = coordX[id] + (distance * std::cos(heading));
-    coordY[id] = coordY[id] + (distance * std::sin(heading));
-
-    // wrap agents
-    if((coordX[id] > food.dSize) | (coordX[id] < 0.0)) coordX[id] = fabs(fmod(coordX[id], food.dSize));
-    if((coordY[id] > food.dSize) | (coordY[id] < 0.0)) coordY[id] = fabs(fmod(coordY[id], food.dSize));
-
-    // add a cost
-    energy[id] -= (distance * moveCost);
+    if(get_distance(newX, coordX[id], newY, coordY[id]) > 0.f) {
+        energy[id] -= moveCost;
+    }
+    // set locations
+    coordX[id] = newX; coordY[id] = newY;
 }
 
 void Population::forage(size_t id, Resources &food, float sensoryRange, const int stopTime){
     // find nearest item ids
-    std::vector<int> theseItems = (countNearby(food.rtree, id, sensoryRange)).second;
-    // energy[id] = static_cast<double> (theseItems.size());
+    std::vector<int> theseItems = (countNearby(food.rtree, id, sensoryRange, coordX[id], coordY[id])).second;
+    // energy[id] = static_cast<float> (theseItems.size());
     // counter[id] = stopTime;
     int thisItem = -1;
 
@@ -195,13 +230,13 @@ void Population::forage(size_t id, Resources &food, float sensoryRange, const in
 // }
 
 /// minor function to normalise vector
-std::vector<double> Population::normaliseIntake() {
+std::vector<float> Population::normaliseIntake() {
     // sort vec fitness
-    std::vector<double> vecFitness = energy;
+    std::vector<float> vecFitness = energy;
     std::sort(vecFitness.begin(), vecFitness.end());
     // scale to max fitness
-    double maxFitness = vecFitness[vecFitness.size()-1];
-    double minFitness = vecFitness[0];
+    float maxFitness = vecFitness[vecFitness.size()-1];
+    float minFitness = vecFitness[0];
     // rescale
     for(size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
         vecFitness[i] = (vecFitness[i] + fabs(minFitness)) / maxFitness;
@@ -217,7 +252,7 @@ std::normal_distribution<float> mutation_size(0.0, mShift);
 // fun for replication
 void Population::Reproduce() {
     //normalise intake
-    std::vector<double> vecFitness = normaliseIntake();
+    std::vector<float> vecFitness = normaliseIntake();
 
     // set up weighted lottery
     std::discrete_distribution<> weightedLottery(vecFitness.begin(), vecFitness.end());
@@ -250,7 +285,7 @@ void Population::Reproduce() {
     coef_nbrs = tmp_coef_nbrs;
     tmp_coef_nbrs.clear(); tmp_coef_food.clear();
     // swap energy
-    std::vector<double> tmpEnergy (nAgents, 0.001);
+    std::vector<float> tmpEnergy (nAgents, 0.001);
     std::swap(energy, tmpEnergy);
     tmpEnergy.clear();
 }

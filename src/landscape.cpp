@@ -13,11 +13,11 @@ std::mt19937 rng;
 
 void Resources::initResources() {
     // generate n central items
-    std::vector<double> centreCoordX (nClusters);
-    std::vector<double> centreCoordY (nClusters);
+    std::vector<float> centreCoordX (nClusters);
+    std::vector<float> centreCoordY (nClusters);
 
-    std::uniform_real_distribution<double> item_ran_pos(0.0, dSize);
-    std::normal_distribution<double> item_cluster_spread(0.0, clusterDispersal);
+    std::uniform_real_distribution<float> item_ran_pos(0.0f, dSize);
+    std::normal_distribution<float> item_cluster_spread(0.0f, clusterDispersal);
 
     for(size_t i = 0; i < static_cast<size_t>(nClusters); i++) {
 
@@ -68,14 +68,14 @@ void Resources::countAvailable() {
 //' Returns a test landscape.
 //'
 //' @param nItems How many items.
-//' @param landsize Size as a numeric (double).
+//' @param landsize Size as a numeric (float).
 //' @param nClusters How many clusters, an integer value.
 //' @param clusterDispersal Dispersal of items around cluster centres.
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
 Rcpp::DataFrame get_test_landscape(
-        const int nItems, const double landsize,
-        const int nClusters, const double clusterDispersal) {
+        const int nItems, const float landsize,
+        const int nClusters, const float clusterDispersal) {
     Resources thisLandscape (nItems, landsize, nClusters, clusterDispersal);
     thisLandscape.initResources();
 

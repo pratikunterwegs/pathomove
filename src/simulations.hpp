@@ -1,7 +1,7 @@
 #ifndef SIMULATIONS_H
 #define SIMULATIONS_H
 
-#include "data_types.h"
+#include "data_types.hpp"
 
 void evolve_pop(int genmax, double tmax,
                 Population &pop,

@@ -57,7 +57,7 @@ void evolve_pop(int genmax, double tmax,
                     size_t id_to_move = shuffleVec[i];
                     // check if agent can move
                     if (pop.counter[id_to_move] <= 0) {
-                        pop.move(id_to_move, food, competitionCost /*this is the movement cost! */, sensoryRange); // movecost hardcoded to 0
+                        pop.move(id_to_move, food, competitionCost, sensoryRange); // movecost hardcoded to 0
                     } else if (pop.counter[id_to_move] > 0) {
                         pop.counter[id_to_move] --;
                     }
@@ -68,7 +68,7 @@ void evolve_pop(int genmax, double tmax,
                     size_t id_to_move = shuffleVec[i];
                     pop.forage(id_to_move, food, sensoryRange, stopTime);
                     // count associations
-                    pop.associations[id_to_move] += (pop.countNearby(pop.agentRtree, id_to_move, sensoryRange)).first;
+                    pop.associations[id_to_move] += (pop.countNearby(pop.agentRtree, id_to_move, sensoryRange, pop.coordX[id], pop.coordY[id])).first;
                 }
 
                 // PBSN etc

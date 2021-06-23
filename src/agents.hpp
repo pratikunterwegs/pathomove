@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <iostream>
 #include <boost/foreach.hpp>
-#include "landscape.h"
+#include "landscape.hpp"
 
 // Agent class
 struct Population {
@@ -30,9 +30,9 @@ public:
     ~Population() {}
 
     int nAgents = 0;
-    std::vector<double> coordX;
-    std::vector<double> coordY;
-    std::vector<double> energy;
+    std::vector<float> coordX;
+    std::vector<float> coordY;
+    std::vector<float> energy;
     std::vector<float> coef_nbrs;
     std::vector<float> coef_food;
     std::vector<int> counter;
@@ -47,16 +47,17 @@ public:
     void setTrait ();
     void initPos(Resources food);
 
-    void competitionCosts(const double competitionCost);
+    void competitionCosts(const float competitionCost);
     void updateRtree();
     std::pair<int, std::vector<int> > countNearby (
         bgi::rtree< value, bgi::quadratic<16> > treeToQuery,
-        size_t id, float sensoryRange);
+        size_t id, float sensoryRange,
+        const float xloc, const float yloc);
 
-    void move(size_t id, Resources food, const double moveCost, float sensoryRange);
+    void move(size_t id, Resources food, const float moveCost, float sensoryRange);
     void forage(size_t individual, Resources &food, float distance, const int stopTime);
     
-    std::vector<double> normaliseIntake();
+    std::vector<float> normaliseIntake();
     void Reproduce();
     
     // for network

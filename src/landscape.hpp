@@ -16,7 +16,7 @@ using namespace Rcpp;
 #include <random>
 #include <functional>
 #include <chrono>
-#include "parameters.h"
+#include "parameters.hpp"
 
 // apparently some types
 namespace bg = boost::geometry;
@@ -29,26 +29,26 @@ typedef std::pair<point, unsigned> value;
 struct Resources {
 public:
     Resources(const int nItemsInit,
-              const double landsize,
+              const float landsize,
               const int nClusters,
-              const double clusterDispersal) :
+              const float clusterDispersal) :
         nItems(nItemsInit),
         dSize(landsize),
         nClusters(nClusters),
         clusterDispersal(clusterDispersal),
-        coordX(nItems, 0.0),
-        coordY(nItems, 0.0),
+        coordX(nItems, 0.0f),
+        coordY(nItems, 0.0f),
         available(nItems, true),
         nAvailable(nItems)
     {}
     ~Resources() {}
 
     int nItems;
-    double dSize;
+    float dSize;
     int nClusters;
-    double clusterDispersal;
-    std::vector<double> coordX;
-    std::vector<double> coordY;
+    float clusterDispersal;
+    std::vector<float> coordX;
+    std::vector<float> coordY;
     std::vector<bool> available;
     int nAvailable;
     // make rtree
