@@ -64,6 +64,6 @@ public:
     // void updatePbsn(Network &pbsn, const double range);
 };
 
-float get_distance(float x1, float x2);
+float get_distance(float x1, float x2, float y1, float y2);
 
 #endif // AGENTS_H

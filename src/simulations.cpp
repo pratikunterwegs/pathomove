@@ -68,7 +68,7 @@ void evolve_pop(int genmax, double tmax,
                     size_t id_to_move = shuffleVec[i];
                     pop.forage(id_to_move, food, sensoryRange, stopTime);
                     // count associations
-                    pop.associations[id_to_move] += (pop.countNearby(pop.agentRtree, id_to_move, sensoryRange, pop.coordX[id], pop.coordY[id])).first;
+                    pop.associations[id_to_move] += (pop.countNearby(pop.agentRtree, id_to_move, sensoryRange, pop.coordX[i], pop.coordY[i])).first;
                 }
 
                 // PBSN etc

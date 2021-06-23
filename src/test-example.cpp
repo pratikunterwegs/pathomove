@@ -34,7 +34,7 @@ context("Sample unit tests") {
   }
   
   test_that("distance fun works") {
-    expect_true(get_distance(2.f, 3.f) > 0.5f);
+    expect_true(get_distance(2.f, 3.f, 0.f, 0.f) > 0.5f);
   }
 
 }

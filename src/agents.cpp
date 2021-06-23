@@ -132,7 +132,9 @@ void Population::move(size_t id, Resources food, const float moveCost, float sen
     // get suitability current
     float suitabilityHere = (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere);
 
-    float newX, newY;
+    // new location is initially current location
+    float newX = coordX[id];
+    float newY = coordY[id];
 
     // now sample at four locations around
     for(float theta = 0.f; theta < twopi - increment; theta += increment) {

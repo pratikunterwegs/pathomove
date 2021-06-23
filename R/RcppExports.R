@@ -4,7 +4,7 @@
 #' Returns a test landscape.
 #'
 #' @param nItems How many items.
-#' @param landsize Size as a numeric (double).
+#' @param landsize Size as a numeric (float).
 #' @param nClusters How many clusters, an integer value.
 #' @param clusterDispersal Dispersal of items around cluster centres.
 #' @return A data frame of the evolved population traits.
