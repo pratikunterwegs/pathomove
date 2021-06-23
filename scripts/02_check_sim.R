@@ -11,7 +11,7 @@ library(data.table)
 # sim work=e
 a = snevo::do_simulation(
   popsize = 100,
-  genmax = 500, 
+  genmax = 50, 
   tmax = 25, 
   nFood = 500,
   foodClusters = 16, 
@@ -34,6 +34,10 @@ d = rbindlist(d)
 hist(d$energy)
 
 # explore evo
+ggplot(d)+
+  geom_bin2d(
+    aes(gen, coef_nbrs)
+  )
 # summarise trait per gen
 d_summary = melt(d, id.vars = "gen", 
                   measure.vars = c("coef_food", "coef_nbrs"),
