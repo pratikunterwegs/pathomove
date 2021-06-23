@@ -17,7 +17,6 @@ Depends:igraph
 LinkingTo: 
     Rcpp,
     BH,
-    RcppGSL,
     testthat
 Imports: 
     Rcpp,
