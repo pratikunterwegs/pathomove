@@ -15,6 +15,7 @@ do_simulation(
   competitionCost,
   sensoryRange,
   nScenes,
+  gendata,
   stopTime
 )
 }
@@ -38,6 +39,8 @@ do_simulation(
 \item{sensoryRange}{The sensory range.}
 
 \item{nScenes}{How many scenes.}
+
+\item{gendata}{Generation interval at which to log generations.}
 
 \item{stopTime}{The handling time.}
 }

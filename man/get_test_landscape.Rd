@@ -9,7 +9,7 @@ get_test_landscape(nItems, landsize, nClusters, clusterDispersal)
 \arguments{
 \item{nItems}{How many items.}
 
-\item{landsize}{Size as a numeric (double).}
+\item{landsize}{Size as a numeric (float).}
 
 \item{nClusters}{How many clusters, an integer value.}
 

@@ -81,9 +81,10 @@ void evolve_pop(int genmax, double tmax,
         }
         // generation ends here
         // update gendata
-        if ((gen == 0) | (gen % 10 == 0) | (gen == (genmax - 1))) {
+        if (gen == (genmax - 1)) {
             thisGenData.updateGenData(pop, gen);
         }
+    
         // thisNetworkData.updateNetworkData(pop, gen, pbsn);
         // subtract competition costs
         // pop.competitionCosts(competitionCost);

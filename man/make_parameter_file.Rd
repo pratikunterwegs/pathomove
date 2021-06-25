@@ -4,45 +4,14 @@
 \alias{make_parameter_file}
 \title{Write parameters as CSV.}
 \usage{
-make_parameter_file(
-  genmax = 1000,
-  popsize = 1000,
-  tmax = 100,
-  nFood = 3000,
-  landsize = 300,
-  foodClusters = seq(1, 10),
-  clusterDispersal = seq(1, 5),
-  collective = FALSE,
-  competitionCost = 0.1,
-  nScenes = 10,
-  replicates = 10,
-  which_file = "this_file.csv"
-)
+make_parameter_file(replicates, ..., which_file = "this_file.csv")
 }
 \arguments{
-\item{genmax}{Max generation.}
-
-\item{popsize}{Max population size.}
-
-\item{tmax}{Timesteps.}
-
-\item{nFood}{N food items, integer.}
-
-\item{landsize}{Landscape size, double value.}
-
-\item{foodClusters}{How many clusters.}
-
-\item{clusterDispersal}{How spread out food is.}
-
-\item{collective}{Whether movement is collective-aware.}
-
-\item{competitionCost}{The cost of competition.}
-
-\item{nScenes}{How many scenes.}
-
 \item{replicates}{How many replicates.}
 
-\item{which_file}{Which file to write to.}
+\item{...}{Pass arguments to \code{run\_noisewalker}.}
+
+\item{which_file}{Where to save these parameters.}
 }
 \value{
 Writes a parameter file.
