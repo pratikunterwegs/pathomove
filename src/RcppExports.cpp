@@ -6,37 +6,38 @@
 using namespace Rcpp;
 
 // get_test_landscape
-Rcpp::DataFrame get_test_landscape(const int nItems, const float landsize, const int nClusters, const float clusterDispersal);
-RcppExport SEXP _snevo_get_test_landscape(SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterDispersalSEXP) {
+Rcpp::DataFrame get_test_landscape(const int nItems, const float landsize, const int nClusters, const float clusterSpread);
+RcppExport SEXP _snevo_get_test_landscape(SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterSpreadSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const int >::type nItems(nItemsSEXP);
     Rcpp::traits::input_parameter< const float >::type landsize(landsizeSEXP);
     Rcpp::traits::input_parameter< const int >::type nClusters(nClustersSEXP);
-    Rcpp::traits::input_parameter< const float >::type clusterDispersal(clusterDispersalSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_test_landscape(nItems, landsize, nClusters, clusterDispersal));
+    Rcpp::traits::input_parameter< const float >::type clusterSpread(clusterSpreadSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_test_landscape(nItems, landsize, nClusters, clusterSpread));
     return rcpp_result_gen;
 END_RCPP
 }
-// do_simulation
-Rcpp::List do_simulation(int popsize, int genmax, int tmax, int nFood, int foodClusters, double clusterDispersal, double landsize, double competitionCost, float sensoryRange, const int nScenes, const int stopTime);
-RcppExport SEXP _snevo_do_simulation(SEXP popsizeSEXP, SEXP genmaxSEXP, SEXP tmaxSEXP, SEXP nFoodSEXP, SEXP foodClustersSEXP, SEXP clusterDispersalSEXP, SEXP landsizeSEXP, SEXP competitionCostSEXP, SEXP sensoryRangeSEXP, SEXP nScenesSEXP, SEXP stopTimeSEXP) {
+// run_pathomove
+Rcpp::List run_pathomove(const int popsize, const int scenario, const int nItems, const float landsize, const int nClusters, const float clusterSpread, const int tmax, const int genmax, const float range_food, const float range_agents, const int handling_time, const int regen_time);
+RcppExport SEXP _snevo_run_pathomove(SEXP popsizeSEXP, SEXP scenarioSEXP, SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterSpreadSEXP, SEXP tmaxSEXP, SEXP genmaxSEXP, SEXP range_foodSEXP, SEXP range_agentsSEXP, SEXP handling_timeSEXP, SEXP regen_timeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type popsize(popsizeSEXP);
-    Rcpp::traits::input_parameter< int >::type genmax(genmaxSEXP);
-    Rcpp::traits::input_parameter< int >::type tmax(tmaxSEXP);
-    Rcpp::traits::input_parameter< int >::type nFood(nFoodSEXP);
-    Rcpp::traits::input_parameter< int >::type foodClusters(foodClustersSEXP);
-    Rcpp::traits::input_parameter< double >::type clusterDispersal(clusterDispersalSEXP);
-    Rcpp::traits::input_parameter< double >::type landsize(landsizeSEXP);
-    Rcpp::traits::input_parameter< double >::type competitionCost(competitionCostSEXP);
-    Rcpp::traits::input_parameter< float >::type sensoryRange(sensoryRangeSEXP);
-    Rcpp::traits::input_parameter< const int >::type nScenes(nScenesSEXP);
-    Rcpp::traits::input_parameter< const int >::type stopTime(stopTimeSEXP);
-    rcpp_result_gen = Rcpp::wrap(do_simulation(popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, competitionCost, sensoryRange, nScenes, stopTime));
+    Rcpp::traits::input_parameter< const int >::type popsize(popsizeSEXP);
+    Rcpp::traits::input_parameter< const int >::type scenario(scenarioSEXP);
+    Rcpp::traits::input_parameter< const int >::type nItems(nItemsSEXP);
+    Rcpp::traits::input_parameter< const float >::type landsize(landsizeSEXP);
+    Rcpp::traits::input_parameter< const int >::type nClusters(nClustersSEXP);
+    Rcpp::traits::input_parameter< const float >::type clusterSpread(clusterSpreadSEXP);
+    Rcpp::traits::input_parameter< const int >::type tmax(tmaxSEXP);
+    Rcpp::traits::input_parameter< const int >::type genmax(genmaxSEXP);
+    Rcpp::traits::input_parameter< const float >::type range_food(range_foodSEXP);
+    Rcpp::traits::input_parameter< const float >::type range_agents(range_agentsSEXP);
+    Rcpp::traits::input_parameter< const int >::type handling_time(handling_timeSEXP);
+    Rcpp::traits::input_parameter< const int >::type regen_time(regen_timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(run_pathomove(popsize, scenario, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -45,7 +46,7 @@ RcppExport SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_snevo_get_test_landscape", (DL_FUNC) &_snevo_get_test_landscape, 4},
-    {"_snevo_do_simulation", (DL_FUNC) &_snevo_do_simulation, 11},
+    {"_snevo_run_pathomove", (DL_FUNC) &_snevo_run_pathomove, 12},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

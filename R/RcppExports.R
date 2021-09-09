@@ -8,15 +8,15 @@
 #' @param nClusters How many clusters, an integer value.
 #' @param clusterDispersal Dispersal of items around cluster centres.
 #' @return A data frame of the evolved population traits.
-get_test_landscape <- function(nItems, landsize, nClusters, clusterDispersal) {
-    .Call(`_snevo_get_test_landscape`, nItems, landsize, nClusters, clusterDispersal)
+get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread) {
+    .Call(`_snevo_get_test_landscape`, nItems, landsize, nClusters, clusterSpread)
 }
 
-#' Runs the sociality model simulation.
+#' Runs the pathomove simulation.
 #'
 #' @description Run the simulation using parameters passed as
 #' arguments to the corresponding R function.
-#' 
+#'
 #' @param popsize The population size.
 #' @param genmax The maximum number of generations per simulation.
 #' @param tmax The number of timesteps per generation.
@@ -29,7 +29,7 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterDispersal) {
 #' @param nScenes How many scenes.
 #' @param stopTime The handling time.
 #' @return A data frame of the evolved population traits.
-do_simulation <- function(popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, competitionCost, sensoryRange, nScenes, stopTime) {
-    .Call(`_snevo_do_simulation`, popsize, genmax, tmax, nFood, foodClusters, clusterDispersal, landsize, competitionCost, sensoryRange, nScenes, stopTime)
+run_pathomove <- function(popsize, scenario, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time) {
+    .Call(`_snevo_run_pathomove`, popsize, scenario, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time)
 }
 
