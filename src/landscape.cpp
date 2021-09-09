@@ -17,7 +17,7 @@ void Resources::initResources() {
     std::vector<float> centreCoordY (nClusters);
 
     std::uniform_real_distribution<float> item_ran_pos(0.0f, dSize);
-    std::normal_distribution<float> item_cluster_spread(0.0f, clusterDispersal);
+    std::normal_distribution<float> item_cluster_spread(0.0f, clusterSpread);
 
     for(size_t i = 0; i < static_cast<size_t>(nClusters); i++) {
 
@@ -64,6 +64,14 @@ void Resources::countAvailable() {
     }
 }
 
+void Resources::regenerate() {
+    for (size_t i = 0; i < nItems; i++)
+    {
+        food.counter[i] -= (food.counter[i] > 0 ? 1 : 0);
+        food.avaialable[i] = (food.counter == 0 ? true : false);
+    }    
+}
+
 /// function to export landscape as matrix
 //' Returns a test landscape.
 //'
@@ -75,12 +83,12 @@ void Resources::countAvailable() {
 // [[Rcpp::export]]
 Rcpp::DataFrame get_test_landscape(
         const int nItems, const float landsize,
-        const int nClusters, const float clusterDispersal) {
-    Resources thisLandscape (nItems, landsize, nClusters, clusterDispersal);
-    thisLandscape.initResources();
+        const int nClusters, const float clusterSpread) {
+    Resources food (nItems, landsize, nClusters, clusterSpread, 0);
+    food.initResources();
 
     return Rcpp::DataFrame::create(
-                Rcpp::Named("x") = thisLandscape.coordX,
-                Rcpp::Named("y") = thisLandscape.coordY
+                Rcpp::Named("x") = food.coordX,
+                Rcpp::Named("y") = food.coordY
             );
 }
