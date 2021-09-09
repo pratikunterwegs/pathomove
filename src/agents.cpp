@@ -87,15 +87,6 @@ float get_distance(float x1, float x2, float y1, float y2) {
 //     }
 // }
 
-// function for competition costs
-void Population::competitionCosts(const float competitionCost) {
-    
-    // reduce energy by competition cost
-    for(int i = 0; i < nAgents; i++) {
-        energy[i] -= (associations[i] * competitionCost);
-    }
-}
-
 // general function for items or agents within distance
 std::pair<int, std::vector<int> > Population::countNearby (
     bgi::rtree< value, bgi::quadratic<16> > treeToQuery,
@@ -199,10 +190,6 @@ void Population::move(Resources food) {
             if((newY > food.dSize) | (newY < 0.f)) {
                 newY = std::fabs(std::fmod(newY, food.dSize));
             }
-
-    if(get_distance(newX, coordX[id], newY, coordY[id]) > 0.f) {
-        energy[id] -= moveCost;
-    }
             // set locations
             coordX[id] = newX; coordY[id] = newY;
         }
@@ -279,7 +266,7 @@ void Population::forage(Resources &food){
 // }
 
 /// minor function to normalise vector
-std::vector<float> Population::normaliseIntake() {
+std::vector<float> Population::handleFitness() {
     // sort vec fitness
     std::vector<float> vecFitness = energy;
     std::sort(vecFitness.begin(), vecFitness.end());
@@ -301,7 +288,7 @@ std::normal_distribution<float> mutation_size(0.0, mShift);
 // fun for replication
 void Population::Reproduce() {
     //normalise intake
-    std::vector<float> vecFitness = normaliseIntake();
+    std::vector<float> vecFitness = handleFitness();
 
     // set up weighted lottery
     std::discrete_distribution<> weightedLottery(vecFitness.begin(), vecFitness.end());
