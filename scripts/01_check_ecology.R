@@ -1,7 +1,7 @@
 # check function
 Rcpp::compileAttributes()
 devtools::build()
-sink(file = "install_output.log"); devtools::install(); sink()
+sink(file = "install_output.log"); devtools::install(upgrade = "never"); sink()
 
 library(snevo)
 library(ggplot2)
