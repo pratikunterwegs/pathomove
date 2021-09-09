@@ -127,67 +127,86 @@ std::pair<int, std::vector<int> > Population::countNearby (
 }
 
 /// population movement function
-void Population::move(size_t id, Resources food, const float moveCost, float sensoryRange) {
+void Population::move(Resources food) {
 
-    float angle = 0.f;
-    float twopi = 2.f * M_PI;
-    
-    // what increment for 4 samples in a circle around the agent
-    float increment = twopi / 4.0f;
-
-    // first assess current location
-    float sampleX = coordX[id];
-    float sampleY = coordY[id]; 
-    float foodHere = static_cast<float>(countNearby(
-            food.rtree, id, sensoryRange, sampleX, sampleY
-        ).first);
-    float nbrsHere = static_cast<float>(countNearby(
-            agentRtree, id, sensoryRange, sampleX, sampleY
-        ).first);;
-
-    // get suitability current
-    float suitabilityHere = (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere);
-
-    // new location is initially current location
-    float newX = coordX[id];
-    float newY = coordY[id];
-
-    // now sample at four locations around
-    for(float theta = 0.f; theta < twopi - increment; theta += increment) {
-
-        sampleX = coordX[id] + (sensoryRange * static_cast<float>(cos(theta)));
-        sampleY = coordY[id] + (sensoryRange * static_cast<float>(sin(theta)));
-
-        foodHere = static_cast<float>(countNearby(
-            food.rtree, id, sensoryRange, sampleX, sampleY
-        ).first);
-
-        nbrsHere = static_cast<float>(countNearby(
-            agentRtree, id, sensoryRange, sampleX, sampleY
-        ).first);
-
-        float new_suitabilityHere = (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere);
-
-        if (new_suitabilityHere > suitabilityHere) {
-            
-            newX = sampleX; newY = sampleY;
-            suitabilityHere = new_suitabilityHere;
+    shufflePop();
+    // loop over agents --- randomise
+    for (size_t i = 0; i < order.size(); i++)
+    {
+        int id = order[i];
+        if (counter[id] > 0) {
+            counter[id] --;
         }
-    }
+        else {
+            float angle = 0.f;
+            float twopi = 2.f * M_PI;
+            
+            // what increment for 4 samples in a circle around the agent
+            float increment = twopi / 4.0f;
 
-    // crudely wrap movement
-    if((newX > food.dSize) | (newX < 0.f)) {
-        newX = std::fabs(std::fmod(newX, food.dSize));
-    }
-    if((newY > food.dSize) | (newY < 0.f)) {
-        newY = std::fabs(std::fmod(newY, food.dSize));
-    }
+            // first assess current location
+            float sampleX = coordX[id];
+            float sampleY = coordY[id]; 
+            float foodHere = static_cast<float>(countNearby(
+                    food.rtree, id, range_food, sampleX, sampleY
+                ).first);
+            float nbrsHere = static_cast<float>(countNearby(
+                    agentRtree, id, range_agents, sampleX, sampleY
+                ).first);
+
+            // get suitability current
+            float suitabilityHere = (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere);
+
+            // new location is initially current location
+            float newX = coordX[id];
+            float newY = coordY[id];
+
+            // now sample at four locations around
+            for(float theta = 0.f; theta < twopi - increment; theta += increment) {
+
+                float t1_ = static_cast<float>(cos(theta));
+                float t2_ = static_cast<float>(sin(theta));
+
+                // range for food
+                sampleX = coordX[id] + (range_food * t1_);
+                sampleY = coordY[id] + (range_food * t2_);
+
+                foodHere = static_cast<float>(countNearby(
+                    food.rtree, id, range_food, sampleX, sampleY
+                ).first);
+
+                // use range for agents
+                sampleX = coordX[id] + (range_agents * t1_);
+                sampleY = coordY[id] + (range_agents * t2_);
+
+                nbrsHere = static_cast<float>(countNearby(
+                    agentRtree, id, range_agents, sampleX, sampleY
+                ).first);
+
+                float new_suitabilityHere = (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere);
+
+                if (new_suitabilityHere > suitabilityHere) {
+                    
+                    newX = sampleX; newY = sampleY;
+                    suitabilityHere = new_suitabilityHere;
+                }
+            }
+
+            // crudely wrap movement
+            if((newX > food.dSize) | (newX < 0.f)) {
+                newX = std::fabs(std::fmod(newX, food.dSize));
+            }
+            if((newY > food.dSize) | (newY < 0.f)) {
+                newY = std::fabs(std::fmod(newY, food.dSize));
+            }
 
     if(get_distance(newX, coordX[id], newY, coordY[id]) > 0.f) {
         energy[id] -= moveCost;
     }
-    // set locations
-    coordX[id] = newX; coordY[id] = newY;
+            // set locations
+            coordX[id] = newX; coordY[id] = newY;
+        }
+    }
 }
 
 void Population::forage(size_t id, Resources &food, float sensoryRange, const int stopTime){
