@@ -209,31 +209,43 @@ void Population::move(Resources food) {
     }
 }
 
-void Population::forage(size_t id, Resources &food, float sensoryRange, const int stopTime){
-    // find nearest item ids
-    std::vector<int> theseItems = (countNearby(food.rtree, id, sensoryRange, coordX[id], coordY[id])).second;
-    // energy[id] = static_cast<float> (theseItems.size());
-    // counter[id] = stopTime;
-    int thisItem = -1;
+void Population::forage(Resources &food){
+    shufflePop();
+    // loop over agents --- randomise
+    for (size_t i = 0; i < order.size(); i++)
+    {
+        int id = order[i];
+        if (counter[id] > 0) { 
 
-    // check near items count
-    if(theseItems.size() > 0) {
-        // now check them
-        for (size_t i = 0; i < theseItems.size(); i++){
-            if(food.available[theseItems[i]]) {
-                thisItem = theseItems[i]; // if available pick this item
-                break;
-            }
         }
+        else {
+            // find nearest item ids
+            std::vector<int> theseItems = (countNearby(food.rtree, id, range_food, coordX[id], coordY[id])).second;
+            // energy[id] = static_cast<float> (theseItems.size());
+            // counter[id] = stopTime;
+            int thisItem = -1;
 
-        if (thisItem != -1) {
-            // check selected item is available
-            assert(food.available[thisItem] && "forage error: item not available");
-            counter[id] = stopTime;
-            energy[id] += 1.0;
+            // check near items count
+            if(theseItems.size() > 0) {
+                // now check them
+                for (size_t i = 0; i < theseItems.size(); i++){
+                    if(food.available[theseItems[i]]) {
+                        thisItem = theseItems[i]; // if available pick this item
+                        break;
+                    }
+                }
 
-            // remove the food item from the landscape
-            food.available[thisItem] = false;
+                if (thisItem != -1) {
+                    // check selected item is available
+                    assert(food.available[thisItem] && "forage error: item not available");
+                    counter[id] = handling_time;
+                    energy[id] += 1.0;
+
+                    // reset food availability
+                    food.available[thisItem] = false;
+                    food.counter[thisItem] = food.regen_time;
+                }
+            }
         }
     }
 }
