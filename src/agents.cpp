@@ -9,6 +9,22 @@
 #include "landscape.hpp"
 #include "agents.hpp"
 
+// to shuffle pop id
+void Population::shufflePop() {
+    if (order[0] == order[nAgents - 1])
+    {
+        for (size_t i = 0; i < nAgents; i++)
+        {
+            order[i] = i;
+        }
+        std::random_shuffle ( order.begin(), order.end() );
+    }
+    else {
+        std::random_shuffle ( order.begin(), order.end() );
+    }
+    
+}
+
 // to update agent Rtree
 void Population::updateRtree () {
     // initialise rtree
