@@ -119,7 +119,11 @@ std::pair<int, std::vector<int> > Population::countNearby (
 
 /// population movement function
 void Population::move(Resources food) {
-
+    float angle = 0.f;
+    float twopi = 2.f * M_PI;
+    
+    // what increment for 4 samples in a circle around the agent
+    float increment = twopi / 4.0f;
     shufflePop();
     // loop over agents --- randomise
     for (size_t i = 0; i < order.size(); i++)
@@ -129,11 +133,6 @@ void Population::move(Resources food) {
             counter[id] --;
         }
         else {
-            float angle = 0.f;
-            float twopi = 2.f * M_PI;
-            
-            // what increment for 4 samples in a circle around the agent
-            float increment = twopi / 4.0f;
 
             // first assess current location
             float sampleX = coordX[id];

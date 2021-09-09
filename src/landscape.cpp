@@ -68,7 +68,7 @@ void Resources::regenerate() {
     for (size_t i = 0; i < nItems; i++)
     {
         counter[i] -= (counter[i] > 0 ? 1 : 0);
-        avaialable[i] = (counter == 0 ? true : false);
+        available[i] = (counter[i] == 0);
     }    
 }
 

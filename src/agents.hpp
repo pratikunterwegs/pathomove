@@ -14,9 +14,7 @@
 struct Population {
 public:
     Population(const int popsize, const float range_agents,
-    const float range_food, const int handling_time,
-    const int nInfected,
-    const float pTransmit) :
+    const float range_food, const int handling_time) :
         // agents and traits
         nAgents (popsize),
         coordX (popsize, 0.0),
@@ -34,9 +32,9 @@ public:
         range_food(range_food),
         handling_time(handling_time),
         order(popsize, 1),
-        infected(popsize, false),
-        nInfected (nInfected),
-        pTransmit (pTransmit)
+        infected(popsize, false)//,
+        // nInfected (nInfected),
+        // pTransmit (pTransmit)
 
     {}
     ~Population() {}
