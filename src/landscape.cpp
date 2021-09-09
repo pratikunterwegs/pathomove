@@ -67,8 +67,8 @@ void Resources::countAvailable() {
 void Resources::regenerate() {
     for (size_t i = 0; i < nItems; i++)
     {
-        food.counter[i] -= (food.counter[i] > 0 ? 1 : 0);
-        food.avaialable[i] = (food.counter == 0 ? true : false);
+        counter[i] -= (counter[i] > 0 ? 1 : 0);
+        avaialable[i] = (counter == 0 ? true : false);
     }    
 }
 
