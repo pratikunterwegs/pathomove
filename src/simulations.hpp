@@ -2,6 +2,8 @@
 #define SIMULATIONS_H
 
 #include "data_types.hpp"
+#include "landscape.hpp"
+#include "agents.hpp"
 
 class simulation {
 public:
