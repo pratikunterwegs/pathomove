@@ -20,13 +20,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // run_pathomove
-Rcpp::List run_pathomove(const int popsize, const int scenario, const int nItems, const float landsize, const int nClusters, const float clusterSpread, const int tmax, const int genmax, const float range_food, const float range_agents, const int handling_time, const int regen_time);
-RcppExport SEXP _snevo_run_pathomove(SEXP popsizeSEXP, SEXP scenarioSEXP, SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterSpreadSEXP, SEXP tmaxSEXP, SEXP genmaxSEXP, SEXP range_foodSEXP, SEXP range_agentsSEXP, SEXP handling_timeSEXP, SEXP regen_timeSEXP) {
+Rcpp::List run_pathomove(const int scenario, const int popsize, const int nItems, const float landsize, const int nClusters, const float clusterSpread, const int tmax, const int genmax, const float range_food, const float range_agents, const int handling_time, const int regen_time);
+RcppExport SEXP _snevo_run_pathomove(SEXP scenarioSEXP, SEXP popsizeSEXP, SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterSpreadSEXP, SEXP tmaxSEXP, SEXP genmaxSEXP, SEXP range_foodSEXP, SEXP range_agentsSEXP, SEXP handling_timeSEXP, SEXP regen_timeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const int >::type popsize(popsizeSEXP);
     Rcpp::traits::input_parameter< const int >::type scenario(scenarioSEXP);
+    Rcpp::traits::input_parameter< const int >::type popsize(popsizeSEXP);
     Rcpp::traits::input_parameter< const int >::type nItems(nItemsSEXP);
     Rcpp::traits::input_parameter< const float >::type landsize(landsizeSEXP);
     Rcpp::traits::input_parameter< const int >::type nClusters(nClustersSEXP);
@@ -37,7 +37,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const float >::type range_agents(range_agentsSEXP);
     Rcpp::traits::input_parameter< const int >::type handling_time(handling_timeSEXP);
     Rcpp::traits::input_parameter< const int >::type regen_time(regen_timeSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_pathomove(popsize, scenario, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time));
+    rcpp_result_gen = Rcpp::wrap(run_pathomove(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time));
     return rcpp_result_gen;
 END_RCPP
 }

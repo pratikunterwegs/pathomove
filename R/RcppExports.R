@@ -17,19 +17,20 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread) {
 #' @description Run the simulation using parameters passed as
 #' arguments to the corresponding R function.
 #'
+#' @param scenario The pathomove scenario: 1 for ancestral pathogen, 2 for spillover pathogen.
 #' @param popsize The population size.
-#' @param genmax The maximum number of generations per simulation.
-#' @param tmax The number of timesteps per generation.
-#' @param nFood The number of food items.
-#' @param foodClusters Number of clusters around which food is generated.
-#' @param clusterDispersal How dispersed food is around the cluster centre.
+#' @param nItems How many food items on the landscape.
 #' @param landsize The size of the landscape as a numeric (double).
-#' @param competitionCost Cost of associations.
-#' @param sensoryRange The sensory range.
-#' @param nScenes How many scenes.
-#' @param stopTime The handling time.
+#' @param nClusters Number of clusters around which food is generated.
+#' @param clusterSpread How dispersed food is around the cluster centre.
+#' @param tmax The number of timesteps per generation.
+#' @param genmax The maximum number of generations per simulation.
+#' @param range_food The sensory range for food.
+#' @param range_agents The sensory range for agents.
+#' @param handling_time The handling time.
+#' @param regen_time The item regeneration time.
 #' @return A data frame of the evolved population traits.
-run_pathomove <- function(popsize, scenario, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time) {
-    .Call(`_snevo_run_pathomove`, popsize, scenario, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time)
+run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time) {
+    .Call(`_snevo_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time)
 }
 
