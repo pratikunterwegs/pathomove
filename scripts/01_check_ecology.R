@@ -2,29 +2,29 @@
 Rcpp::compileAttributes()
 devtools::build()
 sink(file = "install_output.log"); devtools::install(upgrade = "never"); sink()
+devtools::document()
 
 library(snevo)
 library(ggplot2)
 library(data.table)
 
-a = snevo::do_eco_sim(
-    popsize = 50,
-    landsize = 1000,
-    nFood = 10,
-    nClusters = 1,
-    clusterDispersal = 8,
-    maxAct = 0.01,
-    activityRatio = 0.2,
-    pInactive = 0.5,
-    collective = FALSE,
-    sensoryRange = 1.0,
-    stopTime = 3,
-    tmax = 100,
-    scenes = 1
+a = run_pathomove(
+  scenario = 1,
+  popsize = 50,
+  nItems = 250,
+  landsize = 10,
+  nClusters = 8,
+  clusterSpread = 2,
+  tmax = 25,
+  genmax = 100,
+  range_food = 0.5,
+  range_agents = 1,
+  handling_time = 3,
+  regen_time = 5
 )
 names(a)
 
-b = a[["movedata"]]
+b = a[["pop_data"]]
 b = Map(function(l, t) {
     l$time = t
     l
