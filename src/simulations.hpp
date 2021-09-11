@@ -17,7 +17,7 @@ public:
                const float range_agents,
                const int handling_time,
                const int regen_time):
-        pop (popsize, range_agents, range_food, handling_time, ),
+        pop (popsize, range_agents, range_food, handling_time),
         food(nItems, landsize, nClusters, clusterSpread, regen_time),
         gen_data (),
         scenario(scenario),

@@ -52,8 +52,8 @@ public:
     const int handling_time;
     std::vector<int> order;
     std::vector<bool> infected;
-    const int nInfected;
-    const float pTransmit;
+//    const int nInfected;
+//    const float pTransmit;
 
     // position rtree
     bgi::rtree< value, bgi::quadratic<16> > agentRtree;
@@ -64,9 +64,11 @@ public:
     void initPos(Resources food);
 
     void updateRtree();
-    std::pair<int, std::vector<int> > countNearby (
-        bgi::rtree< value, bgi::quadratic<16> > treeToQuery,
-        size_t id, float sRange,
+    std::pair<int, std::vector<int> > countFood (
+        Resources food, size_t id,
+        const float xloc, const float yloc);
+    std::pair<int, std::vector<int> > countAgents (
+        size_t id,
         const float xloc, const float yloc);
 
     void move(Resources food);

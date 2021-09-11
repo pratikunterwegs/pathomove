@@ -87,34 +87,51 @@ float get_distance(float x1, float x2, float y1, float y2) {
 //     }
 // }
 
-// general function for items or agents within distance
-std::pair<int, std::vector<int> > Population::countNearby (
-    bgi::rtree< value, bgi::quadratic<16> > treeToQuery,
-    size_t id, float sensoryRange,
+// general function for agents within distance
+std::pair<int, std::vector<int> > Population::countAgents (size_t id,
     const float xloc, const float yloc) {
-
-    std::vector<int> entityId;
-    std::vector<value> nearEntities;
-    
-    // std::cout << "id = " << id << " at " << bg::wkt<point> (point(coordX[id], coordY[id])) << "\n";
-
+    std::vector<int> agent_id;
+    std::vector<value> near_agents;
     // query for a simple box
-    treeToQuery.query(bgi::satisfies([&](value const& v) {
-        return bg::distance(v.first, point(xloc, yloc)) < sensoryRange;}),
-        std::back_inserter(nearEntities));
+    agentRtree.query(bgi::satisfies([&](value const& v) {
+        return bg::distance(v.first, point(xloc, yloc)) < range_agents;}),
+        std::back_inserter(near_agents));
 
-    BOOST_FOREACH(value const& v, nearEntities) {
+    BOOST_FOREACH(value const& v, near_agents) {
         // std::cout << bg::wkt<point> (v.first) << " - " << v.second << "\n";
-        entityId.push_back(v.second);
+        agent_id.push_back(v.second);
     }
-
     nearEntities.clear();
+    // first element is number of near entities
+    // second is the identity of entities
+    return std::pair<int, std::vector<int> > {agent_id.size(), agent_id};
+}
+// general function for items within distance
+std::pair<int, std::vector<int> > Population::countFood (
+    Resources &food,
+    size_t id,
+    const float xloc, const float yloc) {
+    std::vector<int> food_id;
+    std::vector<value> near_food;
 
-    // std::cout << "near agents = " << entityId.size() << "\n\n";
+    // check any available
+    if (food.nAvailable > 0) {
+        // query for a simple box
+        food.rtree.query(bgi::satisfies([&](value const& v) {
+            return bg::distance(v.first, point(xloc, yloc)) < range_food;}),
+            std::back_inserter(near_food));
+
+        BOOST_FOREACH(value const& v, near_food) {
+            if (food.available[v.second]) {
+                food_id.push_back(v.second);
+            }
+        }
+        nearEntities.clear();
+    }
 
     // first element is number of near entities
     // second is the identity of entities
-    return std::pair<int, std::vector<int> > {entityId.size(), entityId};
+    return std::pair<int, std::vector<int> > {food_id.size(), food_id};
 }
 
 /// population movement function
@@ -133,55 +150,43 @@ void Population::move(Resources food) {
             counter[id] --;
         }
         else {
-
             // first assess current location
             float sampleX = coordX[id];
             float sampleY = coordY[id]; 
-            float foodHere = static_cast<float>(countNearby(
-                    food.rtree, id, range_food, sampleX, sampleY
+            float foodHere = static_cast<float>(countFood(
+                    food, id, sampleX, sampleY
                 ).first);
-            float nbrsHere = static_cast<float>(countNearby(
-                    agentRtree, id, range_agents, sampleX, sampleY
+            float nbrsHere = static_cast<float>(countAgents(
+                    id, sampleX, sampleY
                 ).first);
-
             // get suitability current
             float suitabilityHere = (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere);
-
             // new location is initially current location
             float newX = coordX[id];
             float newY = coordY[id];
-
             // now sample at four locations around
             for(float theta = 0.f; theta < twopi - increment; theta += increment) {
-
                 float t1_ = static_cast<float>(cos(theta));
                 float t2_ = static_cast<float>(sin(theta));
-
                 // range for food
                 sampleX = coordX[id] + (range_food * t1_);
                 sampleY = coordY[id] + (range_food * t2_);
-
                 foodHere = static_cast<float>(countNearby(
-                    food.rtree, id, range_food, sampleX, sampleY
+                    food, id, sampleX, sampleY
                 ).first);
-
                 // use range for agents
                 sampleX = coordX[id] + (range_agents * t1_);
                 sampleY = coordY[id] + (range_agents * t2_);
-
                 nbrsHere = static_cast<float>(countNearby(
-                    agentRtree, id, range_agents, sampleX, sampleY
+                    id, sampleX, sampleY
                 ).first);
-
                 float new_suitabilityHere = (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere);
-
                 if (new_suitabilityHere > suitabilityHere) {
                     
                     newX = sampleX; newY = sampleY;
                     suitabilityHere = new_suitabilityHere;
                 }
             }
-
             // crudely wrap movement
             if((newX > food.dSize) | (newX < 0.f)) {
                 newX = std::fabs(std::fmod(newX, food.dSize));
@@ -201,12 +206,12 @@ void Population::forage(Resources &food){
     for (size_t i = 0; i < order.size(); i++)
     {
         int id = order[i];
-        if (counter[id] > 0) { 
+        if ((counter[id] > 0) | (food.nAvailable == 0)) { 
 
         }
         else {
             // find nearest item ids
-            std::vector<int> theseItems = (countNearby(food.rtree, id, range_food, coordX[id], coordY[id])).second;
+            std::vector<int> theseItems = (countFood(food, id, coordX[id], coordY[id])).second;
             // energy[id] = static_cast<float> (theseItems.size());
             // counter[id] = stopTime;
             int thisItem = -1;
@@ -214,12 +219,14 @@ void Population::forage(Resources &food){
             // check near items count
             if(theseItems.size() > 0) {
                 // now check them
-                for (size_t i = 0; i < theseItems.size(); i++){
-                    if(food.available[theseItems[i]]) {
-                        thisItem = theseItems[i]; // if available pick this item
-                        break;
-                    }
-                }
+                // for (size_t i = 0; i < theseItems.size(); i++){
+                //     if(food.available[theseItems[i]]) {
+                //         thisItem = theseItems[i]; // if available pick this item
+                //         break;
+                //     }
+                // }
+                // take first items by default
+                thisItem = theseItems[0];
 
                 if (thisItem != -1) {
                     // check selected item is available
