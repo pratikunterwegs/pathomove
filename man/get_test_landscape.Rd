@@ -4,7 +4,7 @@
 \alias{get_test_landscape}
 \title{Returns a test landscape.}
 \usage{
-get_test_landscape(nItems, landsize, nClusters, clusterDispersal)
+get_test_landscape(nItems, landsize, nClusters, clusterSpread)
 }
 \arguments{
 \item{nItems}{How many items.}
