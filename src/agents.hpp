@@ -65,10 +65,8 @@ public:
 
     void updateRtree();
     std::pair<int, std::vector<int> > countFood (
-        Resources food, size_t id,
-        const float xloc, const float yloc);
+        Resources &food, const float xloc, const float yloc);
     std::pair<int, std::vector<int> > countAgents (
-        size_t id,
         const float xloc, const float yloc);
 
     void move(Resources food);

@@ -51,7 +51,7 @@ void Population::initPos(Resources food) {
 }
 
 // unifrom distribution for agent trait
-std::uniform_real_distribution<float> agent_ran_trait(0.0, 1.0);
+std::uniform_real_distribution<float> agent_ran_trait(-1.0, 1.0);
 
 // set agent trait
 void Population::setTrait() {
@@ -88,8 +88,9 @@ float get_distance(float x1, float x2, float y1, float y2) {
 // }
 
 // general function for agents within distance
-std::pair<int, std::vector<int> > Population::countAgents (size_t id,
+std::pair<int, std::vector<int> > Population::countAgents (
     const float xloc, const float yloc) {
+    
     std::vector<int> agent_id;
     std::vector<value> near_agents;
     // query for a simple box
@@ -101,15 +102,15 @@ std::pair<int, std::vector<int> > Population::countAgents (size_t id,
         // std::cout << bg::wkt<point> (v.first) << " - " << v.second << "\n";
         agent_id.push_back(v.second);
     }
-    nearEntities.clear();
+    near_agents.clear();
     // first element is number of near entities
     // second is the identity of entities
     return std::pair<int, std::vector<int> > {agent_id.size(), agent_id};
 }
+
 // general function for items within distance
 std::pair<int, std::vector<int> > Population::countFood (
     Resources &food,
-    size_t id,
     const float xloc, const float yloc) {
     std::vector<int> food_id;
     std::vector<value> near_food;
@@ -126,7 +127,7 @@ std::pair<int, std::vector<int> > Population::countFood (
                 food_id.push_back(v.second);
             }
         }
-        nearEntities.clear();
+        near_food.clear();
     }
 
     // first element is number of near entities
@@ -154,13 +155,15 @@ void Population::move(Resources food) {
             float sampleX = coordX[id];
             float sampleY = coordY[id]; 
             float foodHere = static_cast<float>(countFood(
-                    food, id, sampleX, sampleY
+                    food, sampleX, sampleY
                 ).first);
             float nbrsHere = static_cast<float>(countAgents(
-                    id, sampleX, sampleY
+                    sampleX, sampleY
                 ).first);
+            
             // get suitability current
             float suitabilityHere = (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere);
+
             // new location is initially current location
             float newX = coordX[id];
             float newY = coordY[id];
@@ -171,14 +174,14 @@ void Population::move(Resources food) {
                 // range for food
                 sampleX = coordX[id] + (range_food * t1_);
                 sampleY = coordY[id] + (range_food * t2_);
-                foodHere = static_cast<float>(countNearby(
-                    food, id, sampleX, sampleY
+                foodHere = static_cast<float>(countFood(
+                    food, sampleX, sampleY
                 ).first);
                 // use range for agents
                 sampleX = coordX[id] + (range_agents * t1_);
                 sampleY = coordY[id] + (range_agents * t2_);
-                nbrsHere = static_cast<float>(countNearby(
-                    id, sampleX, sampleY
+                nbrsHere = static_cast<float>(countAgents(
+                    sampleX, sampleY
                 ).first);
                 float new_suitabilityHere = (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere);
                 if (new_suitabilityHere > suitabilityHere) {
@@ -211,7 +214,7 @@ void Population::forage(Resources &food){
         }
         else {
             // find nearest item ids
-            std::vector<int> theseItems = (countFood(food, id, coordX[id], coordY[id])).second;
+            std::vector<int> theseItems = (countFood(food, coordX[id], coordY[id])).second;
             // energy[id] = static_cast<float> (theseItems.size());
             // counter[id] = stopTime;
             int thisItem = -1;
