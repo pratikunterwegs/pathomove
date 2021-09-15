@@ -51,7 +51,7 @@ void Population::initPos(Resources food) {
 }
 
 // unifrom distribution for agent trait
-std::uniform_real_distribution<float> agent_ran_trait(-1.0, 1.0);
+std::uniform_real_distribution<float> agent_ran_trait(-0.001, 0.001);
 
 // set agent trait
 void Population::setTrait() {
