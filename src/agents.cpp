@@ -292,7 +292,7 @@ std::vector<float> Population::handleFitness() {
 
 // mutation probability and size distribution
 std::bernoulli_distribution mutation_happens(mProb);
-std::normal_distribution<float> mutation_size(0.0, mShift);
+std::cauchy_distribution<float> mutation_size(0.0, mShift);
 
 // fun for replication
 void Population::Reproduce() {
