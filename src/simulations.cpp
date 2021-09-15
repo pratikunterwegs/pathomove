@@ -31,7 +31,7 @@ Rcpp::List simulation::do_simulation() {
     for(int gen = 0; gen < genmax; gen++) {
         // go over scenes
 
-            food.initResources();
+            // food.initResources();
             food.countAvailable();
             // reset population associations and degree
             // pop.associations = std::vector<int> (pop.nAgents, 0);
