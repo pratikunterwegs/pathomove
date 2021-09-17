@@ -17,11 +17,13 @@ public:
     const float range_food, const int handling_time) :
         // agents and traits
         nAgents (popsize),
-        coordX (popsize, 0.0),
-        coordY (popsize, 0.0),
+        coordX (popsize, 0.0f),
+        coordY (popsize, 0.0f),
         energy (popsize, 0.001),
-        coef_nbrs (popsize, 1.f),
-        coef_food (popsize, 1.f),
+        coef_nbrs (popsize, 0.f),
+        coef_food (popsize, 0.f),
+        coef_nbrs2 (popsize, 0.f),
+        coef_food2 (popsize, 0.f),
         
         // count stationary behaviour
         counter (popsize, 0),
@@ -43,11 +45,18 @@ public:
     std::vector<float> coordX;
     std::vector<float> coordY;
     std::vector<float> energy;
+    // weights
     std::vector<float> coef_nbrs;
     std::vector<float> coef_food;
+    std::vector<float> coef_nbrs2;
+    std::vector<float> coef_food2;
+
+    // counter and metrics
     std::vector<int> counter;
     std::vector<int> associations; // number of total interactions
     std::vector<int> degree;
+
+    // sensory range
     const float range_agents, range_food;
     const int handling_time;
     std::vector<int> order;
@@ -69,7 +78,7 @@ public:
     std::pair<int, std::vector<int> > countAgents (
         const float xloc, const float yloc);
 
-    void move(Resources food);
+    void move(Resources &food);
     void forage(Resources &food);
     
     std::vector<float> handleFitness();

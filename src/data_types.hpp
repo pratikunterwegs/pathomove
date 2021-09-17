@@ -15,6 +15,10 @@ public:
     std::vector<std::vector<float> > genEnergyVec;
     std::vector<std::vector<float> > genCoefFoodVec;
     std::vector<std::vector<float> > genCoefNbrsVec;
+
+    std::vector<std::vector<float> > genCoefFood2Vec;
+    std::vector<std::vector<float> > genCoefNbrs2Vec;
+
     // std::vector<std::vector<int> > genAssocVec;
     // std::vector<std::vector<int> > genDegreeVec;
     std::vector<int> gens;

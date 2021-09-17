@@ -58,6 +58,8 @@ void Population::setTrait() {
     for(size_t i = 0; i < nAgents; i++) {
         coef_food[i] = agent_ran_trait(rng);
         coef_nbrs[i] = agent_ran_trait(rng);
+        coef_food2[i] = agent_ran_trait(rng);
+        coef_nbrs2[i] = agent_ran_trait(rng);
     }
 }
 
@@ -136,8 +138,7 @@ std::pair<int, std::vector<int> > Population::countFood (
 }
 
 /// population movement function
-void Population::move(Resources food) {
-    float angle = 0.f;
+void Population::move(Resources &food) {
     float twopi = 2.f * M_PI;
     
     // what increment for 4 samples in a circle around the agent
@@ -162,7 +163,10 @@ void Population::move(Resources food) {
                 ).first);
             
             // get suitability current
-            float suitabilityHere = (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere);
+            float suitabilityHere = (
+                (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere) +
+                (coef_food2[id] * foodHere) + (coef_nbrs2[id] * nbrsHere)
+            );
 
             // new location is initially current location
             float newX = coordX[id];
@@ -184,10 +188,12 @@ void Population::move(Resources food) {
                     sampleX, sampleY
                 ).first);
                 float new_suitabilityHere = (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere);
+                
+                // move to first position better than current
                 if (new_suitabilityHere > suitabilityHere) {
                     
                     newX = sampleX; newY = sampleY;
-                    suitabilityHere = new_suitabilityHere;
+                    break;
                 }
             }
             // crudely wrap movement
@@ -221,13 +227,6 @@ void Population::forage(Resources &food){
 
             // check near items count
             if(theseItems.size() > 0) {
-                // now check them
-                // for (size_t i = 0; i < theseItems.size(); i++){
-                //     if(food.available[theseItems[i]]) {
-                //         thisItem = theseItems[i]; // if available pick this item
-                //         break;
-                //     }
-                // }
                 // take first items by default
                 thisItem = theseItems[0];
 
@@ -305,9 +304,15 @@ void Population::Reproduce() {
     // get parent trait based on weighted lottery
     std::vector<float> tmp_coef_food (nAgents, 0.f);
     std::vector<float> tmp_coef_nbrs (nAgents, 0.f);
+    std::vector<float> tmp_coef_food2 (nAgents, 0.f);
+    std::vector<float> tmp_coef_nbrs2 (nAgents, 0.f);
+
     for (int a = 0; a < nAgents; a++) {
         tmp_coef_nbrs[a] = coef_nbrs[static_cast<size_t>(weightedLottery(rng))];
         tmp_coef_food[a] = coef_food[static_cast<size_t>(weightedLottery(rng))];
+
+        tmp_coef_nbrs2[a] = coef_nbrs2[static_cast<size_t>(weightedLottery(rng))];
+        tmp_coef_food2[a] = coef_food2[static_cast<size_t>(weightedLottery(rng))];
     }
     
     // reset counter
@@ -323,12 +328,24 @@ void Population::Reproduce() {
         if(mutation_happens(rng)) {
             tmp_coef_nbrs[a] = tmp_coef_nbrs[a] + mutation_size(rng);
         }
+        if(mutation_happens(rng)) {
+            tmp_coef_food2[a] = tmp_coef_food2[a] + mutation_size(rng);
+        }
+        if(mutation_happens(rng)) {
+            tmp_coef_nbrs2[a] = tmp_coef_nbrs2[a] + mutation_size(rng);
+        }
     }
 
     // swap trait matrices
     coef_food =  tmp_coef_food;
     coef_nbrs = tmp_coef_nbrs;
+
+    coef_food2 =  tmp_coef_food2;
+    coef_nbrs2 = tmp_coef_nbrs2;
+
     tmp_coef_nbrs.clear(); tmp_coef_food.clear();
+    tmp_coef_nbrs2.clear(); tmp_coef_food2.clear();
+    
     // swap energy
     std::vector<float> tmpEnergy (nAgents, 0.001);
     std::swap(energy, tmpEnergy);

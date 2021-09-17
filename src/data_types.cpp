@@ -42,6 +42,9 @@ void genData::updateGenData (Population &pop, const int gen_) {
     genEnergyVec.push_back(pop.energy);
     genCoefFoodVec.push_back(pop.coef_food);
     genCoefNbrsVec.push_back(pop.coef_nbrs);
+
+    genCoefFood2Vec.push_back(pop.coef_food2);
+    genCoefNbrs2Vec.push_back(pop.coef_nbrs2);
     // genAssocVec.push_back(pop.associations);
     // genDegreeVec.push_back(pop.degree);
     gens.push_back(gen_);
@@ -55,7 +58,9 @@ Rcpp::List genData::getGenData() {
         genDataList[i] = DataFrame::create(
             Named("energy") = genEnergyVec[i],
             Named("coef_food") = genCoefFoodVec[i],
-            Named("coef_nbrs") = genCoefNbrsVec[i]
+            Named("coef_nbrs") = genCoefNbrsVec[i],
+            Named("coef_food2") = genCoefFood2Vec[i],
+            Named("coef_nbrs2") = genCoefNbrs2Vec[i]
             // Named("associations") = genAssocVec[i],
             // Named("degree") = genDegreeVec[i]
         );
