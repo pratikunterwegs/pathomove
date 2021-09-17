@@ -1,12 +1,11 @@
 /// define functions for pathogen spread
 
 #include "parameters.hpp"
-#include "agent.hpp"
-#include "pathospread.hpp"
+#include "agents.hpp"
 #include <unordered_set>
 
 /// function to infect n individuals
-void popIntroPathogen(const int nInfected) {
+void Population::popIntroPathogen(const int nInfected) {
 
     shufflePop();
     // loop through the intended number of infections
@@ -19,7 +18,7 @@ void popIntroPathogen(const int nInfected) {
 }
 
 /// function to spread pathogen
-void popPathogenSpread(std::bernoulli_distribution &pathogenTransmits) {
+void Population::popPathogenSpread() {
 
     // looping through agents, query rtree for neighbours
     for (size_t i = 0; i < pop.size(); i++)
@@ -54,7 +53,7 @@ void popPathogenSpread(std::bernoulli_distribution &pathogenTransmits) {
 }
 
 /// function for pathogen cost
-void popPathogenCost(const float costInfect) {
+void Population::popPathogenCost(const float costInfect) {
     for (size_t i = 0; i < pop.size(); i++)
     {
         if(pop[i].infected) {

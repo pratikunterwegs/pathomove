@@ -14,7 +14,8 @@
 struct Population {
 public:
     Population(const int popsize, const float range_agents,
-    const float range_food, const int handling_time) :
+    const float range_food, const int handling_time,
+    const float pTransmit) :
         // agents and traits
         nAgents (popsize),
         coordX (popsize, 0.0f),
@@ -36,7 +37,7 @@ public:
         order(popsize, 1),
         infected(popsize, false)//,
         // nInfected (nInfected),
-        // pTransmit (pTransmit)
+        pTransmit (pTransmit)
 
     {}
     ~Population() {}
@@ -67,6 +68,9 @@ public:
     // position rtree
     bgi::rtree< value, bgi::quadratic<16> > agentRtree;
 
+    // transmission random number generation
+    std::bernoulli_distribution pathogenTransmit(pTransmit);
+
     // funs for pop
     void shufflePop();
     void setTrait ();
@@ -86,7 +90,7 @@ public:
     
     //pathogen
     void introducePathogen(const int nInfected);
-    void pathogenSpread(const float pTransmit);
+    void pathogenSpread();
     void pathogenCost(const float costInfect);
 
 };
