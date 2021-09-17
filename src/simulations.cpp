@@ -17,7 +17,7 @@ Rcpp::List simulation::do_simulation() {
     Rcpp::Rcout << "landscape with " << food.nClusters << " clusters\n";
 
     pop.setTrait();
-    Rcpp::Rcout << "pop with" << pop.nAgents << " agents for " << genmax << " gens " << tmax << " timesteps\n";
+    Rcpp::Rcout << "pop with " << pop.nAgents << " agents for " << genmax << " gens " << tmax << " timesteps\n";
 
     // prepare social network struct
     // Network pbsn;
@@ -70,9 +70,9 @@ Rcpp::List simulation::do_simulation() {
             // food.countAvailable();
         // generation ends here
         // update gendata
-        // if (gen == (genmax - 1)) {
+        if ((gen == (genmax - 1)) | (gen % 10 == 0)) {
             gen_data.updateGenData(pop, gen);
-        // }
+        }
 
         // thisNetworkData.updateNetworkData(pop, gen, pbsn);
         // subtract competition costs
