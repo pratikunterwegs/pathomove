@@ -19,6 +19,15 @@ Rcpp::List simulation::do_simulation() {
     pop.setTrait();
     Rcpp::Rcout << "pop with " << pop.nAgents << " agents for " << genmax << " gens " << tmax << " timesteps\n";
 
+    // prepare scenario
+    Rcpp::Rcout << "this is scenario " << scenario << "\n";
+
+    if (scenario == 0) {
+        pTransmit = 0;
+    } else {
+        pTransmit = pTransmit;
+    }
+
     // prepare social network struct
     // Network pbsn;
     // pbsn.initAssociations(pop.nAgents);
@@ -41,6 +50,8 @@ Rcpp::List simulation::do_simulation() {
             pop.counter = std::vector<int> (pop.nAgents, 0);
             pop.initPos(food);
 
+            pop.introducePathogen(nInfected);
+
             // reset pbsn
             // pbsn.initAssociations(pop.nAgents);
             // pbsn.initAdjMat(pop.nAgents);
@@ -59,7 +70,8 @@ Rcpp::List simulation::do_simulation() {
                 // foraging
                 pop.forage(food);
 
-                // associations not upated
+                // disease
+                pop.pathogenSpread();
 
                 // PBSN etc
                 // pop.updatePbsn(pbsn, sensoryRange);
@@ -75,8 +87,10 @@ Rcpp::List simulation::do_simulation() {
         }
 
         // thisNetworkData.updateNetworkData(pop, gen, pbsn);
-        // subtract competition costs
-        // pop.competitionCosts(competitionCost);
+        
+        //population infection cost by time
+        pop.pathogenCost(costInfect);
+
         // reproduce
         pop.Reproduce();
     }
