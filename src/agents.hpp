@@ -84,8 +84,11 @@ public:
     std::vector<float> handleFitness();
     void Reproduce();
     
-    // for network
-    // void updatePbsn(Network &pbsn, const double range);
+    //pathogen
+    void introducePathogen(const int nInfected);
+    void pathogenSpread(const float pTransmit);
+    void pathogenCost(const float costInfect);
+
 };
 
 float get_distance(float x1, float x2, float y1, float y2);
