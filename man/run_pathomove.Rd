@@ -16,7 +16,10 @@ run_pathomove(
   range_food,
   range_agents,
   handling_time,
-  regen_time
+  regen_time,
+  pTransmit,
+  nInfected,
+  costInfect
 )
 }
 \arguments{
@@ -43,6 +46,12 @@ run_pathomove(
 \item{handling_time}{The handling time.}
 
 \item{regen_time}{The item regeneration time.}
+
+\item{pTransmit}{Probability of transmission.}
+
+\item{nInfected}{Agents infected per event.}
+
+\item{costInfect}{Cost infection.}
 }
 \value{
 A data frame of the evolved population traits.

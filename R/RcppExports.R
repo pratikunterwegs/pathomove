@@ -29,8 +29,11 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread) {
 #' @param range_agents The sensory range for agents.
 #' @param handling_time The handling time.
 #' @param regen_time The item regeneration time.
+#' @param pTransmit Probability of transmission.
+#' @param nInfected Agents infected per event.
+#' @param costInfect Cost infection.
 #' @return A data frame of the evolved population traits.
-run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time) {
-    .Call(`_snevo_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time)
+run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time, pTransmit, nInfected, costInfect) {
+    .Call(`_snevo_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time, pTransmit, nInfected, costInfect)
 }
 
