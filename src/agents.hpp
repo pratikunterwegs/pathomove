@@ -36,6 +36,7 @@ public:
         handling_time(handling_time),
         order(popsize, 1),
         infected(popsize, false),//,
+        timeInfected(popsize, 0),
         // nInfected (nInfected),
         pTransmit (pTransmit)
 
@@ -62,6 +63,7 @@ public:
     const int handling_time;
     std::vector<int> order;
     std::vector<bool> infected;
+    std::vector<int> timeInfected;
     float pTransmit;
 
     // position rtree
