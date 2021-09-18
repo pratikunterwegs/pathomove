@@ -19,7 +19,7 @@ void Population::popIntroPathogen(const int nInfected) {
 
 /// function to spread pathogen
 void Population::popPathogenSpread() {
-
+    std::bernoulli_distribution transmission (pTransmit);
     // looping through agents, query rtree for neighbours
     for (size_t i = 0; i < pop.size(); i++)
     {

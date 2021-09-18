@@ -67,9 +67,6 @@ public:
     // position rtree
     bgi::rtree< value, bgi::quadratic<16> > agentRtree;
 
-    // bernoulli dist
-    std::bernoulli_distribution transmission(pTransmit);
-
     // funs for pop
     void shufflePop();
     void setTrait ();
