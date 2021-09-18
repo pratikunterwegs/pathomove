@@ -5,31 +5,32 @@
 #include <unordered_set>
 
 /// function to infect n individuals
-void Population::popIntroPathogen(const int nInfected) {
+void Population::introducePathogen(const int nInfected) {
 
     shufflePop();
     // loop through the intended number of infections
     for (int i = 0; i < nInfected; i++)
     {       
         // toggle infected agents boolean for infected
-        pop[ order[i] ].infected = true;
-        pop[ order[i] ].timeInfected = 0;        
+        infected[order[i]] = true;
+        timeInfected[order[i]] = 0;        
     }
 }
 
 /// function to spread pathogen
-void Population::popPathogenSpread() {
+void Population::pathogenSpread() {
     std::bernoulli_distribution transmission (pTransmit);
     // looping through agents, query rtree for neighbours
-    for (size_t i = 0; i < pop.size(); i++)
+    for (size_t i = 0; i < nAgents; i++)
     {
         // spread to neighbours if self infected
-        if (pop[i].infected) 
+        if (infected[i]) 
         {
+            timeInfected[i]++; // increase time infecetd
             // get neigbour ids
             std::vector<int> nbrsId = countAgents(
                 coordX[i], coordY[i]
-            ).second();
+            ).second;
 
             if (nbrsId.size() > 0) 
             {
@@ -37,13 +38,12 @@ void Population::popPathogenSpread() {
                 for(size_t j = 0; j < nbrsId.size(); j++) 
                 {
                     size_t toInfect = nbrsId[j];
-                    if (!pop[toInfect].infected) 
+                    if (!infected[toInfect]) 
                     {
                         // infect neighbours with prob p
                         if(transmission(rng))
                         {
-                            pop[toInfect].infected = true;
-                            pop[toInfect].timeInfected = t_;
+                            infected[toInfect] = true;
                         }
                     }
                 }
@@ -53,11 +53,11 @@ void Population::popPathogenSpread() {
 }
 
 /// function for pathogen cost
-void Population::popPathogenCost(const float costInfect) {
-    for (size_t i = 0; i < pop.size(); i++)
+void Population::pathogenCost(const float costInfect) {
+    for (size_t i = 0; i < nAgents; i++)
     {
-        if(pop[i].infected) {
-            pop[i].energy -= (costInfection * static_cast<float>(pop[i].timeInfected));
+        if(infected[i]) {
+            energy[i] -= (costInfect * static_cast<float>(timeInfected[i]));
         }
     }
 }
