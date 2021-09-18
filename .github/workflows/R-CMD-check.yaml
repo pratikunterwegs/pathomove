@@ -80,17 +80,19 @@ jobs:
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
+        run: |
+          devtools::build()
+          devtools::install()
         shell: Rscript {0}
 
-      - name: Install covr and do covr test coverage
-        if: matrix.config.r == 'devel'
       # - name: Install covr and do covr test coverage
       #   if: matrix.config.r == 'devel'
       #   run: |
       #     remotes::install_cran("covr")
       #     covr::codecov()
       #   shell: Rscript {0}
+
+      - name: Upload check results
         if: failure()
         uses: actions/upload-artifact@main
         with:
