@@ -23,10 +23,9 @@ Rcpp::List simulation::do_simulation() {
     Rcpp::Rcout << "this is scenario " << scenario << "\n";
 
     if (scenario == 0) {
-        pTransmit = 0;
-    } else {
-        pTransmit = pTransmit;
+        pTransmit = 0.f;
     }
+
 
     // prepare social network struct
     // Network pbsn;
@@ -118,6 +117,8 @@ Rcpp::List simulation::do_simulation() {
 //' @param range_agents The sensory range for agents.
 //' @param handling_time The handling time.
 //' @param regen_time The item regeneration time.
+//' @param pTransmit Probability of transmission.
+//' @param nInfected Agents infected per event.
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
 Rcpp::List run_pathomove(const int scenario,
@@ -130,7 +131,9 @@ Rcpp::List run_pathomove(const int scenario,
                         const float range_food,
                         const float range_agents,
                         const int handling_time,
-                        const int regen_time) {
+                        const int regen_time,
+                        float pTransmit,
+                        const int nInfected) {
     simulation this_sim(popsize, scenario, nItems, landsize,
                         nClusters, clusterSpread, tmax, genmax,
                         range_food, range_agents,

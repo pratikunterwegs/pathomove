@@ -16,8 +16,10 @@ public:
                const float range_food,
                const float range_agents,
                const int handling_time,
-               const int regen_time):
-        pop (popsize, range_agents, range_food, handling_time),
+               const int regen_time,
+               float pTransmit,
+               const int nInfected):
+        pop (popsize, range_agents, range_food, handling_time, pTransmit),
         food(nItems, landsize, nClusters, clusterSpread, regen_time),
         gen_data (),
         scenario(scenario),
@@ -26,15 +28,18 @@ public:
         handling_time(handling_time),
         regen_time(regen_time),
         range_food(range_food),
-        range_agents(range_agents)
+        range_agents(range_agents),
+        nInfected(nInfected),
+        pTransmit(pTransmit)
     {}
     ~simulation() {}
 
     Population pop;
     Resources food;
     genData gen_data;
-    const int scenario, tmax, genmax, handling_time, regen_time;
+    const int scenario, tmax, genmax, handling_time, regen_time, nInfected;
     const float range_food, range_agents;
+    float pTransmit;
 
     // funs
     Rcpp::List do_simulation();
@@ -50,6 +55,8 @@ Rcpp::List run_pathomove(const int popsize, const int scenario,
                         const float range_food,
                         const float range_agents,
                         const int handling_time,
-                        const int regen_time);
+                        const int regen_time,
+                        float pTransmit,
+                        const int nInfected);
 
 #endif // SIMULATIONS_H

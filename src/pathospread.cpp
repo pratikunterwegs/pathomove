@@ -40,7 +40,7 @@ void Population::popPathogenSpread() {
                     if (!pop[toInfect].infected) 
                     {
                         // infect neighbours with prob p
-                        if(pathogenTransmits(rng))
+                        if(transmission(rng))
                         {
                             pop[toInfect].infected = true;
                             pop[toInfect].timeInfected = t_;
