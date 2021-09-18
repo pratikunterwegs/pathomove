@@ -85,12 +85,12 @@ jobs:
 
       - name: Install covr and do covr test coverage
         if: matrix.config.r == 'devel'
-        run: |
-          remotes::install_cran("covr")
-          covr::codecov()
-        shell: Rscript {0}
-
-      - name: Upload check results
+      # - name: Install covr and do covr test coverage
+      #   if: matrix.config.r == 'devel'
+      #   run: |
+      #     remotes::install_cran("covr")
+      #     covr::codecov()
+      #   shell: Rscript {0}
         if: failure()
         uses: actions/upload-artifact@main
         with:
