@@ -19,6 +19,24 @@ plot(l)
 
 a = run_pathomove(
   scenario = 1,
+  popsize = 50,
+  nItems = 500,
+  landsize = 25,
+  nClusters = 100,
+  clusterSpread = 0.1,
+  tmax = 200,
+  genmax = 20,
+  range_food = 0.5,
+  range_agents = 1,
+  handling_time = 5,
+  regen_time = 10,
+  pTransmit = 0.5,
+  nInfected = 2,
+  costInfect = 0.2
+)
+
+a = run_pathomove(
+  scenario = 1,
   popsize = 200,
   nItems = 500,
   landsize = 25,
@@ -29,7 +47,8 @@ a = run_pathomove(
   range_food = 0.5,
   range_agents = 1,
   handling_time = 5,
-  regen_time = 10
+  regen_time = 10,
+
 )
 
 names(a)
