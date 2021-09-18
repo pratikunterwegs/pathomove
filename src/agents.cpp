@@ -306,13 +306,25 @@ void Population::Reproduce() {
     std::vector<float> tmp_coef_nbrs (nAgents, 0.f);
     std::vector<float> tmp_coef_food2 (nAgents, 0.f);
     std::vector<float> tmp_coef_nbrs2 (nAgents, 0.f);
+    
+    // infected or not for vertical transmission
+    std::vector<bool> infected_2 (nAgents, false);
 
     for (int a = 0; a < nAgents; a++) {
-        tmp_coef_nbrs[a] = coef_nbrs[static_cast<size_t>(weightedLottery(rng))];
-        tmp_coef_food[a] = coef_food[static_cast<size_t>(weightedLottery(rng))];
+        size_t parent_id = static_cast<size_t>(weightedLottery(rng));
 
-        tmp_coef_nbrs2[a] = coef_nbrs2[static_cast<size_t>(weightedLottery(rng))];
-        tmp_coef_food2[a] = coef_food2[static_cast<size_t>(weightedLottery(rng))];
+        tmp_coef_nbrs[a] = coef_nbrs[parent_id];
+        tmp_coef_food[a] = coef_food[parent_id];
+
+        tmp_coef_nbrs2[a] = coef_nbrs2[parent_id];
+        tmp_coef_food2[a] = coef_food2[parent_id];
+
+        // vertical transmission of infection.
+        if(infected[parent_id]) {
+            if(transmission(rng)) {
+                infected_2 = true;
+            }
+        }
     }
     
     // reset counter
