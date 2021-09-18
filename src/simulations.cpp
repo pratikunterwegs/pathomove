@@ -119,6 +119,7 @@ Rcpp::List simulation::do_simulation() {
 //' @param regen_time The item regeneration time.
 //' @param pTransmit Probability of transmission.
 //' @param nInfected Agents infected per event.
+//' @param costInfect Cost infection.
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
 Rcpp::List run_pathomove(const int scenario,
@@ -133,10 +134,13 @@ Rcpp::List run_pathomove(const int scenario,
                         const int handling_time,
                         const int regen_time,
                         float pTransmit,
-                        const int nInfected) {
+                        const int nInfected,
+                        const float costInfect) {
+                            
     simulation this_sim(popsize, scenario, nItems, landsize,
                         nClusters, clusterSpread, tmax, genmax,
                         range_food, range_agents,
-                        handling_time, regen_time);
+                        handling_time, regen_time,
+                        pTransmit, nInfected, costInfect);
     return this_sim.do_simulation();
 }
