@@ -295,6 +295,7 @@ std::cauchy_distribution<float> mutation_size(0.0, mShift);
 
 // fun for replication
 void Population::Reproduce() {
+    std::bernoulli_distribution verticalInfect(0.2f);
     //normalise intake
     std::vector<float> vecFitness = handleFitness();
 
@@ -321,14 +322,15 @@ void Population::Reproduce() {
 
         // vertical transmission of infection.
         if(infected[parent_id]) {
-            if(transmission(rng)) {
-                infected_2 = true;
+            if(verticalInfect(rng)) {
+                infected_2[a] = true;
             }
         }
     }
     
     // reset counter
     counter = std::vector<int> (nAgents, 0);
+    timeInfected = std::vector<int> (nAgents, 0);
     assert(static_cast<int>(counter.size()) == nAgents && "counter size wrong");
 
     // mutate trait: trait shifts up or down with an equal prob
@@ -357,6 +359,7 @@ void Population::Reproduce() {
 
     tmp_coef_nbrs.clear(); tmp_coef_food.clear();
     tmp_coef_nbrs2.clear(); tmp_coef_food2.clear();
+
     
     // swap energy
     std::vector<float> tmpEnergy (nAgents, 0.001);
