@@ -25,8 +25,6 @@ Rcpp::List simulation::do_simulation() {
     if (scenario == 0) {
         pTransmit = 0.f;
     }
-
-
     // prepare social network struct
     // Network pbsn;
     // pbsn.initAssociations(pop.nAgents);
@@ -37,51 +35,42 @@ Rcpp::List simulation::do_simulation() {
 
     // go over gens
     for(int gen = 0; gen < genmax; gen++) {
-        // go over scenes
+        // food.initResources();
+        food.countAvailable();
+        
+        // reset counter and positions
+        pop.counter = std::vector<int> (pop.nAgents, 0);
+        pop.initPos(food);
 
-            // food.initResources();
-            food.countAvailable();
-            // reset population associations and degree
-            // pop.associations = std::vector<int> (pop.nAgents, 0);
-            // pop.degree = std::vector<int> (pop.nAgents, 0);
+        if(scenario > 0) {
+            pop.introducePathogen(initialInfections);
+        }
 
-            // reset counter and positions
-            pop.counter = std::vector<int> (pop.nAgents, 0);
-            pop.initPos(food);
+        // timesteps start here
+        for (size_t t = 0; t < static_cast<size_t>(tmax); t++)
+        {
+            // resources regrow
+            food.regenerate();
+
+            pop.updateRtree();
+
+            // movement section
+            pop.move(food);
+
+            // foraging
+            pop.forage(food);
 
             if(scenario > 0) {
-                pop.introducePathogen(nInfected);
-            }
-
-            // reset pbsn
-            // pbsn.initAssociations(pop.nAgents);
-            // pbsn.initAdjMat(pop.nAgents);
-
-            // timesteps start here
-            for (size_t t = 0; t < static_cast<size_t>(tmax); t++)
-            {
-                // resources regrow
-                food.regenerate();
-
-                pop.updateRtree();
-
-                // movement section
-                pop.move(food);
-
-                // foraging
-                pop.forage(food);
-
                 // disease
                 pop.pathogenSpread();
-
-                // PBSN etc
-                // pop.updatePbsn(pbsn, sensoryRange);
             }
-            // timestep ends here
-            // pop.degree = getDegree(pbsn);
 
-            // food.countAvailable();
-        // generation ends here
+            // timestep ends here
+        }
+        
+        pop.countInfected();
+        assert(pop.nInfected <= pop.nAgents);
+
         // update gendata
         if ((gen == (genmax - 1)) | (gen % 10 == 0)) {
             gen_data.updateGenData(pop, gen);
@@ -94,6 +83,8 @@ Rcpp::List simulation::do_simulation() {
 
         // reproduce
         pop.Reproduce();
+
+        // generation ends here
     }
     // all gens end here
 
@@ -120,7 +111,7 @@ Rcpp::List simulation::do_simulation() {
 //' @param handling_time The handling time.
 //' @param regen_time The item regeneration time.
 //' @param pTransmit Probability of transmission.
-//' @param nInfected Agents infected per event.
+//' @param intialInfections Agents infected per event.
 //' @param costInfect Cost infection.
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
@@ -136,13 +127,13 @@ Rcpp::List run_pathomove(const int scenario,
                         const int handling_time,
                         const int regen_time,
                         float pTransmit,
-                        const int nInfected,
+                        const int initialInfections,
                         const float costInfect) {
                             
     simulation this_sim(popsize, scenario, nItems, landsize,
                         nClusters, clusterSpread, tmax, genmax,
                         range_food, range_agents,
                         handling_time, regen_time,
-                        pTransmit, nInfected, costInfect);
+                        pTransmit, initialInfections, costInfect);
     return this_sim.do_simulation();
 }
