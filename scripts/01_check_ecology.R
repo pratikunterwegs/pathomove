@@ -10,48 +10,36 @@ library(ggplot2)
 library(data.table)
 
 l = snevo::get_test_landscape(
-  nItems = 2000,
-  landsize = 25,
-  nClusters = 100, 
-  clusterSpread = 0.15
+  nItems = 500,
+  landsize = 100,
+  nClusters = 50, 
+  clusterSpread = 3
 )
 plot(l)
 
 a = run_pathomove(
   scenario = 1,
-  popsize = 50,
-  nItems = 500,
-  landsize = 25,
-  nClusters = 100,
+  popsize = 100,
+  nItems = 100,
+  landsize = 100,
+  nClusters = 20,
   clusterSpread = 0.1,
-  tmax = 200,
-  genmax = 20,
+  tmax = 100,
+  genmax = 100,
   range_food = 0.5,
   range_agents = 1,
   handling_time = 5,
   regen_time = 10,
-  pTransmit = 0.5,
-  nInfected = 2,
-  costInfect = 0.2
-)
-
-a = run_pathomove(
-  scenario = 1,
-  popsize = 200,
-  nItems = 500,
-  landsize = 25,
-  nClusters = 100,
-  clusterSpread = 0.1,
-  tmax = 200,
-  genmax = 500,
-  range_food = 0.5,
-  range_agents = 1,
-  handling_time = 5,
-  regen_time = 10,
-
+  pTransmit = 0.001,
+  initialInfections = 2,
+  costInfect = 0.4
 )
 
 names(a)
+
+plot(a[["gens"]], a[["n_infected"]], type = "b")
+plot(a[["gens"]], a[["p_src"]], type = "b")
+
 
 #### handle data ####
 b = copy(a)
@@ -79,6 +67,11 @@ wts = b[variable != "energy",]
 wts[, value := tanh(value * 20)]
 
 ggplot(wts)+
+  geom_hline(
+    yintercept = 0,
+    col = "blue",
+    size = 0.1
+  )+
   geom_bin2d(
     aes(gen, value),
     binwidth = c(10, 0.02),
@@ -93,7 +86,7 @@ ggplot(wts)+
     option = "C", direction = -1,
     begin = 0.2, end = 1
   )+
-  theme_minimal()+
+  theme_test()+
   facet_wrap(~variable, ncol = 2)
 
 # scale weights
@@ -124,5 +117,5 @@ ggplot(wts_wide[gen %% 100 == 0 | gen == max(gen)])+
   scale_y_continuous(
     trans = ggallin::ssqrt_trans
   )+
-  theme_minimal()+
+  theme_bw()+
   facet_wrap(~ gen)
