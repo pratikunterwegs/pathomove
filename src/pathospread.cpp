@@ -44,6 +44,7 @@ void Population::pathogenSpread() {
                         if(transmission(rng))
                         {
                             infected[toInfect] = true;
+                            srcInfect[toInfect] = 2;
                         }
                     }
                 }
@@ -60,4 +61,37 @@ void Population::pathogenCost(const float costInfect) {
             energy[i] -= (costInfect * static_cast<float>(timeInfected[i]));
         }
     }
+}
+
+/// count infected agents
+void Population::countInfected() {
+    nInfected = 0;
+    for (size_t i = 0; i < nAgents; i++)
+    {
+        if(infected[i]) {
+            nInfected++;
+        }
+    }
+    assert(nInfected <= nAgents);
+}
+
+/// proportion of infection sources
+float Population::propSrcInfection() {
+    int vertical = 0; int horizontal = 0;
+    for (size_t i = 0; i < nAgents; i++)
+    {
+        if(infected[i]) {
+            if (srcInfect[i] == 1)
+            {
+                vertical ++;
+            } else if (srcInfect[i] == 2) {
+                horizontal ++;
+            }
+            
+        }
+    }
+    Rcpp::Rcout << "# horizontal infections = " << horizontal << "\n";
+    float propSource = (vertical == 0 && horizontal == 0) ? 0.f : (static_cast<float>(horizontal) / static_cast<float>(vertical + horizontal));
+
+    return static_cast<float>(horizontal);
 }
