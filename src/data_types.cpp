@@ -47,7 +47,10 @@ void genData::updateGenData (Population &pop, const int gen_) {
     genCoefNbrs2Vec.push_back(pop.coef_nbrs2);
     // genAssocVec.push_back(pop.associations);
     // genDegreeVec.push_back(pop.degree);
+    genInfected.push_back(pop.nInfected);
     gens.push_back(gen_);
+    pSrcInfect.push_back(pop.propSrcInfection());
+
 }
 
 // function to return gen data as an rcpp list
@@ -67,7 +70,9 @@ Rcpp::List genData::getGenData() {
     }
     List dataToReturn = List::create(
         Named("pop_data") = genDataList,
-        Named("gens") = gens
+        Named("gens") = gens,
+        Named("n_infected") = genInfected,
+        Named("p_src") = pSrcInfect
     );
 
     return dataToReturn;

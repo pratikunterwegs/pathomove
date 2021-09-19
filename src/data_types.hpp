@@ -21,7 +21,9 @@ public:
 
     // std::vector<std::vector<int> > genAssocVec;
     // std::vector<std::vector<int> > genDegreeVec;
+    std::vector<int> genInfected;
     std::vector<int> gens;
+    std::vector<float> pSrcInfect;
 
     void updateGenData (Population &pop, const int gen);
     Rcpp::List getGenData ();
