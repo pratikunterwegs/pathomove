@@ -97,6 +97,9 @@ public:
     void pathogenSpread();
     void pathogenCost(const float costInfect);
 
+    void countInfected();
+    float propSrcInfection();
+
 };
 
 float get_distance(float x1, float x2, float y1, float y2);
