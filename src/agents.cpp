@@ -336,6 +336,9 @@ void Population::Reproduce() {
     // infected or not for vertical transmission
     std::vector<bool> infected_2 (nAgents, false);
 
+    // reset infection source
+    srcInfect = std::vector<int> (nAgents, 0);
+
     for (int a = 0; a < nAgents; a++) {
         size_t parent_id = static_cast<size_t>(weightedLottery(rng));
 
