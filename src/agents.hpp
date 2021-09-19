@@ -37,9 +37,9 @@ public:
         order(popsize, 1),
         infected(popsize, false),//,
         timeInfected(popsize, 0),
-        // nInfected (nInfected),
-        pTransmit (pTransmit)
-
+        pTransmit (pTransmit),
+        nInfected(0),
+        srcInfect(popsize, 0)
     {}
     ~Population() {}
 
