@@ -58,9 +58,11 @@ public:
     std::vector<int> associations; // number of total interactions
     std::vector<int> degree;
 
-    // sensory range
+    // sensory range and foraging
     const float range_agents, range_food;
     const int handling_time;
+
+    // shuffle vector and transmission
     std::vector<int> order;
     std::vector<bool> infected;
     std::vector<int> timeInfected;
