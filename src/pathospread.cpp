@@ -5,15 +5,15 @@
 #include <unordered_set>
 
 /// function to infect n individuals
-void Population::introducePathogen(const int nInfected) {
+void Population::introducePathogen(const int initialInfections) {
 
     shufflePop();
     // loop through the intended number of infections
-    for (int i = 0; i < nInfected; i++)
+    for (int i = 0; i < initialInfections; i++)
     {       
         // toggle infected agents boolean for infected
         infected[order[i]] = true;
-        timeInfected[order[i]] = 0;        
+        timeInfected[order[i]] = 1;        
     }
 }
 
