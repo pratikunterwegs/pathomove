@@ -356,8 +356,12 @@ void Population::Reproduce() {
             }
         }
     }
+
+    // swap infected and infected_2
+    std::swap(infected, infected_2);
+    infected_2.clear();
     
-    // reset counter
+    // reset counter and time infected
     counter = std::vector<int> (nAgents, 0);
     timeInfected = std::vector<int> (nAgents, 0);
     assert(static_cast<int>(counter.size()) == nAgents && "counter size wrong");
