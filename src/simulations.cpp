@@ -49,7 +49,9 @@ Rcpp::List simulation::do_simulation() {
             pop.counter = std::vector<int> (pop.nAgents, 0);
             pop.initPos(food);
 
-            pop.introducePathogen(nInfected);
+            if(scenario > 0) {
+                pop.introducePathogen(nInfected);
+            }
 
             // reset pbsn
             // pbsn.initAssociations(pop.nAgents);
