@@ -20,8 +20,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // run_pathomove
-Rcpp::List run_pathomove(const int scenario, const int popsize, const int nItems, const float landsize, const int nClusters, const float clusterSpread, const int tmax, const int genmax, const float range_food, const float range_agents, const int handling_time, const int regen_time, float pTransmit, const int nInfected, const float costInfect);
-RcppExport SEXP _snevo_run_pathomove(SEXP scenarioSEXP, SEXP popsizeSEXP, SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterSpreadSEXP, SEXP tmaxSEXP, SEXP genmaxSEXP, SEXP range_foodSEXP, SEXP range_agentsSEXP, SEXP handling_timeSEXP, SEXP regen_timeSEXP, SEXP pTransmitSEXP, SEXP nInfectedSEXP, SEXP costInfectSEXP) {
+Rcpp::List run_pathomove(const int scenario, const int popsize, const int nItems, const float landsize, const int nClusters, const float clusterSpread, const int tmax, const int genmax, const float range_food, const float range_agents, const int handling_time, const int regen_time, float pTransmit, const int initialInfections, const float costInfect);
+RcppExport SEXP _snevo_run_pathomove(SEXP scenarioSEXP, SEXP popsizeSEXP, SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterSpreadSEXP, SEXP tmaxSEXP, SEXP genmaxSEXP, SEXP range_foodSEXP, SEXP range_agentsSEXP, SEXP handling_timeSEXP, SEXP regen_timeSEXP, SEXP pTransmitSEXP, SEXP initialInfectionsSEXP, SEXP costInfectSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -38,9 +38,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int >::type handling_time(handling_timeSEXP);
     Rcpp::traits::input_parameter< const int >::type regen_time(regen_timeSEXP);
     Rcpp::traits::input_parameter< float >::type pTransmit(pTransmitSEXP);
-    Rcpp::traits::input_parameter< const int >::type nInfected(nInfectedSEXP);
+    Rcpp::traits::input_parameter< const int >::type initialInfections(initialInfectionsSEXP);
     Rcpp::traits::input_parameter< const float >::type costInfect(costInfectSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_pathomove(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time, pTransmit, nInfected, costInfect));
+    rcpp_result_gen = Rcpp::wrap(run_pathomove(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time, pTransmit, initialInfections, costInfect));
     return rcpp_result_gen;
 END_RCPP
 }
