@@ -18,7 +18,7 @@ run_pathomove(
   handling_time,
   regen_time,
   pTransmit,
-  nInfected,
+  initialInfections,
   costInfect
 )
 }
@@ -49,9 +49,9 @@ run_pathomove(
 
 \item{pTransmit}{Probability of transmission.}
 
-\item{nInfected}{Agents infected per event.}
-
 \item{costInfect}{Cost infection.}
+
+\item{intialInfections}{Agents infected per event.}
 }
 \value{
 A data frame of the evolved population traits.
