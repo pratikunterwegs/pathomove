@@ -68,6 +68,10 @@ public:
     std::vector<int> timeInfected;
     float pTransmit;
 
+    // the number of infected agents
+    int nInfected;
+    std::vector<int> srcInfect;
+
     // position rtree
     bgi::rtree< value, bgi::quadratic<16> > agentRtree;
 
