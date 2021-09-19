@@ -229,7 +229,7 @@ void Population::move(Resources &food) {
                 weighted_y = std::fabs(std::fmod(weighted_y, food.dSize));
             }
             // set locations
-            coordX[id] = weighted_x; coordY[id] = newY;
+            coordX[id] = weighted_x; coordY[id] = weighted_y;
         }
     }
 }
