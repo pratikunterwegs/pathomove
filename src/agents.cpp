@@ -352,6 +352,7 @@ void Population::Reproduce() {
         if(infected[parent_id]) {
             if(verticalInfect(rng)) {
                 infected_2[a] = true;
+                srcInfect[a] = 1;
             }
         }
     }
