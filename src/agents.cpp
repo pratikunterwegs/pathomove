@@ -382,6 +382,10 @@ void Population::Reproduce() {
             tmp_coef_nbrs2[a] = tmp_coef_nbrs2[a] + mutation_size(rng);
         }
     }
+    
+    // reset nInfected and count natal infections
+    // from vertical transmission
+    countInfected();
 
     // swap trait matrices
     coef_food =  tmp_coef_food;
