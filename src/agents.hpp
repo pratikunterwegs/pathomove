@@ -93,7 +93,7 @@ public:
     void Reproduce();
     
     //pathogen
-    void introducePathogen(const int nInfected);
+    void introducePathogen(const int nAgInf);
     void pathogenSpread();
     void pathogenCost(const float costInfect);
 
