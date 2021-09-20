@@ -13,7 +13,8 @@ void Population::introducePathogen(const int initialInfections) {
     {       
         // toggle infected agents boolean for infected
         infected[order[i]] = true;
-        timeInfected[order[i]] = 1;        
+        timeInfected[order[i]] = 1;       
+        srcInfect[order[i]] = 2; // count as inherited?
     }
 }
 
@@ -90,8 +91,8 @@ float Population::propSrcInfection() {
             
         }
     }
-    Rcpp::Rcout << "# horizontal infections = " << horizontal << "\n";
+    // Rcpp::Rcout << "# horizontal infections = " << horizontal << "\n";
     float propSource = (vertical == 0 && horizontal == 0) ? 0.f : (static_cast<float>(horizontal) / static_cast<float>(vertical + horizontal));
 
-    return static_cast<float>(horizontal);
+    return propSource;
 }
