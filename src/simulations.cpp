@@ -75,7 +75,7 @@ Rcpp::List simulation::do_simulation() {
         assert(pop.nInfected <= pop.nAgents);
 
         // update gendata
-        if ((gen == (genmax - 1)) | (gen % 10 == 0)) {
+        if ((gen == (genmax - 1)) | (gen % 2 == 0)) {
             gen_data.updateGenData(pop, gen);
         }
 
