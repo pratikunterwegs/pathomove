@@ -160,9 +160,14 @@ void Population::move(Resources &food) {
             // first assess current location
             float sampleX = coordX[id];
             float sampleY = coordY[id]; 
-            float foodHere = static_cast<float>(countFood(
+
+            float foodHere = 0.f;
+
+            if(food.nAvailable > 0) {
+                foodHere = static_cast<float>(countFood(
                     food, sampleX, sampleY
                 ).first);
+            }
             float nbrsHere = static_cast<float>(countAgents(
                     sampleX, sampleY
                 ).first);
@@ -193,7 +198,10 @@ void Population::move(Resources &food) {
                     sampleX, sampleY
                 ).first);
 
-                float new_suitabilityHere = (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere);
+                float new_suitabilityHere = (
+                    (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere) +
+                    (coef_food2[id] * foodHere) + (coef_nbrs2[id] * nbrsHere)
+                );
 
                 suitX.push_back(std::make_pair(sampleX, new_suitabilityHere));
                 suitY.push_back(std::make_pair(sampleY, new_suitabilityHere));
@@ -241,13 +249,11 @@ void Population::forage(Resources &food){
     {
         int id = order[i];
         if ((counter[id] > 0) | (food.nAvailable == 0)) { 
-
+            // nothing -- agent cannot forage or there is no food
         }
         else {
             // find nearest item ids
             std::vector<int> theseItems = (countFood(food, coordX[id], coordY[id])).second;
-            // energy[id] = static_cast<float> (theseItems.size());
-            // counter[id] = stopTime;
             int thisItem = -1;
 
             // check near items count
