@@ -19,7 +19,7 @@ public:
     std::vector<std::vector<float> > genCoefFood2Vec;
     std::vector<std::vector<float> > genCoefNbrs2Vec;
 
-    // std::vector<std::vector<int> > genAssocVec;
+    std::vector<std::vector<int> > genAssocVec;
     // std::vector<std::vector<int> > genDegreeVec;
     std::vector<int> genInfected;
     std::vector<int> gens;
