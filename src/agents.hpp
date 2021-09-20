@@ -100,6 +100,9 @@ public:
     void countInfected();
     float propSrcInfection();
 
+    // counting proximity based interactions
+    void countAssoc();
+
 };
 
 float get_distance(float x1, float x2, float y1, float y2);

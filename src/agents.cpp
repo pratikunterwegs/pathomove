@@ -270,6 +270,12 @@ void Population::forage(Resources &food){
     }
 }
 
+void Population::countAssoc() {
+    for(size_t i = 0; i < nAgents; i++) {
+        associations[i] += countAgents(coordX[i], coordY[i]).first;
+    }
+}
+
 // DataFrame returnPbsn (Population &pop, Network &pbsn) {
 
 //     std::vector<int> focalAgent;
@@ -338,6 +344,9 @@ void Population::Reproduce() {
 
     // reset infection source
     srcInfect = std::vector<int> (nAgents, 0);
+
+    // reset associations
+    associations = std::vector<int> (nAgents, 0);
 
     for (int a = 0; a < nAgents; a++) {
         size_t parent_id = static_cast<size_t>(weightedLottery(rng));
