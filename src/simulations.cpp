@@ -60,6 +60,9 @@ Rcpp::List simulation::do_simulation() {
             // foraging
             pop.forage(food);
 
+            // count associations
+            pop.countAssoc();
+
             if(scenario > 0) {
                 // disease
                 pop.pathogenSpread();
