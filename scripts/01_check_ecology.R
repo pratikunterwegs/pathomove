@@ -10,29 +10,29 @@ library(ggplot2)
 library(data.table)
 
 l = snevo::get_test_landscape(
-  nItems = 500,
-  landsize = 100,
-  nClusters = 50, 
-  clusterSpread = 3
+  nItems = 2000,
+  landsize = 30,
+  nClusters = 30, 
+  clusterSpread = 1
 )
 plot(l)
 
 a = run_pathomove(
   scenario = 1,
-  popsize = 100,
-  nItems = 100,
-  landsize = 100,
-  nClusters = 20,
-  clusterSpread = 0.1,
+  popsize = 200,
+  nItems = 2000,
+  landsize = 30,
+  nClusters = 30,
+  clusterSpread = 1,
   tmax = 100,
-  genmax = 100,
+  genmax = 500,
   range_food = 0.5,
   range_agents = 1,
   handling_time = 5,
-  regen_time = 10,
-  pTransmit = 0.001,
+  regen_time = 7,
+  pTransmit = 0.0005,
   initialInfections = 2,
-  costInfect = 0.4
+  costInfect = 0.2
 )
 
 names(a)
@@ -54,15 +54,15 @@ b
 
 ggplot(b)+
   geom_bin2d(
-    aes(gen, energy),
-    binwidth = c(10, 1)
+    aes(gen, energy)
+    # binwidth = c(10, 1)
   )
 
 #### plot data ####
 b = melt(b, id.vars = c("gen", "id"))
 
 # energy = b[variable == "energy",]
-wts = b[variable != "energy",]
+wts = b[!variable %in% c("energy", "assoc"),]
 
 wts[, value := tanh(value * 20)]
 
@@ -84,13 +84,26 @@ ggplot(wts)+
   )+
   scale_fill_viridis_c(
     option = "C", direction = -1,
-    begin = 0.2, end = 1
+    begin = 0, end = 1
   )+
   theme_test()+
   facet_wrap(~variable, ncol = 2)
 
+# plot associations per gen
+ggplot(b[variable == "assoc"])+
+  geom_bin2d(
+    aes(gen, value),
+    binwidth = c(2, 200)
+  )+
+  scale_fill_viridis_c(
+    option = "H", direction = -1,
+    limits = c(3, NA),
+    na.value = "transparent",
+    trans = "sqrt"
+  )
+
 # scale weights
-wts_wide = copy(b[variable != "energy"])
+wts_wide = copy(b[!variable %in% c("energy", "assoc"),])
 wts_wide[, scaled_val := value / sum(abs(value)),
          by = c("gen", "id")]
 wts_wide = dcast(
@@ -100,6 +113,12 @@ wts_wide = dcast(
 )
 
 ggplot(wts_wide[gen %% 100 == 0 | gen == max(gen)])+
+  geom_hline(
+    yintercept = 0, col = 2
+  )+
+  geom_vline(
+    xintercept = 0, col = 2
+  )+
   geom_jitter(
     aes(coef_nbrs, coef_food2,
         fill = coef_nbrs2),
@@ -109,7 +128,7 @@ ggplot(wts_wide[gen %% 100 == 0 | gen == max(gen)])+
   scale_fill_viridis_c(
     option = 'H',
     limits = c(-1, 1), 
-    direction = 1
+    direction = -1
   )+
   scale_x_continuous(
     trans = ggallin::ssqrt_trans
@@ -118,4 +137,8 @@ ggplot(wts_wide[gen %% 100 == 0 | gen == max(gen)])+
     trans = ggallin::ssqrt_trans
   )+
   theme_bw()+
-  facet_wrap(~ gen)
+  facet_wrap(~ gen)+
+  coord_cartesian(
+    xlim = c(-1, 1),
+    ylim = c(-1, 1)
+  )
