@@ -10,7 +10,7 @@ library(ggplot2)
 library(data.table)
 
 l = snevo::get_test_landscape(
-  nItems = 2000,
+  nItems = 500,
   landsize = 30,
   nClusters = 30, 
   clusterSpread = 1
@@ -19,27 +19,25 @@ plot(l)
 
 a = run_pathomove(
   scenario = 1,
-  popsize = 200,
+  popsize = 500,
   nItems = 2000,
-  landsize = 30,
+  landsize = 60,
   nClusters = 30,
   clusterSpread = 1,
   tmax = 100,
-  genmax = 500,
+  genmax = 1000,
   range_food = 0.5,
   range_agents = 1,
   handling_time = 5,
-  regen_time = 7,
-  pTransmit = 0.0005,
+  regen_time = 3,
+  pTransmit = 0.0001,
   initialInfections = 2,
-  costInfect = 0.2
+  costInfect = 0.05
 )
 
 names(a)
 
-plot(a[["gens"]], a[["n_infected"]], type = "b")
-plot(a[["gens"]], a[["p_src"]], type = "b")
-
+plot(a[["gens"]], a[["n_infected"]], type = "o", pch = 16)
 
 #### handle data ####
 b = copy(a)
@@ -54,8 +52,8 @@ b
 
 ggplot(b)+
   geom_bin2d(
-    aes(gen, energy)
-    # binwidth = c(10, 1)
+    aes(gen, energy),
+    binwidth = c(2, 1)
   )
 
 #### plot data ####
@@ -74,7 +72,7 @@ ggplot(wts)+
   )+
   geom_bin2d(
     aes(gen, value),
-    binwidth = c(10, 0.02),
+    binwidth = c(2, 0.02),
     show.legend = F
   )+
   scale_y_continuous(
