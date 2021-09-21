@@ -13,7 +13,7 @@
 void Population::shufflePop() {
     if (order[0] == order[nAgents - 1])
     {
-        for (size_t i = 0; i < nAgents; i++)
+        for (size_t i = 0; i < static_cast<size_t>(nAgents); i++)
         {
             order[i] = i;
         }
@@ -337,7 +337,7 @@ std::cauchy_distribution<float> mutation_size(0.0, mShift);
 // fun for replication
 void Population::Reproduce() {
     std::bernoulli_distribution verticalInfect(pTransmit);
-    std::normal_distribution sprout(0.f, 1.f);
+    std::normal_distribution<float> sprout(0.f, 1.f);
 
     //normalise intake
     std::vector<float> vecFitness = handleFitness();
@@ -361,12 +361,12 @@ void Population::Reproduce() {
     associations = std::vector<int> (nAgents, 0);
 
     // reset distance moved
-    moved = std::vector<float> (nAents, 0.f);
+    moved = std::vector<float> (nAgents, 0.f);
 
     // positions
-    std::vector<float> coord_x_2 (popsize, 0.f);
-    std::vector<float> coord_y_2 (popsize, 0.f);
-
+    std::vector<float> coord_x_2 (nAgents, 0.f);
+    std::vector<float> coord_y_2 (nAgents, 0.f);
+    
     for (int a = 0; a < nAgents; a++) {
         size_t parent_id = static_cast<size_t>(weightedLottery(rng));
 
