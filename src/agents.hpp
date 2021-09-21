@@ -72,6 +72,9 @@ public:
     int nInfected;
     std::vector<int> srcInfect;
 
+    // movement distances
+    std::vector<float> moved;
+
     // position rtree
     bgi::rtree< value, bgi::quadratic<16> > agentRtree;
 
