@@ -1,1 +1,2 @@
 CXXSTD = -std=c++14
+CXXFLAGS=-O3 -fopenmp
