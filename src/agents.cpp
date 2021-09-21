@@ -185,15 +185,15 @@ void Population::move(Resources &food) {
             for(float theta = 0.f; theta < twopi - increment; theta += increment) {
                 float t1_ = static_cast<float>(cos(theta));
                 float t2_ = static_cast<float>(sin(theta));
-                // range for food
-                sampleX = coordX[id] + (range_food * t1_);
-                sampleY = coordY[id] + (range_food * t2_);
+                
+                // use range for agents to determine sample locs
+                sampleX = coordX[id] + (range_agents * t1_);
+                sampleY = coordY[id] + (range_agents * t2_);
+
                 foodHere = static_cast<float>(countFood(
                     food, sampleX, sampleY
                 ).first);
-                // use range for agents
-                sampleX = coordX[id] + (range_agents * t1_);
-                sampleY = coordY[id] + (range_agents * t2_);
+                
                 nbrsHere = static_cast<float>(countAgents(
                     sampleX, sampleY
                 ).first);
@@ -229,6 +229,9 @@ void Population::move(Resources &food) {
             weighted_x = weighted_x / sum_suit;
             weighted_y = weighted_y / sum_suit;
 
+            // distance to be moved
+            moved[id] += get_distance(coordX[i], weighted_x, coordY[i], weighted_y);
+
             // crudely wrap movement
             if((weighted_x > food.dSize) | (weighted_x < 0.f)) {
                 weighted_x = std::fabs(std::fmod(weighted_x, food.dSize));
@@ -236,6 +239,7 @@ void Population::move(Resources &food) {
             if((weighted_y > food.dSize) | (weighted_y < 0.f)) {
                 weighted_y = std::fabs(std::fmod(weighted_y, food.dSize));
             }
+
             // set locations
             coordX[id] = weighted_x; coordY[id] = weighted_y;
         }
@@ -355,6 +359,9 @@ void Population::Reproduce() {
 
     // reset associations
     associations = std::vector<int> (nAgents, 0);
+
+    // reset distance moved
+    moved = std::vector<float> (nAents, 0.f);
 
     // positions
     std::vector<float> coord_x_2 (popsize, 0.f);
