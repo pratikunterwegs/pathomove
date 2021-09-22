@@ -1,34 +1,37 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
-// #include <vector>
-// #include <cassert>
-// #include <Rcpp.h>
-// struct Network {
-// public:
+#include <vector>
+#include <cassert>
+#include <Rcpp.h>
 
-//     int nAgents = 0;
-//     std::vector<std::vector<int> > associations;
-//     Rcpp::NumericMatrix adjacencyMatrix;
+/// including R environment with the igraph package
+Rcpp::Environment igraph("package:igraph");
+Rcpp::Function graph_diameter = igraph["diameter"];
+Rcpp::Function graph_degree = igraph["degree"];
+Rcpp::Function graph_from_adjmat = igraph["graph.adjacency"];
+Rcpp::Function df_from_graph = igraph["as_data_frame"]
+Rcpp::Function network_size = igraph["gsize"]
 
-//     void initAssociations(int nVertices);
-//     void initAdjMat (int nVertices);
-// };
+/// the network structure, which holds an adjacency matrix
+// network should be a member of population later
+// network has funs to return network metrics and the adj matrix
+struct Network {
+public:
+    Network(const int popsize):
+        adjMat (popsize, popsize),
+        graph
+        
+    {}
+    ~Network() {}
+    Rcpp::NumericMatrix adjMat;
+    Rcpp::List graph;
 
-// // initialise associations
-// void Network::initAssociations(int nVertices){
-
-//     nAgents = nVertices;
-//     associations = std::vector<std::vector<int> > (nAgents, std::vector<int> (nAgents, 0)); // a square-ish matrix
-//     for(size_t i = 0; i < static_cast<size_t>(nAgents); i ++) {
-//         associations[i] = (std::vector<int> (nAgents - (i), 0));
-//     }
-//     // check size along top
-//     assert(static_cast<int>(associations[0].size()) == (nAgents - 1) && "association triangle is wrong");
-// }
-
-// void Network::initAdjMat (int nVertices) {
-//     adjacencyMatrix = Rcpp::NumericMatrix (nVertices, nVertices);
-// }
+    // functions
+    void adjMat_to_graph();
+    std::vector<double> ntwkMeasures();
+    std::vector<int> getDegree();
+    Rcpp::DataFrame returnDF();
+};
 
 #endif // NETWORK_H
