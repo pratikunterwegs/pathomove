@@ -137,6 +137,9 @@ std::pair<int, std::vector<int> > Population::countFood (
     return std::pair<int, std::vector<int> > {food_id.size(), food_id};
 }
 
+/// rng for suitability
+std::normal_distribution<float> noise(0.f, 0.01f);
+
 /// population movement function
 void Population::move(Resources &food) {
 
@@ -175,7 +178,8 @@ void Population::move(Resources &food) {
             // get suitability current
             float suitabilityHere = (
                 (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere) +
-                (coef_food2[id] * foodHere) + (coef_nbrs2[id] * nbrsHere)
+                (coef_food2[id] * foodHere) + (coef_nbrs2[id] * nbrsHere) +
+                noise(rng)
             );
 
             suitX.push_back(std::make_pair(sampleX, suitabilityHere));
@@ -200,7 +204,8 @@ void Population::move(Resources &food) {
 
                 float new_suitabilityHere = (
                     (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere) +
-                    (coef_food2[id] * foodHere) + (coef_nbrs2[id] * nbrsHere)
+                    (coef_food2[id] * foodHere) + (coef_nbrs2[id] * nbrsHere) +
+                    noise(rng)
                 );
 
                 suitX.push_back(std::make_pair(sampleX, new_suitabilityHere));
@@ -324,7 +329,8 @@ std::vector<float> Population::handleFitness() {
     float minFitness = vecFitness[0];
     // rescale
     for(size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-        vecFitness[i] = (vecFitness[i] + fabs(minFitness)) / maxFitness;
+        vecFitness[i] = ((vecFitness[i]  - minFitness) / (maxFitness - minFitness)) +
+         noise(rng);
     }
 
     return vecFitness;
