@@ -39,7 +39,8 @@ public:
         timeInfected(popsize, 0),
         pTransmit (pTransmit),
         nInfected(0),
-        srcInfect(popsize, 0)
+        srcInfect(popsize, 0),
+        moved(popsize, 0.f)
     {}
     ~Population() {}
 
