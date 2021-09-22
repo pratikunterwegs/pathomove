@@ -9,6 +9,7 @@
 #include <iostream>
 #include <boost/foreach.hpp>
 #include "landscape.hpp"
+#include "network.hpp"
 
 // Agent class
 struct Population {
@@ -16,7 +17,7 @@ public:
     Population(const int popsize, const float range_agents,
     const float range_food, const int handling_time,
     float pTransmit) :
-        // agents and traits
+        // agents, positions, energy and traits
         nAgents (popsize),
         coordX (popsize, 0.0f),
         coordY (popsize, 0.0f),
@@ -26,24 +27,35 @@ public:
         coef_nbrs2 (popsize, 0.f),
         coef_food2 (popsize, 0.f),
         
-        // count stationary behaviour
+        // counters for handling and social metrics
         counter (popsize, 0),
-        // associations
         associations(popsize, 0),
         degree(popsize, 0),
+
+        // agent sensory parameters
         range_agents(range_agents),
         range_food(range_food),
         handling_time(handling_time),
+
+        // vectors for agent order, infection status, time infected
         order(popsize, 1),
         infected(popsize, false),//,
         timeInfected(popsize, 0),
+
+        // disease parameters and total pop infected
         pTransmit (pTransmit),
         nInfected(0),
+
+        // infection source and distance moved
         srcInfect(popsize, 0),
-        moved(popsize, 0.f)
+        moved(popsize, 0.f),
+
+        // a network object
+        pbsn(popsize)
     {}
     ~Population() {}
 
+    // agent count, coords, and energy
     const int nAgents;
     std::vector<float> coordX;
     std::vector<float> coordY;
@@ -79,36 +91,47 @@ public:
     // position rtree
     bgi::rtree< value, bgi::quadratic<16> > agentRtree;
 
-    // funs for pop
+    // network object
+    Network pbsn;
+
+    /// functions for the population ///
+    // population order, trait and position randomiser
     void shufflePop();
     void setTrait ();
     void initPos(Resources food);
 
+    // make rtree and get nearest agents and food
     void updateRtree();
     std::pair<int, std::vector<int> > countFood (
         Resources &food, const float xloc, const float yloc);
     std::pair<int, std::vector<int> > countAgents (
         const float xloc, const float yloc);
 
+    // functions to move and forage on a landscape
     void move(Resources &food);
     void forage(Resources &food);
     
+    // funs to handle fitness and reproduce
     std::vector<float> handleFitness();
     void Reproduce();
     
-    //pathogen
+    // pathogen dynamics -- initial infections, spread, and costs
     void introducePathogen(const int nAgInf);
     void pathogenSpread();
     void pathogenCost(const float costInfect);
 
+    // count infected agents, infection source
     void countInfected();
     float propSrcInfection();
 
     // counting proximity based interactions
     void countAssoc();
 
+    // functions for the network
+    // there is no function to update the network, this is handled in countAssoc
 };
 
+// a dinky function for distance and passed to catch test
 float get_distance(float x1, float x2, float y1, float y2);
 
 #endif // AGENTS_H
