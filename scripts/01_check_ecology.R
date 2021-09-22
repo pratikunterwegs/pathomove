@@ -60,16 +60,11 @@ ggplot(b)+
 b = melt(b, id.vars = c("gen", "id"))
 
 # energy = b[variable == "energy",]
-wts = b[!variable %in% c("energy", "assoc"),]
+wts = b[!variable %in% c("energy", "assoc", "t_infec", "moved"),]
 
 wts[, value := tanh(value * 20)]
 
 ggplot(wts)+
-  geom_hline(
-    yintercept = 0,
-    col = "blue",
-    size = 0.1
-  )+
   geom_bin2d(
     aes(gen, value),
     binwidth = c(2, 0.02),
@@ -101,7 +96,7 @@ ggplot(b[variable == "assoc"])+
   )
 
 # scale weights
-wts_wide = copy(b[!variable %in% c("energy", "assoc"),])
+wts_wide = copy(b[!variable %in% c("energy", "assoc", "t_infec", "moved"),])
 wts_wide[, scaled_val := value / sum(abs(value)),
          by = c("gen", "id")]
 wts_wide = dcast(
@@ -118,15 +113,17 @@ ggplot(wts_wide[gen %% 100 == 0 | gen == max(gen)])+
     xintercept = 0, col = 2
   )+
   geom_jitter(
-    aes(coef_nbrs, coef_food2,
-        fill = coef_nbrs2),
+    aes(coef_nbrs, coef_food,
+        fill = coef_food2),
     shape = 21,
-    size = 2
+    colour = 'black',
+    stroke = 0.1,
+    size = 4
   )+
-  scale_fill_viridis_c(
-    option = 'H',
-    limits = c(-1, 1), 
-    direction = -1
+  colorspace::scale_fill_continuous_diverging(
+    palette = "Berlin", rev = T,
+    limits = c(-1, 1),
+    trans = ggallin::ssqrt_trans
   )+
   scale_x_continuous(
     trans = ggallin::ssqrt_trans
