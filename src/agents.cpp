@@ -67,10 +67,8 @@ float get_distance(float x1, float x2, float y1, float y2) {
     return std::sqrt(std::pow((x1 - x2), 2) + std::pow((y1 - y2), 2));
 }
 
-// to update pbsn
-// void Population::updatePbsn(Network &pbsn, const float range) {
-
-//     updateRtree();
+// /// function to update pbsn
+// void Population::updatePbsn() {
 
 //     // focal agents
 //     for(size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
@@ -79,7 +77,7 @@ float get_distance(float x1, float x2, float y1, float y2) {
 //         // returns the upper right triangle
 //         // no problems for now with the simple network measures required here
 //         // but may become an issue later
-//         for(size_t j = i; j < pbsn.associations[i].size(); j++) {
+//         for(size_t j = i; j < static_cast<size_t>(nAgents); j++) {
 
 //             if(distanceAgents(coordX[i], coordY[i], coordX[j], coordY[j]) < range) {
 //                 pbsn.associations[i][j]++;
@@ -286,38 +284,19 @@ void Population::forage(Resources &food){
 }
 
 void Population::countAssoc() {
-    for(size_t i = 0; i < nAgents; i++) {
-        associations[i] += countAgents(coordX[i], coordY[i]).first;
+    for(size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
+        // count nearby agents and update raw associations
+        std::pair<int, std::vector<int> > nearby_agents = countAgents(coordX[i], coordY[i]);
+        associations[i] += nearby_agents.first;
+
+        // loop over nearby agents and update association matrix
+        for (size_t j = 0; j < nearby_agents.second.size(); j++)
+        {
+            int target_agent = nearby_agents.second[j];
+            pbsn.adjacencyMatrix (i, target_agent) += 1;
+        }       
     }
 }
-
-// DataFrame returnPbsn (Population &pop, Network &pbsn) {
-
-//     std::vector<int> focalAgent;
-//     std::vector<int> subfocalAgent;
-//     std::vector<int> pbsnAssociations;
-
-//     // focal agents
-//     for(size_t i = 0; i < static_cast<size_t>(pop.nAgents); i++) {
-//         // make vector of proximate agents
-//         // move j along the size of associations expected for i
-//         for(size_t j = i; j < pbsn.associations[i].size(); j++) {
-//             // if(pbsn.associations[i][j] > 0) {
-//             focalAgent.push_back(i);
-//             subfocalAgent.push_back(j);
-//             pbsnAssociations.push_back(pbsn.associations[i][j]);
-
-//         }
-//     }
-
-//     DataFrame pbsnData = DataFrame::create(
-//                 Named("id_x") = focalAgent,
-//                 Named("id_y") = subfocalAgent,
-//                 Named("associations") = pbsnAssociations
-//             );
-
-//     return pbsnData;
-// }
 
 /// minor function to normalise vector
 std::vector<float> Population::handleFitness() {
