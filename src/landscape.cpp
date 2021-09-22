@@ -84,6 +84,10 @@ void Resources::regenerate() {
 Rcpp::DataFrame get_test_landscape(
         const int nItems, const float landsize,
         const int nClusters, const float clusterSpread) {
+    
+    unsigned seed = static_cast<unsigned> (std::chrono::system_clock::now().time_since_epoch().count());
+    rng.seed(seed);
+
     Resources food (nItems, landsize, nClusters, clusterSpread, 0);
     food.initResources();
 

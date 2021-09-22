@@ -11,6 +11,9 @@ using namespace Rcpp;
 
 Rcpp::List simulation::do_simulation() {
 
+    unsigned seed = static_cast<unsigned> (std::chrono::system_clock::now().time_since_epoch().count());
+    rng.seed(seed);
+    
     // prepare landscape and pop
     food.initResources();
     food.countAvailable();
@@ -28,10 +31,6 @@ Rcpp::List simulation::do_simulation() {
     // prepare social network struct
     // Network pbsn;
     // pbsn.initAssociations(pop.nAgents);
-
-    // set seed
-    unsigned seed = static_cast<unsigned> (std::chrono::system_clock::now().time_since_epoch().count());
-    rng.seed(seed);
 
     // go over gens
     for(int gen = 0; gen < genmax; gen++) {
