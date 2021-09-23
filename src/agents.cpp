@@ -349,6 +349,9 @@ void Population::Reproduce() {
     // reset distance moved
     moved = std::vector<float> (nAgents, 0.f);
 
+    // reset adjacency matrix
+    pbsn.adjMat = Rcpp::NumericMatrix(nAgents, nAgents);
+
     // positions
     std::vector<float> coord_x_2 (nAgents, 0.f);
     std::vector<float> coord_y_2 (nAgents, 0.f);
