@@ -6,6 +6,7 @@
 #include <iostream>
 #include <random>
 #include <boost/foreach.hpp>
+#include "network.hpp"
 #include "landscape.hpp"
 #include "agents.hpp"
 
@@ -293,7 +294,7 @@ void Population::countAssoc() {
         for (size_t j = 0; j < nearby_agents.second.size(); j++)
         {
             int target_agent = nearby_agents.second[j];
-            pbsn.adjacencyMatrix (i, target_agent) += 1;
+            pbsn.adjMat (i, target_agent) += 1;
         }       
     }
 }
