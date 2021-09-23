@@ -55,6 +55,9 @@ void genData::updateGenData (Population &pop, const int gen_) {
     gens.push_back(gen_);
     pSrcInfect.push_back(pop.propSrcInfection());
 
+    // update adjacency matrices
+    genAdjMat.push_back(pop.network.returnDF())
+
 }
 
 // function to return gen data as an rcpp list
@@ -78,7 +81,8 @@ Rcpp::List genData::getGenData() {
         Named("pop_data") = genDataList,
         Named("gens") = gens,
         Named("n_infected") = genInfected,
-        Named("p_src") = pSrcInfect
+        Named("p_src") = pSrcInfect,
+        Named("adjmat") = genAdjMat
     );
 
     return dataToReturn;

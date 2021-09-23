@@ -22,6 +22,7 @@ public:
     std::vector<std::vector<int> > genAssocVec;
     std::vector<std::vector<int> > genTimeInfec;
     // std::vector<std::vector<int> > genDegreeVec;
+    std::vector<Rcpp::DataFrame> genAdjMat;
 
     std::vector<std::vector<float> > genMoved;
     std::vector<int> genInfected;
