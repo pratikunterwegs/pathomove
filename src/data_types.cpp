@@ -50,13 +50,15 @@ void genData::updateGenData (Population &pop, const int gen_) {
 
     genMoved.push_back(pop.moved);
 
-    // genDegreeVec.push_back(pop.degree);
+    genDegree.push_back(pop.pbsn.getDegree());
     genInfected.push_back(pop.nInfected);
     gens.push_back(gen_);
     pSrcInfect.push_back(pop.propSrcInfection());
 
     // update adjacency matrices
-    genAdjMat.push_back(pop.network.returnDF())
+    std::vector<float> measures = pop.pbsn.ntwkMeasures();
+    pbsn_diameter.push_back(measures[0]);
+    pbsn_glob_eff.push_back(measures[1]);
 
 }
 
@@ -73,6 +75,7 @@ Rcpp::List genData::getGenData() {
             Named("coef_nbrs2") = genCoefNbrs2Vec[i],
             Named("assoc") = genAssocVec[i],
             Named("t_infec") = genTimeInfec[i],
+            Named("degree") = genDegree[i],
             Named("moved") = genMoved[i]
             // Named("degree") = genDegreeVec[i]
         );
@@ -82,7 +85,8 @@ Rcpp::List genData::getGenData() {
         Named("gens") = gens,
         Named("n_infected") = genInfected,
         Named("p_src") = pSrcInfect,
-        Named("adjmat") = genAdjMat
+        Named("diameter") = pbsn_diameter,
+        Named("glob_eff") = pbsn_glob_eff
     );
 
     return dataToReturn;

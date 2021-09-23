@@ -21,13 +21,17 @@ public:
 
     std::vector<std::vector<int> > genAssocVec;
     std::vector<std::vector<int> > genTimeInfec;
-    // std::vector<std::vector<int> > genDegreeVec;
-    std::vector<Rcpp::DataFrame> genAdjMat;
+    std::vector<std::vector<int> > genDegree;
+    // std::vector<Rcpp::NumericMatrix> genPbsn;
 
     std::vector<std::vector<float> > genMoved;
     std::vector<int> genInfected;
     std::vector<int> gens;
     std::vector<float> pSrcInfect;
+
+    // network metrics
+    std::vector<float> pbsn_diameter;
+    std::vector<float> pbsn_glob_eff;
 
     void updateGenData (Population &pop, const int gen);
     Rcpp::List getGenData ();
