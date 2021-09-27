@@ -132,9 +132,31 @@ std::vector<int> Population::getNeighbourId (
 }
 
 // general function for items within distance
-std::pair<int, std::vector<int> > Population::countFood (
+int Population::countFood (
     Resources &food,
     const float xloc, const float yloc) {
+
+    int nFood = 0;
+    std::vector<value> near_food;
+
+    // check any available
+    if (food.nAvailable > 0) {
+        // query for a simple box
+        food.rtree.query(bgi::satisfies([&](value const& v) {
+            return bg::distance(v.first, point(xloc, yloc)) < range_food;}),
+            std::back_inserter(near_food));
+
+        BOOST_FOREACH(value const& v, near_food) {
+            // count only which are available!
+            if (food.available[v.second]) {
+                nFood++
+            }
+        }
+        near_food.clear();
+    }
+
+    return nFood;
+}
     std::vector<int> food_id;
     std::vector<value> near_food;
 
