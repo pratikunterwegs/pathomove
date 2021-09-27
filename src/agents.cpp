@@ -304,6 +304,7 @@ void Population::forage(Resources &food){
                     // reset food availability
                     food.available[thisItem] = false;
                     food.counter[thisItem] = food.regen_time;
+                    food.nAvailable --;
                 }
             }
         }
