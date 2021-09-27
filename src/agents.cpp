@@ -89,7 +89,29 @@ float get_distance(float x1, float x2, float y1, float y2) {
 // }
 
 // general function for agents within distance
-std::pair<int, std::vector<int> > Population::countAgents (
+std::pair<int, int> Population::countAgents (
+    const float xloc, const float yloc) {
+    
+    int handlers = 0;
+    int nonhandlers = 0;
+    std::vector<value> near_agents;
+    // query for a simple box
+    agentRtree.query(bgi::satisfies([&](value const& v) {
+        return bg::distance(v.first, point(xloc, yloc)) < range_agents;}),
+        std::back_inserter(near_agents));
+
+    BOOST_FOREACH(value const& v, near_agents) {
+        
+        if(counter[v.second] > 0) handlers ++; else nonhandlers ++;
+    }
+    near_agents.clear();
+    // first element is number of near entities
+    // second is the identity of entities
+    return std::pair<int, int> {handlers, nonhandlers};
+}
+
+// function for near agent ids
+std::vector<int> Population::getNeighbourId (
     const float xloc, const float yloc) {
     
     std::vector<int> agent_id;
