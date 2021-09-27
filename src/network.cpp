@@ -27,7 +27,7 @@ std::vector<float> Network::ntwkMeasures() {
         vDiam[0] * (nVertices / vSize[0]) // global efficiency
     };
 
-    Rcpp::Rcout << "pbsn diameter = " << measures[0] << "\n";
+    // Rcpp::Rcout << "pbsn diameter = " << measures[0] << "\n";
 
     return measures;
 }
