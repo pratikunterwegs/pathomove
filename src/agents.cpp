@@ -157,6 +157,12 @@ int Population::countFood (
 
     return nFood;
 }
+
+// function for available food items
+std::vector<int> Population::getFoodId (
+    Resources &food,
+    const float xloc, const float yloc) {
+        
     std::vector<int> food_id;
     std::vector<value> near_food;
 
@@ -168,6 +174,7 @@ int Population::countFood (
             std::back_inserter(near_food));
 
         BOOST_FOREACH(value const& v, near_food) {
+            // count only which are available!
             if (food.available[v.second]) {
                 food_id.push_back(v.second);
             }
@@ -177,7 +184,7 @@ int Population::countFood (
 
     // first element is number of near entities
     // second is the identity of entities
-    return std::pair<int, std::vector<int> > {food_id.size(), food_id};
+    return food_id;
 }
 
 /// rng for suitability
