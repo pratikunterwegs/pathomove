@@ -29,9 +29,7 @@ void Population::pathogenSpread() {
         {
             timeInfected[i]++; // increase time infecetd
             // get neigbour ids
-            std::vector<int> nbrsId = countAgents(
-                coordX[i], coordY[i]
-            ).second;
+            std::vector<int> nbrsId = getNeighbourId(coordX[i], coordY[i]);
 
             if (nbrsId.size() > 0) 
             {
