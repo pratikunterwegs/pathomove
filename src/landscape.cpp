@@ -69,7 +69,9 @@ void Resources::regenerate() {
     {
         counter[i] -= (counter[i] > 0 ? 1 : 0);
         available[i] = (counter[i] == 0);
-    }    
+    }
+    // set availability
+    countAvailable();
 }
 
 /// function to export landscape as matrix
