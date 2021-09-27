@@ -1,0 +1,80 @@
+
+```{r}
+# for plotting
+library(data.table)
+library(ggplot2)
+library(patchwork)
+
+# for landscape
+library(snevo)
+```
+
+Make landscape combinations.
+
+```{r}
+parameters = c(2, 3, 5)
+
+lands = lapply(
+    parameters,
+    function(cs) {
+        snevo::get_test_landscape(
+            nItems = 2000,
+            landsize = 60,
+            nClusters = 30,
+            clusterSpread = cs
+        )
+    }
+)
+
+lands = Map(
+    lands,
+    parameters,
+    f = function(df, p) {
+        setDT(df)
+        df[, cluster_spread := p]
+    }
+)
+
+lands = rbindlist(lands)
+```
+
+```{r}
+fig_land = 
+    ggplot(lands)+
+    geom_point(
+        aes(x, y),
+        alpha = 0.3,
+        col = "darkgreen"
+    )+
+    facet_grid(
+        ~cluster_spread,
+        labeller = labeller(
+            cluster_spread = c(
+                "2" = "Patchy",
+                "3" = "Intermediate",
+                "5" = "Homogeneous"
+            )
+        )
+    )+
+    theme_test()+
+    theme(
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        strip.text = element_text(
+            face = "italic"
+        )
+    )+
+    coord_equal(
+        expand = F
+    )
+
+# save figure
+ggsave(
+    fig_land,
+    file = "figures/fig_land.png",
+    height = 80,
+    width = 170,
+    units = "mm"
+)
+```
