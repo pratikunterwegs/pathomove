@@ -22,10 +22,9 @@ public:
         coordX (popsize, 0.0f),
         coordY (popsize, 0.0f),
         energy (popsize, 0.001),
-        coef_nbrs (popsize, 0.f),
-        coef_food (popsize, 0.f),
-        coef_nbrs2 (popsize, 0.f),
-        coef_food2 (popsize, 0.f),
+        sF (popsize, 0.f),
+        sH (popsize, 0.f),
+        sN (popsize, 0.f),
         
         // counters for handling and social metrics
         counter (popsize, 0),
@@ -61,10 +60,9 @@ public:
     std::vector<float> coordY;
     std::vector<float> energy;
     // weights
-    std::vector<float> coef_nbrs;
-    std::vector<float> coef_food;
-    std::vector<float> coef_nbrs2;
-    std::vector<float> coef_food2;
+    std::vector<float> sF;
+    std::vector<float> sH;
+    std::vector<float> sN;
 
     // counter and metrics
     std::vector<int> counter;

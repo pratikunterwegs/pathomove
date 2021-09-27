@@ -57,36 +57,15 @@ std::uniform_real_distribution<float> agent_ran_trait(-0.001, 0.001);
 // set agent trait
 void Population::setTrait() {
     for(size_t i = 0; i < nAgents; i++) {
-        coef_food[i] = agent_ran_trait(rng);
-        coef_nbrs[i] = agent_ran_trait(rng);
-        coef_food2[i] = agent_ran_trait(rng);
-        coef_nbrs2[i] = agent_ran_trait(rng);
+        sF[i] = agent_ran_trait(rng);
+        sH[i] = agent_ran_trait(rng);
+        sN[i] = agent_ran_trait(rng)
     }
 }
 
 float get_distance(float x1, float x2, float y1, float y2) {
     return std::sqrt(std::pow((x1 - x2), 2) + std::pow((y1 - y2), 2));
 }
-
-// /// function to update pbsn
-// void Population::updatePbsn() {
-
-//     // focal agents
-//     for(size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-//         // make vector of proximate agents
-//         // move j along the size of associations expected for i
-//         // returns the upper right triangle
-//         // no problems for now with the simple network measures required here
-//         // but may become an issue later
-//         for(size_t j = i; j < static_cast<size_t>(nAgents); j++) {
-
-//             if(distanceAgents(coordX[i], coordY[i], coordX[j], coordY[j]) < range) {
-//                 pbsn.associations[i][j]++;
-//                 pbsn.adjacencyMatrix (i, j) += 1;
-//             }
-//         }
-//     }
-// }
 
 // general function for agents within distance
 std::pair<int, int> Population::countAgents (
@@ -221,8 +200,8 @@ void Population::move(Resources &food) {
             
             // get suitability current
             float suit_origin = (
-                (coef_food[id] * foodHere) + (coef_handlers[id] * agentCounts.first) +
-                (coef_nonhandlers[id] * agentCounts.second) +
+                (sF[id] * foodHere) + (sH[id] * agentCounts.first) +
+                (sN[id] * agentCounts.second) +
                 noise(rng)
             );
 
@@ -257,8 +236,8 @@ void Population::move(Resources &food) {
                 std::pair agentCounts = countAgents(sampleX, sampleY);
 
                 float suit_dest = (
-                    (coef_food[id] * foodHere) + (coef_handlers[id] * agentCounts.first) +
-                    (coef_nonhandlers[id] * agentCounts.second) +
+                    (sF[id] * foodHere) + (sH[id] * agentCounts.first) +
+                    (sN[id] * agentCounts.second) +
                     noise(rng)
                 );
 
@@ -359,10 +338,9 @@ void Population::Reproduce() {
     std::discrete_distribution<> weightedLottery(vecFitness.begin(), vecFitness.end());
 
     // get parent trait based on weighted lottery
-    std::vector<float> tmp_coef_food (nAgents, 0.f);
-    std::vector<float> tmp_coef_nbrs (nAgents, 0.f);
-    std::vector<float> tmp_coef_food2 (nAgents, 0.f);
-    std::vector<float> tmp_coef_nbrs2 (nAgents, 0.f);
+    std::vector<float> tmp_sF (nAgents, 0.f);
+    std::vector<float> tmp_sH (nAgents, 0.f);
+    std::vector<float> tmp_sN (nAgents, 0.f)
     
     // infected or not for vertical transmission
     std::vector<bool> infected_2 (nAgents, false);
@@ -386,11 +364,9 @@ void Population::Reproduce() {
     for (int a = 0; a < nAgents; a++) {
         size_t parent_id = static_cast<size_t>(weightedLottery(rng));
 
-        tmp_coef_nbrs[a] = coef_nbrs[parent_id];
-        tmp_coef_food[a] = coef_food[parent_id];
-
-        tmp_coef_nbrs2[a] = coef_nbrs2[parent_id];
-        tmp_coef_food2[a] = coef_food2[parent_id];
+        tmp_sF[a] = sF[parent_id];
+        tmp_sH[a] = sH[parent_id];
+        tmp_sN[a] = sN[parent_id];
 
         coord_x_2[a] = coordX[parent_id] + sprout(rng);
         coord_y_2[a] = coordY[parent_id] + sprout(rng);
@@ -422,16 +398,13 @@ void Population::Reproduce() {
     // trait mutation prob is mProb, in a two step process
     for (int a = 0; a < nAgents; a++) {
         if(mutation_happens(rng)) {
-            tmp_coef_food[a] = tmp_coef_food[a] + mutation_size(rng);
+            tmp_sF[a] = tmp_sF[a] + mutation_size(rng);
         }
         if(mutation_happens(rng)) {
-            tmp_coef_nbrs[a] = tmp_coef_nbrs[a] + mutation_size(rng);
+            tmp_sH[a] = tmp_sH[a] + mutation_size(rng);
         }
         if(mutation_happens(rng)) {
-            tmp_coef_food2[a] = tmp_coef_food2[a] + mutation_size(rng);
-        }
-        if(mutation_happens(rng)) {
-            tmp_coef_nbrs2[a] = tmp_coef_nbrs2[a] + mutation_size(rng);
+            tmp_sN[a] = tmp_sN[a] + mutation_size(rng);
         }
     }
     
@@ -440,15 +413,11 @@ void Population::Reproduce() {
     countInfected();
 
     // swap trait matrices
-    coef_food =  tmp_coef_food;
-    coef_nbrs = tmp_coef_nbrs;
+    std::swap(sF, tmp_sF);
+    std::swap(sH, tmp_sH);
+    std::swap(sN, tmp_sN);
 
-    coef_food2 =  tmp_coef_food2;
-    coef_nbrs2 = tmp_coef_nbrs2;
-
-    tmp_coef_nbrs.clear(); tmp_coef_food.clear();
-    tmp_coef_nbrs2.clear(); tmp_coef_food2.clear();
-
+    tmp_sF.clear(); tmp_sH.clear(); tmp_sN.clear();
     
     // swap energy
     std::vector<float> tmpEnergy (nAgents, 0.001);
