@@ -40,11 +40,10 @@ Rcpp::List moveData::getMoveData() {
 void genData::updateGenData (Population &pop, const int gen_) {
     // get pop data
     genEnergyVec.push_back(pop.energy);
-    genCoefFoodVec.push_back(pop.coef_food);
-    genCoefNbrsVec.push_back(pop.coef_nbrs);
+    genSF.push_back(pop.sF);
+    genSH.push_back(pop.SH);
+    genSN.push_back(pop.SN);
 
-    genCoefFood2Vec.push_back(pop.coef_food2);
-    genCoefNbrs2Vec.push_back(pop.coef_nbrs2);
     genAssocVec.push_back(pop.associations);
     genTimeInfec.push_back(pop.timeInfected);
 
@@ -69,10 +68,9 @@ Rcpp::List genData::getGenData() {
     {
         genDataList[i] = DataFrame::create(
             Named("energy") = genEnergyVec[i],
-            Named("coef_food") = genCoefFoodVec[i],
-            Named("coef_nbrs") = genCoefNbrsVec[i],
-            Named("coef_food2") = genCoefFood2Vec[i],
-            Named("coef_nbrs2") = genCoefNbrs2Vec[i],
+            Named("sF") = genSF[i],
+            Named("sH") = genSH[i],
+            Named("sN") = genSN[i],
             Named("assoc") = genAssocVec[i],
             Named("t_infec") = genTimeInfec[i],
             Named("degree") = genDegree[i],
