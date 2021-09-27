@@ -288,12 +288,12 @@ void Population::forage(Resources &food){
         }
         else {
             // find nearest item ids
-            std::vector<int> theseItems = (countFood(food, coordX[id], coordY[id])).second;
+            std::vector<int> theseItems = getFoodId(food, coordX[id], coordY[id]);
             int thisItem = -1;
 
             // check near items count
             if(theseItems.size() > 0) {
-                // take first items by default
+                // take first item by default
                 thisItem = theseItems[0];
 
                 if (thisItem != -1) {
@@ -314,13 +314,13 @@ void Population::forage(Resources &food){
 void Population::countAssoc() {
     for(size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
         // count nearby agents and update raw associations
-        std::pair<int, std::vector<int> > nearby_agents = countAgents(coordX[i], coordY[i]);
-        associations[i] += nearby_agents.first;
+        std::vector<int> nearby_agents = getNeighbourId(coordX[i], coordY[i]);
+        associations[i] += nearby_agents.size();
 
         // loop over nearby agents and update association matrix
-        for (size_t j = 0; j < nearby_agents.second.size(); j++)
+        for (size_t j = 0; j < nearby_agents.size(); j++)
         {
-            int target_agent = nearby_agents.second[j];
+            int target_agent = nearby_agents[j];
             pbsn.adjMat (i, target_agent) += 1;
         }       
     }
