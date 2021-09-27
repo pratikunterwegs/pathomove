@@ -128,7 +128,7 @@ std::vector<int> Population::getNeighbourId (
     near_agents.clear();
     // first element is number of near entities
     // second is the identity of entities
-    return std::pair<int, std::vector<int> > {agent_id.size(), agent_id};
+    return agent_id;
 }
 
 // general function for items within distance
