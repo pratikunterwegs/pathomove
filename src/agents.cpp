@@ -122,7 +122,6 @@ std::vector<int> Population::getNeighbourId (
         std::back_inserter(near_agents));
 
     BOOST_FOREACH(value const& v, near_agents) {
-        // std::cout << bg::wkt<point> (v.first) << " - " << v.second << "\n";
         agent_id.push_back(v.second);
     }
     near_agents.clear();
