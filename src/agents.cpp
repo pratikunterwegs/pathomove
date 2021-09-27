@@ -59,7 +59,7 @@ void Population::setTrait() {
     for(size_t i = 0; i < nAgents; i++) {
         sF[i] = agent_ran_trait(rng);
         sH[i] = agent_ran_trait(rng);
-        sN[i] = agent_ran_trait(rng)
+        sN[i] = agent_ran_trait(rng);
     }
 }
 
@@ -196,7 +196,7 @@ void Population::move(Resources &food) {
                 ));
             }
             // count local handlers and non-handlers
-            std::pair agentCounts = countAgents(sampleX, sampleY);
+            std::pair<int, int> agentCounts = countAgents(sampleX, sampleY);
             
             // get suitability current
             float suit_origin = (
@@ -233,7 +233,7 @@ void Population::move(Resources &food) {
                 }
                 
                 // count local handlers and non-handlers
-                std::pair agentCounts = countAgents(sampleX, sampleY);
+                std::pair<int, int> agentCounts = countAgents(sampleX, sampleY);
 
                 float suit_dest = (
                     (sF[id] * foodHere) + (sH[id] * agentCounts.first) +
@@ -340,7 +340,7 @@ void Population::Reproduce() {
     // get parent trait based on weighted lottery
     std::vector<float> tmp_sF (nAgents, 0.f);
     std::vector<float> tmp_sH (nAgents, 0.f);
-    std::vector<float> tmp_sN (nAgents, 0.f)
+    std::vector<float> tmp_sN (nAgents, 0.f);
     
     // infected or not for vertical transmission
     std::vector<bool> infected_2 (nAgents, false);
