@@ -102,10 +102,21 @@ public:
 
     // make rtree and get nearest agents and food
     void updateRtree();
+
     std::pair<int, std::vector<int> > countFood (
         Resources &food, const float xloc, const float yloc);
-    std::pair<int, std::vector<int> > countAgents (
+    
+    std::vector<int> getFoodId (
+        Resources &food,
+        const float xloc, const float yloc
+    )
+    
+    std::pair<int, int > countAgents (
         const float xloc, const float yloc);
+    
+    std::vector<int> getNeighbourId (
+        const float xloc, const float yloc
+    );
 
     // functions to move and forage on a landscape
     void move(Resources &food);
