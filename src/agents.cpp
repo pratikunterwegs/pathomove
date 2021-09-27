@@ -193,10 +193,6 @@ std::normal_distribution<float> noise(0.f, 0.01f);
 /// population movement function
 void Population::move(Resources &food) {
 
-    // vector of coords and suit
-    std::vector<std::pair<float, float> > suitX;
-    std::vector<std::pair<float, float> > suitY;
-
     float twopi = 2.f * M_PI;
     
     // what increment for 4 samples in a circle around the agent
@@ -215,25 +211,24 @@ void Population::move(Resources &food) {
             float sampleY = coordY[id]; 
 
             float foodHere = 0.f;
-
+            // count local food only if items are available
             if(food.nAvailable > 0) {
                 foodHere = static_cast<float>(countFood(
                     food, sampleX, sampleY
-                ).first);
+                ));
             }
-            float nbrsHere = static_cast<float>(countAgents(
-                    sampleX, sampleY
-                ).first);
+            // count local handlers and non-handlers
+            std::pair agentCounts = countAgents(sampleX, sampleY);
             
             // get suitability current
-            float suitabilityHere = (
-                (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere) +
-                (coef_food2[id] * foodHere) + (coef_nbrs2[id] * nbrsHere) +
+            float suit_origin = (
+                (coef_food[id] * foodHere) + (coef_handlers[id] * agentCounts.first) +
+                (coef_nonhandlers[id] * agentCounts.second) +
                 noise(rng)
             );
 
-            suitX.push_back(std::make_pair(sampleX, suitabilityHere));
-            suitY.push_back(std::make_pair(sampleY, suitabilityHere));
+            float newX = sampleX;
+            float newY = sampleY;
 
             // now sample at four locations around
             for(float theta = 0.f; theta < twopi - increment; theta += increment) {
@@ -244,59 +239,40 @@ void Population::move(Resources &food) {
                 sampleX = coordX[id] + (range_agents * t1_);
                 sampleY = coordY[id] + (range_agents * t2_);
 
-                foodHere = static_cast<float>(countFood(
-                    food, sampleX, sampleY
-                ).first);
-                
-                nbrsHere = static_cast<float>(countAgents(
-                    sampleX, sampleY
-                ).first);
+                // crudely wrap sampling location
+                if((sampleX > food.dSize) | (sampleX < 0.f)) {
+                    sampleX = std::fabs(std::fmod(sampleX, food.dSize));
+                }
+                if((sampleY > food.dSize) | (sampleY < 0.f)) {
+                    sampleY = std::fabs(std::fmod(sampleY, food.dSize));
+                }
 
-                float new_suitabilityHere = (
-                    (coef_food[id] * foodHere) + (coef_nbrs[id] * nbrsHere) +
-                    (coef_food2[id] * foodHere) + (coef_nbrs2[id] * nbrsHere) +
+                // count food at sample locations if any available
+                if(food.nAvailable > 0) {
+                    foodHere = static_cast<float>(countFood(
+                        food, sampleX, sampleY
+                    ));
+                }
+                
+                // count local handlers and non-handlers
+                std::pair agentCounts = countAgents(sampleX, sampleY);
+
+                float suit_dest = (
+                    (coef_food[id] * foodHere) + (coef_handlers[id] * agentCounts.first) +
+                    (coef_nonhandlers[id] * agentCounts.second) +
                     noise(rng)
                 );
 
-                suitX.push_back(std::make_pair(sampleX, new_suitabilityHere));
-                suitY.push_back(std::make_pair(sampleY, new_suitabilityHere));
-
+                if (suit_dest > suit_origin) {
+                    newX = sampleX;
+                    newY = sampleY;
+                }
             }
-
-            //get minimum suitability
-            float min_suit = 0.f; float max_suit = 0.f;
-            for (size_t i = 0; i < suitX.size(); i++)
-            {
-                min_suit = suitX[i].second < min_suit ? suitX[i].second : min_suit;
-                max_suit = suitX[i].second > max_suit ? suitX[i].second : max_suit;
-            }
-            
-            float weighted_x = 0.f;
-            float weighted_y = 0.f;
-            float sum_suit = 0.f;
-            for (size_t i = 0; i < suitX.size(); i++)
-            {
-                weighted_x += (suitX[i].first * ((suitX[i].second - min_suit) / (max_suit - min_suit)));
-                weighted_y += (suitY[i].first * ((suitY[i].second - min_suit) / (max_suit - min_suit)));
-                sum_suit += suitX[i].first;
-            }
-            
-            weighted_x = weighted_x / sum_suit;
-            weighted_y = weighted_y / sum_suit;
-
             // distance to be moved
-            moved[id] += get_distance(coordX[i], weighted_x, coordY[i], weighted_y);
-
-            // crudely wrap movement
-            if((weighted_x > food.dSize) | (weighted_x < 0.f)) {
-                weighted_x = std::fabs(std::fmod(weighted_x, food.dSize));
-            }
-            if((weighted_y > food.dSize) | (weighted_y < 0.f)) {
-                weighted_y = std::fabs(std::fmod(weighted_y, food.dSize));
-            }
+            moved[id] += range_agents;
 
             // set locations
-            coordX[id] = weighted_x; coordY[id] = weighted_y;
+            coordX[id] = newX; coordY[id] = newY;
         }
     }
 }
