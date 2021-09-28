@@ -26,12 +26,12 @@ public:
         scenario(scenario),
         tmax(tmax),
         genmax(genmax),
-        handling_time(handling_time),
-        regen_time(regen_time),
         range_food(range_food),
         range_agents(range_agents),
-        initialInfections(initialInfections),
+        handling_time(handling_time),
+        regen_time(regen_time),
         pTransmit(pTransmit),
+        initialInfections(initialInfections),
         costInfect(costInfect)
     {}
     ~simulation() {}
