@@ -12,39 +12,53 @@
 // define a struct holding a vector of data frames which holds generation wise data
 struct genData {
 public:
-    std::vector<std::vector<float> > genEnergyVec;
-    std::vector<std::vector<float> > genSF;
-    std::vector<std::vector<float> > genSH;
-    std::vector<std::vector<float> > genSN;
 
-    std::vector<std::vector<int> > genAssocVec;
-    std::vector<std::vector<int> > genTimeInfec;
-    std::vector<std::vector<int> > genDegree;
-    // std::vector<Rcpp::NumericMatrix> genPbsn;
+    genData(const int genmax, const int popsize, const int increment) :
+        genmax (genmax),
+        increment (increment),
+        gSampled (genmax / increment),
+        // generation wise dataframe
+        // energy
+        gEnergy (gSampled, std::vector<float>(popsize, 0.f)),
+        // weights
+        gSF (gSampled, std::vector<float>(popsize, 0.f)),
+        gSH (gSampled, std::vector<float>(popsize, 0.f)),
+        gSN (gSampled, std::vector<float>(popsize, 0.f)),
+        // ecological interactions
+        gAssoc (gSampled, std::vector<int>(popsize, 0.f)),
+        gTInfected (gSampled, std::vector<int>(popsize, 0.f)),
+        gDegree (gSampled, std::vector<int>(popsize, 0.f)),
+        gMoved (gSampled, std::vector<float>(popsize, 0.f)),
+        // generation specific data
+        gNInfected (gSampled, 0),
+        gens (gSampled, 0),
+        gPbsnDiameter (gSampled, 0.f),
+        gPbsnGlobEff (gSampled, 0.f)
+    {}
+    ~genData() {}
 
-    std::vector<std::vector<float> > genMoved;
-    std::vector<int> genInfected;
+    const int genmax;
+    const int increment;
+    const int gSampled;
+    std::vector<std::vector<float> > gEnergy;
+    std::vector<std::vector<float> > gSF;
+    std::vector<std::vector<float> > gSH;
+    std::vector<std::vector<float> > gSN;
+
+    std::vector<std::vector<int> > gAssoc;
+    std::vector<std::vector<int> > gTInfected;
+    std::vector<std::vector<int> > gDegree;
+    std::vector<std::vector<float> > gMoved;
+
+    std::vector<int> gNInfected;
     std::vector<int> gens;
-    std::vector<float> pSrcInfect;
 
     // network metrics
-    std::vector<float> pbsn_diameter;
-    std::vector<float> pbsn_glob_eff;
+    std::vector<float> gPbsnDiameter;
+    std::vector<float> gPbsnGlobEff;
 
-    void updateGenData (Population &pop, const int gen);
+    void updateGenData (Population &pop, const int g_);
     Rcpp::List getGenData ();
-};
-
-struct moveData {
-public:
-    std::vector<std::vector<int> > id;
-    std::vector<std::vector<float> > coordX;
-    std::vector<std::vector<float> > coordY;
-    std::vector<std::vector<float> > energy;
-    std::vector<int> timestep;
-
-    void updateMoveData (Population &pop, const int timestep);
-    Rcpp::List getMoveData ();
 };
 
 #endif  //
