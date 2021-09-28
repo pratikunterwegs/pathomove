@@ -5,7 +5,7 @@
 void moveData::updateMoveData (Population &pop, const int timestep_) {
     // get pop data
     std::vector<int> idVec (pop.nAgents);
-    for (size_t i = 0; i < pop.nAgents; i++) {
+    for (int i = 0; i < pop.nAgents; i++) {
         idVec[i] = i;
     }
 

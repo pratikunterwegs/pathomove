@@ -22,7 +22,7 @@ void Population::introducePathogen(const int initialInfections) {
 void Population::pathogenSpread() {
     std::bernoulli_distribution transmission (pTransmit);
     // looping through agents, query rtree for neighbours
-    for (size_t i = 0; i < nAgents; i++)
+    for (int i = 0; i < nAgents; i++)
     {
         // spread to neighbours if self infected
         if (infected[i]) 
@@ -54,7 +54,7 @@ void Population::pathogenSpread() {
 
 /// function for pathogen cost
 void Population::pathogenCost(const float costInfect) {
-    for (size_t i = 0; i < nAgents; i++)
+    for (int i = 0; i < nAgents; i++)
     {
         if(infected[i]) {
             energy[i] -= (costInfect * static_cast<float>(timeInfected[i]));
@@ -65,7 +65,7 @@ void Population::pathogenCost(const float costInfect) {
 /// count infected agents
 void Population::countInfected() {
     nInfected = 0;
-    for (size_t i = 0; i < nAgents; i++)
+    for (int i = 0; i < nAgents; i++)
     {
         if(infected[i]) {
             nInfected++;
@@ -77,7 +77,7 @@ void Population::countInfected() {
 /// proportion of infection sources
 float Population::propSrcInfection() {
     int vertical = 0; int horizontal = 0;
-    for (size_t i = 0; i < nAgents; i++)
+    for (int i = 0; i < nAgents; i++)
     {
         if(infected[i]) {
             if (srcInfect[i] == 1)

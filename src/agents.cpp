@@ -56,7 +56,7 @@ std::uniform_real_distribution<float> agent_ran_trait(-0.001, 0.001);
 
 // set agent trait
 void Population::setTrait() {
-    for(size_t i = 0; i < nAgents; i++) {
+    for(int i = 0; i < nAgents; i++) {
         sF[i] = agent_ran_trait(rng);
         sH[i] = agent_ran_trait(rng);
         sN[i] = agent_ran_trait(rng);
@@ -173,8 +173,8 @@ void Population::move(Resources &food) {
 
     float twopi = 2.f * M_PI;
     
-    // what increment for 4 samples in a circle around the agent
-    float increment = twopi / 4.0f;
+    // what increment for 3 samples in a circle around the agent
+    float increment = twopi / 3.0f;
     shufflePop();
     // loop over agents --- randomise
     for (size_t i = 0; i < order.size(); i++)
@@ -208,7 +208,7 @@ void Population::move(Resources &food) {
             float newX = sampleX;
             float newY = sampleY;
 
-            // now sample at four locations around
+            // now sample at three locations around
             for(float theta = 0.f; theta < twopi - increment; theta += increment) {
                 float t1_ = static_cast<float>(cos(theta));
                 float t2_ = static_cast<float>(sin(theta));

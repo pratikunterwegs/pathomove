@@ -23,8 +23,8 @@ std::vector<float> Network::ntwkMeasures() {
     Rcpp::NumericVector vSize (size);
 
     std::vector<float> measures { 
-        vDiam[0], // diameter
-        vDiam[0] * (nVertices / vSize[0]) // global efficiency
+        static_cast<float>(vDiam[0]), // diameter
+        static_cast<float>(vDiam[0]) * (static_cast<float>(nVertices) / static_cast<float>(vSize[0])) // global efficiency
     };
 
     // Rcpp::Rcout << "pbsn diameter = " << measures[0] << "\n";
