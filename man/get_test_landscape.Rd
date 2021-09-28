@@ -4,7 +4,7 @@
 \alias{get_test_landscape}
 \title{Returns a test landscape.}
 \usage{
-get_test_landscape(nItems, landsize, nClusters, clusterSpread)
+get_test_landscape(nItems, landsize, nClusters, clusterSpread, regen_time)
 }
 \arguments{
 \item{nItems}{How many items.}
@@ -12,6 +12,8 @@ get_test_landscape(nItems, landsize, nClusters, clusterSpread)
 \item{landsize}{Size as a numeric (float).}
 
 \item{nClusters}{How many clusters, an integer value.}
+
+\item{regen_time}{Regeneration time, in timesteps.}
 
 \item{clusterDispersal}{Dispersal of items around cluster centres.}
 }
