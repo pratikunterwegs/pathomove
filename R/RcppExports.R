@@ -7,9 +7,10 @@
 #' @param landsize Size as a numeric (float).
 #' @param nClusters How many clusters, an integer value.
 #' @param clusterDispersal Dispersal of items around cluster centres.
+#' @param regen_time Regeneration time, in timesteps.
 #' @return A data frame of the evolved population traits.
-get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread) {
-    .Call(`_snevo_get_test_landscape`, nItems, landsize, nClusters, clusterSpread)
+get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen_time) {
+    .Call(`_snevo_get_test_landscape`, nItems, landsize, nClusters, clusterSpread, regen_time)
 }
 
 #' Runs the pathomove simulation.

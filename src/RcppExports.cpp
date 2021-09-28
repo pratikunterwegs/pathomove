@@ -5,14 +5,9 @@
 
 using namespace Rcpp;
 
-#ifdef RCPP_USE_GLOBAL_ROSTREAM
-Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
-Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
-#endif
-
 // get_test_landscape
-Rcpp::DataFrame get_test_landscape(const int nItems, const float landsize, const int nClusters, const float clusterSpread);
-RcppExport SEXP _snevo_get_test_landscape(SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterSpreadSEXP) {
+Rcpp::DataFrame get_test_landscape(const int nItems, const float landsize, const int nClusters, const float clusterSpread, const int regen_time);
+RcppExport SEXP _snevo_get_test_landscape(SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterSpreadSEXP, SEXP regen_timeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -20,7 +15,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const float >::type landsize(landsizeSEXP);
     Rcpp::traits::input_parameter< const int >::type nClusters(nClustersSEXP);
     Rcpp::traits::input_parameter< const float >::type clusterSpread(clusterSpreadSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_test_landscape(nItems, landsize, nClusters, clusterSpread));
+    Rcpp::traits::input_parameter< const int >::type regen_time(regen_timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_test_landscape(nItems, landsize, nClusters, clusterSpread, regen_time));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -51,7 +47,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_snevo_get_test_landscape", (DL_FUNC) &_snevo_get_test_landscape, 4},
+    {"_snevo_get_test_landscape", (DL_FUNC) &_snevo_get_test_landscape, 5},
     {"_snevo_run_pathomove", (DL_FUNC) &_snevo_run_pathomove, 15},
     {NULL, NULL, 0}
 };
