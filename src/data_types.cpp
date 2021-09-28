@@ -41,8 +41,8 @@ void genData::updateGenData (Population &pop, const int gen_) {
     // get pop data
     genEnergyVec.push_back(pop.energy);
     genSF.push_back(pop.sF);
-    genSH.push_back(pop.SH);
-    genSN.push_back(pop.SN);
+    genSH.push_back(pop.sH);
+    genSN.push_back(pop.sN);
 
     genAssocVec.push_back(pop.associations);
     genTimeInfec.push_back(pop.timeInfected);

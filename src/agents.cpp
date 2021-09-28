@@ -127,7 +127,7 @@ int Population::countFood (
         BOOST_FOREACH(value const& v, near_food) {
             // count only which are available!
             if (food.available[v.second]) {
-                nFood++
+                nFood++;
             }
         }
         near_food.clear();
