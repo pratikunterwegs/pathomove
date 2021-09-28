@@ -40,13 +40,19 @@ void Resources::initResources() {
         coordY[i] = fmod(dSize + coordY[i], dSize);
     }
 
-    // initialise rtree
+    // dist to set random counter value
+    std::uniform_int_distribution<> distRegen(0, static_cast<int>(std::floor(static_cast<float>(regen_time) / 3.f)));
+    
+    // initialise rtree and set counter value
     bgi::rtree< value, bgi::quadratic<16> > tmpRtree;
     for (int i = 0; i < nItems; ++i)
     {
         point p = point(coordX[i], coordY[i]);
         tmpRtree.insert(std::make_pair(p, i));
+
+        counter[i] = distRegen(rng);
     }
+
     std::swap(rtree, tmpRtree);
     tmpRtree.clear();
 
@@ -58,14 +64,14 @@ void Resources::countAvailable() {
     nAvailable = 0;
     // counter set to max regeneration value on foraging
     for (size_t i = 0; i < static_cast<size_t>(nItems); i++){
-        if(available[i]) {
+        if(counter[i] == 0) {
             nAvailable ++;
         }
     }
 }
 
 void Resources::regenerate() {
-    for (size_t i = 0; i < nItems; i++)
+    for (int i = 0; i < nItems; i++)
     {
         counter[i] -= (counter[i] > 0 ? 1 : 0);
         available[i] = (counter[i] == 0);
@@ -81,20 +87,23 @@ void Resources::regenerate() {
 //' @param landsize Size as a numeric (float).
 //' @param nClusters How many clusters, an integer value.
 //' @param clusterDispersal Dispersal of items around cluster centres.
+//' @param regen_time Regeneration time, in timesteps.
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
 Rcpp::DataFrame get_test_landscape(
         const int nItems, const float landsize,
-        const int nClusters, const float clusterSpread) {
+        const int nClusters, const float clusterSpread,
+        const int regen_time) {
     
     unsigned seed = static_cast<unsigned> (std::chrono::system_clock::now().time_since_epoch().count());
     rng.seed(seed);
 
-    Resources food (nItems, landsize, nClusters, clusterSpread, 0);
+    Resources food (nItems, landsize, nClusters, clusterSpread, regen_time);
     food.initResources();
 
     return Rcpp::DataFrame::create(
                 Rcpp::Named("x") = food.coordX,
-                Rcpp::Named("y") = food.coordY
+                Rcpp::Named("y") = food.coordY,
+                Rcpp::Named("tAvail") = food.counter
             );
 }
