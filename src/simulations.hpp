@@ -22,7 +22,7 @@ public:
                const float costInfect):
         pop (popsize, range_agents, range_food, handling_time, pTransmit),
         food(nItems, landsize, nClusters, clusterSpread, regen_time),
-        gen_data (),
+        gen_data (genmax, popsize, 2), // increment hardcoded
         scenario(scenario),
         tmax(tmax),
         genmax(genmax),
