@@ -41,7 +41,7 @@ void Resources::initResources() {
     }
 
     // dist to set random counter value
-    std::poisson_distribution<int> distRegen(static_cast<int>(std::floor(static_cast<float>(regen_time) * 0.03)));
+    std::poisson_distribution<int> distRegen(static_cast<int>(std::floor(static_cast<float>(regen_time) * 0.1)));
     
     // initialise rtree and set counter value
     bgi::rtree< value, bgi::quadratic<16> > tmpRtree;

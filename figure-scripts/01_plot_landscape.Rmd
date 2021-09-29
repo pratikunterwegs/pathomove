@@ -1,3 +1,6 @@
+---
+
+---
 
 ```{r}
 # for plotting
@@ -12,7 +15,7 @@ library(snevo)
 Make landscape combinations.
 
 ```{r}
-parameters = c(2, 3, 5)
+parameters = c(1, 2)
 
 lands = lapply(
     parameters,
@@ -20,8 +23,9 @@ lands = lapply(
         snevo::get_test_landscape(
             nItems = 2000,
             landsize = 60,
-            nClusters = 30,
-            clusterSpread = cs
+            nClusters = 100,
+            clusterSpread = cs,
+            regen_time = 50
         )
     }
 )
@@ -42,17 +46,22 @@ lands = rbindlist(lands)
 fig_land = 
     ggplot(lands)+
     geom_point(
-        aes(x, y),
-        alpha = 0.3,
-        col = "darkgreen"
+        aes(x, y, col = tAvail),
+        size = 0.3
+    )+
+    colorspace::scale_colour_binned_sequential(
+        palette = "Batlow",
+        rev=F,
+        name = "time until\navailable",
+        breaks = c(0, 2, 10, 20)
     )+
     facet_grid(
         ~cluster_spread,
         labeller = labeller(
             cluster_spread = c(
-                "2" = "Patchy",
-                "3" = "Intermediate",
-                "5" = "Homogeneous"
+                "1" = "Patchy",
+                "1.5" = "Intermediate",
+                "2" = "Homogeneous"
             )
         )
     )+
@@ -63,18 +72,21 @@ fig_land =
         axis.ticks = element_blank(),
         strip.text = element_text(
             face = "italic"
-        )
+        ),
+        legend.key.width = unit(5, "mm"),
+        legend.key.height = unit(2, "mm"),
+        legend.position = "top"
     )+
     coord_equal(
         expand = F
     )
-
+fig_land
 # save figure
 ggsave(
     fig_land,
     file = "figures/fig_land.png",
     height = 80,
-    width = 170,
+    width = 120,
     units = "mm"
 )
 ```
