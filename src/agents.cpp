@@ -204,8 +204,6 @@ void Population::move(Resources &food, const int nThreads) {
                     // first assess current location
                     float sampleX = coordX[id];
                     float sampleY = coordY[id]; 
-            float sampleY = coordY[id]; 
-                    float sampleY = coordY[id]; 
 
                     float foodHere = 0.f;
                     // count local food only if items are available
@@ -286,8 +284,6 @@ void Population::forage(Resources &food, const int nThreads){
             [&](const tbb::blocked_range<unsigned>& r) {
             for (unsigned i = r.begin(); i < r.end(); ++i) {
                 int id = order[i];
-                if ((counter[id] > 0) | (food.nAvailable == 0)) { 
-        if ((counter[id] > 0) | (food.nAvailable == 0)) { 
                 if ((counter[id] > 0) | (food.nAvailable == 0)) { 
                     // nothing -- agent cannot forage or there is no food
                 }
