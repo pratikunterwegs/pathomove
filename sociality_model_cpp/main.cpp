@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-#include "../src/simulations.h"
+#include "../src/simulations.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -18,31 +18,20 @@ int main(int argc, char *argv[])
     int popsize = 5;
     int genmax = 1;
     int tmax = 2;
-    float competitionCost = 0.f;
-    float sensoryRange = 3.f;
-    int nScenes = 1;
-    int stopTime = 1;
+    int regen_time = 1;
 
     // prepare landscape
-    Resources food (nFood, landsize, foodClusters, clusterDispersal);
+    Resources food (nFood, landsize, foodClusters, clusterDispersal, regen_time);
     food.initResources();
     food.countAvailable();
     std::cout << "landscape with " << foodClusters << " clusters\n";
     /// export landscape
 
     // prepare population
-    Population pop (popsize, 0);
+    Population pop (popsize, 0.1, 0.2, 1, 0.3);
     // pop.initPop(popsize);
     pop.setTrait();
     std::cout << pop.nAgents << " agents over " << genmax << " gens of " << tmax << " timesteps\n";
-
-    genData thisGenData;
-    // prepare social network struct
-    // Network pbsn;
-    // pbsn.initAssociations(pop.nAgents);
-
-    // evolve population and store data
-    evolve_pop(genmax, tmax, pop, food, thisGenData, competitionCost, sensoryRange, nScenes, stopTime);
 
     return 0;
 }
