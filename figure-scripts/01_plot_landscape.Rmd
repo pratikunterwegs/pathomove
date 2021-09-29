@@ -47,7 +47,8 @@ fig_land =
     ggplot(lands)+
     geom_point(
         aes(x, y, col = tAvail),
-        size = 0.3
+        size = 0.5,
+        alpha = 0.7
     )+
     colorspace::scale_colour_binned_sequential(
         palette = "Batlow",
