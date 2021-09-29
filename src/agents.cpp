@@ -276,39 +276,47 @@ void Population::move(Resources &food, const int nThreads) {
     );
 }
 
-void Population::forage(Resources &food){
+void Population::forage(Resources &food, const int nThreads){
     shufflePop();
     // loop over agents --- randomise
-    for (size_t i = 0; i < order.size(); i++)
-    {
-        int id = order[i];
+    tbb::task_scheduler_init _tbb((nThreads == 1) ? nThreads : tbb::task_scheduler_init::automatic); // automatic for now
+    // try parallel foraging
+    tbb::parallel_for(
+        tbb::blocked_range<unsigned>(1, order.size()),
+            [&](const tbb::blocked_range<unsigned>& r) {
+            for (unsigned i = r.begin(); i < r.end(); ++i) {
+                int id = order[i];
+                if ((counter[id] > 0) | (food.nAvailable == 0)) { 
         if ((counter[id] > 0) | (food.nAvailable == 0)) { 
-            // nothing -- agent cannot forage or there is no food
-        }
-        else {
-            // find nearest item ids
-            std::vector<int> theseItems = getFoodId(food, coordX[id], coordY[id]);
-            int thisItem = -1;
+                if ((counter[id] > 0) | (food.nAvailable == 0)) { 
+                    // nothing -- agent cannot forage or there is no food
+                }
+                else {
+                    // find nearest item ids
+                    std::vector<int> theseItems = getFoodId(food, coordX[id], coordY[id]);
+                    int thisItem = -1;
 
-            // check near items count
-            if(theseItems.size() > 0) {
-                // take first item by default
-                thisItem = theseItems[0];
+                    // check near items count
+                    if(theseItems.size() > 0) {
+                        // take first item by default
+                        thisItem = theseItems[0];
 
-                if (thisItem != -1) {
-                    // check selected item is available
-                    assert(food.available[thisItem] && "forage error: item not available");
-                    counter[id] = handling_time;
-                    energy[id] += 1.0;
+                        if (thisItem != -1) {
+                            // check selected item is available
+                            assert(food.available[thisItem] && "forage error: item not available");
+                            counter[id] = handling_time;
+                            energy[id] += 1.0;
 
-                    // reset food availability
-                    food.available[thisItem] = false;
-                    food.counter[thisItem] = food.regen_time;
-                    food.nAvailable --;
+                            // reset food availability
+                            food.available[thisItem] = false;
+                            food.counter[thisItem] = food.regen_time;
+                            food.nAvailable --;
+                        }
+                    }
                 }
             }
         }
-    }
+    );
 }
 
 void Population::countAssoc() {
