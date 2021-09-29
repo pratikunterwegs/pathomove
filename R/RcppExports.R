@@ -33,8 +33,9 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' @param pTransmit Probability of transmission.
 #' @param intialInfections Agents infected per event.
 #' @param costInfect Cost infection.
+#' @param nThreads How many threads to parallelise over.
 #' @return A data frame of the evolved population traits.
-run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time, pTransmit, initialInfections, costInfect) {
-    .Call(`_snevo_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time, pTransmit, initialInfections, costInfect)
+run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads) {
+    .Call(`_snevo_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads)
 }
 
