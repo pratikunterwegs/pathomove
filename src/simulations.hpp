@@ -19,20 +19,31 @@ public:
                const int regen_time,
                float pTransmit,
                const int initialInfections,
-               const float costInfect):
+               const float costInfect,
+               const int nThreads):
+        // population, food, and data structures
         pop (popsize, range_agents, range_food, handling_time, pTransmit),
         food(nItems, landsize, nClusters, clusterSpread, regen_time),
         gen_data (genmax, popsize, 2), // increment hardcoded
+
+        // eco-evolutionary parameters
         scenario(scenario),
         tmax(tmax),
         genmax(genmax),
+
+        // agent perception and behaviour, food growth
         range_food(range_food),
         range_agents(range_agents),
         handling_time(handling_time),
         regen_time(regen_time),
+
+        // disease parameters
         pTransmit(pTransmit),
         initialInfections(initialInfections),
-        costInfect(costInfect)
+        costInfect(costInfect),
+
+        // parallelisation
+        nThreads (nThreads)
     {}
     ~simulation() {}
 
@@ -42,6 +53,7 @@ public:
     const int scenario, tmax, genmax, handling_time, regen_time, initialInfections;
     const float range_food, range_agents, costInfect;
     float pTransmit;
+    int nThreads;
 
     // funs
     Rcpp::List do_simulation();
@@ -60,6 +72,7 @@ Rcpp::List run_pathomove(const int popsize, const int scenario,
                         const int regen_time,
                         float pTransmit,
                         const int intialInfections,
-                        const float costInfect);
+                        const float costInfect,
+                        const int nThreads);
 
 #endif // SIMULATIONS_H

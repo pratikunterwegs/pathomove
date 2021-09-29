@@ -54,10 +54,10 @@ Rcpp::List simulation::do_simulation() {
             pop.updateRtree();
 
             // movement section
-            pop.move(food);
+            pop.move(food, nThreads);
 
             // foraging
-            pop.forage(food);
+            pop.forage(food, nThreads);
 
             // count associations
             pop.countAssoc();
@@ -115,6 +115,7 @@ Rcpp::List simulation::do_simulation() {
 //' @param pTransmit Probability of transmission.
 //' @param intialInfections Agents infected per event.
 //' @param costInfect Cost infection.
+//' @param nThreads How many threads to parallelise over.
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
 Rcpp::List run_pathomove(const int scenario,
@@ -130,12 +131,13 @@ Rcpp::List run_pathomove(const int scenario,
                         const int regen_time,
                         float pTransmit,
                         const int initialInfections,
-                        const float costInfect) {
+                        const float costInfect,
+                        const int nThreads) {
                             
     simulation this_sim(popsize, scenario, nItems, landsize,
                         nClusters, clusterSpread, tmax, genmax,
                         range_food, range_agents,
                         handling_time, regen_time,
-                        pTransmit, initialInfections, costInfect);
+                        pTransmit, initialInfections, costInfect, nThreads);
     return this_sim.do_simulation();
 }
