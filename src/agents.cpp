@@ -5,7 +5,11 @@
 #include <algorithm>
 #include <iostream>
 #include <random>
+
 #include <boost/foreach.hpp>
+
+#include <RcppParallel.h>
+
 #include "network.hpp"
 #include "landscape.hpp"
 #include "agents.hpp"
