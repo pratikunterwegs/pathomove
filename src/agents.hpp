@@ -135,7 +135,7 @@ public:
     float propSrcInfection();
 
     // counting proximity based interactions
-    void countAssoc();
+    void countAssoc(const int nThreads);
 
     // functions for the network
     // there is no function to update the network, this is handled in countAssoc

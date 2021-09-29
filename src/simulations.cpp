@@ -60,7 +60,7 @@ Rcpp::List simulation::do_simulation() {
             pop.forage(food, nThreads);
 
             // count associations
-            pop.countAssoc();
+            pop.countAssoc(nThreads);
 
             if(scenario > 0) {
                 // disease

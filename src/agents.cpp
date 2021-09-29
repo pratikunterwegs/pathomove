@@ -315,7 +315,7 @@ void Population::forage(Resources &food, const int nThreads){
     );
 }
 
-void Population::countAssoc() {
+void Population::countAssoc(const int nThreads) {
     tbb::task_scheduler_init _tbb((nThreads == 1) ? nThreads : tbb::task_scheduler_init::automatic); // automatic for now
     // try parallel foraging
     tbb::parallel_for(
