@@ -10,30 +10,47 @@ library(ggplot2)
 library(data.table)
 
 l = snevo::get_test_landscape(
-  nItems = 500,
-  landsize = 30,
-  nClusters = 30, 
-  clusterSpread = 1
-)
-plot(l)
-
-a = run_pathomove(
-  scenario = 1,
-  popsize = 500,
   nItems = 2000,
   landsize = 60,
-  nClusters = 30,
+  nClusters = 100, 
   clusterSpread = 1,
-  tmax = 100,
-  genmax = 1000,
-  range_food = 0.5,
-  range_agents = 1,
-  handling_time = 5,
-  regen_time = 3,
-  pTransmit = 0.0001,
-  initialInfections = 2,
-  costInfect = 0.05
+  regen_time = 100
 )
+ggplot(l)+
+  geom_point(
+    aes(x, y, size = tAvail == 0, col = tAvail)
+  )+
+  scale_colour_viridis_b(
+    option = "H",
+    direction = 1,
+    breaks = c(0, 1, 2, 5, 10)
+  )
+
+{t1 = Sys.time()
+invisible(
+  x = {
+    a = run_pathomove(
+      scenario = 1,
+      popsize = 500,
+      nItems = 2000,
+      landsize = 60,
+      nClusters = 30,
+      clusterSpread = 1,
+      tmax = 100,
+      genmax = 100,
+      range_food = 0.5,
+      range_agents = 1,
+      handling_time = 5,
+      regen_time = 3,
+      pTransmit = 0.0001,
+      initialInfections = 2,
+      costInfect = 0.05,
+      nThreads = 2
+    )
+  }
+)
+t2 = Sys.time()
+t2 - t1}
 
 names(a)
 
