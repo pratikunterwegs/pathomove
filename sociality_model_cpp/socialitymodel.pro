@@ -31,21 +31,22 @@ RCPPINCL =      $$system($$R_HOME/bin/Rscript -e \"Rcpp:::CxxFlags\(\)\")
 RCPPLIBS =      $$system($$R_HOME/bin/Rscript -e \"Rcpp:::LdFlags\(\)\")
 
 SOURCES += \
-        ../src/test-example.cpp \
+#        ../src/test-example.cpp \
         ../src/agents.cpp \
         ../src/landscape.cpp \
         ../src/data_types.cpp \
         main.cpp \
-        ../src/simulations.cpp
+        ../src/simulations.cpp \
+        ../src/pathospread.cpp \
+        ../src/network.cpp
 
 HEADERS += \
-    ../src/agents.h \
-    ../src/landscape.h \
-    ../src/network.h \
-#    ../src/network_operations.hpp \
-    ../src/parameters.h \
-    ../src/data_types.h \
-    ../src/simulations.h
+    ../src/agents.hpp \
+    ../src/landscape.hpp \
+    ../src/network.hpp \
+    ../src/parameters.hpp \
+    ../src/data_types.hpp \
+    ../src/simulations.hpp
 
 QMAKE_CXXFLAGS += $$RCPPWARNING $$RCPPFLAGS $$RCPPINCL
 QMAKE_LIBS += $$RLDFLAGS $$RBLAS $$RLAPACK $$RCPPLIBS
