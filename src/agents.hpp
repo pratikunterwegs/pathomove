@@ -32,6 +32,7 @@ public:
         degree(popsize, 0),
 
         // agent sensory parameters
+        n_samples (3.f),
         range_agents(range_agents),
         range_food(range_food),
         handling_time(handling_time),
@@ -70,7 +71,7 @@ public:
     std::vector<int> degree;
 
     // sensory range and foraging
-    const float range_agents, range_food;
+    const float n_samples, range_agents, range_food;
     const int handling_time;
 
     // shuffle vector and transmission
@@ -117,8 +118,8 @@ public:
     );
 
     // functions to move and forage on a landscape
-    void move(Resources &food);
-    void forage(Resources &food);
+    void move(Resources &food, const int nThreads);
+    void forage(Resources &food, const int nThreads);
     
     // funs to handle fitness and reproduce
     std::vector<float> handleFitness();
