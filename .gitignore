@@ -102,5 +102,8 @@ bash/job*
 # ignore Makefile
 Makefile
 
+# ignore log
+*.log
+
 # allow parameters
 !data/parameters/*
