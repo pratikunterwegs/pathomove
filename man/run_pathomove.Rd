@@ -19,7 +19,8 @@ run_pathomove(
   regen_time,
   pTransmit,
   initialInfections,
-  costInfect
+  costInfect,
+  nThreads
 )
 }
 \arguments{
@@ -50,6 +51,8 @@ run_pathomove(
 \item{pTransmit}{Probability of transmission.}
 
 \item{costInfect}{Cost infection.}
+
+\item{nThreads}{How many threads to parallelise over.}
 
 \item{intialInfections}{Agents infected per event.}
 }

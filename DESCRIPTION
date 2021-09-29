@@ -16,10 +16,12 @@ RoxygenNote: 7.1.1
 Depends:igraph
 LinkingTo: 
     Rcpp,
+    RcppParallel,
     BH,
     testthat
 Imports: 
     Rcpp,
+    RcppParallel,
     assertthat,
     data.table,
     glue
@@ -27,3 +29,4 @@ Suggests:
     testthat,
     ssh,
     xml2
+SystemRequirements: GNU make
