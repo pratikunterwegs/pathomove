@@ -19,39 +19,45 @@ params = read.csv(param_file)
 library(snevo)
 
 # run simulation
-data_evolved_pop = do_simulation(
+data = run_pathomove(
+  scenario = params$scenario[row_n],
+
   popsize = params$popsize[row_n],
-  genmax = params$genmax[row_n], 
-  tmax = params$tmax[row_n],
-  nFood = params$nFood[row_n],
-  foodClusters = params$foodClusters[row_n], 
-  clusterDispersal = params$clusterDispersal[row_n],
+  
+  nItems = params$popsize[row_n],
   landsize = params$landsize[row_n],
-  collective = params$collective[row_n],
-  competitionCost = params$collective[row_n],
-  nScenes = params$nScenes[row_n]
+  nClusters = params$nClusters[row_n],
+  clusterSpread = params$clusterSpread[row_n],
+
+  tmax = params$tmax[row_n],
+  genmax = params$genmax[row_n], 
+  
+  range_food = params$range_food[row_n],
+  range_agents = params$range_agents[row_n], 
+  handling_time = params$handling_time[row_n],
+
+  regen_time = params$regen_time[row_n],
+  pTransmit = params$pTransmit[row_n],
+
+  initialInfections = params$initialInfections[row_n],
+  costInfect = params$costInfect[row_n],
+  nThreads = params$nThreads[row_n]
 )
 
 # get params as named vector
 these_params = unlist(params[row_n,])
 
 # append list of params
-data_evolved_pop = append(
-  data_evolved_pop,
+data = append(
+  data,
   these_params
 )
 
+output_file_index = params$ofi[row_n]
+
 # name of rdata file
-output_file = Reduce(
-  paste,
-  mapply(
-    function(p, np) {
-      paste(np, p, sep = "_")
-    }, these_params, names(these_params)
-  )
-)
 output_file = glue::glue(
-  'data/output/{output_file}.Rdata'
+  'data/output/{output_file_index}.Rds'
 )
 
 # save
