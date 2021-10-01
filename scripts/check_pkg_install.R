@@ -1,4 +1,6 @@
 # check function
+remove.packages("snevo")
+
 Rcpp::compileAttributes()
 devtools::build()
 {sink(file = "install_output.log"); devtools::install(upgrade = "never"); sink()}
@@ -9,7 +11,7 @@ library(snevo)
 library(ggplot2)
 library(data.table)
 
-l = get_test_landscape(
+l = snevo::get_test_landscape(
   nItems = 2000,
   landsize = 100,
   nClusters = 100, 
@@ -29,15 +31,15 @@ ggplot(l)+
 {t1 = Sys.time()
 invisible(
   x = {
-    a = run_pathomove(
+    a = snevo::run_pathomove(
       scenario = 1,
-      popsize = 500,
-      nItems = 2000,
-      landsize = 60,
+      popsize = 50,
+      nItems = 200,
+      landsize = 20,
       nClusters = 30,
       clusterSpread = 1,
       tmax = 100,
-      genmax = 100,
+      genmax = 10,
       range_food = 0.5,
       range_agents = 1,
       handling_time = 5,
