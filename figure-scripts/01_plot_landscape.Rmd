@@ -86,7 +86,7 @@ fig_land
 ggsave(
     fig_land,
     file = "figures/fig_land.png",
-    height = 60,
+    height = 70,
     width = 90,
     units = "mm"
 )
