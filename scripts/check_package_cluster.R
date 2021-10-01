@@ -34,7 +34,7 @@ snevo::make_parameter_file(
 snevo::use_cluster(
   ssh_con = "p284074@peregrine.hpc.rug.nl",
   password = password, 
-  script = "scripts/check_sim_cluster.R", 
+  script = "scripts/do_sim_cluster.R", 
   template_job = "bash/main_job_maker.sh", 
-  parameter_file = "data/parameters/parameters_full.csv"
+  parameter_file = "data/parameters/parameters_test.csv"
 )

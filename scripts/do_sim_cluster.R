@@ -16,6 +16,8 @@ message(
 
 params = read.csv(param_file)
 
+library(snevo)
+
 # run simulation
 data = snevo::run_pathomove(
   scenario = params$scenario[row_n],
