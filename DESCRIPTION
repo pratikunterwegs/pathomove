@@ -22,6 +22,7 @@ LinkingTo:
 Imports: 
     Rcpp,
     RcppParallel,
+    BH,
     assertthat,
     data.table,
     glue
@@ -29,4 +30,6 @@ Suggests:
     testthat,
     ssh,
     xml2
-SystemRequirements: GNU make
+SystemRequirements: 
+    GNU make,
+    C++14
