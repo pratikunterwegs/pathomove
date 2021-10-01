@@ -1,6 +1,8 @@
 #ifndef AGENTS_H
 #define AGENTS_H
 
+// [[Rcpp::depends(RcppParallel)]]
+
 #define _USE_MATH_DEFINES
 /// code to make agents
 #include <vector>
@@ -10,6 +12,7 @@
 #include <boost/foreach.hpp>
 #include "landscape.hpp"
 #include "network.hpp"
+
 
 // Agent class
 struct Population {

@@ -8,6 +8,7 @@
 
 #include <boost/foreach.hpp>
 
+#include <Rcpp.h>
 #include <RcppParallel.h>
 
 #include "network.hpp"

@@ -3,7 +3,7 @@
 
 // [[Rcpp::depends(BH)]]
 
-// Enable C++11 via this plugin to suppress 'long long' errors
+// Enable C++14 via this plugin to suppress 'long long' errors
 // [[Rcpp::plugins("cpp14")]]
 
 #include <vector>
