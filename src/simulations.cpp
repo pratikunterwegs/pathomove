@@ -138,6 +138,7 @@ Rcpp::List run_pathomove(const int scenario,
                         nClusters, clusterSpread, tmax, genmax,
                         range_food, range_agents,
                         handling_time, regen_time,
-                        pTransmit, initialInfections, costInfect, nThreads);
+                        pTransmit, initialInfections, 
+                        costInfect, nThreads);
     return this_sim.do_simulation();
 }

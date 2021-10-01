@@ -60,7 +60,8 @@ public:
 
 };
 
-Rcpp::List run_pathomove(const int popsize, const int scenario,
+Rcpp::List run_pathomove(const int scenario,
+                        const int popsize,
                         const int nItems, const float landsize,
                         const int nClusters,
                         const float clusterSpread,
@@ -71,7 +72,7 @@ Rcpp::List run_pathomove(const int popsize, const int scenario,
                         const int handling_time,
                         const int regen_time,
                         float pTransmit,
-                        const int intialInfections,
+                        const int initialInfections,
                         const float costInfect,
                         const int nThreads);
 
