@@ -107,3 +107,5 @@ Makefile
 
 # allow parameters
 !data/parameters/*
+
+data/password
