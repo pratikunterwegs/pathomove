@@ -1,8 +1,6 @@
 #ifndef AGENTS_H
 #define AGENTS_H
 
-// [[Rcpp::depends(RcppParallel)]]
-
 #define _USE_MATH_DEFINES
 /// code to make agents
 #include <vector>

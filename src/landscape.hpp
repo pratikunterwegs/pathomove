@@ -1,11 +1,6 @@
 #ifndef LANDSCAPE_H
 #define LANDSCAPE_H
 
-// [[Rcpp::depends(BH)]]
-
-// Enable C++14 via this plugin to suppress 'long long' errors
-// [[Rcpp::plugins("cpp14")]]
-
 #include <vector>
 #include <Rcpp.h>
 #include <boost/geometry.hpp>

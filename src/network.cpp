@@ -8,7 +8,6 @@ Rcpp::Environment igraph("package:igraph");
 Rcpp::Function graph_diameter = igraph["diameter"];
 Rcpp::Function graph_degree = igraph["degree"];
 Rcpp::Function graph_from_adjmat = igraph["graph.adjacency"];
-Rcpp::Function df_from_graph = igraph["as_data_frame"];
 Rcpp::Function network_size = igraph["gsize"];
 
 /// function to get metrics from adjacency matrix
