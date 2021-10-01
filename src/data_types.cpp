@@ -17,6 +17,7 @@ void genData::updateGenData (Population &pop, const int g_) {
     gTInfected[i] = pop.timeInfected;
     gDegree[i] = pop.pbsn.getDegree();
     gNInfected[i] = pop.nInfected;
+    gMoved[i] = pop.moved;
 
     gens[i] = g_;
     gPbsnDiameter[i] = measures[0];
