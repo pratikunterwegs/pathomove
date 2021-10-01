@@ -1,26 +1,33 @@
 
 library(snevo)
-password = readLines("data/password.txt")
+password = readLines("data/password")
 
 # check cluster
-snevo::check_prepare_cluster(
-  ssh_con = "p284074@peregrine.hpc.rug.nl",
-  password = password
-)
+# snevo::check_prepare_cluster(
+#   ssh_con = "p284074@peregrine.hpc.rug.nl",
+#   password = password
+# )
 
 # prepare parameters
 snevo::make_parameter_file(
-  nFood = 1000,
-  popsize = 3000,
-  landsize = c(100, 300),
-  genmax = 5000,
-  foodClusters = 100,
-  clusterDispersal = 2,
-  collective = c(TRUE, FALSE),
-  competitionCost = 0.1,
-  nScenes = 10,
-  replicates = 25,
-  which_file = "data/parameters/parameters_full.csv"
+  scenario = 1,
+  popsize = 500,
+  nItems = 2000,
+  landsize = 60,
+  nClusters = 30,
+  clusterSpread = 1,
+  tmax = 100,
+  genmax = 100,
+  range_food = 0.5,
+  range_agents = 1,
+  handling_time = 5,
+  regen_time = 3,
+  pTransmit = 0.0001,
+  initialInfections = 2,
+  costInfect = 0.05,
+  nThreads = 2,
+  replicates = 3,
+  which_file = "data/parameters/parameters_test.csv"
 )
 
 # try sending in a job
