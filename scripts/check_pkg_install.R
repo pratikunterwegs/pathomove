@@ -9,9 +9,9 @@ library(snevo)
 library(ggplot2)
 library(data.table)
 
-l = snevo::get_test_landscape(
+l = get_test_landscape(
   nItems = 2000,
-  landsize = 60,
+  landsize = 100,
   nClusters = 100, 
   clusterSpread = 1,
   regen_time = 100
