@@ -106,6 +106,6 @@ Makefile
 *.log
 
 # allow parameters
-!data/parameters/*
+# !data/parameters/*
 
 data/password
