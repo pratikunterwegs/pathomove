@@ -25,6 +25,13 @@ use_cluster <- function(
     files = parameter_file,
     to = "snevo/data/parameters"
   )
+  
+  # transfer R script
+  ssh::scp_upload(
+    s,
+    files = script,
+    to = "snevo/scripts"
+  )
 
   # modify template job to use correct R script
   job_shell_script <- readLines(template_job)
