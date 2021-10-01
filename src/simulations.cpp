@@ -33,13 +33,18 @@ Rcpp::List simulation::do_simulation() {
         Rcpp::Rcout << "gen: " << gen << "\n";
         // food.initResources();
         food.countAvailable();
+
+        Rcpp::Rcout << "counted food" << gen << "\n";
         
         // reset counter and positions
         pop.counter = std::vector<int> (pop.nAgents, 0);
         pop.initPos(food);
 
+        Rcpp::Rcout << "randomised agent pos" << gen << "\n";
+
         if(scenario > 0) {
             pop.introducePathogen(initialInfections);
+            Rcpp::Rcout << "introduced pathogen" << gen << "\n";
         }
 
         // timesteps start here
