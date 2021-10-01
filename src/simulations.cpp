@@ -28,12 +28,9 @@ Rcpp::List simulation::do_simulation() {
     if (scenario == 0) {
         pTransmit = 0.f;
     }
-    // prepare social network struct
-    // Network pbsn;
-    // pbsn.initAssociations(pop.nAgents);
-
     // go over gens
     for(int gen = 0; gen < genmax; gen++) {
+        Rcpp::Rcout << "gen: " << gen << "\n";
         // food.initResources();
         food.countAvailable();
         
@@ -75,6 +72,7 @@ Rcpp::List simulation::do_simulation() {
 
         // update gendata
         if ((gen == (genmax - 1)) | (gen % 2 == 0)) {
+            Rcpp::Rcout << "logging data at gen: " << gen << "\n";
             gen_data.updateGenData(pop, gen);
         }
 
