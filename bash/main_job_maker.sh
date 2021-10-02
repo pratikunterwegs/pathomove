@@ -7,7 +7,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --array=1-n_array
 #SBATCH --output=/home/p284074/snevo/data/output/snevo_output_%a.log
-#SBATCH --mem=2000
+#SBATCH --mem=500
 
 pwd
 ml load R/4.0.0-foss-2020a
