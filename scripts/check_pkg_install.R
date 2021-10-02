@@ -35,16 +35,16 @@ invisible(
       scenario = 1,
       popsize = 50,
       nItems = 200,
-      landsize = 20,
+      landsize = 60,
       nClusters = 30,
       clusterSpread = 1,
-      tmax = 100,
-      genmax = 10,
+      tmax = 5,
+      genmax = 2,
       range_food = 0.5,
       range_agents = 1,
       handling_time = 5,
       regen_time = 3,
-      pTransmit = 0.0001,
+      pTransmit = 0.001,
       initialInfections = 2,
       costInfect = 0.05,
       nThreads = 2
@@ -57,6 +57,8 @@ t2 - t1}
 names(a)
 
 plot(a[["gens"]], a[["n_infected"]], type = "o", pch = 16)
+plot(a[["gens"]], a[["diameter"]], type = "o", pch = 16)
+plot(a[["gens"]], a[["glob_eff"]], type = "o", pch = 16)
 
 #### handle data ####
 b = copy(a)
