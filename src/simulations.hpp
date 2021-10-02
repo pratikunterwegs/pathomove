@@ -38,9 +38,9 @@ public:
         regen_time(regen_time),
 
         // disease parameters
-        pTransmit(pTransmit),
         initialInfections(initialInfections),
         costInfect(costInfect),
+        pTransmit(pTransmit),
 
         // parallelisation
         nThreads (nThreads)
@@ -50,8 +50,12 @@ public:
     Population pop;
     Resources food;
     genData gen_data;
-    const int scenario, tmax, genmax, handling_time, regen_time, initialInfections;
-    const float range_food, range_agents, costInfect;
+    const int scenario, tmax, genmax;
+    const float range_food, range_agents;
+    const int handling_time;
+
+    const int regen_time, initialInfections;
+    const float costInfect;
     float pTransmit;
     int nThreads;
 

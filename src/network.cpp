@@ -3,15 +3,14 @@
 #include "network.hpp"
 #include <Rcpp.h>
 
-/// including R environment with the igraph package
-Rcpp::Environment igraph("package:igraph");
-Rcpp::Function graph_diameter = igraph["diameter"];
-Rcpp::Function graph_degree = igraph["degree"];
-Rcpp::Function graph_from_adjmat = igraph["graph.adjacency"];
-Rcpp::Function network_size = igraph["gsize"];
-
 /// function to get metrics from adjacency matrix
 std::vector<float> Network::ntwkMeasures() {
+    /// including R environment with the igraph package
+    Rcpp::Environment igraph("package:igraph");
+    Rcpp::Function graph_diameter = igraph["diameter"];
+    Rcpp::Function graph_from_adjmat = igraph["graph.adjacency"];
+    Rcpp::Function network_size = igraph["gsize"];
+
 
     SEXP graph = graph_from_adjmat(adjMat, Rcpp::Named("diag")=false, Rcpp::Named("weighted")=true);
 
@@ -33,6 +32,12 @@ std::vector<float> Network::ntwkMeasures() {
 
 /// get individual degree from data frame
 std::vector<int> Network::getDegree() {
+
+    /// including R environment with the igraph package
+    Rcpp::Environment igraph("package:igraph");
+    Rcpp::Function graph_degree = igraph["degree"];
+    Rcpp::Function graph_from_adjmat = igraph["graph.adjacency"];
+    
 
     SEXP graph = graph_from_adjmat(adjMat, Rcpp::Named("diag")=false, Rcpp::Named("weighted")=true);
     
