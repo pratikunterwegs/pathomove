@@ -62,6 +62,6 @@ output_file = glue::glue(
 
 # save
 save(
-  data_evolved_pop,
+  data,
   file = output_file
 )
