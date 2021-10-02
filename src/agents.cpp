@@ -277,43 +277,61 @@ void Population::move(Resources &food, const int nThreads) {
 
 void Population::forage(Resources &food, const int nThreads){
     shufflePop();
-    // loop over agents --- randomise
+    // nearest food
+    std::vector<int> idTargetFood (nAgents, -1);
+    Rcpp::Rcout << "pop foraging\n";
+
+    // loop over agents --- no shuffling required here
     tbb::task_scheduler_init _tbb((nThreads == 1) ? nThreads : tbb::task_scheduler_init::automatic); // automatic for now
-    // try parallel foraging
+    // try parallel foraging --- agents pick a target item
     tbb::parallel_for(
         tbb::blocked_range<unsigned>(1, order.size()),
             [&](const tbb::blocked_range<unsigned>& r) {
             for (unsigned i = r.begin(); i < r.end(); ++i) {
-                int id = order[i];
-                if ((counter[id] > 0) | (food.nAvailable == 0)) { 
+                if ((counter[i] > 0) | (food.nAvailable == 0)) { 
                     // nothing -- agent cannot forage or there is no food
                 }
                 else {
                     // find nearest item ids
-                    std::vector<int> theseItems = getFoodId(food, coordX[id], coordY[id]);
+                    std::vector<int> theseItems = getFoodId(food, coordX[i], coordY[i]);
                     int thisItem = -1;
 
                     // check near items count
                     if(theseItems.size() > 0) {
                         // take first item by default
                         thisItem = theseItems[0];
-
-                        if (thisItem != -1) {
-                            // check selected item is available
-                            assert(food.available[thisItem] && "forage error: item not available");
-                            counter[id] = handling_time;
-                            energy[id] += 1.0;
-
-                            // reset food availability
-                            food.available[thisItem] = false;
-                            food.counter[thisItem] = food.regen_time;
-                            food.nAvailable --;
-                        }
+                        idTargetFood[i] = thisItem;
                     }
                 }
             }
         }
     );
+    Rcpp::Rcout << "pop chose items\n";
+
+    // all agents have picked a food item if they can forage
+    // now forage in a serial loop --- this cannot be parallelised
+    // this order is randomised
+    for (size_t i = 0; i < static_cast<size_t>(nAgents); i++)
+    {
+        int id = order[i];
+        if ((counter[id] > 0) | (food.nAvailable == 0)) {
+            // nothing
+        } else {
+            int thisItem = idTargetFood[id]; //the item picked by this agent
+            // check selected item is available
+            if (thisItem != -1)
+            {
+                counter[id] = handling_time;
+                energy[id] += 1.0; // increased here --- not as described.
+
+                // reset food availability
+                food.available[thisItem] = false;
+                food.counter[thisItem] = food.regen_time;
+                food.nAvailable --;
+            }
+        }
+    }
+    Rcpp::Rcout << "pop foraging complete\n";
 }
 
 void Population::countAssoc(const int nThreads) {
