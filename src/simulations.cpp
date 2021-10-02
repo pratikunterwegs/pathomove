@@ -44,7 +44,7 @@ Rcpp::List simulation::do_simulation() {
 
         if(scenario > 0) {
             pop.introducePathogen(initialInfections);
-            Rcpp::Rcout << "introduced pathogen" << gen << "\n";
+            Rcpp::Rcout << "introduced pathogen gen: " << gen << "\n";
         }
 
         // timesteps start here
@@ -53,26 +53,40 @@ Rcpp::List simulation::do_simulation() {
             // resources regrow
             food.regenerate();
 
+            Rcpp::Rcout << "food regenerated:\n";
+
             pop.updateRtree();
+
+            Rcpp::Rcout << "pop rtree updated\n";
 
             // movement section
             pop.move(food, nThreads);
 
+            Rcpp::Rcout << "pop moved\n";
+
             // foraging
             pop.forage(food, nThreads);
+            
+            Rcpp::Rcout << "pop foraged\n";
 
             // count associations
             pop.countAssoc(nThreads);
 
+            Rcpp::Rcout << "counted associations\n";            
+
             if(scenario > 0) {
                 // disease
                 pop.pathogenSpread();
+
+                Rcpp::Rcout << "pathogen spread\n";
             }
 
             // timestep ends here
         }
         
         pop.countInfected();
+
+        Rcpp::Rcout << "counted infected\n";
         assert(pop.nInfected <= pop.nAgents);
 
         // update gendata
