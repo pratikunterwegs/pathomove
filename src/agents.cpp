@@ -335,25 +335,18 @@ void Population::forage(Resources &food, const int nThreads){
 }
 
 void Population::countAssoc(const int nThreads) {
-    tbb::task_scheduler_init _tbb((nThreads == 1) ? nThreads : tbb::task_scheduler_init::automatic); // automatic for now
-    // try parallel foraging
-    tbb::parallel_for(
-        tbb::blocked_range<unsigned>(1, order.size()),
-            [&](const tbb::blocked_range<unsigned>& r) {
-            for (unsigned i = r.begin(); i < r.end(); ++i) {
-                // count nearby agents and update raw associations
-                std::vector<int> nearby_agents = getNeighbourId(coordX[i], coordY[i]);
-                associations[i] += nearby_agents.size();
+    for (int i = 0; i < nAgents; ++i) {
+        // count nearby agents and update raw associations
+        std::vector<int> nearby_agents = getNeighbourId(coordX[i], coordY[i]);
+        associations[i] += nearby_agents.size();
 
-                // loop over nearby agents and update association matrix
-                for (size_t j = 0; j < nearby_agents.size(); j++)
-                {
-                    int target_agent = nearby_agents[j];
-                    pbsn.adjMat (i, target_agent) += 1;
-                }
-            }
+        // loop over nearby agents and update association matrix
+        for (size_t j = 0; j < nearby_agents.size(); j++)
+        {
+            int target_agent = nearby_agents[j];
+            pbsn.adjMat (i, target_agent) += 1;
         }
-    );
+    }
 }
 
 /// minor function to normalise vector
