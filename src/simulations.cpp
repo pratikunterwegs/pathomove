@@ -30,21 +30,15 @@ Rcpp::List simulation::do_simulation() {
     }
     // go over gens
     for(int gen = 0; gen < genmax; gen++) {
-        Rcpp::Rcout << "gen: " << gen << "\n";
         // food.initResources();
         food.countAvailable();
 
-        Rcpp::Rcout << "counted food" << gen << "\n";
-        
         // reset counter and positions
         pop.counter = std::vector<int> (pop.nAgents, 0);
         pop.initPos(food);
 
-        Rcpp::Rcout << "randomised agent pos" << gen << "\n";
-
         if(scenario > 0) {
             pop.introducePathogen(initialInfections);
-            Rcpp::Rcout << "introduced pathogen gen: " << gen << "\n";
         }
 
         // timesteps start here
@@ -52,33 +46,16 @@ Rcpp::List simulation::do_simulation() {
         {
             // resources regrow
             food.regenerate();
-
-            Rcpp::Rcout << "food regenerated:\n";
-
             pop.updateRtree();
-
-            Rcpp::Rcout << "pop rtree updated\n";
-
             // movement section
             pop.move(food, nThreads);
-
-            Rcpp::Rcout << "pop moved\n";
-
             // foraging
             pop.forage(food, nThreads);
-            
-            Rcpp::Rcout << "pop foraged\n";
-
             // count associations
             pop.countAssoc(nThreads);
-
-            Rcpp::Rcout << "counted associations\n";            
-
             if(scenario > 0) {
                 // disease
                 pop.pathogenSpread();
-
-                Rcpp::Rcout << "pathogen spread\n";
             }
 
             // timestep ends here
@@ -86,7 +63,6 @@ Rcpp::List simulation::do_simulation() {
         
         pop.countInfected();
 
-        Rcpp::Rcout << "counted infected\n";
         assert(pop.nInfected <= pop.nAgents);
 
         // update gendata
@@ -94,9 +70,6 @@ Rcpp::List simulation::do_simulation() {
             Rcpp::Rcout << "logging data at gen: " << gen << "\n";
             gen_data.updateGenData(pop, gen);
         }
-
-        // thisNetworkData.updateNetworkData(pop, gen, pbsn);
-        
         //population infection cost by time
         pop.pathogenCost(costInfect);
 

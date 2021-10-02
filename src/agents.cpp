@@ -141,14 +141,13 @@ int Population::countFood (
     return nFood;
 }
 
-// function for available food items
+// function for the nearest available food item
 std::vector<int> Population::getFoodId (
     Resources &food,
     const float xloc, const float yloc) {
         
     std::vector<int> food_id;
     std::vector<value> near_food;
-
     // check any available
     if (food.nAvailable > 0) {
         // query for a simple box
@@ -279,7 +278,6 @@ void Population::forage(Resources &food, const int nThreads){
     shufflePop();
     // nearest food
     std::vector<int> idTargetFood (nAgents, -1);
-    Rcpp::Rcout << "pop foraging\n";
 
     // loop over agents --- no shuffling required here
     tbb::task_scheduler_init _tbb((nThreads == 1) ? nThreads : tbb::task_scheduler_init::automatic); // automatic for now
@@ -306,7 +304,6 @@ void Population::forage(Resources &food, const int nThreads){
             }
         }
     );
-    Rcpp::Rcout << "pop chose items\n";
 
     // all agents have picked a food item if they can forage
     // now forage in a serial loop --- this cannot be parallelised
@@ -331,7 +328,6 @@ void Population::forage(Resources &food, const int nThreads){
             }
         }
     }
-    Rcpp::Rcout << "pop foraging complete\n";
 }
 
 void Population::countAssoc(const int nThreads) {
