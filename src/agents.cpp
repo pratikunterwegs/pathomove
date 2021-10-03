@@ -369,7 +369,7 @@ std::cauchy_distribution<float> mutation_size(0.0, mShift);
 // fun for replication
 void Population::Reproduce() {
     std::bernoulli_distribution verticalInfect(pTransmit);
-    std::normal_distribution<float> sprout(0.f, 1.f);
+    std::normal_distribution<float> sprout(0.f, 10.f);
 
     //normalise intake
     std::vector<float> vecFitness = handleFitness();
