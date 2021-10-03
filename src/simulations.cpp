@@ -35,6 +35,7 @@ Rcpp::List simulation::do_simulation() {
     for(int gen = 0; gen < genmax; gen++) {
         // food.initResources();
         food.countAvailable();
+        Rcpp::Rcout << "food available = " << food.nAvailable << "\n";
 
         // reset counter and positions
         pop.counter = std::vector<int> (pop.nAgents, 0);
@@ -70,7 +71,7 @@ Rcpp::List simulation::do_simulation() {
 
         // update gendata
         if ((gen == (genmax - 1)) | (gen % 2 == 0)) {
-            Rcpp::Rcout << "logging data at gen: " << gen << "\n";
+            // Rcpp::Rcout << "logging data at gen: " << gen << "\n";
             gen_data.updateGenData(pop, gen);
         }
         //population infection cost by time
