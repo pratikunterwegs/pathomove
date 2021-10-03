@@ -51,13 +51,12 @@ void Resources::initResources() {
         tmpRtree.insert(std::make_pair(p, i));
 
         counter[i] = distRegen(rng);
+        // set all to available
+        available[i] = (counter[i] == 0);
     }
 
     std::swap(rtree, tmpRtree);
     tmpRtree.clear();
-
-    // set all to available
-    available = std::vector<bool> (nItems, true);
 }
 
 void Resources::countAvailable() {
