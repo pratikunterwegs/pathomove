@@ -12,15 +12,16 @@ library(ggplot2)
 library(data.table)
 
 l = snevo::get_test_landscape(
-  nItems = 2000,
-  landsize = 100,
-  nClusters = 100, 
-  clusterSpread = 1,
-  regen_time = 100
+  nItems = 1000,
+  landsize = 200,
+  nClusters = 50, 
+  clusterSpread = 5,
+  regen_time = 10
 )
 ggplot(l)+
   geom_point(
-    aes(x, y, size = tAvail == 0, col = tAvail)
+    aes(x, y, col = tAvail),
+    size = 0.3
   )+
   scale_colour_viridis_b(
     option = "H",
@@ -32,21 +33,21 @@ ggplot(l)+
 invisible(
   x = {
     a = snevo::run_pathomove(
-      scenario = 1,
-      popsize = 50,
-      nItems = 200,
-      landsize = 60,
-      nClusters = 30,
-      clusterSpread = 1,
-      tmax = 5,
-      genmax = 2,
-      range_food = 0.5,
+      scenario = 0,
+      popsize = 500,
+      nItems = 1000,
+      landsize = 200,
+      nClusters = 50,
+      clusterSpread = 5,
+      tmax = 100,
+      genmax = 500,
+      range_food = 1,
       range_agents = 1,
       handling_time = 5,
-      regen_time = 3,
-      pTransmit = 0.001,
+      regen_time = 200,
+      pTransmit = 0.01,
       initialInfections = 2,
-      costInfect = 0.05,
+      costInfect = 0.00,
       nThreads = 2
     )
   }
@@ -77,11 +78,18 @@ ggplot(b)+
     binwidth = c(2, 1)
   )
 
+ggplot(b)+
+  geom_bin2d(
+    aes(gen, moved),
+    binwidth = c(2, 1)
+  )
+
+
 #### plot data ####
 b = melt(b, id.vars = c("gen", "id"))
 
 # energy = b[variable == "energy",]
-wts = b[!variable %in% c("energy", "assoc", "t_infec", "moved"),]
+wts = b[!variable %in% c("energy", "assoc", "t_infec", "moved", "degree"),]
 
 wts[, value := tanh(value * 20)]
 
@@ -97,7 +105,7 @@ ggplot(wts)+
     # trans = ggallin::ssqrt_trans
   )+
   scale_fill_viridis_c(
-    option = "C", direction = -1,
+    option = "A", direction = -1,
     begin = 0, end = 1
   )+
   theme_test()+
@@ -107,7 +115,7 @@ ggplot(wts)+
 ggplot(b[variable == "assoc"])+
   geom_bin2d(
     aes(gen, value),
-    binwidth = c(2, 200)
+    binwidth = c(2, 500)
   )+
   scale_fill_viridis_c(
     option = "H", direction = -1,
@@ -117,7 +125,7 @@ ggplot(b[variable == "assoc"])+
   )
 
 # scale weights
-wts_wide = copy(b[!variable %in% c("energy", "assoc", "t_infec", "moved"),])
+wts_wide = copy(b[!variable %in% c("energy", "assoc", "t_infec", "moved", "degree"),])
 wts_wide[, scaled_val := value / sum(abs(value)),
          by = c("gen", "id")]
 wts_wide = dcast(
@@ -134,12 +142,13 @@ ggplot(wts_wide[gen %% 100 == 0 | gen == max(gen)])+
     xintercept = 0, col = 2
   )+
   geom_jitter(
-    aes(coef_nbrs, coef_food,
-        fill = coef_food2),
+    aes(sF, sH,
+        fill = sN),
     shape = 21,
     colour = 'black',
     stroke = 0.1,
-    size = 4
+    size = 2,
+    alpha = 0.5
   )+
   colorspace::scale_fill_continuous_diverging(
     palette = "Berlin", rev = T,
@@ -147,10 +156,10 @@ ggplot(wts_wide[gen %% 100 == 0 | gen == max(gen)])+
     trans = ggallin::ssqrt_trans
   )+
   scale_x_continuous(
-    trans = ggallin::ssqrt_trans
+    # trans = ggallin::ssqrt_trans
   )+
   scale_y_continuous(
-    trans = ggallin::ssqrt_trans
+    # trans = ggallin::ssqrt_trans
   )+
   theme_bw()+
   facet_wrap(~ gen)+
