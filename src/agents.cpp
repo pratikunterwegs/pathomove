@@ -170,7 +170,7 @@ std::vector<int> Population::getFoodId (
 }
 
 /// rng for suitability
-std::normal_distribution<float> noise(0.f, 0.01f);
+std::normal_distribution<float> noise(0.f, 0.0001f);
 
 /// population movement function
 void Population::move(Resources &food, const int nThreads) {
