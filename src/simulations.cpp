@@ -25,6 +25,9 @@ Rcpp::List simulation::do_simulation() {
     // prepare scenario
     Rcpp::Rcout << "this is scenario " << scenario << "\n";
 
+    // agent random position
+    pop.initPos(food);
+
     if (scenario == 0) {
         pTransmit = 0.f;
     }
@@ -35,7 +38,7 @@ Rcpp::List simulation::do_simulation() {
 
         // reset counter and positions
         pop.counter = std::vector<int> (pop.nAgents, 0);
-        pop.initPos(food);
+        // pop.initPos(food);
 
         if(scenario > 0) {
             pop.introducePathogen(initialInfections);
