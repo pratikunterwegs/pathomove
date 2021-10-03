@@ -349,16 +349,19 @@ void Population::countAssoc(const int nThreads) {
 std::vector<float> Population::handleFitness() {
     // sort vec fitness
     std::vector<float> vecFitness = energy;
-    std::sort(vecFitness.begin(), vecFitness.end());
+    std::sort(vecFitness.begin(), vecFitness.end()); // sort to to get min-max
     // scale to max fitness
     float maxFitness = vecFitness[vecFitness.size()-1];
     float minFitness = vecFitness[0];
-    // rescale
+
+    // reset to energy
+    vecFitness = energy;
+    // rescale copied energy vector by min anx max fitness
     for(size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
         vecFitness[i] = ((vecFitness[i]  - minFitness) / (maxFitness - minFitness)) +
          noise(rng);
     }
-
+    
     return vecFitness;
 }
 
