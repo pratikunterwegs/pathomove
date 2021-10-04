@@ -12,48 +12,51 @@ library(ggplot2)
 library(data.table)
 
 l = snevo::get_test_landscape(
-  nItems = 1000,
-  landsize = 200,
-  nClusters = 50, 
-  clusterSpread = 5,
-  regen_time = 10
+  nItems = 2000,
+  landsize = 60,
+  nClusters = 100, 
+  clusterSpread = 1,
+  regen_time = 100
 )
 ggplot(l)+
   geom_point(
     aes(x, y, col = tAvail),
-    size = 0.3
+    alpha = 0.5
   )+
   scale_colour_viridis_b(
     option = "H",
     direction = 1,
-    breaks = c(0, 1, 2, 5, 10)
-  )
+    breaks = c(0, 1, 2, 5, 10, 100)
+  )+
+  coord_equal()
 
-{t1 = Sys.time()
-invisible(
-  x = {
-    a = snevo::run_pathomove(
-      scenario = 0,
-      popsize = 500,
-      nItems = 1000,
-      landsize = 200,
-      nClusters = 50,
-      clusterSpread = 5,
-      tmax = 100,
-      genmax = 500,
-      range_food = 1,
-      range_agents = 1,
-      handling_time = 5,
-      regen_time = 200,
-      pTransmit = 0.01,
-      initialInfections = 2,
-      costInfect = 0.00,
-      nThreads = 2
-    )
+{
+  t1 = Sys.time()
+  invisible(
+    x = {
+      a = snevo::run_pathomove(
+        scenario = 1,
+        popsize = 500,
+        nItems = 2000,
+        landsize = 60,
+        nClusters = 100,
+        clusterSpread = 1,
+        tmax = 100,
+        genmax = 500,
+        range_food = 1,
+        range_agents = 1,
+        handling_time = 5,
+        regen_time = 100,
+        pTransmit = 0.01,
+        initialInfections = 2,
+        costInfect = 1,
+        nThreads = 2
+      )
+    }
+  )
+  t2 = Sys.time()
+  t2 - t1
   }
-)
-t2 = Sys.time()
-t2 - t1}
 
 names(a)
 
@@ -75,7 +78,12 @@ b
 ggplot(b)+
   geom_bin2d(
     aes(gen, energy),
-    binwidth = c(2, 1)
+    binwidth = c(5, 1)
+  )+
+  scale_fill_viridis_c(
+    limits = c(10, NA),
+    na.value = "transparent"
+    # trans = "sqrt"
   )
 
 ggplot(b)+
@@ -94,6 +102,10 @@ wts = b[!variable %in% c("energy", "assoc", "t_infec", "moved", "degree"),]
 wts[, value := tanh(value * 20)]
 
 ggplot(wts)+
+  geom_hline(
+    yintercept = 0, size = 0.1,
+    col = 4
+  )+
   geom_bin2d(
     aes(gen, value),
     binwidth = c(2, 0.02),
@@ -102,26 +114,30 @@ ggplot(wts)+
   scale_y_continuous(
     # limits = c(-0.3, 0.3),
     # limits = c(-0.5, 0.5)
-    # trans = ggallin::ssqrt_trans
+    trans = ggallin::ssqrt_trans
   )+
   scale_fill_viridis_c(
-    option = "A", direction = -1,
+    option = "H", direction = -1,
+    limits = c(5, NA),
+    na.value = "transparent",
     begin = 0, end = 1
   )+
-  theme_test()+
   facet_wrap(~variable, ncol = 2)
 
 # plot associations per gen
 ggplot(b[variable == "assoc"])+
   geom_bin2d(
     aes(gen, value),
-    binwidth = c(2, 500)
+    binwidth = c(2, 0.2)
   )+
   scale_fill_viridis_c(
     option = "H", direction = -1,
     limits = c(3, NA),
     na.value = "transparent",
     trans = "sqrt"
+  )+
+  scale_y_continuous(
+    trans = ggallin::ssqrt_trans
   )
 
 # scale weights
@@ -147,11 +163,11 @@ ggplot(wts_wide[gen %% 100 == 0 | gen == max(gen)])+
     shape = 21,
     colour = 'black',
     stroke = 0.1,
-    size = 2,
+    size = 4,
     alpha = 0.5
   )+
   colorspace::scale_fill_continuous_diverging(
-    palette = "Berlin", rev = T,
+    palette = "Tropic", rev = T,
     limits = c(-1, 1),
     trans = ggallin::ssqrt_trans
   )+
