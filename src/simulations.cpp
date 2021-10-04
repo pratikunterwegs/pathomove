@@ -31,6 +31,11 @@ Rcpp::List simulation::do_simulation() {
     if (scenario == 0) {
         pTransmit = 0.f;
     }
+    int gen_init = 0;
+    if (scenario == 2) {
+        gen_init = static_cast<int>(std::round(static_cast<float>(genmax) * 0.667));
+        
+    }
     // go over gens
     for(int gen = 0; gen < genmax; gen++) {
         // food.initResources();
@@ -41,7 +46,7 @@ Rcpp::List simulation::do_simulation() {
         pop.counter = std::vector<int> (pop.nAgents, 0);
         pop.initPos(food);
 
-        if(scenario > 0) {
+        if((scenario > 0) && (gen > gen_init)) {
             pop.introducePathogen(initialInfections);
         }
 
