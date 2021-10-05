@@ -222,7 +222,7 @@ void Population::move(Resources &food, const int nThreads) {
                     float suit_origin = (
                         (sF[id] * foodHere) + (sH[id] * agentCounts.first) +
                         (sN[id] * agentCounts.second) +
-                        noise_here;
+                        noise_here
                     );
 
                     float newX = sampleX;
@@ -257,7 +257,7 @@ void Population::move(Resources &food, const int nThreads) {
                         float suit_dest = (
                             (sF[id] * foodHere) + (sH[id] * agentCounts.first) +
                             (sN[id] * agentCounts.second) +
-                            noise_v[j]; // add same very very small noise to all
+                            noise_v[j] // add same very very small noise to all
                         );
 
                         if (suit_dest > suit_origin) {
