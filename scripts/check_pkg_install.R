@@ -12,20 +12,32 @@ library(ggplot2)
 library(data.table)
 
 l = snevo::get_test_landscape(
+<<<<<<< HEAD
   nItems = 500,
   landsize = 100,
   nClusters = 50, 
   clusterSpread = 2,
+=======
+  nItems = 1000,
+  landsize = 200,
+  nClusters = 50, 
+  clusterSpread = 5,
+>>>>>>> parent of 92c1416... new check script
   regen_time = 10
 )
 ggplot(l)+
   geom_point(
     aes(x, y, col = tAvail),
+<<<<<<< HEAD
     alpha = 1
+=======
+    size = 0.3
+>>>>>>> parent of 92c1416... new check script
   )+
   scale_colour_viridis_b(
     option = "H",
     direction = 1,
+<<<<<<< HEAD
     breaks = c(0, 1, 2, 5, 10, 100)
   )+
   coord_equal()
@@ -57,6 +69,36 @@ ggplot(l)+
   t2 = Sys.time()
   t2 - t1
 }
+=======
+    breaks = c(0, 1, 2, 5, 10)
+  )
+
+{t1 = Sys.time()
+invisible(
+  x = {
+    a = snevo::run_pathomove(
+      scenario = 0,
+      popsize = 500,
+      nItems = 1000,
+      landsize = 200,
+      nClusters = 50,
+      clusterSpread = 5,
+      tmax = 100,
+      genmax = 500,
+      range_food = 1,
+      range_agents = 1,
+      handling_time = 5,
+      regen_time = 200,
+      pTransmit = 0.01,
+      initialInfections = 2,
+      costInfect = 0.00,
+      nThreads = 2
+    )
+  }
+)
+t2 = Sys.time()
+t2 - t1}
+>>>>>>> parent of 92c1416... new check script
 
 data = a
 a = data[[1]]
@@ -81,11 +123,14 @@ ggplot(b)+
   geom_bin2d(
     aes(gen, energy),
     binwidth = c(2, 1)
+<<<<<<< HEAD
   )+
   scale_fill_viridis_c(
     # limits = c(10, NA),
     na.value = "transparent"
     # trans = "sqrt"
+=======
+>>>>>>> parent of 92c1416... new check script
   )
 
 #### plot data ####
@@ -97,6 +142,7 @@ wts = b[!variable %in% c("energy", "assoc", "t_infec", "moved", "degree"),]
 wts[, value := tanh(value * 20)]
 
 ggplot(wts)+
+<<<<<<< HEAD
   # geom_vline(
   #   # xintercept = 1000 * 0.667
   # )+
@@ -104,6 +150,8 @@ ggplot(wts)+
     yintercept = 0, size = 0.1,
     col = 4
   )+
+=======
+>>>>>>> parent of 92c1416... new check script
   geom_bin2d(
     aes(gen, value),
     binwidth = c(2, 0.02),
@@ -112,30 +160,33 @@ ggplot(wts)+
   scale_y_continuous(
     # limits = c(-0.3, 0.3),
     # limits = c(-0.5, 0.5)
-    trans = ggallin::ssqrt_trans
+    # trans = ggallin::ssqrt_trans
   )+
   scale_fill_viridis_c(
+<<<<<<< HEAD
     option = "C", direction = -1,
     end = 0.9,
     # limits = c(, NA),
     na.value = "transparent"
+=======
+    option = "A", direction = -1,
+    begin = 0, end = 1
+>>>>>>> parent of 92c1416... new check script
   )+
+  theme_test()+
   facet_wrap(~variable, ncol = 2)
 
 # plot associations per gen
 ggplot(b[variable == "assoc"])+
   geom_bin2d(
     aes(gen, value),
-    binwidth = c(2, 0.2)
+    binwidth = c(2, 500)
   )+
   scale_fill_viridis_c(
     option = "H", direction = -1,
     limits = c(3, NA),
     na.value = "transparent",
     trans = "sqrt"
-  )+
-  scale_y_continuous(
-    trans = ggallin::ssqrt_trans
   )
 
 # scale weights
@@ -161,11 +212,11 @@ ggplot(wts_wide[gen %% 100 == 0 | gen == max(gen)])+
     shape = 21,
     colour = 'black',
     stroke = 0.1,
-    size = 4,
+    size = 2,
     alpha = 0.5
   )+
   colorspace::scale_fill_continuous_diverging(
-    palette = "Tropic", rev = T,
+    palette = "Berlin", rev = T,
     limits = c(-1, 1),
     trans = ggallin::ssqrt_trans
   )+
