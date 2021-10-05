@@ -12,16 +12,16 @@ library(ggplot2)
 library(data.table)
 
 l = snevo::get_test_landscape(
-  nItems = 2000,
-  landsize = 60,
-  nClusters = 100, 
-  clusterSpread = 1,
-  regen_time = 100
+  nItems = 500,
+  landsize = 100,
+  nClusters = 50, 
+  clusterSpread = 2,
+  regen_time = 10
 )
 ggplot(l)+
   geom_point(
     aes(x, y, col = tAvail),
-    alpha = 0.5
+    alpha = 1
   )+
   scale_colour_viridis_b(
     option = "H",
@@ -34,30 +34,32 @@ ggplot(l)+
   t1 = Sys.time()
   invisible(
     x = {
-      a = snevo::run_pathomove(
+      a = run_pathomove(
         scenario = 1,
         popsize = 500,
-        nItems = 2000,
-        landsize = 60,
-        nClusters = 100,
-        clusterSpread = 1,
+        nItems = 500,
+        landsize = 100,
+        nClusters = 50,
+        clusterSpread = 2,
         tmax = 100,
         genmax = 500,
         range_food = 1,
         range_agents = 1,
         handling_time = 5,
-        regen_time = 100,
-        pTransmit = 0.01,
-        initialInfections = 2,
-        costInfect = 1,
+        regen_time = 50,
+        pTransmit = 0.2,
+        initialInfections = 10,
+        costInfect = 0.02,
         nThreads = 2
       )
     }
   )
   t2 = Sys.time()
   t2 - t1
-  }
+}
 
+data = a
+a = data[[1]]
 names(a)
 
 plot(a[["gens"]], a[["n_infected"]], type = "o", pch = 16)
@@ -78,20 +80,13 @@ b
 ggplot(b)+
   geom_bin2d(
     aes(gen, energy),
-    binwidth = c(5, 1)
+    binwidth = c(2, 1)
   )+
   scale_fill_viridis_c(
-    limits = c(10, NA),
+    # limits = c(10, NA),
     na.value = "transparent"
     # trans = "sqrt"
   )
-
-ggplot(b)+
-  geom_bin2d(
-    aes(gen, moved),
-    binwidth = c(2, 1)
-  )
-
 
 #### plot data ####
 b = melt(b, id.vars = c("gen", "id"))
@@ -102,6 +97,9 @@ wts = b[!variable %in% c("energy", "assoc", "t_infec", "moved", "degree"),]
 wts[, value := tanh(value * 20)]
 
 ggplot(wts)+
+  # geom_vline(
+  #   # xintercept = 1000 * 0.667
+  # )+
   geom_hline(
     yintercept = 0, size = 0.1,
     col = 4
@@ -117,10 +115,10 @@ ggplot(wts)+
     trans = ggallin::ssqrt_trans
   )+
   scale_fill_viridis_c(
-    option = "H", direction = -1,
-    limits = c(5, NA),
-    na.value = "transparent",
-    begin = 0, end = 1
+    option = "C", direction = -1,
+    end = 0.9,
+    # limits = c(, NA),
+    na.value = "transparent"
   )+
   facet_wrap(~variable, ncol = 2)
 
@@ -183,3 +181,8 @@ ggplot(wts_wide[gen %% 100 == 0 | gen == max(gen)])+
     xlim = c(-1, 1),
     ylim = c(-1, 1)
   )
+
+#### explore network ####
+library(igraph)
+g = data[[2]]
+g = igraph::graph_from_adjacency_matrix(g, mode = "upper", weighted = TRUE)
