@@ -27,6 +27,7 @@ Rcpp::List simulation::do_simulation() {
 
     // agent random position
     pop.initPos(food);
+    Rcpp::NumericMatrix finalAdjMat(pop.nAgents, pop.nAgents);
 
     if (scenario == 0) {
         pTransmit = 0.f;
@@ -40,7 +41,7 @@ Rcpp::List simulation::do_simulation() {
     for(int gen = 0; gen < genmax; gen++) {
         // food.initResources();
         food.countAvailable();
-        Rcpp::Rcout << "food available = " << food.nAvailable << "\n";
+        // Rcpp::Rcout << "food available = " << food.nAvailable << "\n";
 
         // reset counter and positions
         pop.counter = std::vector<int> (pop.nAgents, 0);
@@ -62,7 +63,7 @@ Rcpp::List simulation::do_simulation() {
             pop.forage(food, nThreads);
             // count associations
             pop.countAssoc(nThreads);
-            if(scenario > 0) {
+            if((scenario > 0) && (gen > gen_init)) {
                 // disease
                 pop.pathogenSpread();
             }
@@ -81,6 +82,13 @@ Rcpp::List simulation::do_simulation() {
         }
         //population infection cost by time
         pop.pathogenCost(costInfect);
+        if((gen %% (genmax / 10)) == 0) {
+            Rcpp::Rcout << "gen: " << gen << "\n";
+        }
+
+        if(gen == (genmax - 1)) {
+            finalAdjMat = pop.pbsn.adjMat;
+        }
 
         // reproduce
         pop.Reproduce();
@@ -91,7 +99,10 @@ Rcpp::List simulation::do_simulation() {
 
     Rcpp::Rcout << "data prepared\n";
 
-    return gen_data.getGenData();
+    return Rcpp::List::create(
+        gen_data.getGenData(),
+        finalAdjMat
+    );
 }
 
 //' Runs the pathomove simulation.
