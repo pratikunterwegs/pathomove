@@ -82,7 +82,7 @@ Rcpp::List simulation::do_simulation() {
         }
         //population infection cost by time
         pop.pathogenCost(costInfect);
-        if((gen %% (genmax / 10)) == 0) {
+        if((gen % (genmax / 10)) == 0) {
             Rcpp::Rcout << "gen: " << gen << "\n";
         }
 
