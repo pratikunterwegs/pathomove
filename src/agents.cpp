@@ -182,10 +182,13 @@ void Population::move(Resources &food, const int nThreads) {
     float angle = 0.f;
     // for this increment what angles to sample at
     std::vector<float> sample_angles (static_cast<int>(n_samples), 0.f);
+    std::vector<float> noise_v (static_cast<int>(n_samples), 0.f);
+    float noise_here = noise(rng);
     for (int i_ = 0; i_ < static_cast<int>(n_samples); i_++)
     {
         sample_angles[i_] = angle;
         angle += increment;
+        noise_v[i_] = noise(rng);
     }    
 
     shufflePop();
@@ -219,7 +222,7 @@ void Population::move(Resources &food, const int nThreads) {
                     float suit_origin = (
                         (sF[id] * foodHere) + (sH[id] * agentCounts.first) +
                         (sN[id] * agentCounts.second) +
-                        noise(rng)
+                        noise_here;
                     );
 
                     float newX = sampleX;
@@ -254,7 +257,7 @@ void Population::move(Resources &food, const int nThreads) {
                         float suit_dest = (
                             (sF[id] * foodHere) + (sH[id] * agentCounts.first) +
                             (sN[id] * agentCounts.second) +
-                            noise(rng)
+                            noise_v[j]; // add same very very small noise to all
                         );
 
                         if (suit_dest > suit_origin) {
@@ -371,7 +374,7 @@ std::cauchy_distribution<float> mutation_size(0.0, mShift);
 
 // fun for replication
 void Population::Reproduce() {
-    std::bernoulli_distribution verticalInfect(pTransmit);
+    std::bernoulli_distribution verticalInfect(0.1f);
     std::normal_distribution<float> sprout(0.f, 10.f);
 
     //normalise intake
