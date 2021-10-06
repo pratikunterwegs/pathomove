@@ -27,7 +27,7 @@ Rcpp::List simulation::do_simulation() {
 
     // agent random position
     pop.initPos(food);
-    Rcpp::NumericMatrix finalAdjMat(pop.nAgents, pop.nAgents);
+    Rcpp::List adjMatrices (3);
 
     if (scenario == 0) {
         pTransmit = 0.f;
@@ -80,14 +80,16 @@ Rcpp::List simulation::do_simulation() {
             // Rcpp::Rcout << "logging data at gen: " << gen << "\n";
             gen_data.updateGenData(pop, gen);
         }
+        
         //population infection cost by time
         pop.pathogenCost(costInfect);
+        
         if((gen % (genmax / 10)) == 0) {
             Rcpp::Rcout << "gen: " << gen << "\n";
         }
 
-        if(gen == (genmax - 1)) {
-            finalAdjMat = pop.pbsn.adjMat;
+        if((gen == 0) | (gen == (genmax / 2)) | (gen == genmax - 1)) {
+            adjMatrices.push_back(pop.pbsn.adjMat);
         }
 
         // reproduce
@@ -100,8 +102,8 @@ Rcpp::List simulation::do_simulation() {
     Rcpp::Rcout << "data prepared\n";
 
     return Rcpp::List::create(
-        gen_data.getGenData(),
-        finalAdjMat
+        Named("gen_data") = gen_data.getGenData(),
+        Named("matrices") = adjMatrices
     );
 }
 
