@@ -22,7 +22,7 @@ public:
     Rcpp::NumericMatrix adjMat;
 
     // functions
-    std::vector<float> ntwkMeasures();
-    std::vector<int> getDegree();
+    // std::vector<float> ntwkMeasures();
+    // std::vector<int> getDegree();
 };
 

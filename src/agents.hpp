@@ -30,7 +30,7 @@ public:
         // counters for handling and social metrics
         counter (popsize, 0),
         associations(popsize, 0),
-        degree(popsize, 0),
+        // degree(popsize, 0),
 
         // agent sensory parameters
         n_samples (3.f),
@@ -69,7 +69,7 @@ public:
     // counter and metrics
     std::vector<int> counter;
     std::vector<int> associations; // number of total interactions
-    std::vector<int> degree;
+    // std::vector<int> degree;
 
     // sensory range and foraging
     const float n_samples, range_agents, range_food;

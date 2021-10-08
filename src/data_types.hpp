@@ -27,13 +27,13 @@ public:
         // ecological interactions
         gAssoc (gSampled, std::vector<int>(popsize, 0.f)),
         gTInfected (gSampled, std::vector<int>(popsize, 0.f)),
-        gDegree (gSampled, std::vector<int>(popsize, 0.f)),
+        // gDegree (gSampled, std::vector<int>(popsize, 0.f)),
         gMoved (gSampled, std::vector<float>(popsize, 0.f)),
         // generation specific data
         gNInfected (gSampled, 0),
-        gens (gSampled, 0),
-        gPbsnDiameter (gSampled, 0.f),
-        gPbsnGlobEff (gSampled, 0.f)
+        gens (gSampled, 0)//,
+        // gPbsnDiameter (gSampled, 0.f),
+        // gPbsnGlobEff (gSampled, 0.f)
     {}
     ~genData() {}
 
@@ -47,15 +47,15 @@ public:
 
     std::vector<std::vector<int> > gAssoc;
     std::vector<std::vector<int> > gTInfected;
-    std::vector<std::vector<int> > gDegree;
+    // std::vector<std::vector<int> > gDegree;
     std::vector<std::vector<float> > gMoved;
 
     std::vector<int> gNInfected;
     std::vector<int> gens;
 
     // network metrics
-    std::vector<float> gPbsnDiameter;
-    std::vector<float> gPbsnGlobEff;
+    // std::vector<float> gPbsnDiameter;
+    // std::vector<float> gPbsnGlobEff;
 
     void updateGenData (Population &pop, const int g_);
     Rcpp::List getGenData ();

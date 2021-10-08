@@ -27,7 +27,7 @@ Rcpp::List simulation::do_simulation() {
 
     // agent random position
     pop.initPos(food);
-    Rcpp::List adjMatrices (3);
+    Rcpp::List adjMatrices;
 
     if (scenario == 0) {
         pTransmit = 0.f;
