@@ -27,7 +27,7 @@ Rcpp::List simulation::do_simulation() {
 
     // agent random position
     pop.initPos(food);
-    Rcpp::List adjMatrices;
+    Rcpp::List edgeLists;
 
     if (scenario == 0) {
         pTransmit = 0.f;
@@ -88,8 +88,8 @@ Rcpp::List simulation::do_simulation() {
             Rcpp::Rcout << "gen: " << gen << "\n";
         }
 
-        if((gen == 0) | (gen == (genmax / 2)) | (gen == genmax - 1)) {
-            adjMatrices.push_back(pop.pbsn.adjMat);
+        if((gen == 0) | (gen % 10 == 0) | (gen == genmax - 1)) {
+            edgeList.push_back(pop.pbsn.getNtwkDf());
         }
 
         // reproduce
@@ -103,7 +103,7 @@ Rcpp::List simulation::do_simulation() {
 
     return Rcpp::List::create(
         Named("gen_data") = gen_data.getGenData(),
-        Named("matrices") = adjMatrices
+        Named("edgeLists") = edgeLists
     );
 }
 
