@@ -3,6 +3,33 @@
 #include "network.hpp"
 #include <Rcpp.h>
 
+/// function for dataframe from rcpp matrix
+Rcpp::DataFrame Network::getNtwkDf() {
+	Rcpp::DataFrame ntwkDf;
+	std::vector<int> focal;
+	std::vector<int> edgeWeight;
+
+	for (int n = 0; n < nVertices; ++n)
+	{
+		focal.push_back(n);
+		std::vector<int> subfocal (nVertices - (n+1));
+		for(int m = n+1; m < nVertices; ++m) {
+			focal.push_back(n);
+			subfocal.push_back(m);
+			edgeWeight.push_back(adjMat(n, m));
+		}
+	}
+
+	// make df
+	Rcpp::DataFrame ntwkDf = Rcpp::DataFrame::create(
+		Named("focal") = focal,
+		Named("target") = subfocal,
+		Named("assoc") = edgeWeight
+	);
+
+	return ntwkDf;
+}
+
 /// function to get metrics from adjacency matrix
 // std::vector<float> Network::ntwkMeasures() {
 //     /// including R environment with the igraph package

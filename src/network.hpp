@@ -22,6 +22,7 @@ public:
     Rcpp::NumericMatrix adjMat;
 
     // functions
+    Rcpp::DataFrame getNtwkDf();
     // std::vector<float> ntwkMeasures();
     // std::vector<int> getDegree();
 };
