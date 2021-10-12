@@ -89,7 +89,7 @@ Rcpp::List simulation::do_simulation() {
         }
 
         if((gen == 0) | (gen % 10 == 0) | (gen == genmax - 1)) {
-            edgeList.push_back(pop.pbsn.getNtwkDf());
+            edgeLists.push_back(pop.pbsn.getNtwkDf());
         }
 
         // reproduce
