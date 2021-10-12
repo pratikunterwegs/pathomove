@@ -5,14 +5,13 @@
 
 /// function for dataframe from rcpp matrix
 Rcpp::DataFrame Network::getNtwkDf() {
-	Rcpp::DataFrame ntwkDf;
 	std::vector<int> focal;
+	std::vector<int> subfocal;
 	std::vector<int> edgeWeight;
 
 	for (int n = 0; n < nVertices; ++n)
 	{
 		focal.push_back(n);
-		std::vector<int> subfocal (nVertices - (n+1));
 		for(int m = n+1; m < nVertices; ++m) {
 			focal.push_back(n);
 			subfocal.push_back(m);
