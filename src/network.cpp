@@ -4,7 +4,7 @@
 #include <Rcpp.h>
 
 /// function for dataframe from rcpp matrix
-Rcpp::List Network::getNtwkDf() {
+Rcpp::DataFrame Network::getNtwkDf() {
 	std::vector<int> focal;
 	std::vector<int> subfocal;
 	std::vector<int> edgeWeight;
