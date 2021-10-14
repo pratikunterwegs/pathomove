@@ -88,9 +88,13 @@ Rcpp::List simulation::do_simulation() {
             Rcpp::Rcout << "gen: " << gen << "\n";
         }
 
+        Rcpp::Rcout << "logging edgelist\n";
+
         if((gen == 0) | (gen % 10 == 0) | (gen == genmax - 1)) {
             edgeLists.push_back(pop.pbsn.getNtwkDf());
         }
+
+        Rcpp::Rcout << "logged edgelist\n";
 
         // reproduce
         pop.Reproduce();
