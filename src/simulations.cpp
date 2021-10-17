@@ -84,9 +84,7 @@ Rcpp::List simulation::do_simulation() {
         //population infection cost by time
         pop.pathogenCost(costInfect);
         
-        if((gen % (genmax / 10)) == 0) {
-            Rcpp::Rcout << "gen: " << gen << "\n";
-        }
+        Rcpp::Rcout << "gen: " << gen << "\n";
 
         if((gen == 0) | ((gen % (genmax / 10)) == 0) | (gen == genmax - 1)) {
             edgeLists.push_back(pop.pbsn.getNtwkDf());
