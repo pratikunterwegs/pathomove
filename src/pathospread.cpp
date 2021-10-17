@@ -12,7 +12,7 @@ void Population::introducePathogen(const int initialInfections) {
     // introduce new pathogen 
     shufflePop();
     // loop through the intended number of infections
-    if(nInfected < countInfected) {
+    if(initialInfections > nInfected) {
         for (int i = 0; i < (initialInfections - nInfected);)
         {   
             // look for uninfected agents
