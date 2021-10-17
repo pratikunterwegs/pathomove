@@ -33,22 +33,22 @@ ggplot(l)+
 {t1 = Sys.time()
 invisible(
   x = {
-    a = snevo::run_pathomove(
+    a = run_pathomove(
       scenario = 1,
       popsize = 500,
       nItems = 500,
       landsize = 200,
       nClusters = 50,
-      clusterSpread = 4,
+      clusterSpread = 2,
       tmax = 100,
       genmax = 500,
-      range_food = 1,
-      range_agents = 1,
+      range_food = 1.0,
+      range_agents = 1.0,
       handling_time = 5,
-      regen_time = 50,
-      pTransmit = 0.01,
-      initialInfections = 2,
-      costInfect = 0.02,
+      regen_time = 20,
+      pTransmit = 0.05,
+      initialInfections = 10,
+      costInfect = 0.2,
       nThreads = 2
     )
   }
@@ -148,8 +148,18 @@ ggplot(wts_wide[gen %% 100 == 0 | gen == max(gen)])+
 
 #### explore network ####
 library(igraph)
-g = data[["matrices"]][4:6]
-g = g[[3]]
-g = igraph::graph_from_adjacency_matrix(g, mode = "upper", weighted = TRUE, diag = F)
+# g = data[["matrices"]][4:6]
+# g = g[[3]]
+setnames(b, "assoc", "weight")
+g = igraph::graph_from_data_frame(b[b$weight > 0, ], directed = FALSE)
 
 plot(g, vertex.size = 3, vertex.label=NA)
+
+library(tidygraph)
+library(ggraph)
+
+g = tidygraph::as_tbl_graph(g)
+
+ggraph(g, layout = "mds")+
+  geom_node_point()+
+  geom_edge_link()
