@@ -9,10 +9,10 @@ void Population::introducePathogen(const int initialInfections) {
 
     // recount for safety
     countInfected();
-    // introduce new pathogen only if < 1% are infected
-    if(nInfected < static_cast<int>(std::floor(static_cast<float>(nAgents) * 0.01))) {
-        shufflePop();
-        // loop through the intended number of infections
+    // introduce new pathogen 
+    shufflePop();
+    // loop through the intended number of infections
+    if(nInfected < countInfected) {
         for (int i = 0; i < (initialInfections - nInfected);)
         {   
             // look for uninfected agents
@@ -23,7 +23,6 @@ void Population::introducePathogen(const int initialInfections) {
                 srcInfect[order[i]] = 2; // count as inherited?
                 i++;
             }
-            
         }
     }
     // count after
