@@ -12,17 +12,14 @@ void Population::introducePathogen(const int initialInfections) {
     // introduce new pathogen 
     shufflePop();
     // loop through the intended number of infections
-    if(initialInfections > nInfected) {
-        for (int i = 0; i < (initialInfections - nInfected);)
-        {   
-            // look for uninfected agents
-            if(!infected[order[i]]) {
-                // toggle infected agents boolean for infected
-                infected[order[i]] = true;
-                timeInfected[order[i]] = 1;       
-                srcInfect[order[i]] = 2; // count as inherited?
-                i++;
-            }
+    for (int i = 0; i < initialInfections; i++)
+    {   
+        // look for uninfected agents
+        if(!infected[order[i]]) {
+            // toggle infected agents boolean for infected
+            infected[order[i]] = true;
+            timeInfected[order[i]] = 1;       
+            srcInfect[order[i]] = 2; // count as inherited?
         }
     }
     // count after
