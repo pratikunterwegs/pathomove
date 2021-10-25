@@ -33,7 +33,7 @@ public:
         // degree(popsize, 0),
 
         // agent sensory parameters
-        n_samples (3.f),
+        n_samples (5.f),
         range_agents(range_agents),
         range_food(range_food),
         handling_time(handling_time),
