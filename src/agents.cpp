@@ -374,7 +374,7 @@ std::cauchy_distribution<float> mutation_size(0.0, mShift);
 
 // fun for replication
 void Population::Reproduce() {
-    std::bernoulli_distribution verticalInfect(0.1f);
+    // std::bernoulli_distribution verticalInfect(0.01f);
     std::normal_distribution<float> sprout(0.f, 3.f);
 
     //normalise intake
@@ -414,16 +414,16 @@ void Population::Reproduce() {
         tmp_sH[a] = sH[parent_id];
         tmp_sN[a] = sN[parent_id];
 
-        coord_x_2[a] = coordX[parent_id] + sprout(rng);
-        coord_y_2[a] = coordY[parent_id] + sprout(rng);
+        // coord_x_2[a] = coordX[parent_id] + sprout(rng);
+        // coord_y_2[a] = coordY[parent_id] + sprout(rng);
 
         // vertical transmission of infection.
-        if(infected[parent_id]) {
-            if(verticalInfect(rng)) {
-                infected_2[a] = true;
-                srcInfect[a] = 1;
-            }
-        }
+        // if(infected[parent_id]) {
+        //     if(verticalInfect(rng)) {
+        //         infected_2[a] = true;
+        //         srcInfect[a] = 1;
+        //     }
+        // }
     }
 
     // swap infected and infected_2
