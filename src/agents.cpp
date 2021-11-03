@@ -261,13 +261,13 @@ void Population::move(Resources &food, const int nThreads) {
                         );
 
                         if (suit_dest > suit_origin) {
-                            newX = sampleX;
-                            newY = sampleY;
+                            newX = coordX[id] + (range_move * t1_);
+                            newY = coordY[id] + (range_move * t1_);
                             suit_origin = suit_dest;
                         }
                     }
                     // distance to be moved
-                    moved[id] += range_agents;
+                    moved[id] += range_move;
 
                     // set locations
                     coordX[id] = newX; coordY[id] = newY;

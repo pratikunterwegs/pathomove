@@ -16,7 +16,7 @@
 struct Population {
 public:
     Population(const int popsize, const float range_agents,
-    const float range_food, const int handling_time,
+    const float range_food, const float range_move, const int handling_time,
     float pTransmit) :
         // agents, positions, energy and traits
         nAgents (popsize),
@@ -36,6 +36,7 @@ public:
         n_samples (5.f),
         range_agents(range_agents),
         range_food(range_food),
+        range_move (range_move),
         handling_time(handling_time),
 
         // vectors for agent order, infection status, time infected
@@ -72,7 +73,7 @@ public:
     // std::vector<int> degree;
 
     // sensory range and foraging
-    const float n_samples, range_agents, range_food;
+    const float n_samples, range_agents, range_food, range_move;
     const int handling_time;
 
     // shuffle vector and transmission
