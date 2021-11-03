@@ -35,6 +35,7 @@ public:
         // agent perception and behaviour, food growth
         range_food(range_food),
         range_agents(range_agents),
+        range_move(range_move),
         handling_time(handling_time),
         regen_time(regen_time),
 
