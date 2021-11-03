@@ -121,6 +121,7 @@ Rcpp::List simulation::do_simulation() {
 //' @param genmax The maximum number of generations per simulation.
 //' @param range_food The sensory range for food.
 //' @param range_agents The sensory range for agents.
+//' @param range_move The movement range for agents.
 //' @param handling_time The handling time.
 //' @param regen_time The item regeneration time.
 //' @param pTransmit Probability of transmission.
@@ -138,6 +139,7 @@ Rcpp::List run_pathomove(const int scenario,
                         const int genmax,
                         const float range_food,
                         const float range_agents,
+                        const float range_move,
                         const int handling_time,
                         const int regen_time,
                         float pTransmit,
@@ -147,7 +149,7 @@ Rcpp::List run_pathomove(const int scenario,
                             
     simulation this_sim(popsize, scenario, nItems, landsize,
                         nClusters, clusterSpread, tmax, genmax,
-                        range_food, range_agents,
+                        range_food, range_agents, range_move,
                         handling_time, regen_time,
                         pTransmit, initialInfections, 
                         costInfect, nThreads);
