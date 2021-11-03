@@ -101,8 +101,9 @@ std::vector<int> Population::getNeighbourId (
     std::vector<int> agent_id;
     std::vector<value> near_agents;
     // query for a simple box
+    // neighbours for associations are counted over the MOVEMENT RANGE
     agentRtree.query(bgi::satisfies([&](value const& v) {
-        return bg::distance(v.first, point(xloc, yloc)) < range_agents;}),
+        return bg::distance(v.first, point(xloc, yloc)) < range_move;}),
         std::back_inserter(near_agents));
 
     BOOST_FOREACH(value const& v, near_agents) {
@@ -151,8 +152,9 @@ std::vector<int> Population::getFoodId (
     // check any available
     if (food.nAvailable > 0) {
         // query for a simple box
+        // food is accessed over the MOVEMENT RANGE
         food.rtree.query(bgi::satisfies([&](value const& v) {
-            return bg::distance(v.first, point(xloc, yloc)) < range_food;}),
+            return bg::distance(v.first, point(xloc, yloc)) < range_move;}), 
             std::back_inserter(near_food));
 
         BOOST_FOREACH(value const& v, near_food) {
