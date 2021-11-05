@@ -9,7 +9,7 @@ void genData::updateGenData (Population &pop, const int g_) {
     // std::vector<float> measures = pop.pbsn.ntwkMeasures();
     
     // get pop data
-    gEnergy[i] = pop.energy;
+    gIntake[i] = pop.energy; // this returns the intake! not the net energy
     gSF[i] = pop.sF;
     gSH[i] = pop.sH;
     gSN[i] = pop.sN;
@@ -30,7 +30,7 @@ Rcpp::List genData::getGenData() {
     for (int i = 0; i < gSampled; i++)
     {
         gDataList[i] = DataFrame::create(
-            Named("energy") = gEnergy[i],
+            Named("energy") = gIntake[i],
             Named("sF") = gSF[i],
             Named("sH") = gSH[i],
             Named("sN") = gSN[i],
