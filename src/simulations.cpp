@@ -29,6 +29,9 @@ Rcpp::List simulation::do_simulation() {
     pop.initPos(food);
     Rcpp::List edgeLists;
 
+    // agent data logging increment
+    int increment_log = std::min((static_cast<int>(static_cast<float>(genmax) * 0.001f)), 2);
+
     if (scenario == 0) {
         pTransmit = 0.f;
     }
@@ -76,7 +79,7 @@ Rcpp::List simulation::do_simulation() {
         assert(pop.nInfected <= pop.nAgents);
 
         // update gendata
-        if ((gen == (genmax - 1)) | (gen % 2 == 0)) {
+        if ((gen == (genmax - 1)) | (gen % increment_log == 0)) {
             // Rcpp::Rcout << "logging data at gen: " << gen << "\n";
             gen_data.updateGenData(pop, gen);
         }
