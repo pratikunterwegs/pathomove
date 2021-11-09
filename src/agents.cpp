@@ -416,8 +416,8 @@ void Population::Reproduce() {
         tmp_sH[a] = sH[parent_id];
         tmp_sN[a] = sN[parent_id];
 
-        // coord_x_2[a] = coordX[parent_id] + sprout(rng);
-        // coord_y_2[a] = coordY[parent_id] + sprout(rng);
+        coord_x_2[a] = coordX[parent_id] + sprout(rng);
+        coord_y_2[a] = coordY[parent_id] + sprout(rng);
 
         // vertical transmission of infection.
         // if(infected[parent_id]) {
