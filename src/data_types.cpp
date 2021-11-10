@@ -31,7 +31,7 @@ Rcpp::List genData::getGenData() {
     for (int i = 0; i < gSampled; i++)
     {
         gDataList[i] = DataFrame::create(
-            Named("energy") = gIntake[i],
+            Named("intake") = gIntake[i],
             Named("sF") = gSF[i],
             Named("sH") = gSH[i],
             Named("sN") = gSN[i],
