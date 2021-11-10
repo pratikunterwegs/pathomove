@@ -414,8 +414,8 @@ void Population::Reproduce() {
         tmp_sH[a] = sH[parent_id];
         tmp_sN[a] = sN[parent_id];
 
-        // coord_x_2[a] = coordX[parent_id] + sprout(rng);
-        // coord_y_2[a] = coordY[parent_id] + sprout(rng);
+        coord_x_2[a] = coordX[parent_id] + sprout(rng);
+        coord_y_2[a] = coordY[parent_id] + sprout(rng);
 
         // // vertical transmission of infection.
         // if(infected[parent_id]) {
@@ -431,9 +431,9 @@ void Population::Reproduce() {
     infected_2.clear();
 
     // swap coords
-    // std::swap(coordX, coord_x_2);
-    // std::swap(coordY, coord_y_2);
-    // coord_x_2.clear(); coord_y_2.clear();
+    std::swap(coordX, coord_x_2);
+    std::swap(coordY, coord_y_2);
+    coord_x_2.clear(); coord_y_2.clear();
     
     // reset counter and time infected
     counter = std::vector<int> (nAgents, 0);
