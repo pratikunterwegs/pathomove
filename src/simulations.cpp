@@ -34,7 +34,9 @@ Rcpp::List simulation::do_simulation() {
     Rcpp::Rcout << "created edge list object\n";
 
     // agent data logging increment
-    int increment_log = std::min((static_cast<int>(static_cast<float>(genmax) * 0.001f)), 2);
+    int increment_log = std::max((static_cast<int>(static_cast<float>(genmax) * 0.001f)), 2);
+
+    Rcpp::Rcout << "logging data after gens: " << increment_log << "\n";
 
     if (scenario == 0) {
         pTransmit = 0.f;
