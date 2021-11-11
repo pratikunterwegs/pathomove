@@ -27,7 +27,11 @@ Rcpp::List simulation::do_simulation() {
 
     // agent random position
     pop.initPos(food);
+
+    Rcpp::Rcout << "initialised population positions\n";
     Rcpp::List edgeLists;
+
+    Rcpp::Rcout << "created edge list object\n";
 
     // agent data logging increment
     int increment_log = std::min((static_cast<int>(static_cast<float>(genmax) * 0.001f)), 2);
