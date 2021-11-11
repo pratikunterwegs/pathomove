@@ -22,6 +22,8 @@ public:
         nAgents (popsize),
         coordX (popsize, 0.0f),
         coordY (popsize, 0.0f),
+        initX (popsize, 0.0f),
+        initY (popsize, 0.0f),
         energy (popsize, 0.001),
         sF (popsize, 0.f),
         sH (popsize, 0.f),
@@ -60,6 +62,8 @@ public:
     const int nAgents;
     std::vector<float> coordX;
     std::vector<float> coordY;
+    std::vector<float> initX;
+    std::vector<float> initY;
     std::vector<float> energy;
     // weights
     std::vector<float> sF;

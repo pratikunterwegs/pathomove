@@ -14,6 +14,8 @@ void genData::updateGenData (Population &pop, const int g_) {
     gSF[i] = pop.sF;
     gSH[i] = pop.sH;
     gSN[i] = pop.sN;
+    gX[i] = pop.initX;
+    gY[i] = pop.initY;
     gAssoc[i] = pop.associations;
     gTInfected[i] = pop.timeInfected;
     // gDegree[i] = pop.pbsn.getDegree();
@@ -35,18 +37,17 @@ Rcpp::List genData::getGenData() {
             Named("sF") = gSF[i],
             Named("sH") = gSH[i],
             Named("sN") = gSN[i],
+            Named("x") = gX[i],
+            Named("y") = gY[i],
             Named("assoc") = gAssoc[i],
             Named("t_infec") = gTInfected[i],
-            // Named("degree") = gDegree[i],
             Named("moved") = gMoved[i]
         );
     }
     List dataToReturn = List::create(
         Named("pop_data") = gDataList,
         Named("gens") = gens,
-        Named("n_infected") = gNInfected//,
-        // Named("diameter") = gPbsnDiameter,
-        // Named("glob_eff") = gPbsnGlobEff
+        Named("n_infected") = gNInfected
     );
 
     return dataToReturn;
