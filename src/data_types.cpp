@@ -16,6 +16,8 @@ void genData::updateGenData (Population &pop, const int g_) {
     gSN[i] = pop.sN;
     gX[i] = pop.initX;
     gY[i] = pop.initY;
+    gXn[i] = pop.coordX;
+    gYn[i] = pop.coordY;
     gAssoc[i] = pop.associations;
     gTInfected[i] = pop.timeInfected;
     // gDegree[i] = pop.pbsn.getDegree();
@@ -39,6 +41,8 @@ Rcpp::List genData::getGenData() {
             Named("sN") = gSN[i],
             Named("x") = gX[i],
             Named("y") = gY[i],
+            Named("xn") = gXn[i],
+            Named("yn") = gYn[i],
             Named("assoc") = gAssoc[i],
             Named("t_infec") = gTInfected[i],
             Named("moved") = gMoved[i]
