@@ -233,7 +233,7 @@ void Population::move(Resources &food, const int nThreads) {
                     float suit_origin = (
                         (sF[id] * foodHere) + (sH[id] * agentCounts.first) +
                         (sN[id] * agentCounts.second) +
-                        noise_v[id][0];
+                        noise_v[id][0]
                     );
 
                     float newX = sampleX;
