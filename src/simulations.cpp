@@ -74,7 +74,7 @@ Rcpp::List simulation::do_simulation() {
             if(gen == std::max(gen_init - 1, 2)) {
                 mdPre.updateMoveData(pop, t);
             }
-            if(gen == std::max(genmax - 1)) {
+            if(gen == (genmax - 1)) {
                 mdPost.updateMoveData(pop, t);
             }
 

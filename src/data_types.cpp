@@ -64,17 +64,16 @@ void moveData::updateMoveData(Population &pop, const int t_) {
     x[t_] = pop.coordX;
     y[t_] = pop.coordX;
 
-    id_
 }
 
-Rcpp::List getMoveData() {
+Rcpp::List moveData::getMoveData() {
     Rcpp::List mDataList (tmax);
     std::vector<int> id(popsize, 0);
     std::iota(std::begin(id), std::end(id), 0);
 
     for (int i = 0; i < tmax; i++)
     {
-        gDataList[i] = DataFrame::create(
+        mDataList[i] = DataFrame::create(
             Named("time") = timesteps[i],
             Named("x") = x[i],
             Named("y") = y[i],
