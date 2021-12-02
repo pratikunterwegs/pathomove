@@ -62,7 +62,7 @@ void moveData::updateMoveData(Population &pop, const int t_) {
 
     timesteps[t_] = std::vector<int> (popsize, t_);
     x[t_] = pop.coordX;
-    y[t_] = pop.coordX;
+    y[t_] = pop.coordY;
 
 }
 
