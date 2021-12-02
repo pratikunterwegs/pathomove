@@ -4,58 +4,79 @@ remove.packages("snevo")
 Rcpp::compileAttributes()
 devtools::build()
 {sink(file = "install_output.log"); devtools::install(upgrade = "never"); sink()}
-devtools::document()
+# devtools::document()
 
 detach(package:snevo)
 library(snevo)
 library(ggplot2)
 library(data.table)
 
-l = snevo::get_test_landscape(
-  nItems = 1000,
-  landsize = 100,
-  nClusters = 200, 
-  clusterSpread = 1,
-  regen_time = 100
-)
-ggplot(l)+
-  geom_point(
-    aes(x, y, col = tAvail)
-    # size = 0.3
-  )+
-  scale_colour_viridis_b(
-    option = "H",
-    direction = 1,
-    breaks = c(0, 1, 2, 5, 10)
-  )+
-  coord_equal()
+# l = snevo::get_test_landscape(
+#   nItems = 1000,
+#   landsize = 100,
+#   nClusters = 200, 
+#   clusterSpread = 1,
+#   regen_time = 100
+# )
+# ggplot(l)+
+#   geom_point(
+#     aes(x, y, col = tAvail)
+#     # size = 0.3
+#   )+
+#   scale_colour_viridis_b(
+#     option = "H",
+#     direction = 1,
+#     breaks = c(0, 1, 2, 5, 10)
+#   )+
+#   coord_equal()
 
-{t1 = Sys.time()
-invisible(
-  x = {
+# {t1 = Sys.time()
+# invisible(
+#   x = {
     a = run_pathomove(
-      scenario = 1,
-      popsize = 500,
-      nItems = 500,
-      landsize = 200,
-      nClusters = 50,
-      clusterSpread = 2,
+      scenario = 0,
+      popsize = 50,
+      nItems = 1000,
+      landsize = 50,
+      nClusters = 100,
+      clusterSpread = 1,
       tmax = 100,
-      genmax = 50,
-      range_food = 2.0,
-      range_agents = 2.0,
+      genmax = 200,
+      range_food = 1.0,
+      range_agents = 1.0,
       range_move = 1.0,
       handling_time = 5,
-      regen_time = 20,
+      regen_time = 50,
       pTransmit = 0.05,
       initialInfections = 10,
       costInfect = 0.2,
       nThreads = 2
     )
-  }
-)
-t2 = Sys.time()
-t2 - t1}
+#   }
+# )
+# t2 = Sys.time()
+# t2 - t1}
+
+# movement data
+m1= a[["move_pre"]] |> rbindlist()
+m2= a[["move_post"]] |> rbindlist()
+
+ggplot(m1)+
+  geom_path(
+    aes(x, y, group = id, col = id),
+    # size = 0.1
+  )+
+  # geom_point(
+  #   aes(x, y, col = id),
+  #   # size = 0.1
+  # )+
+  scale_colour_viridis_c(
+    option = "H"
+  )+
+  coord_equal(
+    # xlim = c(0, 50),
+    # ylim = c(0, 50)
+  )
 
 data = a
 a = data[[1]]
