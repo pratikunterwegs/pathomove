@@ -193,10 +193,10 @@ void Population::move(Resources &food, const int nThreads) {
     }
 
     // make random noise for each individual and each sample
-    std::vector<std::vector<float> > noise_v (nAgents, std::vector<float>(static_cast<int>(n_samples), 0.f));
+    std::vector<std::vector<float> > noise_v (nAgents, std::vector<float>(static_cast<int>(n_samples+1), 0.f));
     for (size_t i_ = 0; i_ < noise_v.size(); i_++)
     {
-        for (size_t j_ = 0; j_ < static_cast<size_t>(n_samples); j_++)
+        for (size_t j_ = 0; j_ <= static_cast<size_t>(n_samples); j_++)
         {
             noise_v[i_][j_] = noise(rng);
         }
@@ -232,7 +232,8 @@ void Population::move(Resources &food, const int nThreads) {
                     // get suitability current
                     float suit_origin = (
                         (sF[id] * foodHere) + (sH[id] * agentCounts.first) +
-                        (sN[id] * agentCounts.second)
+                        (sN[id] * agentCounts.second) +
+                        noise_v[id][0];
                     );
 
                     float newX = sampleX;
@@ -267,7 +268,7 @@ void Population::move(Resources &food, const int nThreads) {
                         float suit_dest = (
                             (sF[id] * foodHere) + (sH[id] * agentCounts.first) +
                             (sN[id] * agentCounts.second) +
-                            noise_v[id][j] // add same very very small noise to all
+                            noise_v[id][j+1] // add same very very small noise to all
                         );
 
                         if (suit_dest > suit_origin) {
