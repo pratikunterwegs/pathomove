@@ -15,6 +15,7 @@ run_pathomove(
   genmax,
   range_food,
   range_agents,
+  range_move,
   handling_time,
   regen_time,
   pTransmit,
@@ -43,6 +44,8 @@ run_pathomove(
 \item{range_food}{The sensory range for food.}
 
 \item{range_agents}{The sensory range for agents.}
+
+\item{range_move}{The movement range for agents.}
 
 \item{handling_time}{The handling time.}
 

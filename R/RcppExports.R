@@ -28,6 +28,7 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' @param genmax The maximum number of generations per simulation.
 #' @param range_food The sensory range for food.
 #' @param range_agents The sensory range for agents.
+#' @param range_move The movement range for agents.
 #' @param handling_time The handling time.
 #' @param regen_time The item regeneration time.
 #' @param pTransmit Probability of transmission.
@@ -35,7 +36,7 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' @param costInfect Cost infection.
 #' @param nThreads How many threads to parallelise over.
 #' @return A data frame of the evolved population traits.
-run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads) {
-    .Call(`_snevo_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads)
+run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads) {
+    .Call(`_snevo_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads)
 }
 

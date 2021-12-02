@@ -12,11 +12,11 @@ library(ggplot2)
 library(data.table)
 
 l = snevo::get_test_landscape(
-  nItems = 500,
-  landsize = 200,
-  nClusters = 100, 
-  clusterSpread = 10,
-  regen_time = 50
+  nItems = 1000,
+  landsize = 100,
+  nClusters = 200, 
+  clusterSpread = 1,
+  regen_time = 100
 )
 ggplot(l)+
   geom_point(
@@ -41,9 +41,10 @@ invisible(
       nClusters = 50,
       clusterSpread = 2,
       tmax = 100,
-      genmax = 500,
-      range_food = 1.0,
-      range_agents = 1.0,
+      genmax = 50,
+      range_food = 2.0,
+      range_agents = 2.0,
+      range_move = 1.0,
       handling_time = 5,
       regen_time = 20,
       pTransmit = 0.05,

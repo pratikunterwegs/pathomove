@@ -103,8 +103,9 @@ std::vector<int> Population::getNeighbourId (
     std::vector<int> agent_id;
     std::vector<value> near_agents;
     // query for a simple box
+    // neighbours for associations are counted over the MOVEMENT RANGE
     agentRtree.query(bgi::satisfies([&](value const& v) {
-        return bg::distance(v.first, point(xloc, yloc)) < range_agents;}),
+        return bg::distance(v.first, point(xloc, yloc)) < range_move;}),
         std::back_inserter(near_agents));
 
     BOOST_FOREACH(value const& v, near_agents) {
@@ -153,8 +154,9 @@ std::vector<int> Population::getFoodId (
     // check any available
     if (food.nAvailable > 0) {
         // query for a simple box
+        // food is accessed over the MOVEMENT RANGE
         food.rtree.query(bgi::satisfies([&](value const& v) {
-            return bg::distance(v.first, point(xloc, yloc)) < range_food;}),
+            return bg::distance(v.first, point(xloc, yloc)) < range_move;}), 
             std::back_inserter(near_food));
 
         BOOST_FOREACH(value const& v, near_food) {
@@ -263,13 +265,13 @@ void Population::move(Resources &food, const int nThreads) {
                         );
 
                         if (suit_dest > suit_origin) {
-                            newX = sampleX;
-                            newY = sampleY;
+                            newX = coordX[id] + (range_move * t1_);
+                            newY = coordY[id] + (range_move * t1_);
                             suit_origin = suit_dest;
                         }
                     }
                     // distance to be moved
-                    moved[id] += range_agents;
+                    moved[id] += range_move;
 
                     // set locations
                     coordX[id] = newX; coordY[id] = newY;
@@ -376,7 +378,7 @@ std::cauchy_distribution<float> mutation_size(0.0, mShift);
 
 // fun for replication
 void Population::Reproduce() {
-    std::bernoulli_distribution verticalInfect(0.1f);
+    // std::bernoulli_distribution verticalInfect(0.01f);
     std::normal_distribution<float> sprout(0.f, 3.f);
 
     //normalise intake

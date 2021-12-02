@@ -15,6 +15,7 @@ public:
                const int genmax,
                const float range_food,
                const float range_agents,
+               const float range_move,
                const int handling_time,
                const int regen_time,
                float pTransmit,
@@ -22,7 +23,7 @@ public:
                const float costInfect,
                const int nThreads):
         // population, food, and data structures
-        pop (popsize, range_agents, range_food, handling_time, pTransmit),
+        pop (popsize, range_agents, range_food, range_move, handling_time, pTransmit),
         food(nItems, landsize, nClusters, clusterSpread, regen_time),
         gen_data (genmax, popsize, std::max(static_cast<int>(static_cast<float>(genmax) * 0.001f), 2)), // increment hardcoded
 
@@ -34,6 +35,7 @@ public:
         // agent perception and behaviour, food growth
         range_food(range_food),
         range_agents(range_agents),
+        range_move(range_move),
         handling_time(handling_time),
         regen_time(regen_time),
 
@@ -51,7 +53,7 @@ public:
     Resources food;
     genData gen_data;
     const int scenario, tmax, genmax;
-    const float range_food, range_agents;
+    const float range_food, range_agents, range_move;
     const int handling_time;
 
     const int regen_time, initialInfections;
@@ -73,6 +75,7 @@ Rcpp::List run_pathomove(const int scenario,
                         const int genmax,
                         const float range_food,
                         const float range_agents,
+                        const float range_move,
                         const int handling_time,
                         const int regen_time,
                         float pTransmit,
