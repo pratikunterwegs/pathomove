@@ -24,6 +24,11 @@ public:
         gSF (gSampled, std::vector<float>(popsize, 0.f)),
         gSH (gSampled, std::vector<float>(popsize, 0.f)),
         gSN (gSampled, std::vector<float>(popsize, 0.f)),
+        // initial positions
+        gX (gSampled, std::vector<float>(popsize, 0.f)),
+        gY (gSampled, std::vector<float>(popsize, 0.f)),
+        gXn (gSampled, std::vector<float>(popsize, 0.f)),
+        gYn (gSampled, std::vector<float>(popsize, 0.f)),
         // ecological interactions
         gAssoc (gSampled, std::vector<int>(popsize, 0.f)),
         gTInfected (gSampled, std::vector<int>(popsize, 0.f)),
@@ -44,6 +49,11 @@ public:
     std::vector<std::vector<float> > gSF;
     std::vector<std::vector<float> > gSH;
     std::vector<std::vector<float> > gSN;
+
+    std::vector<std::vector<float> > gX;
+    std::vector<std::vector<float> > gY;
+    std::vector<std::vector<float> > gXn;
+    std::vector<std::vector<float> > gYn;
 
     std::vector<std::vector<int> > gAssoc;
     std::vector<std::vector<int> > gTInfected;

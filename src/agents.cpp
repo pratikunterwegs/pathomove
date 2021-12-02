@@ -51,7 +51,9 @@ std::uniform_real_distribution<float> agent_ran_pos(0.0f, 1.f);
 void Population::initPos(Resources food) {
     for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
         coordX[i] = agent_ran_pos(rng) * food.dSize;
+        initX[i] = coordX[i];
         coordY[i] = agent_ran_pos(rng) * food.dSize;
+        initY[i] = coordY[i];
     }
     updateRtree();
 }
@@ -419,7 +421,11 @@ void Population::Reproduce() {
         coord_x_2[a] = coordX[parent_id] + sprout(rng);
         coord_y_2[a] = coordY[parent_id] + sprout(rng);
 
-        // vertical transmission of infection.
+        // edit initial positions
+        initX[a] = coord_x_2[a];
+        initY[a] = coord_y_2[a];
+
+        // // vertical transmission of infection.
         // if(infected[parent_id]) {
         //     if(verticalInfect(rng)) {
         //         infected_2[a] = true;

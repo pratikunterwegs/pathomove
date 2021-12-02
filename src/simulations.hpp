@@ -25,7 +25,7 @@ public:
         // population, food, and data structures
         pop (popsize, range_agents, range_food, range_move, handling_time, pTransmit),
         food(nItems, landsize, nClusters, clusterSpread, regen_time),
-        gen_data (genmax, popsize, 2), // increment hardcoded
+        gen_data (genmax, popsize, std::max(static_cast<int>(static_cast<float>(genmax) * 0.001f), 2)), // increment hardcoded
 
         // eco-evolutionary parameters
         scenario(scenario),
