@@ -272,8 +272,18 @@ void Population::move(Resources &food, const int nThreads) {
                         );
 
                         if (suit_dest > suit_origin) {
-                            newX = sampleX;
-                            newY = sampleY;
+                            // where does the individual really go
+                            newX = coordX[id] + (range_move * t1_);
+                            newY = coordY[id] + (range_move * t1_);
+
+                            // crudely wrap MOVEMENT location
+                            if((newX > food.dSize) | (newX < 0.f)) {
+                                newX = std::fabs(std::fmod(newX, food.dSize));
+                            }
+                            if((newY > food.dSize) | (newY < 0.f)) {
+                                newY = std::fabs(std::fmod(newY, food.dSize));
+                            }
+
                             assert(newX < food.dSize && newX > 0.f);
                             assert(newY < food.dSize && newY > 0.f);
                             suit_origin = suit_dest;
