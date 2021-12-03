@@ -274,7 +274,7 @@ void Population::move(Resources &food, const int nThreads) {
                         if (suit_dest > suit_origin) {
                             // where does the individual really go
                             newX = coordX[id] + (range_move * t1_);
-                            newY = coordY[id] + (range_move * t1_);
+                            newY = coordY[id] + (range_move * t2_);
 
                             // crudely wrap MOVEMENT location
                             if((newX > food.dSize) | (newX < 0.f)) {
