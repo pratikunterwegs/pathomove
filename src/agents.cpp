@@ -175,6 +175,7 @@ std::vector<int> Population::getFoodId (
 
 /// rng for suitability
 std::normal_distribution<float> noise(0.f, 0.0001f);
+std::cauchy_distribution<float> noise_cauchy(0.f, 0.001f);
 
 /// population movement function
 void Population::move(Resources &food, const int nThreads) {
@@ -186,13 +187,20 @@ void Population::move(Resources &food, const int nThreads) {
     float angle = 0.f;
     // for this increment what angles to sample at
     std::vector<float> sample_angles (static_cast<int>(n_samples), 0.f);
-    std::vector<float> noise_v (static_cast<int>(n_samples), 0.f);
-    float noise_here = noise(rng);
     for (int i_ = 0; i_ < static_cast<int>(n_samples); i_++)
     {
         sample_angles[i_] = angle;
         angle += increment;
-        noise_v[i_] = noise(rng);
+    }
+
+    // make random noise for each individual and each sample
+    std::vector<std::vector<float> > noise_v (nAgents, std::vector<float>(static_cast<int>(n_samples), 0.f));
+    for (size_t i_ = 0; i_ < noise_v.size(); i_++)
+    {
+        for (size_t j_ = 0; j_ < static_cast<size_t>(n_samples); j_++)
+        {
+            noise_v[i_][j_] = noise_cauchy(rng);
+        }
     }    
 
     shufflePop();
@@ -225,8 +233,7 @@ void Population::move(Resources &food, const int nThreads) {
                     // get suitability current
                     float suit_origin = (
                         (sF[id] * foodHere) + (sH[id] * agentCounts.first) +
-                        (sN[id] * agentCounts.second) +
-                        noise_here
+                        (sN[id] * agentCounts.second)
                     );
 
                     float newX = sampleX;
@@ -261,12 +268,24 @@ void Population::move(Resources &food, const int nThreads) {
                         float suit_dest = (
                             (sF[id] * foodHere) + (sH[id] * agentCounts.first) +
                             (sN[id] * agentCounts.second) +
-                            noise_v[j] // add same very very small noise to all
+                            noise_v[id][j] // add same very very small noise to all
                         );
 
                         if (suit_dest > suit_origin) {
+                            // where does the individual really go
                             newX = coordX[id] + (range_move * t1_);
-                            newY = coordY[id] + (range_move * t1_);
+                            newY = coordY[id] + (range_move * t2_);
+
+                            // crudely wrap MOVEMENT location
+                            if((newX > food.dSize) | (newX < 0.f)) {
+                                newX = std::fabs(std::fmod(newX, food.dSize));
+                            }
+                            if((newY > food.dSize) | (newY < 0.f)) {
+                                newY = std::fabs(std::fmod(newY, food.dSize));
+                            }
+
+                            assert(newX < food.dSize && newX > 0.f);
+                            assert(newY < food.dSize && newY > 0.f);
                             suit_origin = suit_dest;
                         }
                     }

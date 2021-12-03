@@ -45,7 +45,11 @@ public:
         pTransmit(pTransmit),
 
         // parallelisation
-        nThreads (nThreads)
+        nThreads (nThreads),
+
+        // movement data
+        mdPre(tmax, popsize),
+        mdPost(tmax, popsize)
     {}
     ~simulation() {}
 
@@ -60,6 +64,8 @@ public:
     const float costInfect;
     float pTransmit;
     int nThreads;
+
+    moveData mdPre, mdPost;
 
     // funs
     Rcpp::List do_simulation();

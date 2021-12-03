@@ -46,6 +46,7 @@ Rcpp::List simulation::do_simulation() {
         gen_init = static_cast<int>(std::round(static_cast<float>(genmax) * 0.667));
         
     }
+
     // go over gens
     for(int gen = 0; gen < genmax; gen++) {
         // food.initResources();
@@ -68,6 +69,15 @@ Rcpp::List simulation::do_simulation() {
             pop.updateRtree();
             // movement section
             pop.move(food, nThreads);
+
+            // log movement
+            if(gen == std::max(gen_init - 1, 2)) {
+                mdPre.updateMoveData(pop, t);
+            }
+            if(gen == (genmax - 1)) {
+                mdPost.updateMoveData(pop, t);
+            }
+
             // foraging
             pop.forage(food, nThreads);
             // count associations
@@ -111,7 +121,9 @@ Rcpp::List simulation::do_simulation() {
 
     return Rcpp::List::create(
         Named("gen_data") = gen_data.getGenData(),
-        Named("edgeLists") = edgeLists
+        Named("edgeLists") = edgeLists,
+        Named("move_pre") = mdPre.getMoveData(),
+        Named("move_post") = mdPost.getMoveData()
     );
 }
 
