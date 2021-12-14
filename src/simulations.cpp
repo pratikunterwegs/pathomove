@@ -47,19 +47,28 @@ Rcpp::List simulation::do_simulation() {
         
     }
 
+    Rcpp::Rcout << "spillover in gen: " << gen_init << "\n";
+
     // go over gens
     for(int gen = 0; gen < genmax; gen++) {
+
+        Rcpp::Rcout << "gen = " << gen << "\n";
+
         // food.initResources();
         food.countAvailable();
-        // Rcpp::Rcout << "food available = " << food.nAvailable << "\n";
+        Rcpp::Rcout << "food available = " << food.nAvailable << "\n";
 
         // reset counter and positions
         pop.counter = std::vector<int> (pop.nAgents, 0);
+        Rcpp::Rcout << "resetting agent counter\n";
         // pop.initPos(food);
 
         if((scenario > 0) && (gen > gen_init)) {
             pop.introducePathogen(initialInfections);
         }
+        Rcpp::Rcout << "introduced pathogen if applicable\n";
+
+        Rcpp::Rcout << "entering ecological timescale\n";
 
         // timesteps start here
         for (size_t t = 0; t < static_cast<size_t>(tmax); t++)
