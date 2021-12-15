@@ -301,7 +301,7 @@ void Population::move(const Resources &food, const int nThreads) {
 }
 
 // function to paralellise choice of forage item
-std::vector<int> Population::pickForageItem(const Resources &food, const int nThreads){
+void Population::pickForageItem(const Resources &food, const int nThreads){
     shufflePop();
     // nearest food
     std::vector<int> idTargetFood (nAgents, -1);
@@ -332,13 +332,11 @@ std::vector<int> Population::pickForageItem(const Resources &food, const int nTh
         }
     );
 
-    return idTargetFood;
+    forageItem = idTargetFood;
 }
 
 // function to exploitatively forage on picked forage items
 void Population::doForage(Resources &food, const int nThreads) {
-    std::vector<int> idTargetFood = pickForageItem(food, nThreads);
-
     // all agents have picked a food item if they can forage
     // now forage in a serial loop --- this cannot be parallelised
     // this order is randomised
@@ -348,7 +346,7 @@ void Population::doForage(Resources &food, const int nThreads) {
         if ((counter[id] > 0) | (food.nAvailable == 0)) {
             // nothing
         } else {
-            int thisItem = idTargetFood[id]; //the item picked by this agent
+            int thisItem = forageItem[id]; //the item picked by this agent
             // check selected item is available
             if (thisItem != -1)
             {

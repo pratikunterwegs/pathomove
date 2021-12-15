@@ -43,6 +43,7 @@ public:
 
         // vectors for agent order, infection status, time infected
         order(popsize, 1),
+        forageItem(popsize, -1),
         infected(popsize, false),//,
         timeInfected(popsize, 0),
 
@@ -82,6 +83,7 @@ public:
 
     // shuffle vector and transmission
     std::vector<int> order;
+    std::vector<int> forageItem;
     std::vector<bool> infected;
     std::vector<int> timeInfected;
     float pTransmit;
@@ -125,7 +127,7 @@ public:
 
     // functions to move and forage on a landscape
     void move(const Resources &food, const int nThreads);
-    std::vector<int> pickForageItem(const Resources &food, const int nThreads);
+    void pickForageItem(const Resources &food, const int nThreads);
     void doForage(Resources &food, const int nThreads);
     
     // funs to handle fitness and reproduce
