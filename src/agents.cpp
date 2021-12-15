@@ -335,6 +335,10 @@ std::vector<int> Population::pickForageItem(const Resources &food, const int nTh
     return idTargetFood;
 }
 
+// function to exploitatively forage on picked forage items
+void Population::doForage(Resources &food, const int nThreads) {
+    std::vector<int> idTargetFood = pickForageItem(food, nThreads);
+
     // all agents have picked a food item if they can forage
     // now forage in a serial loop --- this cannot be parallelised
     // this order is randomised
