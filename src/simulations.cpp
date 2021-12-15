@@ -87,8 +87,11 @@ Rcpp::List simulation::do_simulation() {
                 mdPost.updateMoveData(pop, t);
             }
 
-            // foraging
-            pop.forage(food, nThreads);
+            // foraging -- split into parallelised picking
+            // and non-parallel exploitation
+            pop.pickForageItem(food, nThreads);
+            pop.doForage(food, nThreads);
+
             // count associations
             pop.countAssoc(nThreads);
             if((scenario > 0) && (gen > gen_init)) {
