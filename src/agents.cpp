@@ -119,7 +119,7 @@ std::vector<int> Population::getNeighbourId (
 
 // general function for items within distance
 int Population::countFood (
-    Resources &food,
+    const Resources &food,
     const float xloc, const float yloc) {
 
     int nFood = 0;
@@ -146,7 +146,7 @@ int Population::countFood (
 
 // function for the nearest available food item
 std::vector<int> Population::getFoodId (
-    Resources &food,
+    const Resources &food,
     const float xloc, const float yloc) {
         
     std::vector<int> food_id;
@@ -178,7 +178,7 @@ std::normal_distribution<float> noise(0.f, 0.0001f);
 std::cauchy_distribution<float> noise_cauchy(0.f, 0.001f);
 
 /// population movement function
-void Population::move(Resources &food, const int nThreads) {
+void Population::move(const Resources &food, const int nThreads) {
 
     float twopi = 2.f * M_PI;
     

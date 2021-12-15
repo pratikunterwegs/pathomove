@@ -109,10 +109,10 @@ public:
     void updateRtree();
 
     int countFood (
-        Resources &food, const float xloc, const float yloc);
+        const Resources &food, const float xloc, const float yloc);
     
     std::vector<int> getFoodId (
-        Resources &food,
+        const Resources &food,
         const float xloc, const float yloc
     );
     
@@ -124,8 +124,9 @@ public:
     );
 
     // functions to move and forage on a landscape
-    void move(Resources &food, const int nThreads);
-    void forage(Resources &food, const int nThreads);
+    void move(const Resources &food, const int nThreads);
+    std::vector<int> pickForageItem(const Resources &food, const int nThreads);
+    void doForage(Resources &food, const int nThreads);
     
     // funs to handle fitness and reproduce
     std::vector<float> handleFitness();
