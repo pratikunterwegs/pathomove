@@ -300,7 +300,8 @@ void Population::move(Resources &food, const int nThreads) {
     );
 }
 
-void Population::forage(Resources &food, const int nThreads){
+// function to paralellise choice of forage item
+std::vector<int> Population::pickForageItem(const Resources &food, const int nThreads){
     shufflePop();
     // nearest food
     std::vector<int> idTargetFood (nAgents, -1);
@@ -330,6 +331,9 @@ void Population::forage(Resources &food, const int nThreads){
             }
         }
     );
+
+    return idTargetFood;
+}
 
     // all agents have picked a food item if they can forage
     // now forage in a serial loop --- this cannot be parallelised
