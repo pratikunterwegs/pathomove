@@ -75,28 +75,42 @@ Rcpp::List simulation::do_simulation() {
         {
             // resources regrow
             food.regenerate();
+
+            Rcpp::Rcout << "regenerated food\n";
+
             pop.updateRtree();
+
+            Rcpp::Rcout << "updated pop positions\n";
+
             // movement section
             pop.move(food, nThreads);
+
+            Rcpp::Rcout << "moved pop";
 
             // log movement
             if(gen == std::max(gen_init - 1, 2)) {
                 mdPre.updateMoveData(pop, t);
+                Rcpp::Rcout << "logging movement initial\n";
             }
             if(gen == (genmax - 1)) {
                 mdPost.updateMoveData(pop, t);
+                Rcpp::Rcout << "logging movement final\n";
             }
 
             // foraging -- split into parallelised picking
             // and non-parallel exploitation
             pop.pickForageItem(food, nThreads);
+            Rcpp::Rcout << "picked forage item\n";
             pop.doForage(food, nThreads);
+            Rcpp::Rcout << "did foraging\n";
 
             // count associations
             pop.countAssoc(nThreads);
+            Rcpp::Rcout << "counted associations\n";
             if((scenario > 0) && (gen > gen_init)) {
                 // disease
                 pop.pathogenSpread();
+                Rcpp::Rcout << "spread pathogen\n";
             }
 
             // timestep ends here
@@ -110,6 +124,7 @@ Rcpp::List simulation::do_simulation() {
         if ((gen == (genmax - 1)) | (gen % increment_log == 0)) {
             // Rcpp::Rcout << "logging data at gen: " << gen << "\n";
             gen_data.updateGenData(pop, gen);
+            Rcpp::Rcout << "updated gen data\n";
         }
         
         //population infection cost by time
