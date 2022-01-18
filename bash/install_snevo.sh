@@ -7,4 +7,4 @@ ml load tbb/4.4.2.152
 
 # here working in R
 Rscript --slave -e 'devtools::build()'
-Rscript --slave -e 'sink("install_log.log"); devtools::install(); sink()'
+Rscript --slave -e 'sink("install_log.log"); devtools::install(upgrade = "never"); sink()'
