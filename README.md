@@ -1,6 +1,45 @@
-# Individual-based Model for the Evolution of Movement Rules and the Structure of Emergent Social Networks
+# Individual-based Model for the Evolution of Animal Movement Strategies under the Risk of Pathogen Spread
 
-This is a small `Rcpp` model tying together a number of interesting tools to examine the evolution of animal movement rules in the context of exploitation competition and infectious pathogen transmission, and the consequences of evolved movement rules on the structure of emergent proximity-based animal social networks.
+<!-- badges: start -->
+  [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+  <!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4314905.svg)](https://doi.org/10.5281/zenodo.4033154) -->
+  [![R build status](https://github.com/pratikunterwegs/pathomove/workflows/R-CMD-check/badge.svg)](https://github.com/pratikunterwegs/pathomove/actions)
+  [![codecov.io](https://codecov.io/github/pratikunterwegs/pathomove/coverage.svg?branch=master)](https://codecov.io/github/pratikunterwegs/pathomove/branch/master)
+<!-- badges: end -->
+
+`pathomove` is a mechanistic, individual-based model that simualtes the evolution of animal movement rules in the context of exploitation competition and infectious pathogen transmission.
+
+## Contact
+
+Get in touch with me at p.r.gupte@rug.nl, or pratikgupte16@gmail.com.
+
+## Simulation model
+
+This model ties together a number of different concepts:
+
+1. Mechanistic modelling of the evolution of animal movement decisions, following a framework from the simulation model [_Kleptmove_ (Netz 2021)](https://doi.org/10.5281/zenodo.4905476).
+
+2. Exploitation competition for discrete food items, similar to _Kleptomove_, but distributed in continuous space, rather than on a grid.
+
+3. The introduction and spread of an infectious pathogen between agents when they are close together. The pathogen causes a chronic 'disease', which reduces net energy, and hence fitness.
+
+## Simulation methods and data
+
+The model combines a number of interesting tools to implement its conceptual components:
+
+1. **Familiarity in R, speed in C++** The simulation is written in C++, but disguised as easy-to-use `R` functions. `Rcpp` is used to link the two. The model runs with a single function, `run_pathomove`.
+
+2. **R functions return R objects** Simulation results from `run_pathomove` are returned to `R` as well known objects (lists and data.frames).
+
+3. **Fast and efficient distance calculations** Distances between agent pairs, and between agents and food items, are calculated many hundreds of thousands of times, using [`boost` Rtrees](https://www.boost.org/doc/libs/1_76_0/libs/geometry/doc/html/geometry/spatial_indexes.html).
+
+4. **Speed boosts using TBB multi-threading** Internal simulation functions are sped up using Intel's Thread Building Blocks (TBB) library, which is conveniently included with `RcppParallel`, making it cross-platform.
+
+5. **Testing Rcpp functions** The internal C++ functions underlying the main simulation code (`run_pathomove`) are tested (some!) using Catch testing, which is integrated with the R package `testthat`.
+
+## Package documentation
+
+There is no standalone package documentation as yet, but each function is documented, and this can be accessed through R help: `?pathomove::run_pathomove`.
 
 ## Running the model
 
@@ -17,7 +56,7 @@ The package depends on the following R packages, which are installed by default 
 
 3. `BH` to make the Boost.Geometry headers available to the Rcpp package. The package _does not_ explicitly link to system Boost installations (though this is possible).
 
-4. `igraph` to calculate social network metrics within the C++ simulation.
+<!-- 4. `igraph` to calculate social network metrics within the C++ simulation. -->
 
 ### RcppParallel on Windows
 
@@ -27,19 +66,10 @@ This is not necessary on Linux systems.
 
 ### Installation
 
-1. Clone the repository using SSH by running `git clone git@github.com:pratikunterwegs/snevo.git`
+1. Clone the repository using SSH by running `git clone git@github.com:pratikunterwegs/pathomove.git`.
 
-2. In `R`, build the package using `devtools::build()`
+2. In `R`, build the package using `devtools::build()`.
 
-3. In `R`, install the package using `devtools::install()`
+3. In `R`, install the package using `devtools::install()`.
 
-4. Try out the model using the script `scripts/chk_pkg_install.R`
-
-## Fast distance calculations using Boost Rtrees
-
-Distances between agents and between agents and food items are calculated using [`boost` Rtrees](https://www.boost.org/doc/libs/1_76_0/libs/geometry/doc/html/geometry/spatial_indexes.html).
-
-
-## Simulations launched from, and data returned to, `R`
-
-The simulations are disguised as easy-to-use `R` functions, using `Rcpp` to obscure the scary `C++` code that lies beneath. The simulation data are also returned to `R`, as well known objects (lists and data.frames).
+4. Try out the model using the script `scripts/chk_pkg_install.R`. Be warned that specifying either large number of individuals, generations, or timesteps within generations, _will_ take a long time, and may brick up lower-capacity hardware.
