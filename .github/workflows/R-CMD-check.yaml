@@ -84,10 +84,11 @@ jobs:
         run: |
           devtools::build()
           devtools::install()
+          devtools::test()
         shell: Rscript {0}
 
       # - name: Install covr and do covr test coverage
-      #   if: matrix.config.r == 'devel'
+      #   # if: matrix.config.r == 'devel'
       #   run: |
       #     remotes::install_cran("covr")
       #     covr::codecov()
