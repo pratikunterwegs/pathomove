@@ -18,6 +18,7 @@ check_prepare_cluster <- function(
     'if [[ -d "snevo" ]]; then
         echo "snevo exists, updating";
         cd snevo;
+        git branch
         git checkout -- .;
         rm data/output/*.log;
         rm install_log.log;

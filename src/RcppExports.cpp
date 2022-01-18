@@ -53,9 +53,12 @@ BEGIN_RCPP
 END_RCPP
 }
 
+RcppExport SEXP run_testthat_tests(SEXP);
+
 static const R_CallMethodDef CallEntries[] = {
     {"_snevo_get_test_landscape", (DL_FUNC) &_snevo_get_test_landscape, 5},
     {"_snevo_run_pathomove", (DL_FUNC) &_snevo_run_pathomove, 17},
+    {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };
 
