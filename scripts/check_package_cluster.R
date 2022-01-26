@@ -1,15 +1,15 @@
 
-library(snevo)
+library(pathomove)
 password = readLines("data/password")
 
 # check cluster
-# snevo::check_prepare_cluster(
+# pathomove::check_prepare_cluster(
 #   ssh_con = "p284074@peregrine.hpc.rug.nl",
 #   password = password
 # )
 
 # prepare parameters
-snevo::make_parameter_file(
+pathomove::make_parameter_file(
   scenario = 1,
   popsize = 500,
   nItems = 2000,
@@ -31,7 +31,7 @@ snevo::make_parameter_file(
 )
 
 # try sending in a job
-snevo::use_cluster(
+pathomove::use_cluster(
   ssh_con = "p284074@peregrine.hpc.rug.nl",
   password = password, 
   script = "scripts/do_sim_cluster.R", 

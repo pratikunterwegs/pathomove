@@ -13,6 +13,7 @@ public:
                const float clusterSpread,
                const int tmax,
                const int genmax,
+               const int g_patho_init,
                const float range_food,
                const float range_agents,
                const float range_move,
@@ -31,6 +32,7 @@ public:
         scenario(scenario),
         tmax(tmax),
         genmax(genmax),
+        g_patho_init(g_patho_init),
 
         // agent perception and behaviour, food growth
         range_food(range_food),
@@ -56,7 +58,7 @@ public:
     Population pop;
     Resources food;
     genData gen_data;
-    const int scenario, tmax, genmax;
+    const int scenario, tmax, genmax, g_patho_init;
     const float range_food, range_agents, range_move;
     const int handling_time;
 
@@ -79,6 +81,7 @@ Rcpp::List run_pathomove(const int scenario,
                         const float clusterSpread,
                         const int tmax,
                         const int genmax,
+                        const int g_patho_init,
                         const float range_food,
                         const float range_agents,
                         const float range_move,
