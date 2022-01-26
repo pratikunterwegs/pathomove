@@ -4,7 +4,6 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --job-name=snevo_simulation
-#SBATCH --cpus-per-task=4
 #SBATCH --array=1-n_array
 #SBATCH --output=/home/p284074/snevo/data/output/snevo_output_%a.log
 #SBATCH --mem=5000
