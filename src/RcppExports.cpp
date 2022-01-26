@@ -12,7 +12,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // get_test_landscape
 Rcpp::DataFrame get_test_landscape(const int nItems, const float landsize, const int nClusters, const float clusterSpread, const int regen_time);
-RcppExport SEXP _snevo_get_test_landscape(SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterSpreadSEXP, SEXP regen_timeSEXP) {
+RcppExport SEXP _pathomove_get_test_landscape(SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterSpreadSEXP, SEXP regen_timeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -27,7 +27,7 @@ END_RCPP
 }
 // run_pathomove
 Rcpp::List run_pathomove(const int scenario, const int popsize, const int nItems, const float landsize, const int nClusters, const float clusterSpread, const int tmax, const int genmax, const float range_food, const float range_agents, const float range_move, const int handling_time, const int regen_time, float pTransmit, const int initialInfections, const float costInfect, const int nThreads);
-RcppExport SEXP _snevo_run_pathomove(SEXP scenarioSEXP, SEXP popsizeSEXP, SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterSpreadSEXP, SEXP tmaxSEXP, SEXP genmaxSEXP, SEXP range_foodSEXP, SEXP range_agentsSEXP, SEXP range_moveSEXP, SEXP handling_timeSEXP, SEXP regen_timeSEXP, SEXP pTransmitSEXP, SEXP initialInfectionsSEXP, SEXP costInfectSEXP, SEXP nThreadsSEXP) {
+RcppExport SEXP _pathomove_run_pathomove(SEXP scenarioSEXP, SEXP popsizeSEXP, SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterSpreadSEXP, SEXP tmaxSEXP, SEXP genmaxSEXP, SEXP range_foodSEXP, SEXP range_agentsSEXP, SEXP range_moveSEXP, SEXP handling_timeSEXP, SEXP regen_timeSEXP, SEXP pTransmitSEXP, SEXP initialInfectionsSEXP, SEXP costInfectSEXP, SEXP nThreadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -53,16 +53,13 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP run_testthat_tests(SEXP);
-
 static const R_CallMethodDef CallEntries[] = {
-    {"_snevo_get_test_landscape", (DL_FUNC) &_snevo_get_test_landscape, 5},
-    {"_snevo_run_pathomove", (DL_FUNC) &_snevo_run_pathomove, 17},
-    {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
+    {"_pathomove_get_test_landscape", (DL_FUNC) &_pathomove_get_test_landscape, 5},
+    {"_pathomove_run_pathomove", (DL_FUNC) &_pathomove_run_pathomove, 17},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_snevo(DllInfo *dll) {
+RcppExport void R_init_pathomove(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

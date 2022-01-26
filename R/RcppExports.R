@@ -10,7 +10,7 @@
 #' @param regen_time Regeneration time, in timesteps.
 #' @return A data frame of the evolved population traits.
 get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen_time) {
-    .Call(`_snevo_get_test_landscape`, nItems, landsize, nClusters, clusterSpread, regen_time)
+    .Call(`_pathomove_get_test_landscape`, nItems, landsize, nClusters, clusterSpread, regen_time)
 }
 
 #' Runs the pathomove simulation.
@@ -37,6 +37,6 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' @param nThreads How many threads to parallelise over.
 #' @return A data frame of the evolved population traits.
 run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads) {
-    .Call(`_snevo_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads)
+    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads)
 }
 
