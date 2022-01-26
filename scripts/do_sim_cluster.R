@@ -16,6 +16,8 @@ message(
 
 params = read.csv(param_file)
 
+head(params)
+
 # library(pathomove)
 
 # run simulation
