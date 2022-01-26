@@ -26,6 +26,7 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' @param clusterSpread How dispersed food is around the cluster centre.
 #' @param tmax The number of timesteps per generation.
 #' @param genmax The maximum number of generations per simulation.
+#' @param g_patho_init The generation in which to begin introducing the pathogen.
 #' @param range_food The sensory range for food.
 #' @param range_agents The sensory range for agents.
 #' @param range_move The movement range for agents.
@@ -36,7 +37,7 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' @param costInfect Cost infection.
 #' @param nThreads How many threads to parallelise over.
 #' @return A data frame of the evolved population traits.
-run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads) {
-    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads)
+run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads) {
+    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads)
 }
 
