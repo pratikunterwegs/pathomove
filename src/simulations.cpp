@@ -43,7 +43,7 @@ Rcpp::List simulation::do_simulation() {
     }
     int gen_init = 0;
     if (scenario == 2) {
-        gen_init = static_cast<int>(std::round(static_cast<float>(genmax) * 0.667));
+        gen_init = g_patho_init;
         
     }
 
@@ -152,6 +152,7 @@ Rcpp::List simulation::do_simulation() {
 //' @param clusterSpread How dispersed food is around the cluster centre.
 //' @param tmax The number of timesteps per generation.
 //' @param genmax The maximum number of generations per simulation.
+//' @param g_patho_init The generation in which to begin introducing the pathogen.
 //' @param range_food The sensory range for food.
 //' @param range_agents The sensory range for agents.
 //' @param range_move The movement range for agents.
@@ -170,6 +171,7 @@ Rcpp::List run_pathomove(const int scenario,
                         const float clusterSpread,
                         const int tmax,
                         const int genmax,
+                        const int g_patho_init,
                         const float range_food,
                         const float range_agents,
                         const float range_move,
@@ -181,7 +183,7 @@ Rcpp::List run_pathomove(const int scenario,
                         const int nThreads) {
                             
     simulation this_sim(popsize, scenario, nItems, landsize,
-                        nClusters, clusterSpread, tmax, genmax,
+                        nClusters, clusterSpread, tmax, genmax, g_patho_init,
                         range_food, range_agents, range_move,
                         handling_time, regen_time,
                         pTransmit, initialInfections, 
