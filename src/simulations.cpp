@@ -61,7 +61,7 @@ Rcpp::List simulation::do_simulation() {
         // reset counter and positions
         pop.counter = std::vector<int> (pop.nAgents, 0);
         // Rcpp::Rcout << "resetting agent counter\n";
-        // pop.initPos(food);
+        pop.initPos(food);
 
         if((scenario > 0) && (gen > gen_init)) {
             pop.introducePathogen(initialInfections);
