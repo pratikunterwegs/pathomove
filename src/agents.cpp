@@ -400,31 +400,55 @@ void Population::pickForageItem(const Resources &food, const int nThreads){
     // nearest food
     std::vector<int> idTargetFood (nAgents, -1);
 
-    // loop over agents --- no shuffling required here
-    tbb::task_scheduler_init _tbb((nThreads == 1) ? nThreads : tbb::task_scheduler_init::automatic); // automatic for now
-    // try parallel foraging --- agents pick a target item
-    tbb::parallel_for(
-        tbb::blocked_range<unsigned>(1, order.size()),
-            [&](const tbb::blocked_range<unsigned>& r) {
-            for (unsigned i = r.begin(); i < r.end(); ++i) {
+    if (nThreads > 1)
+    {
+        // loop over agents --- no shuffling required here
+        tbb::task_scheduler_init _tbb(tbb::task_scheduler_init::automatic); // automatic for now
+        // try parallel foraging --- agents pick a target item
+        tbb::parallel_for(
+            tbb::blocked_range<unsigned>(1, order.size()),
+                [&](const tbb::blocked_range<unsigned>& r) {
+                for (unsigned i = r.begin(); i < r.end(); ++i) {
+                    if ((counter[i] > 0) | (food.nAvailable == 0)) { 
                 if ((counter[i] > 0) | (food.nAvailable == 0)) { 
-                    // nothing -- agent cannot forage or there is no food
-                }
-                else {
-                    // find nearest item ids
-                    std::vector<int> theseItems = getFoodId(food, coordX[i], coordY[i]);
-                    int thisItem = -1;
+                    if ((counter[i] > 0) | (food.nAvailable == 0)) { 
+                        // nothing -- agent cannot forage or there is no food
+                    }
+                    else {
+                        // find nearest item ids
+                        std::vector<int> theseItems = getFoodId(food, coordX[i], coordY[i]);
+                        int thisItem = -1;
 
-                    // check near items count
-                    if(theseItems.size() > 0) {
-                        // take first item by default
-                        thisItem = theseItems[0];
-                        idTargetFood[i] = thisItem;
+                        // check near items count
+                        if(theseItems.size() > 0) {
+                            // take first item by default
+                            thisItem = theseItems[0];
+                            idTargetFood[i] = thisItem;
+                        }
                     }
                 }
             }
+        );
+    } else if (nThreads == 1)
+    {
+        for (int i = 0; i < nAgents; ++i) {
+            if ((counter[i] > 0) | (food.nAvailable == 0)) { 
+                // nothing -- agent cannot forage or there is no food
+            }
+            else {
+                // find nearest item ids
+                std::vector<int> theseItems = getFoodId(food, coordX[i], coordY[i]);
+                int thisItem = -1;
+
+                // check near items count
+                if(theseItems.size() > 0) {
+                    // take first item by default
+                    thisItem = theseItems[0];
+                    idTargetFood[i] = thisItem;
+                }
+            }
         }
-    );
+    }
 
     forageItem = idTargetFood;
 }
