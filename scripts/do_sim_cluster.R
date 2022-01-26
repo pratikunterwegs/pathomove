@@ -16,7 +16,7 @@ message(
 
 params = read.csv(param_file)
 
-library(pathomove)
+# library(pathomove)
 
 # run simulation
 data = pathomove::run_pathomove(
@@ -35,6 +35,7 @@ data = pathomove::run_pathomove(
   
   range_food = params$range_food[row_n],
   range_agents = params$range_agents[row_n], 
+  range_move = params$range_move[row_n], 
   handling_time = params$handling_time[row_n],
 
   regen_time = params$regen_time[row_n],
