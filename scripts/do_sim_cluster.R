@@ -16,10 +16,10 @@ message(
 
 params = read.csv(param_file)
 
-library(snevo)
+library(pathomove)
 
 # run simulation
-data = snevo::run_pathomove(
+data = pathomove::run_pathomove(
   scenario = params$scenario[row_n],
 
   popsize = params$popsize[row_n],
@@ -31,6 +31,7 @@ data = snevo::run_pathomove(
 
   tmax = params$tmax[row_n],
   genmax = params$genmax[row_n], 
+  g_patho_init = params$g_patho_init[row_n],
   
   range_food = params$range_food[row_n],
   range_agents = params$range_agents[row_n], 
