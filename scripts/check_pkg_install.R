@@ -34,14 +34,15 @@ library(data.table)
 # invisible(
 #   x = {
     a = run_pathomove(
-      scenario = 0,
+      scenario = 2,
       popsize = 50,
       nItems = 1000,
       landsize = 50,
       nClusters = 100,
       clusterSpread = 1,
-      tmax = 100,
-      genmax = 200,
+      tmax = 10,
+      genmax = 20,
+      g_patho_init = 170,
       range_food = 1.0,
       range_agents = 1.0,
       range_move = 1.0,
