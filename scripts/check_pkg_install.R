@@ -1,13 +1,13 @@
 # check function
-remove.packages("snevo")
+remove.packages("pathomove")
 
 Rcpp::compileAttributes()
 devtools::build()
 {sink(file = "install_output.log"); devtools::install(upgrade = "never"); sink()}
 # devtools::document()
 
-detach(package:snevo)
-library(snevo)
+detach(package:pathomove)
+library(pathomove)
 library(ggplot2)
 library(data.table)
 
