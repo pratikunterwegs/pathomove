@@ -32,6 +32,7 @@ public:
         scenario(scenario),
         tmax(tmax),
         genmax(genmax),
+        g_patho_init(g_patho_init),
 
         // agent perception and behaviour, food growth
         range_food(range_food),
