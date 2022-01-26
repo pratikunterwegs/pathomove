@@ -18,7 +18,7 @@ pathomove::make_parameter_file(
   clusterSpread = 1,
   tmax = 300,
   genmax = 1000,
-  gen_init = 700,
+  g_patho_init = 700,
   range_food = 1,
   range_agents = 1,
   range_move = 1,
@@ -28,7 +28,7 @@ pathomove::make_parameter_file(
   initialInfections = 20,
   costInfect = c(0.005, 0.01, 0.02),
   nThreads = 2,
-  replicates = 5,
+  replicates = 1,
   which_file = "data/parameters/parameters_test.csv"
 )
 
