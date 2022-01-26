@@ -9,7 +9,8 @@
 #SBATCH --mem=5000
 
 pwd
-ml load R/4.0.0-foss-2020a
+ml load R/4.1.0-foss-2021a
+ml load Boost/1.76.0-GCC-10.3.0
 cd snevo
 echo "now in" 
 pwd
