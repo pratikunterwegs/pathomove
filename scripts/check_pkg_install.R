@@ -33,7 +33,7 @@ library(data.table)
 # {t1 = Sys.time()
 # invisible(
 #   x = {
-    a = run_pathomove(
+    a = pathomove::run_pathomove(
       scenario = 2,
       popsize = 50,
       nItems = 1000,
@@ -51,7 +51,7 @@ library(data.table)
       pTransmit = 0.05,
       initialInfections = 10,
       costInfect = 0.2,
-      nThreads = 2
+      nThreads = 1
     )
 #   }
 # )
