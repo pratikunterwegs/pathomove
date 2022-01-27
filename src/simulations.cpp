@@ -52,7 +52,7 @@ Rcpp::List simulation::do_simulation() {
     // go over gens
     for(int gen = 0; gen < genmax; gen++) {
 
-        Rcpp::Rcout << "gen = " << gen << "\n";
+        // Rcpp::Rcout << "gen = " << gen << "\n";
 
         // food.initResources();
         food.countAvailable();
@@ -114,12 +114,10 @@ Rcpp::List simulation::do_simulation() {
         
         //population infection cost by time
         pop.pathogenCost(costInfect);
-        
-        Rcpp::Rcout << "gen: " << gen << "\n";
 
         if((gen == 0) | ((gen % (genmax / 10)) == 0) | (gen == genmax - 1)) {
             edgeLists.push_back(pop.pbsn.getNtwkDf());
-            Rcpp::Rcout << "logged edgelist\n";
+            Rcpp::Rcout << "gen: " << gen << " --- logged edgelist\n";
         }
 
         // reproduce
