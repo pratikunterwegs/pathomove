@@ -159,10 +159,6 @@ Rcpp::List simulation::do_simulation() {
 //' @param pTransmit Probability of transmission.
 //' @param intialInfections Agents infected per event.
 //' @param costInfect The per-timestep cost of pathogen infection.
-//' This is a percentage of the total intake gained lost per timestep infected.
-//' This is conveniently calculated as \code{costInect ^ time_infected},
-//' and subtracted from total intake, to give final intake:
-//' \code{net_intake = total_intake * (1 - costInfect)^ time_infected}.
 //' @param nThreads How many threads to parallelise over.
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
