@@ -26,7 +26,7 @@ Rcpp::List simulation::do_simulation() {
     Rcpp::Rcout << "this is scenario " << scenario << "\n";
 
     // agent random position
-    if (!local_disperal) pop.initPos(food);
+    if (!local_dispersal) pop.initPos(food);
 
     Rcpp::Rcout << "initialised population positions\n";
     Rcpp::List edgeLists;
