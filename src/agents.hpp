@@ -137,7 +137,7 @@ public:
     // pathogen dynamics -- initial infections, spread, and costs
     void introducePathogen(const int nAgInf);
     void pathogenSpread();
-    void pathogenCost(const float costInfect);
+    void pathogenCost(const float costInfect, const bool infect_percent);
 
     // count infected agents, infection source
     void countInfected();

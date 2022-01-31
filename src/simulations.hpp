@@ -22,7 +22,9 @@ public:
                float pTransmit,
                const int initialInfections,
                const float costInfect,
-               const int nThreads):
+               const int nThreads,
+               const bool local_dispersal, 
+               const bool infect_percent):
         // population, food, and data structures
         pop (popsize, range_agents, range_food, range_move, handling_time, pTransmit),
         food(nItems, landsize, nClusters, clusterSpread, regen_time),
@@ -49,6 +51,10 @@ public:
         // parallelisation
         nThreads (nThreads),
 
+        // natal dispersal
+        local_dispersal(local_dispersal),
+        infect_percent(infect_percent),
+
         // movement data
         mdPre(tmax, popsize),
         mdPost(tmax, popsize)
@@ -66,6 +72,8 @@ public:
     const float costInfect;
     float pTransmit;
     int nThreads;
+
+    const bool local_dispersal, infect_percent;
 
     moveData mdPre, mdPost;
 
@@ -90,6 +98,8 @@ Rcpp::List run_pathomove(const int scenario,
                         float pTransmit,
                         const int initialInfections,
                         const float costInfect,
-                        const int nThreads);
+                        const int nThreads,
+                        const bool local_dispersal,
+                        const bool infect_percent);
 
 #endif // SIMULATIONS_H

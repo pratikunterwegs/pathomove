@@ -61,13 +61,14 @@ void Population::pathogenSpread() {
     }
 }
 
-/// function for pathogen cost --- percentage reduction per timestep infected
-void Population::pathogenCost(const float costInfect) {
+/// function for pathogen cost --- use old formula
+void Population::pathogenCost(const float costInfect, const bool infect_percent) {
     for (int i = 0; i < nAgents; i++)
     {
         if(infected[i]) {
-            // ENERGY REMAINING = INTAKE * (1 - PERCENTAGE REDUCTION)^TIME INFECTED
-            energy[i] = energy[i] * std::pow(1.0 - costInfect, static_cast<float>(timeInfected[i]));
+            // ENERGY REMAINING = INTAKE - COST * TIME INFECTED
+            energy[i] = infect_percent ? energy[i] * std::pow(1 - costInfect, static_cast<float>(timeInfected[i])): 
+                energy[i] - (costInfect * static_cast<float>(timeInfected[i]));
         }
     }
 }

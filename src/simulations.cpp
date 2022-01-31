@@ -26,7 +26,7 @@ Rcpp::List simulation::do_simulation() {
     Rcpp::Rcout << "this is scenario " << scenario << "\n";
 
     // agent random position
-    pop.initPos(food);
+    if (!local_dispersal) pop.initPos(food);
 
     Rcpp::Rcout << "initialised population positions\n";
     Rcpp::List edgeLists;
@@ -52,7 +52,7 @@ Rcpp::List simulation::do_simulation() {
     // go over gens
     for(int gen = 0; gen < genmax; gen++) {
 
-        Rcpp::Rcout << "gen = " << gen << "\n";
+        // Rcpp::Rcout << "gen = " << gen << "\n";
 
         // food.initResources();
         food.countAvailable();
@@ -113,13 +113,11 @@ Rcpp::List simulation::do_simulation() {
         }
         
         //population infection cost by time
-        pop.pathogenCost(costInfect);
-        
-        Rcpp::Rcout << "gen: " << gen << "\n";
+        pop.pathogenCost(costInfect, infect_percent);
 
         if((gen == 0) | ((gen % (genmax / 10)) == 0) | (gen == genmax - 1)) {
             edgeLists.push_back(pop.pbsn.getNtwkDf());
-            Rcpp::Rcout << "logged edgelist\n";
+            Rcpp::Rcout << "gen: " << gen << " --- logged edgelist\n";
         }
 
         // reproduce
@@ -161,11 +159,19 @@ Rcpp::List simulation::do_simulation() {
 //' @param pTransmit Probability of transmission.
 //' @param intialInfections Agents infected per event.
 //' @param costInfect The per-timestep cost of pathogen infection.
-//' This is a percentage of the total intake gained lost per timestep infected.
-//' This is conveniently calculated as \code{costInect ^ time_infected},
-//' and subtracted from total intake, to give final intake:
-//' \code{net_intake = total_intake * (1 - costInfect)^ time_infected}.
-//' @param nThreads How many threads to parallelise over.
+//' @param nThreads How many threads to parallelise over. Set to 1 to run on
+//' the HPC Peregrine cluster.
+//' @param local_dispersal A boolean value; whether to implement local 
+//' (\code{TRUE}) or global (\code{FALSE}) natal dispersal.
+//' @param infect_percent A boolean value; whether the infection depletes a
+//' percentage of daily energy (\code{TRUE}) or whether a fixed value 
+//' (\code{FALSE}) is subtracted from net energy.
+//' For \code{infect_percent = TRUE}, the net energy remaining after \code{T} 
+//' timesteps of infection is \code{N * (1 - cost_infect) ^ T}, where \code{N}
+//' is total intake.
+//' For \code{infect_percent = FALSE}, the net energy remaining after \code{T} 
+//' timesteps of infection is \code{N - (cost_infect * T)}, where \code{N}
+//' is total intake.
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
 Rcpp::List run_pathomove(const int scenario,
@@ -184,13 +190,15 @@ Rcpp::List run_pathomove(const int scenario,
                         float pTransmit,
                         const int initialInfections,
                         const float costInfect,
-                        const int nThreads) {
+                        const int nThreads,
+                        const bool local_dispersal,
+                        const bool infect_percent) {
                             
     simulation this_sim(popsize, scenario, nItems, landsize,
                         nClusters, clusterSpread, tmax, genmax, g_patho_init,
                         range_food, range_agents, range_move,
                         handling_time, regen_time,
                         pTransmit, initialInfections, 
-                        costInfect, nThreads);
+                        costInfect, nThreads, local_dispersal, infect_percent);
     return this_sim.do_simulation();
 }
