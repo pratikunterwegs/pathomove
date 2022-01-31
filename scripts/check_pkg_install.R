@@ -40,8 +40,8 @@ library(data.table)
       landsize = 50,
       nClusters = 100,
       clusterSpread = 1,
-      tmax = 10,
-      genmax = 20,
+      tmax = 100,
+      genmax = 200,
       g_patho_init = 170,
       range_food = 1.0,
       range_agents = 1.0,
@@ -51,7 +51,9 @@ library(data.table)
       pTransmit = 0.05,
       initialInfections = 10,
       costInfect = 0.2,
-      nThreads = 1
+      nThreads = 1,
+      local_dispersal = TRUE,
+      infect_percent = TRUE
     )
 #   }
 # )
@@ -62,7 +64,7 @@ library(data.table)
 m1= a[["move_pre"]] |> rbindlist()
 m2= a[["move_post"]] |> rbindlist()
 
-ggplot(m1)+
+ggplot(m2)+
   geom_path(
     aes(x, y, group = id, col = id),
     # size = 0.1
@@ -84,8 +86,6 @@ a = data[[1]]
 names(a)
 
 plot(a[["gens"]], a[["n_infected"]], type = "o", pch = 16)
-plot(a[["gens"]], a[["diameter"]], type = "o", pch = 16)
-plot(a[["gens"]], a[["glob_eff"]], type = "o", pch = 16)
 
 #### handle data ####
 b = copy(a)
