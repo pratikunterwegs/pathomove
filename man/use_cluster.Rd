@@ -2,12 +2,13 @@
 % Please edit documentation in R/fun_use_cluster.R
 \name{use_cluster}
 \alias{use_cluster}
-\title{Run snevo and the cluster.}
+\title{Run {folder} and the cluster.}
 \usage{
 use_cluster(
   ssh_con = "some_server",
   password = "your_password",
   script = "which_script.R",
+  folder = "pathomove",
   template_job = "some_template.sh",
   parameter_file = "which_parameters.csv"
 )
@@ -19,6 +20,8 @@ use_cluster(
 
 \item{script}{Which R script to run.}
 
+\item{folder}{The folder to prepare.}
+
 \item{template_job}{Which shell script to use as a template.}
 
 \item{parameter_file}{Where to get parameters.}
@@ -27,5 +30,5 @@ use_cluster(
 Runs a job which makes more jobs.
 }
 \description{
-Run snevo and the cluster.
+Run {folder} and the cluster.
 }

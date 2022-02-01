@@ -13,6 +13,7 @@ run_pathomove(
   clusterSpread,
   tmax,
   genmax,
+  g_patho_init,
   range_food,
   range_agents,
   range_move,
@@ -21,7 +22,9 @@ run_pathomove(
   pTransmit,
   initialInfections,
   costInfect,
-  nThreads
+  nThreads,
+  local_dispersal,
+  infect_percent
 )
 }
 \arguments{
@@ -41,6 +44,8 @@ run_pathomove(
 
 \item{genmax}{The maximum number of generations per simulation.}
 
+\item{g_patho_init}{The generation in which to begin introducing the pathogen.}
+
 \item{range_food}{The sensory range for food.}
 
 \item{range_agents}{The sensory range for agents.}
@@ -53,9 +58,23 @@ run_pathomove(
 
 \item{pTransmit}{Probability of transmission.}
 
-\item{costInfect}{Cost infection.}
+\item{costInfect}{The per-timestep cost of pathogen infection.}
 
-\item{nThreads}{How many threads to parallelise over.}
+\item{nThreads}{How many threads to parallelise over. Set to 1 to run on
+the HPC Peregrine cluster.}
+
+\item{local_dispersal}{A boolean value; whether to implement local
+(\code{TRUE}) or global (\code{FALSE}) natal dispersal.}
+
+\item{infect_percent}{A boolean value; whether the infection depletes a
+percentage of daily energy (\code{TRUE}) or whether a fixed value
+(\code{FALSE}) is subtracted from net energy.
+For \code{infect_percent = TRUE}, the net energy remaining after \code{T}
+timesteps of infection is \code{N * (1 - cost_infect) ^ T}, where \code{N}
+is total intake.
+For \code{infect_percent = FALSE}, the net energy remaining after \code{T}
+timesteps of infection is \code{N - (cost_infect * T)}, where \code{N}
+is total intake.}
 
 \item{intialInfections}{Agents infected per event.}
 }
