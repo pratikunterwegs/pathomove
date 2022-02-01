@@ -90,7 +90,7 @@ Rcpp::List simulation::do_simulation() {
             // foraging -- split into parallelised picking
             // and non-parallel exploitation
             pop.pickForageItem(food, nThreads);
-            pop.doForage(food, nThreads);
+            pop.doForage(food);
 
             // count associations
             pop.countAssoc(nThreads);
@@ -107,10 +107,15 @@ Rcpp::List simulation::do_simulation() {
         assert(pop.nInfected <= pop.nAgents);
 
         //population infection cost by time
-        pop.pathogenCost(costInfect, infect_percent);
+        if (gen >= gen_init) {
+            pop.pathogenCost(costInfect, infect_percent);
+        } else {
+            pop.energy = pop.intake;
+        }
 
         // update gendata
         if ((gen == (genmax - 1)) | (gen % increment_log == 0)) {
+
             // Rcpp::Rcout << "logging data at gen: " << gen << "\n";
             gen_data.updateGenData(pop, gen);
         }
