@@ -4,7 +4,7 @@ remove.packages("pathomove")
 Rcpp::compileAttributes()
 devtools::build()
 {sink(file = "install_output.log"); devtools::install(upgrade = "never"); sink()}
-# devtools::document()
+devtools::document()
 
 detach(package:pathomove)
 library(pathomove)
@@ -33,38 +33,38 @@ library(data.table)
 # {t1 = Sys.time()
 # invisible(
 #   x = {
-    a = pathomove::run_pathomove(
-      scenario = 2,
-      popsize = 50,
-      nItems = 1000,
-      landsize = 50,
-      nClusters = 100,
-      clusterSpread = 1,
-      tmax = 100,
-      genmax = 200,
-      g_patho_init = 170,
-      range_food = 1.0,
-      range_agents = 1.0,
-      range_move = 1.0,
-      handling_time = 5,
-      regen_time = 50,
-      pTransmit = 0.05,
-      initialInfections = 10,
-      costInfect = 0.2,
-      nThreads = 1,
-      local_dispersal = TRUE,
-      infect_percent = TRUE
-    )
+a = pathomove::run_pathomove(
+  scenario = 2,
+  popsize = 500,
+  nItems = 1000,
+  landsize = 50,
+  nClusters = 100,
+  clusterSpread = 1,
+  tmax = 100,
+  genmax = 200,
+  g_patho_init = 170,
+  range_food = 1.0,
+  range_agents = 1.0,
+  range_move = 1.0,
+  handling_time = 5,
+  regen_time = 50,
+  pTransmit = 0.05,
+  initialInfections = 10,
+  costInfect = 0.3,
+  nThreads = 2,
+  local_dispersal = TRUE,
+  infect_percent = FALSE
+)
 #   }
 # )
 # t2 = Sys.time()
 # t2 - t1}
 
 # movement data
-m1= a[["move_pre"]] |> rbindlist()
-m2= a[["move_post"]] |> rbindlist()
+m1 = a[["move_pre"]] |> rbindlist()
+m2 = a[["move_post"]] |> rbindlist()
 
-ggplot(m2)+
+ggplot(m1)+
   geom_path(
     aes(x, y, group = id, col = id),
     # size = 0.1
@@ -101,73 +101,18 @@ b
 #### plot data ####
 b = melt(b, id.vars = c("gen", "id"))
 
+ggplot(b[variable %in% c("intake", "energy")])+
+  stat_summary(
+    aes(
+      gen, value
+    )
+  )+
+  facet_wrap(~variable)
+
 # energy = b[variable == "energy",]
 wts = b[!variable %in% c("energy", "assoc", "t_infec", "moved", "degree"),]
 
-wts[, value := tanh(value * 20)]
 
-ggplot(wts)+
-  geom_hline(
-    yintercept = 0, lty = 2,
-    col = "grey", size = 0.2
-  )+
-  geom_bin2d(
-    aes(gen, value),
-    binwidth = c(2, 0.02),
-    show.legend = F
-  )+
-  scale_y_continuous(
-    trans = ggallin::ssqrt_trans
-  )+
-  scale_fill_viridis_c(
-    option = "A", direction = -1,
-    begin = 0, end = 1
-  )+
-  theme_test()+
-  facet_wrap(~variable, ncol = 2)
-
-# scale weights
-wts_wide = copy(b[!variable %in% c("energy", "assoc", "t_infec", "moved", "degree"),])
-wts_wide[, scaled_val := value / sum(abs(value)),
-         by = c("gen", "id")]
-wts_wide = dcast(
-  wts_wide[, !("value")], 
-  gen + id ~ variable, 
-  value.var = "scaled_val"
-)
-
-ggplot(wts_wide[gen %% 100 == 0 | gen == max(gen)])+
-  geom_hline(
-    yintercept = 0, col = 2
-  )+
-  geom_vline(
-    xintercept = 0, col = 2
-  )+
-  geom_jitter(
-    aes(sF, sH,
-        fill = sN),
-    shape = 21,
-    # colour = "transparent",
-    stroke = 0.1,
-    size = 4,
-    alpha = 0.8
-  )+
-  colorspace::scale_fill_continuous_sequential(
-    palette = "Batlow", rev = T,
-    limits = c(-1, 1),
-    trans = ggallin::ssqrt_trans
-  )+
-  scale_x_continuous(
-    # trans = ggallin::ssqrt_trans
-  )+
-  scale_y_continuous(
-    # trans = ggallin::ssqrt_trans
-  )+
-  facet_wrap(~ gen, labeller = label_both)+
-  coord_equal(
-    xlim = c(-1, 1),
-    ylim = c(-1, 1)
-  )
 
 #### explore network ####
 library(igraph)
