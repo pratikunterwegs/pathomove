@@ -66,9 +66,11 @@ void Population::pathogenCost(const float costInfect, const bool infect_percent)
     for (int i = 0; i < nAgents; i++)
     {
         if(infected[i]) {
-            // ENERGY REMAINING = INTAKE - COST * TIME INFECTED
-            energy[i] = infect_percent ? energy[i] * std::pow(1 - costInfect, static_cast<float>(timeInfected[i])): 
-                energy[i] - (costInfect * static_cast<float>(timeInfected[i]));
+            if(infect_percent) {
+                energy[i] = energy[i] * std::pow((1.f - costInfect), static_cast<float>(timeInfected[i])); 
+            } else {
+                energy[i] = energy[i] - (costInfect * static_cast<float>(timeInfected[i]))
+            }
         }
     }
 }
