@@ -106,14 +106,14 @@ Rcpp::List simulation::do_simulation() {
 
         assert(pop.nInfected <= pop.nAgents);
 
+        //population infection cost by time
+        pop.pathogenCost(costInfect, infect_percent);
+
         // update gendata
         if ((gen == (genmax - 1)) | (gen % increment_log == 0)) {
             // Rcpp::Rcout << "logging data at gen: " << gen << "\n";
             gen_data.updateGenData(pop, gen);
         }
-        
-        //population infection cost by time
-        pop.pathogenCost(costInfect, infect_percent);
 
         if((gen == 0) | ((gen % (genmax / 10)) == 0) | (gen == genmax - 1)) {
             edgeLists.push_back(pop.pbsn.getNtwkDf());
