@@ -450,7 +450,7 @@ void Population::pickForageItem(const Resources &food, const int nThreads){
 }
 
 // function to exploitatively forage on picked forage items
-void Population::doForage(Resources &food, const int nThreads) {
+void Population::doForage(Resources &food) {
     // all agents have picked a food item if they can forage
     // now forage in a serial loop --- this cannot be parallelised
     // this order is randomised
@@ -465,7 +465,7 @@ void Population::doForage(Resources &food, const int nThreads) {
             if (thisItem != -1)
             {
                 counter[id] = handling_time;
-                energy[id] += 1.0; // increased here --- not as described.
+                intake[id] += 1.0; // increased here --- not as described.
 
                 // reset food availability
                 food.available[thisItem] = false;
@@ -616,4 +616,9 @@ void Population::Reproduce() {
     std::vector<float> tmpEnergy (nAgents, 0.001);
     std::swap(energy, tmpEnergy);
     tmpEnergy.clear();
+
+    // swap intake
+    std::vector<float> tmpIntake (nAgents, 0.001);
+    std::swap(intake, tmpIntake);
+    tmpIntake.clear();
 }
