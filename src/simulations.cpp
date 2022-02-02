@@ -25,8 +25,8 @@ Rcpp::List simulation::do_simulation() {
     // prepare scenario
     Rcpp::Rcout << "this is scenario " << scenario << "\n";
 
-    // agent random position
-    if (!local_dispersal) pop.initPos(food);
+    // agent random position in first gen
+    pop.initPos(food);
 
     Rcpp::Rcout << "initialised population positions\n";
     Rcpp::List edgeLists;
@@ -60,8 +60,9 @@ Rcpp::List simulation::do_simulation() {
 
         // reset counter and positions
         pop.counter = std::vector<int> (pop.nAgents, 0);
-        // Rcpp::Rcout << "resetting agent counter\n";
-        pop.initPos(food);
+        
+        // agent natal dispersal, global is local dispersal is False
+        if (!local_dispersal) pop.initPos(food);
 
         if((scenario > 0) && (gen > gen_init)) {
             pop.introducePathogen(initialInfections);
