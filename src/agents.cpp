@@ -516,9 +516,15 @@ std::bernoulli_distribution mutation_happens(mProb);
 std::cauchy_distribution<float> mutation_size(0.0, mShift);
 
 // fun for replication
-void Population::Reproduce(const bool infect_percent) {
+void Population::Reproduce(const Resources food, const bool infect_percent, 
+    const bool local_dispersal) 
+{
     // std::bernoulli_distribution verticalInfect(0.01f);
-    std::normal_distribution<float> sprout(0.f, 3.f);
+
+    // individuals are born within an arbitrary range if local_dispersal is TRUE
+    // range food is chosen because this is likely to change with landscape size
+    // as most users choosing larger landscapes will also increase sensory range
+    if(local_dispersal) std::normal_distribution<float> sprout(0.f, range_food); 
 
     //normalise intake if percent infect is not true
     if (infect_percent) {
@@ -561,12 +567,20 @@ void Population::Reproduce(const bool infect_percent) {
         tmp_sH[a] = sH[parent_id];
         tmp_sN[a] = sN[parent_id];
 
-        coord_x_2[a] = coordX[parent_id] + sprout(rng);
-        coord_y_2[a] = coordY[parent_id] + sprout(rng);
+        // inherit positions from parent if local dispersal is true
+        if (local_dispersal) {
+            coord_x_2[a] = coordX[parent_id] + sprout(rng);
+            coord_y_2[a] = coordY[parent_id] + sprout(rng);
 
-        // edit initial positions
-        initX[a] = coord_x_2[a];
-        initY[a] = coord_y_2[a];
+            // wrap initial positions
+            // crudely wrap sampling location
+            if((coord_x_2[a] > food.dSize) | (coord_x_2[a] < 0.f)) {
+                coord_x_2[a] = std::fabs(std::fmod(coord_x_2[a], food.dSize));
+            }
+            if((coord_y_2[a] > food.dSize) | (coord_y_2[a] < 0.f)) {
+                coord_y_2[a] = std::fabs(std::fmod(coord_y_2[a], food.dSize));
+            }
+        }
 
         // // vertical transmission of infection.
         // if(infected[parent_id]) {
@@ -581,10 +595,14 @@ void Population::Reproduce(const bool infect_percent) {
     std::swap(infected, infected_2);
     infected_2.clear();
 
-    // swap coords
+    // swap coords --- this initialises individuals at (0, 0) if local_dispersal
+    // is FALSE, or near their parent's position if TRUE
     std::swap(coordX, coord_x_2);
     std::swap(coordY, coord_y_2);
     coord_x_2.clear(); coord_y_2.clear();
+
+    // handle the case where local dispersal is false (global dispersal)
+    if (!local_dispersal) initPos(landscape);
     
     // reset counter and time infected
     counter = std::vector<int> (nAgents, 0);
