@@ -60,13 +60,6 @@ Rcpp::List simulation::do_simulation() {
         // reset counter and positions
         pop.counter = std::vector<int> (pop.nAgents, 0);
         
-        // agent natal dispersal, global is local dispersal is False
-        if (local_dispersal) {
-            // do nothing
-        } else {
-            pop.initPos(food);
-        }
-
         if((scenario > 0) && (gen > gen_init)) {
             pop.introducePathogen(initialInfections);
         }
@@ -130,7 +123,7 @@ Rcpp::List simulation::do_simulation() {
         }
 
         // reproduce
-        pop.Reproduce(infect_percent);
+        pop.Reproduce(food, infect_percent, local_dispersal);
 
         // generation ends here
     }
