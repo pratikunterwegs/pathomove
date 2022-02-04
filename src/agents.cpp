@@ -524,13 +524,13 @@ void Population::Reproduce(const Resources food, const bool infect_percent,
     // individuals are born within an arbitrary range if local_dispersal is TRUE
     // range food is chosen because this is likely to change with landscape size
     // as most users choosing larger landscapes will also increase sensory range
-    if(local_dispersal) std::normal_distribution<float> sprout(0.f, range_food); 
-
+    std::normal_distribution<float> sprout(0.f, range_food); 
+    std::vector<float> vecFitness;
     //normalise intake if percent infect is not true
     if (infect_percent) {
-        // do nothing
+         vecFitness = energy;
     } else {
-        std::vector<float> vecFitness = handleFitness();
+        vecFitness = handleFitness();
     }
 
     // set up weighted lottery
