@@ -44,7 +44,6 @@ Rcpp::List simulation::do_simulation() {
     int gen_init = 0;
     if (scenario == 2) {
         gen_init = g_patho_init;
-        
     }
 
     Rcpp::Rcout << "spillover in gen: " << gen_init << "\n";
@@ -62,7 +61,11 @@ Rcpp::List simulation::do_simulation() {
         pop.counter = std::vector<int> (pop.nAgents, 0);
         
         // agent natal dispersal, global is local dispersal is False
-        if (!local_dispersal) pop.initPos(food);
+        if (local_dispersal) {
+            // do nothing
+        } else {
+            pop.initPos(food);
+        }
 
         if((scenario > 0) && (gen > gen_init)) {
             pop.introducePathogen(initialInfections);
@@ -127,7 +130,7 @@ Rcpp::List simulation::do_simulation() {
         }
 
         // reproduce
-        pop.Reproduce();
+        pop.Reproduce(infect_percent);
 
         // generation ends here
     }

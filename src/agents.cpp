@@ -516,12 +516,16 @@ std::bernoulli_distribution mutation_happens(mProb);
 std::cauchy_distribution<float> mutation_size(0.0, mShift);
 
 // fun for replication
-void Population::Reproduce() {
+void Population::Reproduce(const bool infect_percent) {
     // std::bernoulli_distribution verticalInfect(0.01f);
     std::normal_distribution<float> sprout(0.f, 3.f);
 
-    //normalise intake
-    std::vector<float> vecFitness = handleFitness();
+    //normalise intake if percent infect is not true
+    if (infect_percent) {
+        // do nothing
+    } else {
+        std::vector<float> vecFitness = handleFitness();
+    }
 
     // set up weighted lottery
     std::discrete_distribution<> weightedLottery(vecFitness.begin(), vecFitness.end());
