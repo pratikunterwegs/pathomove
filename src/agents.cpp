@@ -602,7 +602,7 @@ void Population::Reproduce(const Resources food, const bool infect_percent,
     coord_x_2.clear(); coord_y_2.clear();
 
     // handle the case where local dispersal is false (global dispersal)
-    if (!local_dispersal) initPos(landscape);
+    if (!local_dispersal) initPos(food);
     
     // reset counter and time infected
     counter = std::vector<int> (nAgents, 0);
