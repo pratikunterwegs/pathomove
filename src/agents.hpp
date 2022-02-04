@@ -134,7 +134,10 @@ public:
     
     // funs to handle fitness and reproduce
     std::vector<float> handleFitness();
-    void Reproduce(const bool infect_percent);
+    void Reproduce(const Resources food, 
+        const bool infect_percent, 
+        const bool local_dispersal
+    );
     
     // pathogen dynamics -- initial infections, spread, and costs
     void introducePathogen(const int nAgInf);
