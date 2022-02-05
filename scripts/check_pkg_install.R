@@ -11,24 +11,28 @@ library(pathomove)
 library(ggplot2)
 library(data.table)
 
-# l = snevo::get_test_landscape(
-#   nItems = 1000,
-#   landsize = 100,
-#   nClusters = 200, 
-#   clusterSpread = 1,
-#   regen_time = 100
-# )
-# ggplot(l)+
-#   geom_point(
-#     aes(x, y, col = tAvail)
-#     # size = 0.3
-#   )+
-#   scale_colour_viridis_b(
-#     option = "H",
-#     direction = 1,
-#     breaks = c(0, 1, 2, 5, 10)
-#   )+
-#   coord_equal()
+l = pathomove::get_test_landscape(
+  nItems = 2000,
+  landsize = 50,
+  nClusters = 200, 
+  clusterSpread = 0.5,
+  regen_time = 50
+)
+ggplot(l)+
+  geom_point(
+    aes(x, y, col = tAvail)
+    # size = 0.3
+  )+
+  geom_segment(
+    x = 0, y = 0,
+    xend = 2, yend = 0
+  )+
+  scale_colour_viridis_b(
+    option = "H",
+    direction = 1,
+    breaks = c(0, 1, 2, 5, 10)
+  )+
+  coord_equal()
 
 # {t1 = Sys.time()
 # invisible(
