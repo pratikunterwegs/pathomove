@@ -594,6 +594,10 @@ void Population::Reproduce(const Resources food, const bool infect_percent,
     std::swap(coordY, coord_y_2);
     coord_x_2.clear(); coord_y_2.clear();
 
+    // update initial positions!
+    initX = coordX;
+    initY = coordY;
+
     // reset counter and time infected
     counter = std::vector<int> (nAgents, 0);
     timeInfected = std::vector<int> (nAgents, 0);
