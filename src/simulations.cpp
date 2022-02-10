@@ -123,7 +123,7 @@ Rcpp::List simulation::do_simulation() {
         }
 
         // reproduce
-        pop.Reproduce(food, infect_percent, local_dispersal);
+        pop.Reproduce(food, infect_percent, dispersal);
 
         // generation ends here
     }
@@ -204,6 +204,6 @@ Rcpp::List run_pathomove(const int scenario,
                         range_food, range_agents, range_move,
                         handling_time, regen_time,
                         pTransmit, initialInfections, 
-                        costInfect, nThreads, local_dispersal, infect_percent);
+                        costInfect, nThreads, dispersal, infect_percent);
     return this_sim.do_simulation();
 }

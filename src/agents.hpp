@@ -136,7 +136,7 @@ public:
     std::vector<float> handleFitness();
     void Reproduce(const Resources food, 
         const bool infect_percent, 
-        const bool local_dispersal
+        const float dispersal
     );
     
     // pathogen dynamics -- initial infections, spread, and costs
