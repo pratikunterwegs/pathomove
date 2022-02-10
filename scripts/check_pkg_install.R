@@ -45,8 +45,8 @@ a = pathomove::run_pathomove(
   nClusters = 60,
   clusterSpread = 1,
   tmax = 100,
-  genmax = 1000,
-  g_patho_init = 700,
+  genmax = 500,
+  g_patho_init = 300,
   range_food = 1.0,
   range_agents = 1.0,
   range_move = 1.0,
@@ -56,7 +56,7 @@ a = pathomove::run_pathomove(
   initialInfections = 10,
   costInfect = 0.3,
   nThreads = 2,
-  local_dispersal = TRUE,
+  dispersal = 2.0,
   infect_percent = FALSE
 )
 #   }
@@ -82,7 +82,7 @@ m2_summary = m2[, unlist(lapply(.SD, function(x) {
   )
 }), recursive = F), by = c("id"), .SDcols = c("x", "y")]
 
-ggplot(m2)+
+ggplot(m1)+
   geom_point(
     aes(x, y, group = id, col = id),
     # size = 0.1
