@@ -12,10 +12,10 @@ library(ggplot2)
 library(data.table)
 
 l = pathomove::get_test_landscape(
-  nItems = 2000,
-  landsize = 50,
-  nClusters = 200, 
-  clusterSpread = 0.5,
+  nItems = 1800,
+  landsize = 60,
+  nClusters = 60, 
+  clusterSpread = 1,
   regen_time = 50
 )
 ggplot(l)+
@@ -40,13 +40,13 @@ ggplot(l)+
 a = pathomove::run_pathomove(
   scenario = 2,
   popsize = 500,
-  nItems = 1000,
-  landsize = 50,
-  nClusters = 100,
+  nItems = 1800,
+  landsize = 60,
+  nClusters = 60,
   clusterSpread = 1,
   tmax = 100,
-  genmax = 200,
-  g_patho_init = 170,
+  genmax = 1000,
+  g_patho_init = 700,
   range_food = 1.0,
   range_agents = 1.0,
   range_move = 1.0,
@@ -68,8 +68,22 @@ a = pathomove::run_pathomove(
 m1 = a[["move_pre"]] |> rbindlist()
 m2 = a[["move_post"]] |> rbindlist()
 
-ggplot(m1)+
-  geom_path(
+m1_summary = m1[, unlist(lapply(.SD, function(x) {
+  list(
+    first = first(x),
+    last = last(x)
+  )
+}), recursive = F), by = c("id"), .SDcols = c("x", "y")]
+
+m2_summary = m2[, unlist(lapply(.SD, function(x) {
+  list(
+    first = first(x),
+    last = last(x)
+  )
+}), recursive = F), by = c("id"), .SDcols = c("x", "y")]
+
+ggplot(m2)+
+  geom_point(
     aes(x, y, group = id, col = id),
     # size = 0.1
   )+
@@ -83,6 +97,23 @@ ggplot(m1)+
   coord_equal(
     # xlim = c(0, 50),
     # ylim = c(0, 50)
+  )
+
+ggplot()+
+  geom_segment(
+    data = m2_summary,
+    aes(
+      x = x.first, y = y.first,
+      xend = x.last, yend = y.last
+    ),
+    col = "indianred"
+  )+
+  geom_segment(
+    data = m1_summary,
+    aes(
+      x = x.first, y = y.first,
+      xend = x.last, yend = y.last
+    )
   )
 
 data = a
@@ -115,8 +146,6 @@ ggplot(b[variable %in% c("intake", "energy")])+
 
 # energy = b[variable == "energy",]
 wts = b[!variable %in% c("energy", "assoc", "t_infec", "moved", "degree"),]
-
-
 
 #### explore network ####
 library(igraph)
