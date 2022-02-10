@@ -23,7 +23,7 @@ run_pathomove(
   initialInfections,
   costInfect,
   nThreads,
-  local_dispersal,
+  dispersal,
   infect_percent
 )
 }
@@ -63,8 +63,11 @@ run_pathomove(
 \item{nThreads}{How many threads to parallelise over. Set to 1 to run on
 the HPC Peregrine cluster.}
 
-\item{local_dispersal}{A boolean value; whether to implement local
-(\code{TRUE}) or global (\code{FALSE}) natal dispersal.}
+\item{dispersal}{A float value; the standard deviation of a normal
+distribution centred on zero, which determines how far away from its parent
+each individual is initialised. The standard value is 5 percent of the
+landscape size (\code{landsize}), and represents local dispersal.
+Setting this to 10 percent is already almost equivalent to global dispersal.}
 
 \item{infect_percent}{A boolean value; whether the infection depletes a
 percentage of daily energy (\code{TRUE}) or whether a fixed value
