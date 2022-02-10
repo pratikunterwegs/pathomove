@@ -37,8 +37,11 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' @param costInfect The per-timestep cost of pathogen infection.
 #' @param nThreads How many threads to parallelise over. Set to 1 to run on
 #' the HPC Peregrine cluster.
-#' @param local_dispersal A boolean value; whether to implement local 
-#' (\code{TRUE}) or global (\code{FALSE}) natal dispersal.
+#' @param dispersal A float value; the standard deviation of a normal
+#' distribution centred on zero, which determines how far away from its parent
+#' each individual is initialised. The standard value is 5 percent of the
+#' landscape size (\code{landsize}), and represents local dispersal.
+#' Setting this to 10 percent is already almost equivalent to global dispersal.
 #' @param infect_percent A boolean value; whether the infection depletes a
 #' percentage of daily energy (\code{TRUE}) or whether a fixed value 
 #' (\code{FALSE}) is subtracted from net energy.
@@ -49,7 +52,7 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' timesteps of infection is \code{N - (cost_infect * T)}, where \code{N}
 #' is total intake.
 #' @return A data frame of the evolved population traits.
-run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, local_dispersal, infect_percent) {
-    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, local_dispersal, infect_percent)
+run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent) {
+    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent)
 }
 

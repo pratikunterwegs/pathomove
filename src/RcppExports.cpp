@@ -26,8 +26,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // run_pathomove
-Rcpp::List run_pathomove(const int scenario, const int popsize, const int nItems, const float landsize, const int nClusters, const float clusterSpread, const int tmax, const int genmax, const int g_patho_init, const float range_food, const float range_agents, const float range_move, const int handling_time, const int regen_time, float pTransmit, const int initialInfections, const float costInfect, const int nThreads, const bool local_dispersal, const bool infect_percent);
-RcppExport SEXP _pathomove_run_pathomove(SEXP scenarioSEXP, SEXP popsizeSEXP, SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterSpreadSEXP, SEXP tmaxSEXP, SEXP genmaxSEXP, SEXP g_patho_initSEXP, SEXP range_foodSEXP, SEXP range_agentsSEXP, SEXP range_moveSEXP, SEXP handling_timeSEXP, SEXP regen_timeSEXP, SEXP pTransmitSEXP, SEXP initialInfectionsSEXP, SEXP costInfectSEXP, SEXP nThreadsSEXP, SEXP local_dispersalSEXP, SEXP infect_percentSEXP) {
+Rcpp::List run_pathomove(const int scenario, const int popsize, const int nItems, const float landsize, const int nClusters, const float clusterSpread, const int tmax, const int genmax, const int g_patho_init, const float range_food, const float range_agents, const float range_move, const int handling_time, const int regen_time, float pTransmit, const int initialInfections, const float costInfect, const int nThreads, const float dispersal, const bool infect_percent);
+RcppExport SEXP _pathomove_run_pathomove(SEXP scenarioSEXP, SEXP popsizeSEXP, SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterSpreadSEXP, SEXP tmaxSEXP, SEXP genmaxSEXP, SEXP g_patho_initSEXP, SEXP range_foodSEXP, SEXP range_agentsSEXP, SEXP range_moveSEXP, SEXP handling_timeSEXP, SEXP regen_timeSEXP, SEXP pTransmitSEXP, SEXP initialInfectionsSEXP, SEXP costInfectSEXP, SEXP nThreadsSEXP, SEXP dispersalSEXP, SEXP infect_percentSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -49,9 +49,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int >::type initialInfections(initialInfectionsSEXP);
     Rcpp::traits::input_parameter< const float >::type costInfect(costInfectSEXP);
     Rcpp::traits::input_parameter< const int >::type nThreads(nThreadsSEXP);
-    Rcpp::traits::input_parameter< const bool >::type local_dispersal(local_dispersalSEXP);
+    Rcpp::traits::input_parameter< const float >::type dispersal(dispersalSEXP);
     Rcpp::traits::input_parameter< const bool >::type infect_percent(infect_percentSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_pathomove(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, local_dispersal, infect_percent));
+    rcpp_result_gen = Rcpp::wrap(run_pathomove(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent));
     return rcpp_result_gen;
 END_RCPP
 }
