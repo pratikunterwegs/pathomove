@@ -517,14 +517,12 @@ std::cauchy_distribution<float> mutation_size(0.0, mShift);
 
 // fun for replication
 void Population::Reproduce(const Resources food, const bool infect_percent, 
-    const bool local_dispersal) 
+    const float dispersal) 
 {
     // std::bernoulli_distribution verticalInfect(0.01f);
 
-    // individuals are born within an arbitrary range if local_dispersal is TRUE
-    // range food is chosen because this is likely to change with landscape size
-    // as most users choosing larger landscapes will also increase sensory range
-    std::normal_distribution<float> sprout(0.f, food.dSize * 0.1f);
+    // choose the range over which individuals are dispersed
+    std::normal_distribution<float> sprout(0.f, dispersal);
     std::vector<float> vecFitness;
     //normalise intake if percent infect is not true
     if (infect_percent) {
@@ -596,9 +594,6 @@ void Population::Reproduce(const Resources food, const bool infect_percent,
     std::swap(coordY, coord_y_2);
     coord_x_2.clear(); coord_y_2.clear();
 
-    // handle the case where local dispersal is false (global dispersal)
-    if (!local_dispersal) initPos(food);
-    
     // reset counter and time infected
     counter = std::vector<int> (nAgents, 0);
     timeInfected = std::vector<int> (nAgents, 0);
