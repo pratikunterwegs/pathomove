@@ -567,20 +567,16 @@ void Population::Reproduce(const Resources food, const bool infect_percent,
         tmp_sH[a] = sH[parent_id];
         tmp_sN[a] = sN[parent_id];
 
-        // inherit positions from parent if local dispersal is true
-        if (local_dispersal) {
-            coord_x_2[a] = coordX[parent_id] + sprout(rng);
-            coord_y_2[a] = coordY[parent_id] + sprout(rng);
+        // inherit positions from parent
+        coord_x_2[a] = coordX[parent_id] + sprout(rng);
+        coord_y_2[a] = coordY[parent_id] + sprout(rng);
 
-            // wrap initial positions
-            // crudely wrap sampling location
-            if((coord_x_2[a] > food.dSize) | (coord_x_2[a] < 0.f)) {
-                coord_x_2[a] = std::fabs(std::fmod(coord_x_2[a], food.dSize));
-            }
-            if((coord_y_2[a] > food.dSize) | (coord_y_2[a] < 0.f)) {
-                coord_y_2[a] = std::fabs(std::fmod(coord_y_2[a], food.dSize));
-            }
-        }
+        // robustly wrap positions
+        if(coord_x_2[a] < 0.f) coord_x_2[a] = food.dSize + coord_x_2[a];
+        if(coord_x_2[a] > food.dSize) coord_x_2[a] = coord_x_2[a] - food.dSize;
+
+        if(coord_y_2[a] < 0.f) coord_y_2[a] = food.dSize + coord_y_2[a];
+        if(coord_y_2[a] > food.dSize) coord_y_2[a] = coord_y_2[a] - food.dSize;
 
         // // vertical transmission of infection.
         // if(infected[parent_id]) {
@@ -595,8 +591,7 @@ void Population::Reproduce(const Resources food, const bool infect_percent,
     std::swap(infected, infected_2);
     infected_2.clear();
 
-    // swap coords --- this initialises individuals at (0, 0) if local_dispersal
-    // is FALSE, or near their parent's position if TRUE
+    // swap coords --- this initialises individuals near their parent's position
     std::swap(coordX, coord_x_2);
     std::swap(coordY, coord_y_2);
     coord_x_2.clear(); coord_y_2.clear();
