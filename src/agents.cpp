@@ -174,7 +174,7 @@ std::vector<int> Population::getFoodId (
 }
 
 /// rng for suitability
-std::normal_distribution<float> noise(0.f, 0.0001f);
+std::normal_distribution<float> noise(0.f, 0.01f);
 std::cauchy_distribution<float> noise_cauchy(0.f, 0.001f);
 
 /// population movement function
@@ -199,7 +199,7 @@ void Population::move(const Resources &food, const int nThreads) {
     {
         for (size_t j_ = 0; j_ < static_cast<size_t>(n_samples); j_++)
         {
-            noise_v[i_][j_] = noise_cauchy(rng);
+            noise_v[i_][j_] = noise(rng);
         }
     }    
 
