@@ -25,8 +25,8 @@ Rcpp::List simulation::do_simulation() {
     // prepare scenario
     Rcpp::Rcout << "this is scenario " << scenario << "\n";
 
-    // agent random position
-    if (!local_dispersal) pop.initPos(food);
+    // agent random position in first gen
+    pop.initPos(food);
 
     Rcpp::Rcout << "initialised population positions\n";
     Rcpp::List edgeLists;
@@ -44,7 +44,6 @@ Rcpp::List simulation::do_simulation() {
     int gen_init = 0;
     if (scenario == 2) {
         gen_init = g_patho_init;
-        
     }
 
     Rcpp::Rcout << "spillover in gen: " << gen_init << "\n";
@@ -60,9 +59,7 @@ Rcpp::List simulation::do_simulation() {
 
         // reset counter and positions
         pop.counter = std::vector<int> (pop.nAgents, 0);
-        // Rcpp::Rcout << "resetting agent counter\n";
-        pop.initPos(food);
-
+        
         if((scenario > 0) && (gen > gen_init)) {
             pop.introducePathogen(initialInfections);
         }
@@ -90,7 +87,7 @@ Rcpp::List simulation::do_simulation() {
             // foraging -- split into parallelised picking
             // and non-parallel exploitation
             pop.pickForageItem(food, nThreads);
-            pop.doForage(food, nThreads);
+            pop.doForage(food);
 
             // count associations
             pop.countAssoc(nThreads);
@@ -106,14 +103,19 @@ Rcpp::List simulation::do_simulation() {
 
         assert(pop.nInfected <= pop.nAgents);
 
+        //population infection cost by time
+        if (gen >= gen_init) {
+            pop.pathogenCost(costInfect, infect_percent);
+        } else {
+            pop.energy = pop.intake;
+        }
+
         // update gendata
         if ((gen == (genmax - 1)) | (gen % increment_log == 0)) {
+
             // Rcpp::Rcout << "logging data at gen: " << gen << "\n";
             gen_data.updateGenData(pop, gen);
         }
-        
-        //population infection cost by time
-        pop.pathogenCost(costInfect, infect_percent);
 
         if((gen == 0) | ((gen % (genmax / 10)) == 0) | (gen == genmax - 1)) {
             edgeLists.push_back(pop.pbsn.getNtwkDf());
@@ -121,7 +123,7 @@ Rcpp::List simulation::do_simulation() {
         }
 
         // reproduce
-        pop.Reproduce();
+        pop.Reproduce(food, infect_percent, dispersal);
 
         // generation ends here
     }
@@ -161,8 +163,11 @@ Rcpp::List simulation::do_simulation() {
 //' @param costInfect The per-timestep cost of pathogen infection.
 //' @param nThreads How many threads to parallelise over. Set to 1 to run on
 //' the HPC Peregrine cluster.
-//' @param local_dispersal A boolean value; whether to implement local 
-//' (\code{TRUE}) or global (\code{FALSE}) natal dispersal.
+//' @param dispersal A float value; the standard deviation of a normal
+//' distribution centred on zero, which determines how far away from its parent
+//' each individual is initialised. The standard value is 5 percent of the
+//' landscape size (\code{landsize}), and represents local dispersal.
+//' Setting this to 10 percent is already almost equivalent to global dispersal.
 //' @param infect_percent A boolean value; whether the infection depletes a
 //' percentage of daily energy (\code{TRUE}) or whether a fixed value 
 //' (\code{FALSE}) is subtracted from net energy.
@@ -191,7 +196,7 @@ Rcpp::List run_pathomove(const int scenario,
                         const int initialInfections,
                         const float costInfect,
                         const int nThreads,
-                        const bool local_dispersal,
+                        const float dispersal,
                         const bool infect_percent) {
                             
     simulation this_sim(popsize, scenario, nItems, landsize,
@@ -199,6 +204,6 @@ Rcpp::List run_pathomove(const int scenario,
                         range_food, range_agents, range_move,
                         handling_time, regen_time,
                         pTransmit, initialInfections, 
-                        costInfect, nThreads, local_dispersal, infect_percent);
+                        costInfect, nThreads, dispersal, infect_percent);
     return this_sim.do_simulation();
 }

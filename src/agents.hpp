@@ -24,7 +24,8 @@ public:
         coordY (popsize, 0.0f),
         initX (popsize, 0.0f),
         initY (popsize, 0.0f),
-        energy (popsize, 0.001),
+        intake (popsize, 0.001f),
+        energy (popsize, 0.001f),
         sF (popsize, 0.f),
         sH (popsize, 0.f),
         sN (popsize, 0.f),
@@ -66,6 +67,7 @@ public:
     std::vector<float> coordY;
     std::vector<float> initX;
     std::vector<float> initY;
+    std::vector<float> intake;
     std::vector<float> energy;
     // weights
     std::vector<float> sF;
@@ -128,11 +130,14 @@ public:
     // functions to move and forage on a landscape
     void move(const Resources &food, const int nThreads);
     void pickForageItem(const Resources &food, const int nThreads);
-    void doForage(Resources &food, const int nThreads);
+    void doForage(Resources &food);
     
     // funs to handle fitness and reproduce
     std::vector<float> handleFitness();
-    void Reproduce();
+    void Reproduce(const Resources food, 
+        const bool infect_percent, 
+        const float dispersal
+    );
     
     // pathogen dynamics -- initial infections, spread, and costs
     void introducePathogen(const int nAgInf);

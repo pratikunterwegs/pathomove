@@ -20,6 +20,7 @@ public:
         // generation wise dataframe
         // energy
         gIntake (gSampled, std::vector<float>(popsize, 0.f)),
+        gEnergy (gSampled, std::vector<float>(popsize, 0.f)),
         // weights
         gSF (gSampled, std::vector<float>(popsize, 0.f)),
         gSH (gSampled, std::vector<float>(popsize, 0.f)),
@@ -46,6 +47,7 @@ public:
     const int increment;
     const int gSampled;
     std::vector<std::vector<float> > gIntake;
+    std::vector<std::vector<float> > gEnergy;
     std::vector<std::vector<float> > gSF;
     std::vector<std::vector<float> > gSH;
     std::vector<std::vector<float> > gSN;

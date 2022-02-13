@@ -174,7 +174,7 @@ std::vector<int> Population::getFoodId (
 }
 
 /// rng for suitability
-std::normal_distribution<float> noise(0.f, 0.0001f);
+std::normal_distribution<float> noise(0.f, 0.01f);
 std::cauchy_distribution<float> noise_cauchy(0.f, 0.001f);
 
 /// population movement function
@@ -199,7 +199,7 @@ void Population::move(const Resources &food, const int nThreads) {
     {
         for (size_t j_ = 0; j_ < static_cast<size_t>(n_samples); j_++)
         {
-            noise_v[i_][j_] = noise_cauchy(rng);
+            noise_v[i_][j_] = noise(rng);
         }
     }    
 
@@ -450,7 +450,7 @@ void Population::pickForageItem(const Resources &food, const int nThreads){
 }
 
 // function to exploitatively forage on picked forage items
-void Population::doForage(Resources &food, const int nThreads) {
+void Population::doForage(Resources &food) {
     // all agents have picked a food item if they can forage
     // now forage in a serial loop --- this cannot be parallelised
     // this order is randomised
@@ -465,7 +465,7 @@ void Population::doForage(Resources &food, const int nThreads) {
             if (thisItem != -1)
             {
                 counter[id] = handling_time;
-                energy[id] += 1.0; // increased here --- not as described.
+                intake[id] += 1.0; // increased here --- not as described.
 
                 // reset food availability
                 food.available[thisItem] = false;
@@ -516,12 +516,20 @@ std::bernoulli_distribution mutation_happens(mProb);
 std::cauchy_distribution<float> mutation_size(0.0, mShift);
 
 // fun for replication
-void Population::Reproduce() {
+void Population::Reproduce(const Resources food, const bool infect_percent, 
+    const float dispersal) 
+{
     // std::bernoulli_distribution verticalInfect(0.01f);
-    std::normal_distribution<float> sprout(0.f, 3.f);
 
-    //normalise intake
-    std::vector<float> vecFitness = handleFitness();
+    // choose the range over which individuals are dispersed
+    std::normal_distribution<float> sprout(0.f, dispersal);
+    std::vector<float> vecFitness;
+    //normalise intake if percent infect is not true
+    if (infect_percent) {
+         vecFitness = energy;
+    } else {
+        vecFitness = handleFitness();
+    }
 
     // set up weighted lottery
     std::discrete_distribution<> weightedLottery(vecFitness.begin(), vecFitness.end());
@@ -557,12 +565,16 @@ void Population::Reproduce() {
         tmp_sH[a] = sH[parent_id];
         tmp_sN[a] = sN[parent_id];
 
+        // inherit positions from parent
         coord_x_2[a] = coordX[parent_id] + sprout(rng);
         coord_y_2[a] = coordY[parent_id] + sprout(rng);
 
-        // edit initial positions
-        initX[a] = coord_x_2[a];
-        initY[a] = coord_y_2[a];
+        // robustly wrap positions
+        if(coord_x_2[a] < 0.f) coord_x_2[a] = food.dSize + coord_x_2[a];
+        if(coord_x_2[a] > food.dSize) coord_x_2[a] = coord_x_2[a] - food.dSize;
+
+        if(coord_y_2[a] < 0.f) coord_y_2[a] = food.dSize + coord_y_2[a];
+        if(coord_y_2[a] > food.dSize) coord_y_2[a] = coord_y_2[a] - food.dSize;
 
         // // vertical transmission of infection.
         // if(infected[parent_id]) {
@@ -577,11 +589,15 @@ void Population::Reproduce() {
     std::swap(infected, infected_2);
     infected_2.clear();
 
-    // swap coords
+    // swap coords --- this initialises individuals near their parent's position
     std::swap(coordX, coord_x_2);
     std::swap(coordY, coord_y_2);
     coord_x_2.clear(); coord_y_2.clear();
-    
+
+    // update initial positions!
+    initX = coordX;
+    initY = coordY;
+
     // reset counter and time infected
     counter = std::vector<int> (nAgents, 0);
     timeInfected = std::vector<int> (nAgents, 0);
@@ -616,4 +632,9 @@ void Population::Reproduce() {
     std::vector<float> tmpEnergy (nAgents, 0.001);
     std::swap(energy, tmpEnergy);
     tmpEnergy.clear();
+
+    // swap intake
+    std::vector<float> tmpIntake (nAgents, 0.001);
+    std::swap(intake, tmpIntake);
+    tmpIntake.clear();
 }
