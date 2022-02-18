@@ -106,7 +106,7 @@ public:
     /// functions for the population ///
     // population order, trait and position randomiser
     void shufflePop();
-    void setTrait ();
+    void setTrait (const float mSize);
     void initPos(Resources food);
 
     // make rtree and get nearest agents and food

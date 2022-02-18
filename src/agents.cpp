@@ -58,11 +58,12 @@ void Population::initPos(Resources food) {
     updateRtree();
 }
 
-// unifrom distribution for agent trait
-std::uniform_real_distribution<float> agent_ran_trait(-0.001, 0.001);
-
 // set agent trait
-void Population::setTrait() {
+void Population::setTrait(const float mSize) {
+
+    // create a cauchy distribution, mSize is the scale
+    std::cauchy_distribution<float> agent_ran_trait(0.f, mSize);
+
     for(int i = 0; i < nAgents; i++) {
         sF[i] = agent_ran_trait(rng);
         sH[i] = agent_ran_trait(rng);
