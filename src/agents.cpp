@@ -512,15 +512,15 @@ std::vector<float> Population::handleFitness() {
     return vecFitness;
 }
 
-// mutation probability and size distribution
-std::bernoulli_distribution mutation_happens(mProb);
-std::cauchy_distribution<float> mutation_size(0.0, mShift);
-
 // fun for replication
 void Population::Reproduce(const Resources food, const bool infect_percent, 
-    const float dispersal) 
+    const float dispersal, const float mProb, const float mSize) 
 {
     // std::bernoulli_distribution verticalInfect(0.01f);
+
+    // mutation probability and size distribution --- inefficient but oh well
+    std::bernoulli_distribution mutation_happens(mProb);
+    std::cauchy_distribution<float> mutation_size(0.0, mSize);
 
     // choose the range over which individuals are dispersed
     std::normal_distribution<float> sprout(0.f, dispersal);
