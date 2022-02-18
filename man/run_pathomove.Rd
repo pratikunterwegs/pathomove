@@ -24,7 +24,9 @@ run_pathomove(
   costInfect,
   nThreads,
   dispersal,
-  infect_percent
+  infect_percent,
+  mProb,
+  mSize
 )
 }
 \arguments{
@@ -78,6 +80,13 @@ is total intake.
 For \code{infect_percent = FALSE}, the net energy remaining after \code{T}
 timesteps of infection is \code{N - (cost_infect * T)}, where \code{N}
 is total intake.}
+
+\item{mProb}{The probability of mutation. The suggested value is 0.01.
+While high, this may be more appropriate for a small population; change this
+value and \code{popsize} to test the simulation's sensitivity to these values.}
+
+\item{mSize}{Controls the mutational step size, and represents the scale
+parameter of a Cauchy distribution.}
 
 \item{intialInfections}{Agents infected per event.}
 }
