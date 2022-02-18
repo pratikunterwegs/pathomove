@@ -13,7 +13,6 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
-Depends: igraph
 LinkingTo: 
     Rcpp,
     RcppParallel,
@@ -26,7 +25,6 @@ Imports:
     assertthat,
     data.table,
     glue,
-    igraph
 Suggests: 
     testthat,
     ssh,
