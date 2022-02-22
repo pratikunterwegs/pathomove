@@ -51,8 +51,13 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' For \code{infect_percent = FALSE}, the net energy remaining after \code{T} 
 #' timesteps of infection is \code{N - (cost_infect * T)}, where \code{N}
 #' is total intake.
+#' @param mProb The probability of mutation. The suggested value is 0.01.
+#' While high, this may be more appropriate for a small population; change this
+#' value and \code{popsize} to test the simulation's sensitivity to these values.
+#' @param mSize Controls the mutational step size, and represents the scale
+#' parameter of a Cauchy distribution. 
 #' @return A data frame of the evolved population traits.
-run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent) {
-    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent)
+run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, mProb, mSize) {
+    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, mProb, mSize)
 }
 

@@ -24,7 +24,9 @@ public:
                const float costInfect,
                const int nThreads,
                const float dispersal, 
-               const bool infect_percent):
+               const bool infect_percent,
+               const float mProb,
+               const float mSize):
         // population, food, and data structures
         pop (popsize, range_agents, range_food, range_move, handling_time, pTransmit),
         food(nItems, landsize, nClusters, clusterSpread, regen_time),
@@ -55,6 +57,10 @@ public:
         dispersal(dispersal),
         infect_percent(infect_percent),
 
+        // mutation probability and step size
+        mProb(mProb),
+        mSize(mSize),
+
         // movement data
         mdPre(tmax, popsize),
         mdPost(tmax, popsize)
@@ -75,6 +81,8 @@ public:
     const float dispersal;
     const bool infect_percent;
 
+    const float mProb, mSize;
+
     moveData mdPre, mdPost;
 
     // funs
@@ -84,7 +92,8 @@ public:
 
 Rcpp::List run_pathomove(const int scenario,
                         const int popsize,
-                        const int nItems, const float landsize,
+                        const int nItems, 
+                        const float landsize,
                         const int nClusters,
                         const float clusterSpread,
                         const int tmax,
@@ -100,6 +109,8 @@ Rcpp::List run_pathomove(const int scenario,
                         const float costInfect,
                         const int nThreads,
                         const float dispersal,
-                        const bool infect_percent);
+                        const bool infect_percent,
+                        const float mProb,
+                        const float mSize);
 
 #endif // SIMULATIONS_H

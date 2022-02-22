@@ -24,6 +24,7 @@ const float range_agents = 1.f;
 const float range_move = 0.5f;
 const int handling_time = 5;
 const float p_transmit = 0.1;
+const float test_mSize = 0.001;
 
 // make test population
 Population pop (popsize, range_agents, range_food, range_move, 
@@ -53,7 +54,7 @@ context("Population initialisation works") {
   }
   
   // set population traits
-  pop.setTrait();
+  pop.setTrait(test_mSize);
   
   test_that("Population vector have right value before assignment") {
     expect_false((pop.sF[0] - 0.f) < 1e-5);

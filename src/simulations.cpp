@@ -19,7 +19,7 @@ Rcpp::List simulation::do_simulation() {
     food.countAvailable();
     Rcpp::Rcout << "landscape with " << food.nClusters << " clusters\n";
 
-    pop.setTrait();
+    pop.setTrait(mSize);
     Rcpp::Rcout << "pop with " << pop.nAgents << " agents for " << genmax << " gens " << tmax << " timesteps\n";
 
     // prepare scenario
@@ -123,7 +123,7 @@ Rcpp::List simulation::do_simulation() {
         }
 
         // reproduce
-        pop.Reproduce(food, infect_percent, dispersal);
+        pop.Reproduce(food, infect_percent, dispersal, mProb, mSize);
 
         // generation ends here
     }
@@ -177,6 +177,11 @@ Rcpp::List simulation::do_simulation() {
 //' For \code{infect_percent = FALSE}, the net energy remaining after \code{T} 
 //' timesteps of infection is \code{N - (cost_infect * T)}, where \code{N}
 //' is total intake.
+//' @param mProb The probability of mutation. The suggested value is 0.01.
+//' While high, this may be more appropriate for a small population; change this
+//' value and \code{popsize} to test the simulation's sensitivity to these values.
+//' @param mSize Controls the mutational step size, and represents the scale
+//' parameter of a Cauchy distribution. 
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
 Rcpp::List run_pathomove(const int scenario,
@@ -197,13 +202,16 @@ Rcpp::List run_pathomove(const int scenario,
                         const float costInfect,
                         const int nThreads,
                         const float dispersal,
-                        const bool infect_percent) {
+                        const bool infect_percent,
+                        const float mProb,
+                        const float mSize) {
                             
     simulation this_sim(popsize, scenario, nItems, landsize,
                         nClusters, clusterSpread, tmax, genmax, g_patho_init,
                         range_food, range_agents, range_move,
                         handling_time, regen_time,
                         pTransmit, initialInfections, 
-                        costInfect, nThreads, dispersal, infect_percent);
+                        costInfect, nThreads, dispersal, infect_percent,
+                        mProb, mSize);
     return this_sim.do_simulation();
 }

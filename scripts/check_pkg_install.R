@@ -53,11 +53,13 @@ a = pathomove::run_pathomove(
   handling_time = 5,
   regen_time = 50,
   pTransmit = 0.05,
-  initialInfections = 10,
+  initialInfections = 20,
   costInfect = 0.3,
   nThreads = 2,
   dispersal = 2.0,
-  infect_percent = FALSE
+  infect_percent = FALSE,
+  mProb = 0.001,
+  mSize = 0.001
 )
 #   }
 # )
@@ -106,7 +108,7 @@ ggplot()+
       x = x.first, y = y.first,
       xend = x.last, yend = y.last
     ),
-    col = "indianred"
+    col = "red"
   )+
   geom_segment(
     data = m1_summary,
@@ -132,6 +134,24 @@ b = Map(function(l, g) {
 b = rbindlist(b)
 b
 # b = b[(gen %% 100 == 0) | (gen == 9999),] 
+
+#### examine strategies ####
+d = copy(b)
+d[, social_strat := fcase(
+  (sH > 0 & sN > 0), "agent tracking",
+  (sH > 0 & sN < 0), "handler tracking",
+  (sH < 0 & sN > 0), "non-handler tracking",
+  (sH < 0 & sN < 0), "agent avoiding"
+) ]
+
+df = d[, .N, by = c("gen", "social_strat")]
+
+ggplot(df)+
+  geom_point(
+    aes(
+      gen, N, col = social_strat
+    )
+  )
 
 #### plot data ####
 b = melt(b, id.vars = c("gen", "id"))

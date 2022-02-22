@@ -106,14 +106,13 @@ public:
     /// functions for the population ///
     // population order, trait and position randomiser
     void shufflePop();
-    void setTrait ();
+    void setTrait (const float mSize);
     void initPos(Resources food);
 
     // make rtree and get nearest agents and food
     void updateRtree();
 
-    int countFood (
-        const Resources &food, const float xloc, const float yloc);
+    int countFood (const Resources &food, const float xloc, const float yloc);
     
     std::vector<int> getFoodId (
         const Resources &food,
@@ -136,7 +135,9 @@ public:
     std::vector<float> handleFitness();
     void Reproduce(const Resources food, 
         const bool infect_percent, 
-        const float dispersal
+        const float dispersal,
+        const float mProb,
+        const float mSize
     );
     
     // pathogen dynamics -- initial infections, spread, and costs
