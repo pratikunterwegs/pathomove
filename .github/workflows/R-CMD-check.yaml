@@ -78,8 +78,6 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
           remotes::install_cran("devtools")
-          remotes::install_cran("renv")
-          renv::restore()
         shell: Rscript {0}
 
       - name: Check simulation compiles and runs
