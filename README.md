@@ -1,4 +1,4 @@
-# Individual-based Model for the Evolution of Animal Movement Strategies under the Risk of Pathogen Spread
+# Source code for _Pathomove_, an individual-based model for the evolution of animal movement strategies under the risk of pathogen transmission
 
 <!-- badges: start -->
   [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
@@ -7,21 +7,44 @@
   <!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4314905.svg)](https://doi.org/10.5281/zenodo.4033154) -->
 <!-- badges: end -->
 
-`pathomove` is a mechanistic, individual-based model that simualtes the evolution of animal movement rules in the context of exploitation competition and infectious pathogen transmission.
+This repository holds the source code for the _Pathomove_ simulation, a spatially explicit, individual-based, evolutionary model of the evolution of animal social movement strategies under the risk of pathogen transmission.
 
-## Contact
+The model is written by Pratik Gupte, in the Modelling Adaptive Response Mechanisms Group (Weissing Lab) at the Groningen Institute for Evolutionary Life Science, at the University of Groningen.
 
-Get in touch with me at p.r.gupte@rug.nl, or pratikgupte16@gmail.com.
+The source code for analyses of this simulation's output can be found on Github at https://github.com/pratikunterwegs/patho-move-evol, or archived on Zenodo: **Zenodo link to supplementary material here**.
+
+## Contact and Attribution
+
+Please contact [Pratik Gupte](p.r.gupte@rug.nl) for questions on the model or the associated project.
+
+Please cite this simulation as
+
+**WORK IN PROGRESS**
+
+```bibtex
+@software{gupte_2022_pathomove,
+  author       = {Pratik Rajan Gupte},
+  title        = {{Pathomove: Source code for an individual-based model for the 
+                  evolution of animal movement strategies under the risk of 
+                  pathogen transmission}},
+  month        = mar,
+  year         = 2022
+}
+```
 
 ## Simulation model
 
+Please refer to the preprint on _biorXiv_ for a full description of the model, and the biological system it aims to simulate.
+
 This model ties together a number of different concepts:
 
-1. Mechanistic modelling of the evolution of animal movement decisions, following a framework from the simulation model [_Kleptmove_ (Netz 2021)](https://doi.org/10.5281/zenodo.4905476).
+1. Mechanistic modelling of the evolution of animal movement decisions, following a framework from an earlier model [(Gupte et al. 2021)](https://www.biorxiv.org/content/10.1101/2021.07.19.452886v2).
 
-2. Exploitation competition for discrete food items, similar to _Kleptomove_, but distributed in continuous space, rather than on a grid.
+2. Exploitation competition for discrete food items distributed in continuous space, rather than on a grid.
 
 3. The introduction and spread of an infectious pathogen between agents when they are close together. The pathogen causes a chronic 'disease', which reduces net energy, and hence fitness.
+
+<img src="inst/fig_schematic.png" height="200">
 
 ## Simulation methods and data
 
@@ -39,7 +62,11 @@ The model combines a number of interesting tools to implement its conceptual com
 
 ## Package documentation
 
-There is no standalone package documentation as yet, but each function is documented, and this can be accessed through R help: `?pathomove::run_pathomove`.
+There is no standalone package documentation as yet, but each function is documented, and this can be accessed through R help:
+
+```r
+?pathomove::run_pathomove()
+```
 
 ## Running the model
 
@@ -56,13 +83,20 @@ The package depends on the following R packages, which are installed by default 
 
 3. `BH` to make the Boost.Geometry headers available to the Rcpp package. The package _does not_ explicitly link to system Boost installations (though this is possible).
 
-<!-- 4. `igraph` to calculate social network metrics within the C++ simulation. -->
-
-### RcppParallel on Windows
+### RcppParallel on Windows: An Important Note
 
 The contents of the `src/Makevars.win` script need to be copied to the `Makevars.win` script for your local installation of R on Windows, usually `Documents/.R/`.
 This helps the package find the TBB libraries provided by RcppParallel.
 This is not necessary on Linux systems.
+
+**Copy** this to Documents/.R/Makevars.win **on Windows systems**
+
+```cmake
+CXX_STD = CXX14
+PKG_CXXFLAGS += -DRCPP_PARALLEL_USE_TBB=1
+PKG_LIBS += $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" -e "RcppParallel::RcppParallelLibs()")
+```
+
 
 ### Installation
 
@@ -72,4 +106,17 @@ This is not necessary on Linux systems.
 
 3. In `R`, install the package using `devtools::install()`.
 
-4. Try out the model using the script `scripts/chk_pkg_install.R`. Be warned that specifying either large number of individuals, generations, or timesteps within generations, _will_ take a long time, and may brick up lower-capacity hardware.
+Alternatively, install the model as an R package directly from `R` using the code:
+
+```r
+devtools::install_github("pratikunterwegs/pathomove")
+```
+
+4. Try out the model using the script `scripts/chk_pkg_install.R`. Be warned that specifying a large number of individuals, generations, or timesteps within generations, _will_ take a long time, and may crash on lower-capacity hardware.
+
+5. Alternatively, run simulation replicates using the R scripts provided in the `scripts` folder on https://github.com/pratikunterwegs/patho-move-evol.
+
+## Workflow
+
+The workflow to run this model to replicate the results presented in our biorXiv manuscript are described more thoroughly in the Readme of a dedicated repository https://github.com/pratikunterwegs/patho-move-evol.
+
