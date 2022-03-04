@@ -60,14 +60,6 @@ The model combines a number of interesting tools to implement its conceptual com
 
 5. **Testing Rcpp functions** The internal C++ functions underlying the main simulation code (`run_pathomove`) are tested (some!) using Catch testing, which is integrated with the R package `testthat`.
 
-## Package documentation
-
-There is no standalone package documentation as yet, but each function is documented, and this can be accessed through R help:
-
-```r
-?pathomove::run_pathomove()
-```
-
 ## Running the model
 
 The model is bundled as an R package, which means it can be installed and run out-of-the-box on most systems with minimal effort.
@@ -97,7 +89,6 @@ PKG_CXXFLAGS += -DRCPP_PARALLEL_USE_TBB=1
 PKG_LIBS += $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" -e "RcppParallel::RcppParallelLibs()")
 ```
 
-
 ### Installation
 
 1. Clone the repository using SSH by running `git clone git@github.com:pratikunterwegs/pathomove.git`.
@@ -116,7 +107,20 @@ devtools::install_github("pratikunterwegs/pathomove")
 
 5. Alternatively, run simulation replicates using the R scripts provided in the `scripts` folder on https://github.com/pratikunterwegs/patho-move-evol.
 
+## Package documentation
+
+Each function in the package is documented, and this can be accessed through R help, once the package is installed.
+
+```r
+?pathomove::run_pathomove()
+```
+
+Alternatively, build the package manual --- a PDF version of the documentation --- after installing the package. A pre-built version of the documentation is provided among the supplementary files in the associated biorXiv submission.
+
+```r
+devtools::build_manual(pkg = "../pathomove")
+```
+
 ## Workflow
 
 The workflow to run this model to replicate the results presented in our biorXiv manuscript are described more thoroughly in the Readme of a dedicated repository https://github.com/pratikunterwegs/patho-move-evol.
-
