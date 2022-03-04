@@ -107,6 +107,18 @@ devtools::install_github("pratikunterwegs/pathomove")
 
 5. Alternatively, run simulation replicates using the R scripts provided in the `scripts` folder on https://github.com/pratikunterwegs/patho-move-evol.
 
+### Usage on different systems
+
+- Linux and Windows: This package is confirmed to work on both Linux (Ubuntu 20.04+) and Windows (10) systems. This functionality is checked weekly using a Github Actions 'job', the details of which can be found in `.github\workflows\R-CMD-check.yaml`.
+
+- Multi-threading: This package uses Intel's TBB library for multi-threading, which substantially improves the speed of the underlying C++ code. This is especially noticeable when running large population sizes, or many generations. This functionality is confirmed to work on both Windows and Linux systems, as above.
+
+Multi-threading can be turned on for the lone function that uses it, `pathomove::run_pathomove`, by passing a number greater than 1 to the argument `nThreads`.
+
+- Multi-threading caveat for high-performance computing clusters: When using (an Ubuntu-based) HPC cluster, multi-threading may not work, even when the cluster has TBB available and loaded. It is not entirely clear why. When using an HPC cluster, set `nThreads = 1`, to use single-threaded alternatives of multi-threaded functions.
+
+- MacOS: This package likely does _not_ work on MacOS. This is related to using Intel's TBB library for multi-threading. User can try to use the single-threaded option at their own risk.
+
 ## Package documentation
 
 Each function in the package is documented, and this can be accessed through R help, once the package is installed.
