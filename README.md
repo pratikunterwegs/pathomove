@@ -109,11 +109,30 @@ devtools::install_github("pratikunterwegs/pathomove")
 
 ### Usage on different systems
 
-- Linux and Windows: This package is confirmed to work on both Linux (Ubuntu 20.04+) and Windows (10) systems. This functionality is checked weekly using a Github Actions 'job', the details of which can be found in `.github\workflows\R-CMD-check.yaml`.
+- Linux and Windows: This package is confirmed to work on both Linux (Ubuntu 20.04+) and Windows (10) systems. This functionality is checked weekly using a Github Actions 'job', the details of which can be found in `.github/workflows/R-CMD-check.yaml`.
 
 - Multi-threading: This package uses Intel's TBB library for multi-threading, which substantially improves the speed of the underlying C++ code. This is especially noticeable when running large population sizes, or many generations. This functionality is confirmed to work on both Windows and Linux systems, as above.
 
-Multi-threading can be turned on for the lone function that uses it, `pathomove::run_pathomove`, by passing a number greater than 1 to the argument `nThreads`.
+  Multi-threading can be turned on for the lone function that uses it, `pathomove::run_pathomove`, by passing a number greater than 1 to the argument `nThreads`.
+
+- High-performance computing clusters: The installation of this package on an Ubuntu-based HPC cluster can be automated by running the shell script provided in the `bash/` folder. The example below shows how to install it on the University of Groningen's HPC cluster.
+
+  ```sh
+  #!/bin/bash
+  # script to install pathomove on the peregrine cluster
+
+  ml load R/4.1.0-foss-2021a
+  ml load Boost/1.76.0-GCC-10.3.0
+  ml load tbb/4.4.2.152
+
+  # here working in R
+  Rscript --slave -e 'devtools::build()'
+  Rscript --slave -e 'sink("install_log.log"); devtools::install(upgrade = "never"); sink()'
+  ```
+
+  An example of a template job script is provided as `bash/main_job_maker.sh`.
+
+- Mass job submission to an HPC cluster: The function `use_cluster` in `R/fun_use_cluster.R` can be used to run multiple replicates of this simulation, or multiple parameter combinations; **please use this advanced functionality carefully.**
 
 - Multi-threading caveat for high-performance computing clusters: When using (an Ubuntu-based) HPC cluster, multi-threading may not work, even when the cluster has TBB available and loaded. It is not entirely clear why. When using an HPC cluster, set `nThreads = 1`, to use single-threaded alternatives of multi-threaded functions.
 
@@ -130,9 +149,98 @@ Each function in the package is documented, and this can be accessed through R h
 Alternatively, build the package manual --- a PDF version of the documentation --- after installing the package. A pre-built version of the documentation is provided among the supplementary files in the associated biorXiv submission.
 
 ```r
-devtools::build_manual(pkg = "../pathomove")
+devtools::build_manual(pkg = "pathomove")
 ```
 
 ## Workflow
 
 The workflow to run this model to replicate the results presented in our biorXiv manuscript are described more thoroughly in the Readme of a dedicated repository https://github.com/pratikunterwegs/patho-move-evol.
+
+The basic workflow for the package is:
+
+### Local use
+
+1. Install the package.
+
+2. Run the following commands.
+
+```r
+# run a single replicate with a single combination of parameters
+pathomove::run_pathomove(..., nThreads = 8)
+```
+
+Here, `...` indicates the many function arguments, such as population size, landscape size, the number of generations, and when the pathogen is introduced.
+
+`nThreads` controls multi-threading to speed up the simulation. Any value > 1 results in automatic use of as many threads as TBB decides internally.
+
+### HPC cluster use
+
+**Warnings**
+
+Please note: This is an advanced workflow, and should be attempted lightly.
+
+This workflow describes how to prepare a combination of parameters, and create a job array on an HPC cluster, so that a separate simulation is run for each parameter combination and replicate.
+
+Please note: If _any_ part of this sounds unfamiliar, please stop now, and consider using the simulation locally.
+
+**Warning** This workflow currently needs to be run from a Linux system, due to issues converting between line-ending types on Windows and Linux systems.
+
+**Workflow**
+
+1. Install the package locally.
+
+2. Install the package on the cluster.
+
+3. Prepare a directory structure to store the output. A template directory structure can be found at https://github.com/pratikunterwegs/patho-move-evol.
+
+There should be at least the following paths:
+
+```md
+yourFolder
+├───bash
+├───data
+│   ├───output
+│   ├───parameters
+└───scripts
+```
+
+4. Prepare an `R` script to actually run the `run_pathomove` command on the cluster, and to save the output. An example can be found in `scripts/do_sim_pathomove.R`. 
+
+  - You should **prepare this locally*, it will be uploaded to the cluster.
+
+  - Make sure that the output path to save the simulation results is in the directory structure shown above; e.g. `yourFolder/data/output`.
+
+5. Prepare a template job. An example is found in `bash\main_job_maker.sh`. This script is written for an Ubuntu-based, SLURM-scheduler HPC cluster.
+
+6. Run the following commands locally from `R`.
+
+```r
+# this should be your R terminal
+# be careful about working directories etc.
+# load the package locally
+library(pathomove)
+
+# make a parameter file with all the combinations required
+# or with multiple replicates
+pathomove::make_parameter_file(
+  ...,
+  replicates = N,
+  which_file = "some parameter file name.csv"
+)
+
+# above, ... indicates the simulation parameters
+
+# use the use_cluster function to send in jobs
+pathomove::use_cluster(
+  ssh_con = "ssh connection to your HPC cluster",
+  password = "your HPC password", 
+  script = "your simulation run script", # e.g. scripts/do_sim_pathomove.R
+  folder = "yourFolder", # folder for the output
+  template_job = "template job shell script",  # the shell script from (5)
+  parameter_file = "some parameter file name.csv" # the parameter data
+)
+```
+
+7. Simulation output should be returned into the `data/output` folder specified above, or your custom equivalent.
+
+Please note (again): This is advanced functionality. It is brittle, i.e., it is not tested to work across a range of systems. Please do _not_ attempt this lightly.
