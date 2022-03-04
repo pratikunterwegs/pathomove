@@ -1,6 +1,6 @@
 
 library(pathomove)
-password = readLines("data/password")
+password <- readLines("data/password")
 
 # check cluster
 # pathomove::check_prepare_cluster(
@@ -35,9 +35,9 @@ pathomove::make_parameter_file(
 # try sending in a job
 pathomove::use_cluster(
   ssh_con = "p284074@peregrine.hpc.rug.nl",
-  password = password, 
+  password = password,
   folder = "snevo",
-  script = "scripts/do_sim_cluster.R", 
-  template_job = "bash/main_job_maker.sh", 
+  script = "scripts/do_sim_cluster.R",
+  template_job = "bash/main_job_maker.sh",
   parameter_file = "data/parameters/parameters_test.csv"
 )

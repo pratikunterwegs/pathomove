@@ -7,11 +7,9 @@
 #' @return Writes a parameter file.
 #' @export
 #'
-make_parameter_file <- function(
-  replicates,
-  ...,
-  which_file = "this_file.csv"
-) {
+make_parameter_file <- function(replicates,
+                                ...,
+                                which_file = "this_file.csv") {
 
   # make combinations
   parameters <- data.table::CJ(
@@ -20,7 +18,7 @@ make_parameter_file <- function(
   )
 
   # assign unique id called ofi
-  parameters$ofi = as.integer(Sys.time()) + seq(nrow(parameters))
+  parameters$ofi <- as.integer(Sys.time()) + seq(nrow(parameters))
 
   # write file
   data.table::fwrite(

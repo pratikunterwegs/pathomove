@@ -2,8 +2,8 @@ test_that("simulation works", {
   # skip("skipped")
   # parameters
   popsize <- 100
-  
-  data = run_pathomove(
+
+  data <- run_pathomove(
     scenario = 2,
     popsize = popsize,
     nItems = 100,
@@ -22,17 +22,17 @@ test_that("simulation works", {
     costInfect = 0.2,
     nThreads = 2
   )
-  
+
   # check is list
   testthat::expect_is(
     data, "list"
   )
-  
+
   # check length is two
   testthat::expect_identical(
     length(data), 4L
   )
-  
+
   # check names in data
   testthat::expect_true(
     all(
@@ -40,16 +40,17 @@ test_that("simulation works", {
         names(data)
     )
   )
-  
+
   # check elements are data frames
   invisible(
     lapply(data$trait_data$pop_data,
-           testthat::expect_is, class = "data.frame")
+      testthat::expect_is,
+      class = "data.frame"
+    )
   )
-  
+
   # check trait data has popsize rows, checking only one df for now
   testthat::expect_identical(
     nrow(data[["gen_data"]]$pop_data[[1]]), as.integer(popsize)
   )
-  
 })

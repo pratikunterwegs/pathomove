@@ -6,8 +6,7 @@
 #' @return None, should check and prepare cluster.
 #' @export
 #'
-check_prepare_cluster <- function(
-                                  ssh_con = "some_server",
+check_prepare_cluster <- function(ssh_con = "some_server",
                                   password = "your_password") {
   message("checking cluster for snevo")
   # connect to server
@@ -24,11 +23,11 @@ check_prepare_cluster <- function(
         rm install_log.log;
         git remote update;
         if [[ ! `git status --porcelain` ]]; then
-            git pull; 
-            chmod +x bash/install_snevo.sh; 
+            git pull;
+            chmod +x bash/install_snevo.sh;
             ./bash/install_snevo.sh;
         fi
-    else 
+    else
        echo "snevo does not exist, cloning";
        git clone https://github.com/pratikunterwegs/snevo.git snevo;
        cd snevo

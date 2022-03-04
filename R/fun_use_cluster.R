@@ -10,8 +10,7 @@
 #' @return Runs a job which makes more jobs.
 #' @export
 #'
-use_cluster <- function(
-                        ssh_con = "some_server",
+use_cluster <- function(ssh_con = "some_server",
                         password = "your_password",
                         script = "which_script.R",
                         folder = "pathomove",
@@ -27,7 +26,7 @@ use_cluster <- function(
     files = parameter_file,
     to = glue::glue("{folder}/data/parameters")
   )
-  
+
   # transfer R script
   ssh::scp_upload(
     s,
@@ -46,7 +45,7 @@ use_cluster <- function(
 
   # replace n array with length of parameter file
   n_array <- length(readLines(parameter_file)) - 1
-  job_shell_script = gsub(pattern = "n_array", n_array, job_shell_script)
+  job_shell_script <- gsub(pattern = "n_array", n_array, job_shell_script)
 
   # check that last line is Rscript
   assertthat::assert_that(
@@ -68,7 +67,7 @@ use_cluster <- function(
   writeLines(
     job_shell_script,
     con = glue::glue(
-      'bash/{job_name}'
+      "bash/{job_name}"
     )
   )
 
