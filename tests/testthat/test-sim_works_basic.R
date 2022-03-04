@@ -5,22 +5,27 @@ test_that("simulation works", {
 
   data <- run_pathomove(
     scenario = 2,
-    popsize = popsize,
-    nItems = 100,
-    landsize = 20,
-    nClusters = 10,
-    clusterSpread = 0.1,
-    tmax = 20,
-    genmax = 10,
-    range_food = 1,
-    range_agents = 1,
-    range_move = 1,
-    handling_time = 3,
-    regen_time = 5,
-    pTransmit = 0.1,
-    initialInfections = 10,
-    costInfect = 0.2,
-    nThreads = 2
+    popsize = 100,
+    nItems = 180,
+    landsize = 60,
+    nClusters = 60,
+    clusterSpread = 1,
+    tmax = 100,
+    genmax = 20,
+    g_patho_init = 15,
+    range_food = 1.0,
+    range_agents = 1.0,
+    range_move = 1.0,
+    handling_time = 5,
+    regen_time = 50,
+    pTransmit = 0.05,
+    initialInfections = 40,
+    costInfect = 0.25,
+    nThreads = 2,
+    dispersal = 3.0,
+    infect_percent = FALSE,
+    mProb = 0.001,
+    mSize = 0.001
   )
 
   # check is list
