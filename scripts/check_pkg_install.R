@@ -39,24 +39,24 @@ ggplot(l)+
 #   x = {
 a = pathomove::run_pathomove(
   scenario = 2,
-  popsize = 500,
+  popsize = 1000,
   nItems = 1800,
   landsize = 60,
   nClusters = 60,
   clusterSpread = 1,
   tmax = 100,
-  genmax = 500,
-  g_patho_init = 300,
+  genmax = 1000,
+  g_patho_init = 500,
   range_food = 1.0,
   range_agents = 1.0,
   range_move = 1.0,
   handling_time = 5,
   regen_time = 50,
   pTransmit = 0.05,
-  initialInfections = 20,
-  costInfect = 0.3,
+  initialInfections = 40,
+  costInfect = 0.25,
   nThreads = 2,
-  dispersal = 2.0,
+  dispersal = 3.0,
   infect_percent = FALSE,
   mProb = 0.001,
   mSize = 0.001
@@ -101,23 +101,6 @@ ggplot(m1)+
     # ylim = c(0, 50)
   )
 
-ggplot()+
-  geom_segment(
-    data = m2_summary,
-    aes(
-      x = x.first, y = y.first,
-      xend = x.last, yend = y.last
-    ),
-    col = "red"
-  )+
-  geom_segment(
-    data = m1_summary,
-    aes(
-      x = x.first, y = y.first,
-      xend = x.last, yend = y.last
-    )
-  )
-
 data = a
 a = data[[1]]
 names(a)
@@ -139,9 +122,9 @@ b
 d = copy(b)
 d[, social_strat := fcase(
   (sH > 0 & sN > 0), "agent tracking",
-  (sH > 0 & sN < 0), "handler tracking",
-  (sH < 0 & sN > 0), "non-handler tracking",
-  (sH < 0 & sN < 0), "agent avoiding"
+  (sH > 0 & sN <= 0), "handler tracking",
+  (sH <= 0 & sN > 0), "non-handler tracking",
+  (sH <= 0 & sN <= 0), "agent avoiding"
 ) ]
 
 df = d[, .N, by = c("gen", "social_strat")]
@@ -156,13 +139,13 @@ ggplot(df)+
 #### plot data ####
 b = melt(b, id.vars = c("gen", "id"))
 
-ggplot(b[variable %in% c("intake", "energy")])+
+ggplot(b[variable %in% c("intake", "moved")])+
   stat_summary(
     aes(
       gen, value
     )
   )+
-  facet_wrap(~variable)
+  facet_wrap(~variable, scales = "free")
 
 # energy = b[variable == "energy",]
 wts = b[!variable %in% c("energy", "assoc", "t_infec", "moved", "degree"),]
