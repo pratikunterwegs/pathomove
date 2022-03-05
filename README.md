@@ -241,6 +241,6 @@ pathomove::use_cluster(
 )
 ```
 
-7. Simulation output should be returned into the `data/output` folder specified above, or your custom equivalent.
+7. Simulation output should be returned as `Rds` files into the `data/output` folder specified above _on the cluster_, or your custom equivalent. Move these `Rds` files to your local system for further analysis.
 
 Please note (again): This is advanced functionality. It is brittle, i.e., it is not tested to work across a range of systems. Please do _not_ attempt this lightly.
