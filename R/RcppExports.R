@@ -10,7 +10,7 @@
 #' @param regen_time Regeneration time, in timesteps.
 #' @return A data frame of the evolved population traits.
 get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen_time) {
-  .Call(`_pathomove_get_test_landscape`, nItems, landsize, nClusters, clusterSpread, regen_time)
+    .Call(`_pathomove_get_test_landscape`, nItems, landsize, nClusters, clusterSpread, regen_time)
 }
 
 #' Runs the pathomove simulation.
@@ -43,20 +43,21 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' landscape size (\code{landsize}), and represents local dispersal.
 #' Setting this to 10 percent is already almost equivalent to global dispersal.
 #' @param infect_percent A boolean value; whether the infection depletes a
-#' percentage of daily energy (\code{TRUE}) or whether a fixed value
+#' percentage of daily energy (\code{TRUE}) or whether a fixed value 
 #' (\code{FALSE}) is subtracted from net energy.
-#' For \code{infect_percent = TRUE}, the net energy remaining after \code{T}
+#' For \code{infect_percent = TRUE}, the net energy remaining after \code{T} 
 #' timesteps of infection is \code{N * (1 - cost_infect) ^ T}, where \code{N}
 #' is total intake.
-#' For \code{infect_percent = FALSE}, the net energy remaining after \code{T}
+#' For \code{infect_percent = FALSE}, the net energy remaining after \code{T} 
 #' timesteps of infection is \code{N - (cost_infect * T)}, where \code{N}
 #' is total intake.
 #' @param mProb The probability of mutation. The suggested value is 0.01.
 #' While high, this may be more appropriate for a small population; change this
 #' value and \code{popsize} to test the simulation's sensitivity to these values.
 #' @param mSize Controls the mutational step size, and represents the scale
-#' parameter of a Cauchy distribution.
+#' parameter of a Cauchy distribution. 
 #' @return A data frame of the evolved population traits.
 run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, mProb, mSize) {
-  .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, mProb, mSize)
+    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, mProb, mSize)
 }
+

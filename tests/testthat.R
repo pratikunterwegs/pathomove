@@ -1,4 +1,4 @@
 library(testthat)
-library(snevo)
+library(pathomove)
 
-test_check("snevo")
+test_check("pathomove")

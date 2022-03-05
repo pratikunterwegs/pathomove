@@ -1,1 +1,1 @@
-run_cpp_tests("snevo")
+run_cpp_tests("pathomove")
