@@ -16,9 +16,7 @@ message(
 
 params = read.csv(param_file)
 
-head(params)
-
-# library(pathomove)
+library(pathomove)
 
 # run simulation
 data = pathomove::run_pathomove(
@@ -45,7 +43,9 @@ data = pathomove::run_pathomove(
 
   initialInfections = params$initialInfections[row_n],
   costInfect = params$costInfect[row_n],
-  nThreads = params$nThreads[row_n]
+  nThreads = params$nThreads[row_n],
+  dispersal = params$dispersal[row_n],
+  infect_percent = params$infect_percent[row_n]
 )
 
 # get params as named vector
@@ -59,9 +59,15 @@ data = append(
 
 output_file_index = params$ofi[row_n]
 
+sc_type = dplyr::case_when(
+  params$scenario[row_n] == 0 ~ "nopatho",
+  params$scenario[row_n] == 1 ~ "endemic",
+  params$scenario[row_n] == 2 ~ "spillover"
+)
+
 # name of rdata file
 output_file = glue::glue(
-  'data/output/{output_file_index}.Rds'
+  'data/output/scenario_{sc_type}_{output_file_index}.Rds'
 )
 
 # save
