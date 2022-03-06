@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-#include "simulations.hpp"
+#include "simulations.h"
 
 #include <Rcpp.h>
 
@@ -159,7 +159,7 @@ Rcpp::List simulation::do_simulation() {
 //' @param handling_time The handling time.
 //' @param regen_time The item regeneration time.
 //' @param pTransmit Probability of transmission.
-//' @param intialInfections Agents infected per event.
+//' @param initialInfections Agents infected per event.
 //' @param costInfect The per-timestep cost of pathogen infection.
 //' @param nThreads How many threads to parallelise over. Set to 1 to run on
 //' the HPC Peregrine cluster.

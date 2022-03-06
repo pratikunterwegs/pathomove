@@ -1,9 +1,9 @@
 #ifndef SIMULATIONS_H
 #define SIMULATIONS_H
 
-#include "data_types.hpp"
-#include "landscape.hpp"
-#include "agents.hpp"
+#include "data_types.h"
+#include "landscape.h"
+#include "agents.h"
 
 class simulation {
 public:

@@ -1,7 +1,7 @@
 /// define functions for pathogen spread
 
-#include "parameters.hpp"
-#include "agents.hpp"
+#include "parameters.h"
+#include "agents.h"
 #include <unordered_set>
 
 /// function to infect n individuals

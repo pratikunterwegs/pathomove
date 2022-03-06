@@ -6,8 +6,8 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-#include "agents.hpp"
-#include "network.hpp"
+#include "agents.h"
+#include "network.h"
 
 // define a struct holding a vector of data frames which holds generation wise data
 struct genData {

@@ -8,8 +8,8 @@
 #include <algorithm>
 #include <iostream>
 #include <boost/foreach.hpp>
-#include "landscape.hpp"
-#include "network.hpp"
+#include "landscape.h"
+#include "network.h"
 
 
 // Agent class

@@ -11,7 +11,7 @@ using namespace Rcpp;
 #include <random>
 #include <functional>
 #include <chrono>
-#include "parameters.hpp"
+#include "parameters.h"
 
 // apparently some types
 namespace bg = boost::geometry;
