@@ -26,7 +26,7 @@ Imports:
     data.table,
     glue,
 Suggests: 
-    testthat,
+    testthat (>= 3.0.0),
     ssh,
     xml2,
     knitr,
@@ -35,3 +35,4 @@ SystemRequirements:
     GNU make,
     C++14
 VignetteBuilder: knitr
+Config/testthat/edition: 3
