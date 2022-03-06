@@ -49,15 +49,15 @@ context("Population initialisation works") {
     expect_true(pop.range_move == range_move);
   }
   
-  test_that("Population vector have right value before assignment") {
-    expect_true((pop.sF[0] - 0.f) < 1e-5);
+  test_that("Population vector has right value before assignment") {
+    expect_true(std::abs(pop.sF[0] - 0.f) < 1e-3);
   }
   
   // set population traits
   pop.setTrait(test_mSize);
   
-  test_that("Population vector have right value before assignment") {
-    expect_false((pop.sF[0] - 0.f) < 1e-5);
+  test_that("Population vector has right value after assignment") {
+    expect_false(std::abs(pop.sF[0] - 0.f) < 1e-5);
   }
 
 }

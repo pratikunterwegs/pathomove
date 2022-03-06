@@ -29,7 +29,7 @@ test_that("simulation works", {
   )
 
   # check is list
-  testthat::expect_is(
+  testthat::expect_type(
     data, "list"
   )
 
