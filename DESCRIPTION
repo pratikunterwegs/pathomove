@@ -28,7 +28,10 @@ Imports:
 Suggests: 
     testthat,
     ssh,
-    xml2
+    xml2,
+    knitr,
+    rmarkdown
 SystemRequirements: 
     GNU make,
     C++14
+VignetteBuilder: knitr
