@@ -84,8 +84,8 @@ jobs:
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
         run: |
-          devtools::build()
-          devtools::install()
+          devtools::build(vignettes = FALSE)
+          devtools::install(upgrade = "never", build_vignettes = FALSE)
           devtools::test()
         shell: Rscript {0}
 

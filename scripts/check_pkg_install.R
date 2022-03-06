@@ -2,10 +2,10 @@
 remove.packages("pathomove")
 
 Rcpp::compileAttributes()
-devtools::build()
+devtools::build(vignettes = FALSE)
 {
   sink(file = "install_output.log")
-  devtools::install(upgrade = "never")
+  devtools::install(upgrade = "never", build_vignettes = FALSE)
   sink()
 }
 devtools::document()
