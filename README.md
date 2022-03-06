@@ -3,7 +3,6 @@
 <!-- badges: start -->
   [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
   [![R build status](https://github.com/pratikunterwegs/pathomove/workflows/R-CMD-check/badge.svg)](https://github.com/pratikunterwegs/pathomove/actions)
-  [![codecov.io](https://codecov.io/github/pratikunterwegs/pathomove/coverage.svg?branch=master)](https://codecov.io/github/pratikunterwegs/pathomove/branch/master)
   <!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4314905.svg)](https://doi.org/10.5281/zenodo.4033154) -->
 <!-- badges: end -->
 
