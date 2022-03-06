@@ -11,25 +11,16 @@ This repository holds the source code for the _Pathomove_ simulation, a spatiall
 
 The model is written by Pratik Gupte, in the Modelling Adaptive Response Mechanisms Group (Weissing Lab) at the Groningen Institute for Evolutionary Life Science, at the University of Groningen.
 
-The source code for analyses of this simulation's output can be found on Github at https://github.com/pratikunterwegs/patho-move-evol, or archived on Zenodo: **Zenodo link to supplementary material here**.
+The source code for analyses of this simulation's output can be found on Github at https://github.com/pratikunterwegs/patho-move-evol, from where a link to an archived version on Zenodo should be available.
 
 ## Contact and Attribution
 
 Please contact [Pratik Gupte](p.r.gupte@rug.nl) for questions on the model or the associated project.
 
-Please cite this simulation as
-
-**WORK IN PROGRESS**
-
-```bibtex
-@software{gupte_2022_pathomove,
-  author       = {Pratik Rajan Gupte},
-  title        = {{Pathomove: Source code for an individual-based model for the 
-                  evolution of animal movement strategies under the risk of 
-                  pathogen transmission}},
-  month        = mar,
-  year         = 2022
-}
+```md
+Name: Pratik Rajan Gupte
+Email: pratikgupte16@gmail.com OR p.r.gupte@rug.nl
+ORCID: https://orcid.org/0000-0001-5294-7819
 ```
 
 ## Simulation model
@@ -46,6 +37,8 @@ This model ties together a number of different concepts:
 
 <img src="inst/fig_schematic.png" height="200">
 
+---
+
 ## Simulation methods and data
 
 The model combines a number of interesting tools to implement its conceptual components:
@@ -59,6 +52,8 @@ The model combines a number of interesting tools to implement its conceptual com
 4. **Speed boosts using TBB multi-threading** Internal simulation functions are sped up using Intel's Thread Building Blocks (TBB) library, which is conveniently included with `RcppParallel`, making it cross-platform.
 
 5. **Testing Rcpp functions** The internal C++ functions underlying the main simulation code (`run_pathomove`) are tested (some!) using Catch testing, which is integrated with the R package `testthat`.
+
+---
 
 ## Running the model
 
@@ -81,7 +76,7 @@ The contents of the `src/Makevars.win` script need to be copied to the `Makevars
 This helps the package find the TBB libraries provided by RcppParallel.
 This is not necessary on Linux systems.
 
-**Copy** this to Documents/.R/Makevars.win **on Windows systems**
+**Copy** this to Documents/.R/Makevars.win **on Windows systems only**
 
 ```cmake
 CXX_STD = CXX14
@@ -132,11 +127,13 @@ devtools::install_github("pratikunterwegs/pathomove")
 
   An example of a template job script is provided as `bash/main_job_maker.sh`.
 
-- Mass job submission to an HPC cluster: The function `use_cluster` in `R/fun_use_cluster.R` can be used to run multiple replicates of this simulation, or multiple parameter combinations; **please use this advanced functionality carefully.**
+- Mass job submission to an HPC cluster: The function `use_cluster` in `R/fun_use_cluster.R` can be used to run multiple replicates of this simulation, or multiple parameter combinations; *please use this advanced functionality carefully.*
 
 - Multi-threading caveat for high-performance computing clusters: When using (an Ubuntu-based) HPC cluster, multi-threading may not work, even when the cluster has TBB available and loaded. It is not entirely clear why. When using an HPC cluster, set `nThreads = 1`, to use single-threaded alternatives of multi-threaded functions.
 
-- MacOS: This package likely does _not_ work on MacOS. This is related to using Intel's TBB library for multi-threading. User can try to use the single-threaded option at their own risk.
+- MacOS: This package likely does _not_ work on MacOS. This is related to using Intel's TBB library for multi-threading. Users can try to use the single-threaded option at their own risk.
+
+---
 
 ## Package documentation
 
@@ -146,15 +143,19 @@ Each function in the package is documented, and this can be accessed through R h
 ?pathomove::run_pathomove()
 ```
 
-Alternatively, build the package manual --- a PDF version of the documentation --- after installing the package. A pre-built version of the documentation is provided among the supplementary files in the associated biorXiv submission.
+Alternatively, build the package manual --- a PDF version of the documentation --- after installing the package. A pre-built version of the documentation is provided among the supplementary files in the associated _biorXiv_ submission.
 
 ```r
 devtools::build_manual(pkg = "pathomove")
 ```
 
+---
+
 ## Workflow
 
-The workflow to run this model to replicate the results presented in our biorXiv manuscript are described more thoroughly in the Readme of a dedicated repository https://github.com/pratikunterwegs/patho-move-evol.
+The workflow to run this model to replicate the results presented in our _biorXiv_ manuscript are described more thoroughly in the Readme of a dedicated repository, https://github.com/pratikunterwegs/patho-move-evol.
+
+A basic working example of how to use this package can be found in the script in the `vignettes` directory, `vignettes/basic_usage.Rmd`.
 
 The basic workflow for the package is:
 
@@ -169,7 +170,7 @@ The basic workflow for the package is:
 pathomove::run_pathomove(..., nThreads = 8)
 ```
 
-Here, `...` indicates the many function arguments, such as population size, landscape size, the number of generations, and when the pathogen is introduced.
+Here, '`...`' indicates the many function arguments, such as population size, landscape size, the number of generations, and when the pathogen is introduced.
 
 `nThreads` controls multi-threading to speed up the simulation. Any value > 1 results in automatic use of as many threads as TBB decides internally.
 

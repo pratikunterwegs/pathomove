@@ -1,5 +1,5 @@
 Package: pathomove
-Title: Run and individual-based model of movement ruled evolved under pathogen risk
+Title: Individual-based model of animal movement strategies evolved under pathogen risk
 Version: 1.0.0.0000
 Authors@R:
     c(person(given = "Pratik",
@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "p.r.gupte@rug.nl",
            comment = c(ORCID = "https://orcid.org/0000-0001-5294-7819")))
-Description: Runs the evolved social networks simulations.
+Description: Runs the Pathomove simulation, a mechanisitic, spatially explicit, individual-based model of the evolution of animal social movement strategies under different scenarios of pathogen transmission risk, primarily focusing on the introduction of a novel pathogen to a population.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
