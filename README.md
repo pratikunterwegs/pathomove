@@ -177,7 +177,7 @@ Here, '`...`' indicates the many function arguments, such as population size, la
 
 **Warnings**
 
-Please note: This is an advanced workflow, and should be attempted lightly.
+Please note: This is an advanced workflow, and should _not_ be attempted lightly.
 
 This workflow describes how to prepare a combination of parameters, and create a job array on an HPC cluster, so that a separate simulation is run for each parameter combination and replicate.
 
