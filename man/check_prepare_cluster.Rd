@@ -2,7 +2,7 @@
 % Please edit documentation in R/fun_check_cluster.R
 \name{check_prepare_cluster}
 \alias{check_prepare_cluster}
-\title{Prepare the cluster for snevo.}
+\title{Prepare the cluster for pathomove.}
 \usage{
 check_prepare_cluster(ssh_con = "some_server", password = "your_password")
 }
@@ -15,5 +15,5 @@ check_prepare_cluster(ssh_con = "some_server", password = "your_password")
 None, should check and prepare cluster.
 }
 \description{
-Prepare the cluster for snevo.
+Prepare the cluster for pathomove.
 }
