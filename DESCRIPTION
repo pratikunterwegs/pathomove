@@ -1,6 +1,6 @@
 Package: pathomove
-Title: Run and individual-based model of movement ruled evolved under pathogen risk.
-Version: 0.0.0.9000
+Title: Run and individual-based model of movement ruled evolved under pathogen risk
+Version: 1.0.0.0000
 Authors@R:
     c(person(given = "Pratik",
            family = "Gupte",
