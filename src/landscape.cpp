@@ -4,7 +4,7 @@
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/index/rtree.hpp>
 using namespace Rcpp;
-#include "landscape.hpp"
+#include "landscape.h"
 #include <vector>
 #include <algorithm>
 #include <functional>
@@ -85,7 +85,7 @@ void Resources::regenerate() {
 //' @param nItems How many items.
 //' @param landsize Size as a numeric (float).
 //' @param nClusters How many clusters, an integer value.
-//' @param clusterDispersal Dispersal of items around cluster centres.
+//' @param clusterSpread Dispersal of items around cluster centres.
 //' @param regen_time Regeneration time, in timesteps.
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]

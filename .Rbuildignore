@@ -8,6 +8,7 @@
 ^python$
 ^figures$
 ^scripts$
+^jobs$
 ^.*\.Rmd$
 ^sociality_model_cpp$
 ^.*\.sh$

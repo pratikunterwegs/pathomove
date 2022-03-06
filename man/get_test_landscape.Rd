@@ -13,9 +13,9 @@ get_test_landscape(nItems, landsize, nClusters, clusterSpread, regen_time)
 
 \item{nClusters}{How many clusters, an integer value.}
 
-\item{regen_time}{Regeneration time, in timesteps.}
+\item{clusterSpread}{Dispersal of items around cluster centres.}
 
-\item{clusterDispersal}{Dispersal of items around cluster centres.}
+\item{regen_time}{Regeneration time, in timesteps.}
 }
 \value{
 A data frame of the evolved population traits.

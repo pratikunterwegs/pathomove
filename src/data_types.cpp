@@ -1,5 +1,5 @@
 
-#include "data_types.hpp"
+#include "data_types.h"
 
 // function to update gendata
 void genData::updateGenData (Population &pop, const int g_) {

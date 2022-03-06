@@ -11,9 +11,9 @@
 #include <Rcpp.h>
 #include <RcppParallel.h>
 
-#include "network.hpp"
-#include "landscape.hpp"
-#include "agents.hpp"
+#include "network.h"
+#include "landscape.h"
+#include "agents.h"
 
 // to shuffle pop id
 void Population::shufflePop() {

@@ -16,7 +16,7 @@
 // file providing the definition, and let R CMD INSTALL
 // handle building and linking.
 
-#include "agents.hpp"
+#include "agents.h"
 
 const int popsize = 100;
 const float range_food = 1.f;

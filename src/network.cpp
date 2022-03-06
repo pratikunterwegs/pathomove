@@ -1,6 +1,6 @@
 /// functions for network operations
 
-#include "network.hpp"
+#include "network.h"
 #include <Rcpp.h>
 
 /// function for dataframe from rcpp matrix

@@ -6,7 +6,7 @@
 #' @param nItems How many items.
 #' @param landsize Size as a numeric (float).
 #' @param nClusters How many clusters, an integer value.
-#' @param clusterDispersal Dispersal of items around cluster centres.
+#' @param clusterSpread Dispersal of items around cluster centres.
 #' @param regen_time Regeneration time, in timesteps.
 #' @return A data frame of the evolved population traits.
 get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen_time) {
@@ -33,7 +33,7 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' @param handling_time The handling time.
 #' @param regen_time The item regeneration time.
 #' @param pTransmit Probability of transmission.
-#' @param intialInfections Agents infected per event.
+#' @param initialInfections Agents infected per event.
 #' @param costInfect The per-timestep cost of pathogen infection.
 #' @param nThreads How many threads to parallelise over. Set to 1 to run on
 #' the HPC Peregrine cluster.

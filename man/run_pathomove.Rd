@@ -60,6 +60,8 @@ run_pathomove(
 
 \item{pTransmit}{Probability of transmission.}
 
+\item{initialInfections}{Agents infected per event.}
+
 \item{costInfect}{The per-timestep cost of pathogen infection.}
 
 \item{nThreads}{How many threads to parallelise over. Set to 1 to run on
@@ -87,8 +89,6 @@ value and \code{popsize} to test the simulation's sensitivity to these values.}
 
 \item{mSize}{Controls the mutational step size, and represents the scale
 parameter of a Cauchy distribution.}
-
-\item{intialInfections}{Agents infected per event.}
 }
 \value{
 A data frame of the evolved population traits.
