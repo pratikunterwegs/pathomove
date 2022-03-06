@@ -38,7 +38,7 @@ This model ties together a number of different concepts:
 
 ---
 
-## Simulation methods and data
+## Simulation methods
 
 The model combines a number of interesting tools to implement its conceptual components:
 
@@ -244,3 +244,27 @@ pathomove::use_cluster(
 7. Simulation output should be returned as `Rds` files into the `data/output` folder specified above _on the cluster_, or your custom equivalent. Move these `Rds` files to your local system for further analysis.
 
 Please note (again): This is advanced functionality. It is brittle, i.e., it is not tested to work across a range of systems. Please do _not_ attempt this lightly.
+
+---
+
+## Reference dataset
+
+A reference dataset is available on Zenodo at https://zenodo.org/record/6331757.
+
+Please cite the simulation data as:
+
+```bibtex
+@dataset{pratik_rajan_gupte_2022_6331757,
+  author       = {Pratik Rajan Gupte},
+  title        = {{Reference data from the Pathomove simulation, for 
+                   the manuscript "Novel pathogen introduction
+                   rapidly alters the evolution of movement,
+                   restructuring animal societies"}},
+  month        = mar,
+  year         = 2022,
+  publisher    = {Zenodo},
+  version      = {v1.0},
+  doi          = {10.5281/zenodo.6331757},
+  url          = {https://doi.org/10.5281/zenodo.6331757}
+}
+```
