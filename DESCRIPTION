@@ -8,7 +8,7 @@ Authors@R:
            email = "p.r.gupte@rug.nl",
            comment = c(ORCID = "https://orcid.org/0000-0001-5294-7819")))
 Description: Runs the Pathomove simulation, a mechanisitic, spatially explicit, individual-based model of the evolution of animal social movement strategies under different scenarios of pathogen transmission risk, primarily focusing on the introduction of a novel pathogen to a population.
-License: GPL-3
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
