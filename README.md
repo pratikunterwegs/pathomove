@@ -22,6 +22,23 @@ Email: pratikgupte16@gmail.com OR p.r.gupte@rug.nl
 ORCID: https://orcid.org/0000-0001-5294-7819
 ```
 
+Please cite this simulation model as Pratik Gupte. (2022). Source code for Pathomove, an individual-based model for the evolution of animal movement strategies under the risk of pathogen transmission (v1.0.2). Zenodo. https://doi.org/10.5281/zenodo.6331816
+
+```bibtex
+@software{pratik_gupte_2022_6331816,
+  author       = {Pratik Gupte},
+  title        = {{Source code for Pathomove, an individual-based 
+                   model for the evolution of animal movement
+                   strategies under the risk of pathogen transmission}},
+  month        = mar,
+  year         = 2022,
+  publisher    = {Zenodo},
+  version      = {v1.0.2},
+  doi          = {10.5281/zenodo.6331816},
+  url          = {https://doi.org/10.5281/zenodo.6331816}
+}
+```
+
 ## Simulation model
 
 Please refer to the preprint on _biorXiv_ for a full description of the model, and the biological system it aims to simulate.
