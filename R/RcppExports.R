@@ -61,3 +61,7 @@ run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, cluste
     .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, mProb, mSize)
 }
 
+run_pathomove_s4 <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, mProb, mSize) {
+    .Call(`_pathomove_run_pathomove_s4`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, mProb, mSize)
+}
+
