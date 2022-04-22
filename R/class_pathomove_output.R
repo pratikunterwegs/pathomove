@@ -66,10 +66,10 @@ setClass(
 
   # define the default values of the slots
   prototype = list(
-    scenario = NA_real_,
-    n_gen = NA_real_,
-    gen_patho_intro = NA_real_,
-    infections_per_gen = NA_real_
+    scenario = NA_integer_,
+    n_gen = NA_integer_,
+    gen_patho_intro = NA_integer_,
+    infections_per_gen = NA_integer_
   ),
 
   # check validity of class
