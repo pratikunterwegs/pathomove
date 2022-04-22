@@ -215,3 +215,44 @@ Rcpp::List run_pathomove(const int scenario,
                         mProb, mSize);
     return this_sim.do_simulation();
 }
+
+// [[Rcpp::export]]
+S4 run_pathomove_s4(const int scenario,
+                        const int popsize,
+                        const int nItems, const float landsize,
+                        const int nClusters,
+                        const float clusterSpread,
+                        const int tmax,
+                        const int genmax,
+                        const int g_patho_init,
+                        const float range_food,
+                        const float range_agents,
+                        const float range_move,
+                        const int handling_time,
+                        const int regen_time,
+                        float pTransmit,
+                        const int initialInfections,
+                        const float costInfect,
+                        const int nThreads,
+                        const float dispersal,
+                        const bool infect_percent,
+                        const float mProb,
+                        const float mSize) {
+                            
+    simulation this_sim(popsize, scenario, nItems, landsize,
+                        nClusters, clusterSpread, tmax, genmax, g_patho_init,
+                        range_food, range_agents, range_move,
+                        handling_time, regen_time,
+                        pTransmit, initialInfections, 
+                        costInfect, nThreads, dispersal, infect_percent,
+                        mProb, mSize);
+    Rcpp::List pathomoveOutput = this_sim.do_simulation();
+
+    S4 x("pathomove_output");
+    x.slot("scenario") = this_sim.scenario;
+    x.slot("n_gen") = this_sim.genmax;
+    x.slot("gen_patho_intro") = this_sim == 0 ? NA_REAL : this_sim.g_patho_init;
+    x.slot("infections_per_gen") = 1; // testing
+
+    return(x);
+}
