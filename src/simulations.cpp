@@ -251,7 +251,7 @@ S4 run_pathomove_s4(const int scenario,
     S4 x("pathomove_output");
     x.slot("scenario") = this_sim.scenario;
     x.slot("n_gen") = this_sim.genmax;
-    x.slot("gen_patho_intro") = this_sim == 0 ? NA_REAL : this_sim.g_patho_init;
+    x.slot("gen_patho_intro") = this_sim.scenario == 0 ? NA_REAL : this_sim.g_patho_init;
     x.slot("infections_per_gen") = 1; // testing
 
     return(x);
