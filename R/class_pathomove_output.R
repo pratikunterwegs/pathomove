@@ -13,30 +13,6 @@ check_pathomove_output <- function(object) {
     errors <- c(errors, msg)
   }
   
-  # length_status <- length(object@status)
-  # if (length_status != 1) {
-  #   msg <- paste("status is length ", length_status, ". Should be 1", sep = "")
-  #   errors <- c(errors, msg)
-  # }
-  # 
-  # length_missing_species <- length(object@missing_species)
-  # if (length_missing_species != 1) {
-  #   msg <- paste(
-  #     "missing_species is length ", length_missing_species, ". Should be 1",
-  #     sep = ""
-  #   )
-  #   errors <- c(errors, msg)
-  # }
-  # 
-  # length_min_age <- length(object@min_age)
-  # if (length_min_age != 1) {
-  #   msg <- paste(
-  #     "min_age is length ", length_min_age, ". Should be 1",
-  #     sep = ""
-  #   )
-  #   errors <- c(errors, msg)
-  # }
-  
   if (length(errors) == 0) {
     TRUE
   } else {
