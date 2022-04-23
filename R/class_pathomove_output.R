@@ -34,18 +34,16 @@ setClass(
 
   # define the types of the class
   slots = c(
-    scenario = "integer",
-    n_gen = "integer",
-    gen_patho_intro = "integer",
-    infections_per_gen = "data.frame"
+    parameters = "list",
+    infections_per_gen = "data.frame",
+    trait_data = "list"
   ),
 
   # define the default values of the slots
   prototype = list(
-    scenario = NA_integer_,
-    n_gen = NA_integer_,
-    gen_patho_intro = NA_integer_,
-    infections_per_gen = data.frame()
+    parameters = list(),
+    infections_per_gen = data.frame(),
+    trait_data = list()
   ),
 
   # check validity of class
