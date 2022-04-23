@@ -219,6 +219,50 @@ Rcpp::List run_pathomove(const int scenario,
     return this_sim.do_simulation();
 }
 
+//' Runs the pathomove simulation and return a `pathomove_output` object.
+//'
+//' @description Run the simulation using parameters passed as
+//' arguments to the corresponding R function.
+//'
+//' @param scenario The pathomove scenario: 1 for ancestral pathogen, 2 for spillover pathogen.
+//' @param popsize The population size.
+//' @param nItems How many food items on the landscape.
+//' @param landsize The size of the landscape as a numeric (double).
+//' @param nClusters Number of clusters around which food is generated.
+//' @param clusterSpread How dispersed food is around the cluster centre.
+//' @param tmax The number of timesteps per generation.
+//' @param genmax The maximum number of generations per simulation.
+//' @param g_patho_init The generation in which to begin introducing the pathogen.
+//' @param range_food The sensory range for food.
+//' @param range_agents The sensory range for agents.
+//' @param range_move The movement range for agents.
+//' @param handling_time The handling time.
+//' @param regen_time The item regeneration time.
+//' @param pTransmit Probability of transmission.
+//' @param initialInfections Agents infected per event.
+//' @param costInfect The per-timestep cost of pathogen infection.
+//' @param nThreads How many threads to parallelise over. Set to 1 to run on
+//' the HPC Peregrine cluster.
+//' @param dispersal A float value; the standard deviation of a normal
+//' distribution centred on zero, which determines how far away from its parent
+//' each individual is initialised. The standard value is 5 percent of the
+//' landscape size (\code{landsize}), and represents local dispersal.
+//' Setting this to 10 percent is already almost equivalent to global dispersal.
+//' @param infect_percent A boolean value; whether the infection depletes a
+//' percentage of daily energy (\code{TRUE}) or whether a fixed value 
+//' (\code{FALSE}) is subtracted from net energy.
+//' For \code{infect_percent = TRUE}, the net energy remaining after \code{T} 
+//' timesteps of infection is \code{N * (1 - cost_infect) ^ T}, where \code{N}
+//' is total intake.
+//' For \code{infect_percent = FALSE}, the net energy remaining after \code{T} 
+//' timesteps of infection is \code{N - (cost_infect * T)}, where \code{N}
+//' is total intake.
+//' @param mProb The probability of mutation. The suggested value is 0.01.
+//' While high, this may be more appropriate for a small population; change this
+//' value and \code{popsize} to test the simulation's sensitivity to these values.
+//' @param mSize Controls the mutational step size, and represents the scale
+//' parameter of a Cauchy distribution. 
+//' @return An S4 class, `pathomove_output`, with simulation outcomes.
 // [[Rcpp::export]]
 S4 run_pathomove_s4(const int scenario,
                         const int popsize,
@@ -254,6 +298,7 @@ S4 run_pathomove_s4(const int scenario,
                         mProb, mSize);
     // do the simulation using the simulation class function                        
     Rcpp::List pathomoveOutput = this_sim.do_simulation();
+
     // get generation data from output
     Rcpp::List gen_data = pathomoveOutput["gen_data"];
     // make dataframe of infections and generations
@@ -261,12 +306,21 @@ S4 run_pathomove_s4(const int scenario,
         Named("gen") = gen_data["gens"],
         Named("n_infected") = gen_data["n_infected"]
     );
+    // make list of dataframes of population traits
+    Rcpp::List pop_data = gen_data["pop_data"];
 
+    // parameter list
+    Rcpp::List param_list = Rcpp::List::create(
+            Named("scenario") = scenario,
+            Named("popsize") = popsize,
+            Named("gen_patho_intro") = (scenario == 0 ? NA_REAL : g_patho_init)
+        );
+
+    // create S4 class pathomove output and fill slots
     S4 x("pathomove_output");
-    x.slot("scenario") = scenario;
-    x.slot("n_gen") = genmax;
-    x.slot("gen_patho_intro") = scenario == 0 ? NA_REAL : g_patho_init;
+    x.slot("parameters") = Rcpp::wrap(param_list);
     x.slot("infections_per_gen") = Rcpp::wrap(infections_per_gen);
+    x.slot("trait_data") = Rcpp::wrap(pop_data);
 
     return(x);
 }
