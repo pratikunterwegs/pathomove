@@ -10,12 +10,12 @@ Defines the \code{pathomove_output} class.
 \section{Slots}{
 
 \describe{
-\item{\code{scenario}}{integer.}
+\item{\code{parameters}}{list.}
 
-\item{\code{n_gen}}{integer.}
-
-\item{\code{gen_patho_intro}}{integer.}
+\item{\code{generations}}{integer.}
 
 \item{\code{infections_per_gen}}{integer.}
+
+\item{\code{trait_data}}{list.}
 }}
 
