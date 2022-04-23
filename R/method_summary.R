@@ -1,21 +1,34 @@
-# functions to print a summary of the output class
+# methods to summarise and show pathomove_output class objects
+
 #' Summarise a `pathomove_output` object.
 #'
-#' @param x A `pathomove_output` object.
-#' @param ... 
-#'
-#' @return Prints a summary of the `pathomove_output` object.
-#' @export
-#'
-summary <- function(x, ...) {
-  UseMethod("summary", x)
-}
-
-#' @export
+#' @name summary.pathomove_output
+#' @docType methods
 #' @rdname summary
-summary.pathomove_output <- function(x) {
-  glue::glue(
-    "Class: {methods::is(x)}
-                  Scenario: {x@scenario}"
-  )
-}
+#'
+setMethod(
+  "summary", signature(object = "pathomove_output"),
+  function(object) {
+    glue::glue(
+      "Scenario: {object@parameters$scenario}
+              Popsize: {object@parameters$popsize}
+              Pathogen introduced in gen: {object@parameters$gen_patho_intro}"
+    )
+  }
+)
+
+
+#' Show the structure of a `pathomove_output` object.
+#'
+#' @name str.pathomove_output
+#' @docType methods
+#' @rdname str
+#'
+setMethod(
+  "str", signature(object = "pathomove_output"),
+  function(object) {
+    str(
+      object, max.levels = 3
+    )
+  }
+)
