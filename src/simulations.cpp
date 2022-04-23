@@ -206,6 +206,9 @@ Rcpp::List run_pathomove(const int scenario,
                         const float mProb,
                         const float mSize) {
                             
+    // check that intial infections is less than popsize
+    assert(initialInfections <= popsize && "more infections than agents!");
+                            
     simulation this_sim(popsize, scenario, nItems, landsize,
                         nClusters, clusterSpread, tmax, genmax, g_patho_init,
                         range_food, range_agents, range_move,
