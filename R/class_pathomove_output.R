@@ -37,7 +37,7 @@ setClass(
     scenario = "integer",
     n_gen = "integer",
     gen_patho_intro = "integer",
-    infections_per_gen = "integer"
+    infections_per_gen = "data.frame"
   ),
 
   # define the default values of the slots
@@ -45,7 +45,7 @@ setClass(
     scenario = NA_integer_,
     n_gen = NA_integer_,
     gen_patho_intro = NA_integer_,
-    infections_per_gen = NA_integer_
+    infections_per_gen = data.frame()
   ),
 
   # check validity of class
