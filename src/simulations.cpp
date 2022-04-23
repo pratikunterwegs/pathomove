@@ -241,7 +241,10 @@ S4 run_pathomove_s4(const int scenario,
                         const bool infect_percent,
                         const float mProb,
                         const float mSize) {
-                            
+
+    // check that intial infections is less than popsize
+    assert(initialInfections <= popsize && "more infections than agents!");
+    // make simulation class with input parameters                            
     simulation this_sim(popsize, scenario, nItems, landsize,
                         nClusters, clusterSpread, tmax, genmax, g_patho_init,
                         range_food, range_agents, range_move,
@@ -249,13 +252,21 @@ S4 run_pathomove_s4(const int scenario,
                         pTransmit, initialInfections, 
                         costInfect, nThreads, dispersal, infect_percent,
                         mProb, mSize);
+    // do the simulation using the simulation class function                        
     Rcpp::List pathomoveOutput = this_sim.do_simulation();
+    // get generation data from output
+    Rcpp::List gen_data = pathomoveOutput["gen_data"];
+    // make dataframe of infections and generations
+    Rcpp::DataFrame infections_per_gen = Rcpp::DataFrame::create(
+        Named("gen") = gen_data["gens"],
+        Named("n_infected") = gen_data["n_infected"]
+    );
 
     S4 x("pathomove_output");
-    x.slot("scenario") = this_sim.scenario;
-    x.slot("n_gen") = this_sim.genmax;
-    x.slot("gen_patho_intro") = this_sim.scenario == 0 ? NA_REAL : this_sim.g_patho_init;
-    x.slot("infections_per_gen") = 1; // testing
+    x.slot("scenario") = scenario;
+    x.slot("n_gen") = genmax;
+    x.slot("gen_patho_intro") = scenario == 0 ? NA_REAL : g_patho_init;
+    x.slot("infections_per_gen") = Rcpp::wrap(infections_per_gen);
 
     return(x);
 }
