@@ -301,11 +301,6 @@ S4 run_pathomove_s4(const int scenario,
 
     // get generation data from output
     Rcpp::List gen_data = pathomoveOutput["gen_data"];
-    // make dataframe of infections and generations
-    Rcpp::DataFrame infections_per_gen = Rcpp::DataFrame::create(
-        Named("gen") = gen_data["gens"],
-        Named("n_infected") = gen_data["n_infected"]
-    );
     // make list of dataframes of population traits
     Rcpp::List pop_data = gen_data["pop_data"];
 
@@ -319,7 +314,8 @@ S4 run_pathomove_s4(const int scenario,
     // create S4 class pathomove output and fill slots
     S4 x("pathomove_output");
     x.slot("parameters") = Rcpp::wrap(param_list);
-    x.slot("infections_per_gen") = Rcpp::wrap(infections_per_gen);
+    x.slot("generations") = Rcpp::wrap(gen_data["gens"]);
+    x.slot("infections_per_gen") = Rcpp::wrap(gen_data["n_infected"]);
     x.slot("trait_data") = Rcpp::wrap(pop_data);
 
     return(x);
