@@ -28,7 +28,8 @@ setMethod(
   "str", signature(object = "pathomove_output"),
   function(object) {
     str(
-      object, max.level = 3
+      object,
+      max.level = 3
     )
   }
 )
