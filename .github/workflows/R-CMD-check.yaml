@@ -89,12 +89,12 @@ jobs:
           devtools::test()
         shell: Rscript {0}
 
-      # - name: Install covr and do covr test coverage
-      #   # if: matrix.config.r == 'devel'
-      #   run: |
-      #     remotes::install_cran("covr")
-      #     covr::codecov()
-      #   shell: Rscript {0}
+      - name: Install covr and do covr test coverage
+        # if: matrix.config.r == 'devel'
+        run: |
+          remotes::install_cran("covr")
+          covr::codecov()
+        shell: Rscript {0}
 
       - name: Upload check results
         if: failure()
