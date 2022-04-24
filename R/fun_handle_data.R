@@ -9,8 +9,8 @@
 #' @return A `data.table` with all reported generations.
 #' @export
 #'
-pmv_get_trait_data <- function(object,
-                               scaled_preferences = TRUE) {
+get_trait_data <- function(object,
+                           scaled_preferences = TRUE) {
   assertthat::assert_that(
     class(object) == "pathomove_output",
     msg = "pmv get traits: object is not pathomove output"
