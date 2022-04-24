@@ -304,11 +304,39 @@ S4 run_pathomove_s4(const int scenario,
     // make list of dataframes of population traits
     Rcpp::List pop_data = gen_data["pop_data"];
 
+    // return scenario as string
+    std::string scenario_str;
+    switch (scenario)
+    {
+    case 0:
+        scenario_str = std::string("no pathogen");
+        break;
+    case 1:
+        scenario_str = std::string("endemic pathogen");
+        break;
+    case 2:
+        scenario_str = std::string("novel pathogen");
+        break;
+    
+    default:
+        scenario_str = std::string("unknown scenario");
+        break;
+    }
+
+    std::string infection_cost_type = infect_percent ? std::string("percent") :
+        std::string("absolute");
+
     // parameter list
     Rcpp::List param_list = Rcpp::List::create(
-            Named("scenario") = scenario,
-            Named("popsize") = popsize,
-            Named("gen_patho_intro") = (scenario == 0 ? NA_REAL : g_patho_init)
+            Named("scenario") = scenario_str,
+            Named("generations") = genmax,
+            Named("gen_patho_intro") = (scenario == 0 ? NA_REAL : g_patho_init),
+            Named("pop_size") = popsize,
+            Named("pop_density") = static_cast<float>(popsize) / landsize,
+            Named("item_density") = static_cast<float>(nItems) / landsize,
+            Named("dispersal") = dispersal,
+            Named("infection_cost_implementation") = infection_cost_type,
+            Named("infection_cost") = costInfect
         );
 
     // create S4 class pathomove output and fill slots
