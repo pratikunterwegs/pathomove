@@ -1,7 +1,7 @@
 test_that("Pathomove returns S4 output", {
   # skip("skipped")
   # parameters
-  data_s4 = run_pathomove_s4(
+  data_s4 <- run_pathomove_s4(
     scenario = 2,
     popsize = 10,
     nItems = 180,
@@ -24,7 +24,7 @@ test_that("Pathomove returns S4 output", {
     infect_percent = FALSE,
     mProb = 0.001,
     mSize = 0.001
-)
+  )
 
   # check is list
   testthat::expect_s4_class(
