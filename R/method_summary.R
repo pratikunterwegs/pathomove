@@ -9,10 +9,12 @@
 setMethod(
   "summary", signature(object = "pathomove_output"),
   function(object) {
-    glue::glue(
-      "Scenario: {object@parameters$scenario}
-              Popsize: {object@parameters$popsize}
-              Pathogen introduced in gen: {object@parameters$gen_patho_intro}"
+    print(
+      glue::glue(
+        "Scenario: {object@parameters$scenario}
+                Popsize: {object@parameters$popsize}
+                Pathogen introduced in gen: {object@parameters$gen_patho_intro}"
+      )
     )
   }
 )
@@ -27,7 +29,7 @@ setMethod(
 setMethod(
   "str", signature(object = "pathomove_output"),
   function(object) {
-    str(
+    utils::str(
       object,
       max.level = 3
     )
