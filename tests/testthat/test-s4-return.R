@@ -1,7 +1,7 @@
 test_that("Pathomove returns S4 output", {
   # skip("skipped")
   # parameters
-  data_s4 = pathomove::run_pathomove_s4(
+  data_s4 = run_pathomove_s4(
     scenario = 2,
     popsize = 10,
     nItems = 180,
@@ -19,7 +19,7 @@ test_that("Pathomove returns S4 output", {
     pTransmit = 0.05,
     initialInfections = 4,
     costInfect = 0.25,
-    nThreads = 2,
+    nThreads = 1,
     dispersal = 3.0,
     infect_percent = FALSE,
     mProb = 0.001,
