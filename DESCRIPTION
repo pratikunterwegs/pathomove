@@ -33,7 +33,8 @@ Suggests:
     ssh,
     xml2,
     knitr,
-    rmarkdown
+    rmarkdown,
+    covr
 SystemRequirements: 
     GNU make,
     C++14

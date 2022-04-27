@@ -13,3 +13,5 @@
 ^sociality_model_cpp$
 ^.*\.sh$
 ^LICENSE\.md$
+^codecov\.yml$
+^\.covrignore$
