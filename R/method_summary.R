@@ -12,8 +12,9 @@ setMethod(
     print(
       glue::glue(
         "Scenario: {object@parameters$scenario}
-                Popsize: {object@parameters$popsize}
-                Pathogen introduced in gen: {object@parameters$gen_patho_intro}"
+        Pathogen introduced in gen: {object@parameters$gen_patho_intro}
+        Popsize: {object@parameters$pop_size}
+        "
       )
     )
   }
