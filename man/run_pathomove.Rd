@@ -25,12 +25,14 @@ run_pathomove(
   nThreads,
   dispersal,
   infect_percent,
+  vertical,
   mProb,
   mSize
 )
 }
 \arguments{
-\item{scenario}{The pathomove scenario: 1 for ancestral pathogen, 2 for spillover pathogen.}
+\item{scenario}{The pathomove scenario: 0 for no pathogen, 1 for
+persistent introduction across generations, and 2 for a single introduction.}
 
 \item{popsize}{The population size.}
 

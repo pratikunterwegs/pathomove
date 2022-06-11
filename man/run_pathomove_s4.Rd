@@ -25,12 +25,14 @@ run_pathomove_s4(
   nThreads,
   dispersal,
   infect_percent,
+  vertical,
   mProb,
   mSize
 )
 }
 \arguments{
-\item{scenario}{The pathomove scenario: 1 for ancestral pathogen, 2 for spillover pathogen.}
+\item{scenario}{The pathomove scenario: 0 for no pathogen, 1 for
+persistent introduction across generations, and 2 for a single introduction.}
 
 \item{popsize}{The population size.}
 
@@ -82,6 +84,9 @@ is total intake.
 For \code{infect_percent = FALSE}, the net energy remaining after \code{T}
 timesteps of infection is \code{N - (cost_infect * T)}, where \code{N}
 is total intake.}
+
+\item{vertical}{Should the pathogen be transmitted vertically? Should be
+set to \code{TRUE} for a realistic implementation of scenario 3, \emph{single spillover}.}
 
 \item{mProb}{The probability of mutation. The suggested value is 0.01.
 While high, this may be more appropriate for a small population; change this
