@@ -25,10 +25,11 @@ public:
                const int nThreads,
                const float dispersal, 
                const bool infect_percent,
+               const bool vertical,
                const float mProb,
                const float mSize):
         // population, food, and data structures
-        pop (popsize, range_agents, range_food, range_move, handling_time, pTransmit),
+        pop (popsize, range_agents, range_food, range_move, handling_time, pTransmit, vertical),
         food(nItems, landsize, nClusters, clusterSpread, regen_time),
         gen_data (genmax, popsize, std::max(static_cast<int>(static_cast<float>(genmax) * 0.001f), 2)), // increment hardcoded
 
@@ -53,9 +54,10 @@ public:
         // parallelisation
         nThreads (nThreads),
 
-        // natal dispersal
+        // natal dispersal and pathogen cost structure
         dispersal(dispersal),
         infect_percent(infect_percent),
+        vertical(vertical),
 
         // mutation probability and step size
         mProb(mProb),
@@ -80,6 +82,7 @@ public:
     int nThreads;
     const float dispersal;
     const bool infect_percent;
+    const bool vertical;
 
     const float mProb, mSize;
 
@@ -110,6 +113,7 @@ Rcpp::List run_pathomove(const int scenario,
                         const int nThreads,
                         const float dispersal,
                         const bool infect_percent,
+                        const bool vertical,
                         const float mProb,
                         const float mSize);
 
