@@ -38,35 +38,41 @@ Rcpp::List simulation::do_simulation() {
 
     Rcpp::Rcout << "logging data after gens: " << increment_log << "\n";
 
+    // handle pathogen introduction generation
     if (scenario == 0) {
-        pTransmit = 0.f;
+        pTransmit = 0.f; // jsut to be sure
     }
-    int gen_init = 0;
-    if (scenario == 2) {
-        gen_init = g_patho_init;
-    }
-
-    Rcpp::Rcout << "spillover in gen: " << gen_init << "\n";
+    int gen_init = g_patho_init;
 
     // go over gens
     for(int gen = 0; gen < genmax; gen++) {
 
-        // Rcpp::Rcout << "gen = " << gen << "\n";
-
         // food.initResources();
         food.countAvailable();
-        // Rcpp::Rcout << "food available = " << food.nAvailable << "\n";
 
         // reset counter and positions
         pop.counter = std::vector<int> (pop.nAgents, 0);
-        
-        if((scenario > 0) && (gen > gen_init)) {
-            pop.introducePathogen(initialInfections);
+
+        // switch for pathogen introductions
+        switch (scenario)
+        {
+        case 0:
+            break;
+        case 1: // maintained for backwards compatibility but not necessary
+            if(gen >= gen_init) {
+                pop.introducePathogen(initialInfections);
+            }
+            break;
+        case 2:
+            if(gen == gen_init) {
+                pop.introducePathogen(initialInfections);
+                Rcpp::Rcout << "Single spillover event occurring at gen:" << gen << "\n";
+            }
+            break;
+        default:
+            break;
         }
-        // Rcpp::Rcout << "introduced pathogen if applicable\n";
-
-        // Rcpp::Rcout << "entering ecological timescale\n";
-
+        
         // timesteps start here
         for (size_t t = 0; t < static_cast<size_t>(tmax); t++)
         {
@@ -144,7 +150,8 @@ Rcpp::List simulation::do_simulation() {
 //' @description Run the simulation using parameters passed as
 //' arguments to the corresponding R function.
 //'
-//' @param scenario The pathomove scenario: 1 for ancestral pathogen, 2 for spillover pathogen.
+//' @param scenario The pathomove scenario: 0 for no pathogen, 1 for 
+//' persistent introduction across generations, and 2 for a single introduction.
 //' @param popsize The population size.
 //' @param nItems How many food items on the landscape.
 //' @param landsize The size of the landscape as a numeric (double).
@@ -203,6 +210,7 @@ Rcpp::List run_pathomove(const int scenario,
                         const int nThreads,
                         const float dispersal,
                         const bool infect_percent,
+                        const bool vertical,
                         const float mProb,
                         const float mSize) {
                             
@@ -216,7 +224,7 @@ Rcpp::List run_pathomove(const int scenario,
                         range_food, range_agents, range_move,
                         handling_time, regen_time,
                         pTransmit, initialInfections, 
-                        costInfect, nThreads, dispersal, infect_percent,
+                        costInfect, nThreads, dispersal, infect_percent, vertical,
                         mProb, mSize);
     return this_sim.do_simulation();
 }
@@ -226,7 +234,8 @@ Rcpp::List run_pathomove(const int scenario,
 //' @description Run the simulation using parameters passed as
 //' arguments to the corresponding R function.
 //'
-//' @param scenario The pathomove scenario: 1 for ancestral pathogen, 2 for spillover pathogen.
+//' @param scenario The pathomove scenario: 0 for no pathogen, 1 for 
+//' persistent introduction across generations, and 2 for a single introduction.
 //' @param popsize The population size.
 //' @param nItems How many food items on the landscape.
 //' @param landsize The size of the landscape as a numeric (double).
@@ -259,6 +268,8 @@ Rcpp::List run_pathomove(const int scenario,
 //' For \code{infect_percent = FALSE}, the net energy remaining after \code{T} 
 //' timesteps of infection is \code{N - (cost_infect * T)}, where \code{N}
 //' is total intake.
+//' @param vertical Should the pathogen be transmitted vertically? Should be
+//' set to `TRUE` for a realistic implementation of scenario 3, _single spillover_.
 //' @param mProb The probability of mutation. The suggested value is 0.01.
 //' While high, this may be more appropriate for a small population; change this
 //' value and \code{popsize} to test the simulation's sensitivity to these values.
@@ -285,6 +296,7 @@ S4 run_pathomove_s4(const int scenario,
                         const int nThreads,
                         const float dispersal,
                         const bool infect_percent,
+                        const bool vertical,
                         const float mProb,
                         const float mSize) {
 
@@ -298,7 +310,7 @@ S4 run_pathomove_s4(const int scenario,
                         range_food, range_agents, range_move,
                         handling_time, regen_time,
                         pTransmit, initialInfections, 
-                        costInfect, nThreads, dispersal, infect_percent,
+                        costInfect, nThreads, dispersal, infect_percent, vertical,
                         mProb, mSize);
     // do the simulation using the simulation class function                        
     Rcpp::List pathomoveOutput = this_sim.do_simulation();
@@ -314,14 +326,16 @@ S4 run_pathomove_s4(const int scenario,
     {
     case 0:
         scenario_str = std::string("no pathogen");
+        Rcpp::Rcout << "No pathogen introduction\n";
         break;
     case 1:
-        scenario_str = std::string("endemic pathogen");
+        if(g_patho_init == 0) scenario_str = std::string("endemic pathogen");
+        else scenario_str = std::string("novel pathogen");
+        Rcpp::Rcout << "Pathogen introduced from gen:" << g_patho_init << "\n";
         break;
     case 2:
-        scenario_str = std::string("novel pathogen");
+        scenario_str = std::string("single spillover");
         break;
-    
     default:
         scenario_str = std::string("unknown scenario");
         break;
