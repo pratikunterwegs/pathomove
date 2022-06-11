@@ -1,27 +1,27 @@
-test_that("simulation works", {
+test_that("Pathomove simulation works", {
   # skip("skipped")
   # parameters
-  popsize <- 100
+  popsize <- 20
 
   data <- run_pathomove(
     scenario = 2,
-    popsize = 100,
+    popsize = 20,
     nItems = 180,
     landsize = 60,
     nClusters = 60,
     clusterSpread = 1,
     tmax = 100,
-    genmax = 20,
-    g_patho_init = 15,
+    genmax = 10,
+    g_patho_init = 5,
     range_food = 1.0,
     range_agents = 1.0,
     range_move = 1.0,
     handling_time = 5,
     regen_time = 50,
     pTransmit = 0.05,
-    initialInfections = 40,
+    initialInfections = 10,
     costInfect = 0.25,
-    nThreads = 2,
+    nThreads = 1,
     dispersal = 3.0,
     infect_percent = FALSE,
     mProb = 0.001,
@@ -57,5 +57,42 @@ test_that("simulation works", {
   # check trait data has popsize rows, checking only one df for now
   testthat::expect_identical(
     nrow(data[["gen_data"]]$pop_data[[1]]), as.integer(popsize)
+  )
+})
+
+# test for simple simulation failure when there are more infections
+# than agents
+test_that("pathomove fails when infections > agents", {
+  # skip("skipped")
+  # parameters
+  popsize <- 20
+
+  testthat::expect_error(
+    object = {
+      run_pathomove(
+        scenario = 2,
+        popsize = popsize,
+        nItems = 180,
+        landsize = 60,
+        nClusters = 60,
+        clusterSpread = 1,
+        tmax = 100,
+        genmax = 10,
+        g_patho_init = 5,
+        range_food = 1.0,
+        range_agents = 1.0,
+        range_move = 1.0,
+        handling_time = 5,
+        regen_time = 50,
+        pTransmit = 0.05,
+        initialInfections = popsize + 1,
+        costInfect = 0.25,
+        nThreads = 1,
+        dispersal = 3.0,
+        infect_percent = FALSE,
+        mProb = 0.001,
+        mSize = 0.001
+      )
+    }
   )
 })

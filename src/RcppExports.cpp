@@ -57,12 +57,45 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// run_pathomove_s4
+S4 run_pathomove_s4(const int scenario, const int popsize, const int nItems, const float landsize, const int nClusters, const float clusterSpread, const int tmax, const int genmax, const int g_patho_init, const float range_food, const float range_agents, const float range_move, const int handling_time, const int regen_time, float pTransmit, const int initialInfections, const float costInfect, const int nThreads, const float dispersal, const bool infect_percent, const float mProb, const float mSize);
+RcppExport SEXP _pathomove_run_pathomove_s4(SEXP scenarioSEXP, SEXP popsizeSEXP, SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterSpreadSEXP, SEXP tmaxSEXP, SEXP genmaxSEXP, SEXP g_patho_initSEXP, SEXP range_foodSEXP, SEXP range_agentsSEXP, SEXP range_moveSEXP, SEXP handling_timeSEXP, SEXP regen_timeSEXP, SEXP pTransmitSEXP, SEXP initialInfectionsSEXP, SEXP costInfectSEXP, SEXP nThreadsSEXP, SEXP dispersalSEXP, SEXP infect_percentSEXP, SEXP mProbSEXP, SEXP mSizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type scenario(scenarioSEXP);
+    Rcpp::traits::input_parameter< const int >::type popsize(popsizeSEXP);
+    Rcpp::traits::input_parameter< const int >::type nItems(nItemsSEXP);
+    Rcpp::traits::input_parameter< const float >::type landsize(landsizeSEXP);
+    Rcpp::traits::input_parameter< const int >::type nClusters(nClustersSEXP);
+    Rcpp::traits::input_parameter< const float >::type clusterSpread(clusterSpreadSEXP);
+    Rcpp::traits::input_parameter< const int >::type tmax(tmaxSEXP);
+    Rcpp::traits::input_parameter< const int >::type genmax(genmaxSEXP);
+    Rcpp::traits::input_parameter< const int >::type g_patho_init(g_patho_initSEXP);
+    Rcpp::traits::input_parameter< const float >::type range_food(range_foodSEXP);
+    Rcpp::traits::input_parameter< const float >::type range_agents(range_agentsSEXP);
+    Rcpp::traits::input_parameter< const float >::type range_move(range_moveSEXP);
+    Rcpp::traits::input_parameter< const int >::type handling_time(handling_timeSEXP);
+    Rcpp::traits::input_parameter< const int >::type regen_time(regen_timeSEXP);
+    Rcpp::traits::input_parameter< float >::type pTransmit(pTransmitSEXP);
+    Rcpp::traits::input_parameter< const int >::type initialInfections(initialInfectionsSEXP);
+    Rcpp::traits::input_parameter< const float >::type costInfect(costInfectSEXP);
+    Rcpp::traits::input_parameter< const int >::type nThreads(nThreadsSEXP);
+    Rcpp::traits::input_parameter< const float >::type dispersal(dispersalSEXP);
+    Rcpp::traits::input_parameter< const bool >::type infect_percent(infect_percentSEXP);
+    Rcpp::traits::input_parameter< const float >::type mProb(mProbSEXP);
+    Rcpp::traits::input_parameter< const float >::type mSize(mSizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(run_pathomove_s4(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, mProb, mSize));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 RcppExport SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_pathomove_get_test_landscape", (DL_FUNC) &_pathomove_get_test_landscape, 5},
     {"_pathomove_run_pathomove", (DL_FUNC) &_pathomove_run_pathomove, 22},
+    {"_pathomove_run_pathomove_s4", (DL_FUNC) &_pathomove_run_pathomove_s4, 22},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };
