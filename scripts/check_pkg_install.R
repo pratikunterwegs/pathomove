@@ -184,8 +184,8 @@ a = pathomove::run_pathomove_s4(
   nClusters = 60,
   clusterSpread = 1,
   tmax = 100,
-  genmax = 500,
-  g_patho_init = 300,
+  genmax = 1000,
+  g_patho_init = 700,
   range_food = 1,
   range_agents = 1,
   range_move = 1,
@@ -194,10 +194,10 @@ a = pathomove::run_pathomove_s4(
   pTransmit = 0.05,
   initialInfections = 20,
   costInfect = 0.25,
-  nThreads = 1,
+  nThreads = 2,
   dispersal = 3.0, # for local-ish dispersal
   infect_percent = FALSE,
-  vertical = TRUE,
+  vertical = F,
   mProb = 0.01,
   mSize = 0.01
 )
@@ -214,7 +214,30 @@ trait = Map(
 
 trait |> 
   ggplot(aes(gen, intake))+
-  geom_bin_2d()
+  stat_summary(geom = "line")+
+  geom_vline(
+    aes(xintercept = 700),
+    col = "red"
+  )
+  annotate(
+    geom = "vline",
+    xintercept = 700, col = 2
+  )
+  geom_bin_2d(
+    binwidth = c(2, 1)
+  )+
+  scale_fill_viridis_c(
+    option = "A", direction = -1
+  )
+
+trait |> 
+  ggplot(aes(gen, moved))+
+  geom_bin_2d(
+    binwidth = c(2, 5)
+  )+
+  scale_fill_viridis_c(
+    option = "A", direction = -1
+  )
 
 get_social_strategy(trait)
 
@@ -223,6 +246,9 @@ tdf = trait[, .N, by = c("gen", "social_strat")]
 ggplot(tdf)+
   geom_col(
     aes(gen, N, fill = social_strat)
+  )+
+  scale_fill_viridis_d(
+    direction = -1
   )
 
 sdf = trait[, .N, by = c("gen", "infect_src")]
