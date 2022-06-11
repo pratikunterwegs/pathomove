@@ -17,7 +17,7 @@ struct Population {
 public:
     Population(const int popsize, const float range_agents,
     const float range_food, const float range_move, const int handling_time,
-    float pTransmit) :
+    float pTransmit, bool vertical) :
         // agents, positions, energy and traits
         nAgents (popsize),
         coordX (popsize, 0.0f),
@@ -50,6 +50,7 @@ public:
 
         // disease parameters and total pop infected
         pTransmit (pTransmit),
+        vertical (vertical),
         nInfected(0),
 
         // infection source and distance moved
@@ -89,6 +90,7 @@ public:
     std::vector<bool> infected;
     std::vector<int> timeInfected;
     float pTransmit;
+    const bool vertical;
 
     // the number of infected agents
     int nInfected;
