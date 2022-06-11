@@ -109,12 +109,9 @@ Rcpp::List simulation::do_simulation() {
 
         assert(pop.nInfected <= pop.nAgents);
 
-        //population infection cost by time
-        if (gen >= gen_init) {
-            pop.pathogenCost(costInfect, infect_percent);
-        } else {
-            pop.energy = pop.intake;
-        }
+        //population infection cost by time, if infected
+        pop.energy = pop.intake; // first make energy = intake
+        pop.pathogenCost(costInfect, infect_percent); // now energy minus costs
 
         // update gendata
         if ((gen == (genmax - 1)) | (gen % increment_log == 0)) {
