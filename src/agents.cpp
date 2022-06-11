@@ -515,8 +515,10 @@ std::vector<float> Population::handleFitness() {
 // fun for replication
 void Population::Reproduce(const Resources food, const bool infect_percent, 
     const float dispersal, const float mProb, const float mSize) 
-{
-    // std::bernoulli_distribution verticalInfect(0.01f);
+{   
+    // rng for probability of vertical transmission
+    // currently same as prob for horizontal
+    std::bernoulli_distribution verticalInfect(pTransmit);
 
     // mutation probability and size distribution --- inefficient but oh well
     std::bernoulli_distribution mutation_happens(mProb);
@@ -577,13 +579,15 @@ void Population::Reproduce(const Resources food, const bool infect_percent,
         if(coord_y_2[a] < 0.f) coord_y_2[a] = food.dSize + coord_y_2[a];
         if(coord_y_2[a] > food.dSize) coord_y_2[a] = coord_y_2[a] - food.dSize;
 
-        // // vertical transmission of infection.
-        // if(infected[parent_id]) {
-        //     if(verticalInfect(rng)) {
-        //         infected_2[a] = true;
-        //         srcInfect[a] = 1;
-        //     }
-        // }
+        // vertical transmission of infection if set to TRUE
+        if (vertical) {
+            if(infected[parent_id]) {
+                if(verticalInfect(rng)) {
+                    infected_2[a] = true;
+                    srcInfect[a] = 1;
+                }
+            }
+        }
     }
 
     // swap infected and infected_2
