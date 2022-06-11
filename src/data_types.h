@@ -33,7 +33,7 @@ public:
         // ecological interactions
         gAssoc (gSampled, std::vector<int>(popsize, 0.f)),
         gTInfected (gSampled, std::vector<int>(popsize, 0.f)),
-        // gDegree (gSampled, std::vector<int>(popsize, 0.f)),
+        gSrc (gSampled, std::vector<int>(popsize, 1)),
         gMoved (gSampled, std::vector<float>(popsize, 0.f)),
         // generation specific data
         gNInfected (gSampled, 0),
@@ -59,7 +59,7 @@ public:
 
     std::vector<std::vector<int> > gAssoc;
     std::vector<std::vector<int> > gTInfected;
-    // std::vector<std::vector<int> > gDegree;
+    std::vector<std::vector<int> > gSrc;
     std::vector<std::vector<float> > gMoved;
 
     std::vector<int> gNInfected;
