@@ -18,7 +18,8 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' @description Run the simulation using parameters passed as
 #' arguments to the corresponding R function.
 #'
-#' @param scenario The pathomove scenario: 1 for ancestral pathogen, 2 for spillover pathogen.
+#' @param scenario The pathomove scenario: 0 for no pathogen, 1 for 
+#' persistent introduction across generations, and 2 for a single introduction.
 #' @param popsize The population size.
 #' @param nItems How many food items on the landscape.
 #' @param landsize The size of the landscape as a numeric (double).
@@ -57,8 +58,8 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' @param mSize Controls the mutational step size, and represents the scale
 #' parameter of a Cauchy distribution. 
 #' @return A data frame of the evolved population traits.
-run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, mProb, mSize) {
-    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, mProb, mSize)
+run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, vertical, mProb, mSize) {
+    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, vertical, mProb, mSize)
 }
 
 #' Runs the pathomove simulation and return a `pathomove_output` object.
@@ -66,7 +67,8 @@ run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, cluste
 #' @description Run the simulation using parameters passed as
 #' arguments to the corresponding R function.
 #'
-#' @param scenario The pathomove scenario: 1 for ancestral pathogen, 2 for spillover pathogen.
+#' @param scenario The pathomove scenario: 0 for no pathogen, 1 for 
+#' persistent introduction across generations, and 2 for a single introduction.
 #' @param popsize The population size.
 #' @param nItems How many food items on the landscape.
 #' @param landsize The size of the landscape as a numeric (double).
@@ -99,13 +101,15 @@ run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, cluste
 #' For \code{infect_percent = FALSE}, the net energy remaining after \code{T} 
 #' timesteps of infection is \code{N - (cost_infect * T)}, where \code{N}
 #' is total intake.
+#' @param vertical Should the pathogen be transmitted vertically? Should be
+#' set to `TRUE` for a realistic implementation of scenario 3, _single spillover_.
 #' @param mProb The probability of mutation. The suggested value is 0.01.
 #' While high, this may be more appropriate for a small population; change this
 #' value and \code{popsize} to test the simulation's sensitivity to these values.
 #' @param mSize Controls the mutational step size, and represents the scale
 #' parameter of a Cauchy distribution. 
 #' @return An S4 class, `pathomove_output`, with simulation outcomes.
-run_pathomove_s4 <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, mProb, mSize) {
-    .Call(`_pathomove_run_pathomove_s4`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, mProb, mSize)
+run_pathomove_s4 <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, vertical, mProb, mSize) {
+    .Call(`_pathomove_run_pathomove_s4`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, vertical, mProb, mSize)
 }
 
