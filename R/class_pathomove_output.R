@@ -48,7 +48,7 @@ setClass(
 
   # define the default values of the slots
   prototype = list(
-    parameters = list(),
+    agent_parameters = list(),
     eco_parameters = list(),
     generations = NA_integer_,
     infections_per_gen = NA_integer_,
