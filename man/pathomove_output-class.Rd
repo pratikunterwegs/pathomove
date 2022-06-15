@@ -17,5 +17,7 @@ Defines the \code{pathomove_output} class.
 \item{\code{infections_per_gen}}{integer.}
 
 \item{\code{trait_data}}{list.}
+
+\item{\code{edge_list}}{list}
 }}
 
