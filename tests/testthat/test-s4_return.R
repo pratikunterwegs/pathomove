@@ -22,6 +22,7 @@ test_that("Pathomove returns S4 output", {
     nThreads = 1,
     dispersal = 3.0,
     infect_percent = FALSE,
+    vertical = FALSE,
     mProb = 0.001,
     mSize = 0.001
   )

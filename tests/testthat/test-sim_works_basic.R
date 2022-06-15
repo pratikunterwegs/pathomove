@@ -24,6 +24,7 @@ test_that("Pathomove simulation works", {
     nThreads = 1,
     dispersal = 3.0,
     infect_percent = FALSE,
+    vertical = FALSE,
     mProb = 0.001,
     mSize = 0.001
   )
