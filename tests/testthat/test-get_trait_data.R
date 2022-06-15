@@ -22,6 +22,7 @@ test_that("Test getting trait data", {
     nThreads = 1,
     dispersal = 3.0,
     infect_percent = FALSE,
+    vertical = FALSE,
     mProb = 0.001,
     mSize = 0.001
   )
@@ -34,5 +35,10 @@ test_that("Test getting trait data", {
   # check for class, at least data.frame
   testthat::expect_s3_class(
     trait_data, "data.frame"
+  )
+  
+  # check network function
+  networks = get_networks(
+    data_s4
   )
 })

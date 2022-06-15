@@ -7,7 +7,10 @@
 #' @return A list of \code{tidygraph} objects.
 #' @export
 get_networks <- function(datafile, assoc_threshold = 5) {
-  load(datafile)
+  
+  data = readRDS(datafile)
+
+  output
 
   # scenario
   repl <- data[["replicate"]]

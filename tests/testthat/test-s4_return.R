@@ -1,7 +1,7 @@
 test_that("Pathomove returns S4 output", {
   # skip("skipped")
   # parameters
-  data_s4 <- run_pathomove_s4(
+  data <- run_pathomove_s4(
     scenario = 2,
     popsize = 10,
     nItems = 180,
