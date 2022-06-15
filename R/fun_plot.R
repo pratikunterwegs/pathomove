@@ -26,5 +26,6 @@ plot_pathomove <- function(x, type = "infections") {
     gen_patho_intro <- x@parameters$gen_patho_intro
 
     plot(gen, infections, type = "b")
-    abline(v = gen_patho_init, col="red", lty=2)
+    abline(v = gen_patho_init, col = "red", lty = 2)
+  }
 }

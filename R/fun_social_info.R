@@ -6,7 +6,7 @@
 #' @export
 #' @import data.table
 #'
-get_social_strategy = function(df) {
+get_social_strategy <- function(df) {
   assertthat::assert_that(
     all(c("sH", "sN") %in% names(df)),
     msg = "get_social_strat: data does not have social weights"
@@ -26,20 +26,21 @@ get_social_strategy = function(df) {
 #'
 #' @return Nothing. Transforms weights by reference. See data.table.
 #' @export
-get_functional_variation = function(df) {
+get_functional_variation <- function(df) {
   data.table::setDT(df)
-  
+
   assertthat::assert_that(
     all(
       c("sF", "sH", "sN", "gen") %in% colnames(df)
     )
   )
-  
+
   # transform weights
   df[, c("sF", "sH", "sN") := lapply(.SD, function(x) {
     x / (abs(sF) + abs(sH) + abs(sN))
-  }), 
-  .SDcols = c("sF", "sH", "sN")][]
+  }),
+  .SDcols = c("sF", "sH", "sN")
+  ][]
 }
 
 #' Importance of social strategy.
@@ -50,7 +51,7 @@ get_functional_variation = function(df) {
 #' @export
 #' @import data.table
 #'
-get_si_importance = function(df) {
+get_si_importance <- function(df) {
   assertthat::assert_that(
     all(c("sH", "sN") %in% names(df)),
     msg = "get_social_strat: data does not have social weights"
@@ -68,17 +69,16 @@ get_si_importance = function(df) {
 #' @return A column of agent avoidance value, where agent avoidance is
 #' the sum of negative scaled agent weights.
 #' @export
-get_agent_avoidance = function(df) {
+get_agent_avoidance <- function(df) {
   assertthat::assert_that(
     all(c("sH", "sN") %in% names(df)),
     msg = "get_agent_avoidance: data does not have social weights"
   )
   data.table::setDT(df)
-  d_ = copy(df)
+  d_ <- copy(df)
   # avoidance is sum of negative agent weights
-  d_[, agent_avoidance := (fifelse(sH < 0, sH, 0) + fifelse(sN < 0, sN, 0)) / 
-    (abs(sH) + abs(sN) + abs(sF))
-  ]
+  d_[, agent_avoidance := (fifelse(sH < 0, sH, 0) + fifelse(sN < 0, sN, 0)) /
+    (abs(sH) + abs(sN) + abs(sF))]
   # assign to original df, modified by reference
   df[, agent_avoidance := d_$agent_avoidance]
 }
