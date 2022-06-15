@@ -93,28 +93,4 @@ public:
 
 };
 
-Rcpp::List run_pathomove(const int scenario,
-                        const int popsize,
-                        const int nItems, 
-                        const float landsize,
-                        const int nClusters,
-                        const float clusterSpread,
-                        const int tmax,
-                        const int genmax,
-                        const int g_patho_init,
-                        const float range_food,
-                        const float range_agents,
-                        const float range_move,
-                        const int handling_time,
-                        const int regen_time,
-                        float pTransmit,
-                        const int initialInfections,
-                        const float costInfect,
-                        const int nThreads,
-                        const float dispersal,
-                        const bool infect_percent,
-                        const bool vertical,
-                        const float mProb,
-                        const float mSize);
-
 #endif // SIMULATIONS_H
