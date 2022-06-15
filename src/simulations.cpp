@@ -97,7 +97,7 @@ Rcpp::List simulation::do_simulation() {
 
             // count associations
             pop.countAssoc(nThreads);
-            if((scenario > 0) && (gen > gen_init)) {
+            if((scenario > 0) && (gen >= gen_init)) {
                 // disease
                 pop.pathogenSpread();
             }
