@@ -7,9 +7,9 @@
 get_networks(output, assoc_threshold = 5)
 }
 \arguments{
-\item{assoc_threshold}{The association count threshold.}
+\item{output}{A \code{pathomove_output} object.}
 
-\item{datafile}{Rds data file.}
+\item{assoc_threshold}{The association count threshold.}
 }
 \value{
 A list of \code{tidygraph} objects.
