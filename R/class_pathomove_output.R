@@ -22,10 +22,13 @@ check_pathomove_output <- function(object) {
 
 #' Defines the `pathomove_output` class.
 #'
-#' @slot parameters list.
+#' @slot agent_parameters list.
+#' @slot eco_parameters list.
 #' @slot generations integer.
 #' @slot infections_per_gen integer.
 #' @slot trait_data list.
+#' @slot edge_list list.
+#' @slot gens_edge_list list.
 #'
 #' @export
 setClass(
@@ -34,18 +37,24 @@ setClass(
 
   # define the types of the class
   slots = c(
-    parameters = "list",
+    agent_parameters = "list",
+    eco_parameters = "list",
     generations = "integer",
     infections_per_gen = "integer",
-    trait_data = "list"
+    trait_data = "list",
+    edge_lists = "list",
+    gens_edge_lists = "integer"
   ),
 
   # define the default values of the slots
   prototype = list(
-    parameters = list(),
+    agent_parameters = list(),
+    eco_parameters = list(),
     generations = NA_integer_,
     infections_per_gen = NA_integer_,
-    trait_data = list()
+    trait_data = list(),
+    edge_lists = list(),
+    gens_edge_lists = NA_integer_
   ),
 
   # check validity of class

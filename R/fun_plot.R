@@ -25,28 +25,7 @@ plot_pathomove <- function(x, type = "infections") {
     # when infections begin
     gen_patho_intro <- x@parameters$gen_patho_intro
 
-    ggplot2::ggplot(
-      temp_df_,
-      ggplot2::aes(
-        x = gen, y = infections
-      )
-    ) +
-      ggplot2::geom_line(
-        size = 0.3,
-        col = "grey30"
-      ) +
-      ggplot2::geom_point(
-        shape = 16
-      ) +
-      ggplot2::geom_vline(
-        xintercept = gen_patho_intro,
-        col = "indianred",
-        lty = 3
-      ) +
-      ggplot2::labs(
-        x = "Generations",
-        y = "# individuals infected"
-      ) +
-      ggplot2::theme_classic()
+    plot(gen, infections, type = "b")
+    abline(v = gen_patho_init, col = "red", lty = 2)
   }
 }

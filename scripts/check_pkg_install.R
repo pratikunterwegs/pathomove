@@ -12,6 +12,7 @@ devtools::document()
 
 detach(package:pathomove)
 library(pathomove)
+library(data.table)
 library(ggplot2)
 library(data.table)
 
@@ -43,13 +44,13 @@ ggplot(l) +
 #   x = {
 a <- pathomove::run_pathomove(
   scenario = 2,
-  popsize = 1000,
-  nItems = 1800,
+  popsize = 10,
+  nItems = 180,
   landsize = 60,
   nClusters = 60,
   clusterSpread = 1,
   tmax = 100,
-  genmax = 1000,
+  genmax = 10,
   g_patho_init = 500,
   range_food = 1.0,
   range_agents = 1.0,
@@ -57,11 +58,12 @@ a <- pathomove::run_pathomove(
   handling_time = 5,
   regen_time = 50,
   pTransmit = 0.05,
-  initialInfections = 40,
+  initialInfections = 4,
   costInfect = 0.25,
-  nThreads = 2,
+  nThreads = 1,
   dispersal = 3.0,
   infect_percent = FALSE,
+  vertical = FALSE,
   mProb = 0.001,
   mSize = 0.001
 )
@@ -176,25 +178,81 @@ ggraph(g, layout = "mds") +
 #### check S4 class output ####
 a = pathomove::run_pathomove_s4(
   scenario = 2,
-  popsize = 10,
-  nItems = 180,
-  landsize = 10,
-  nClusters = 10,
+  popsize = 500,
+  nItems = 1800,
+  landsize = 60,
+  nClusters = 60,
   clusterSpread = 1,
   tmax = 100,
-  genmax = 10,
-  g_patho_init = 5,
-  range_food = 1.0,
-  range_agents = 1.0,
-  range_move = 1.0,
+  genmax = 1000,
+  g_patho_init = 700,
+  range_food = 1,
+  range_agents = 1,
+  range_move = 1,
   handling_time = 5,
   regen_time = 50,
   pTransmit = 0.05,
-  initialInfections = 4,
+  initialInfections = 20,
   costInfect = 0.25,
   nThreads = 2,
-  dispersal = 3.0,
+  dispersal = 3.0, # for local-ish dispersal
   infect_percent = FALSE,
-  mProb = 0.001,
-  mSize = 0.001
+  vertical = F,
+  mProb = 0.01,
+  mSize = 0.01
 )
+
+pathomove::plot_pathomove(a)
+
+trait = Map(
+  a@trait_data, a@generations,
+  f = function(df, g) {
+    df$gen = g
+    df
+  }
+) |> rbindlist()
+
+trait |> 
+  ggplot(aes(gen, intake))+
+  stat_summary(geom = "line")+
+  geom_vline(
+    aes(xintercept = 700),
+    col = "red"
+  )
+  annotate(
+    geom = "vline",
+    xintercept = 700, col = 2
+  )
+  geom_bin_2d(
+    binwidth = c(2, 1)
+  )+
+  scale_fill_viridis_c(
+    option = "A", direction = -1
+  )
+
+trait |> 
+  ggplot(aes(gen, moved))+
+  geom_bin_2d(
+    binwidth = c(2, 5)
+  )+
+  scale_fill_viridis_c(
+    option = "A", direction = -1
+  )
+
+get_social_strategy(trait)
+
+tdf = trait[, .N, by = c("gen", "social_strat")]
+
+ggplot(tdf)+
+  geom_col(
+    aes(gen, N, fill = social_strat)
+  )+
+  scale_fill_viridis_d(
+    direction = -1
+  )
+
+sdf = trait[, .N, by = c("gen", "infect_src")]
+ggplot(sdf)+
+  geom_col(
+    aes(gen, N, fill = as.factor(infect_src))
+  )

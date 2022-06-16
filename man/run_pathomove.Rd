@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{run_pathomove}
 \alias{run_pathomove}
-\title{Runs the pathomove simulation.}
+\title{Runs the pathomove simulation and return a \code{pathomove_output} object.}
 \usage{
 run_pathomove(
   scenario,
@@ -25,12 +25,14 @@ run_pathomove(
   nThreads,
   dispersal,
   infect_percent,
+  vertical,
   mProb,
   mSize
 )
 }
 \arguments{
-\item{scenario}{The pathomove scenario: 1 for ancestral pathogen, 2 for spillover pathogen.}
+\item{scenario}{The pathomove scenario: 0 for no pathogen, 1 for
+persistent introduction across generations, and 2 for a single introduction.}
 
 \item{popsize}{The population size.}
 
@@ -83,6 +85,9 @@ For \code{infect_percent = FALSE}, the net energy remaining after \code{T}
 timesteps of infection is \code{N - (cost_infect * T)}, where \code{N}
 is total intake.}
 
+\item{vertical}{Should the pathogen be transmitted vertically? Should be
+set to \code{TRUE} for a realistic implementation of scenario 3, \emph{single spillover}.}
+
 \item{mProb}{The probability of mutation. The suggested value is 0.01.
 While high, this may be more appropriate for a small population; change this
 value and \code{popsize} to test the simulation's sensitivity to these values.}
@@ -91,7 +96,7 @@ value and \code{popsize} to test the simulation's sensitivity to these values.}
 parameter of a Cauchy distribution.}
 }
 \value{
-A data frame of the evolved population traits.
+An S4 class, \code{pathomove_output}, with simulation outcomes.
 }
 \description{
 Run the simulation using parameters passed as

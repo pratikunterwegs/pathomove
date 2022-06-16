@@ -10,12 +10,18 @@ Defines the \code{pathomove_output} class.
 \section{Slots}{
 
 \describe{
-\item{\code{parameters}}{list.}
+\item{\code{agent_parameters}}{list.}
+
+\item{\code{eco_parameters}}{list.}
 
 \item{\code{generations}}{integer.}
 
 \item{\code{infections_per_gen}}{integer.}
 
 \item{\code{trait_data}}{list.}
+
+\item{\code{edge_list}}{list.}
+
+\item{\code{gens_edge_list}}{list.}
 }}
 

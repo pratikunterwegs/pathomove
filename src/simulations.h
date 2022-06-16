@@ -25,10 +25,11 @@ public:
                const int nThreads,
                const float dispersal, 
                const bool infect_percent,
+               const bool vertical,
                const float mProb,
                const float mSize):
         // population, food, and data structures
-        pop (popsize, range_agents, range_food, range_move, handling_time, pTransmit),
+        pop (popsize, range_agents, range_food, range_move, handling_time, pTransmit, vertical),
         food(nItems, landsize, nClusters, clusterSpread, regen_time),
         gen_data (genmax, popsize, std::max(static_cast<int>(static_cast<float>(genmax) * 0.001f), 2)), // increment hardcoded
 
@@ -53,9 +54,10 @@ public:
         // parallelisation
         nThreads (nThreads),
 
-        // natal dispersal
+        // natal dispersal and pathogen cost structure
         dispersal(dispersal),
         infect_percent(infect_percent),
+        vertical(vertical),
 
         // mutation probability and step size
         mProb(mProb),
@@ -80,6 +82,7 @@ public:
     int nThreads;
     const float dispersal;
     const bool infect_percent;
+    const bool vertical;
 
     const float mProb, mSize;
 
@@ -89,28 +92,5 @@ public:
     Rcpp::List do_simulation();
 
 };
-
-Rcpp::List run_pathomove(const int scenario,
-                        const int popsize,
-                        const int nItems, 
-                        const float landsize,
-                        const int nClusters,
-                        const float clusterSpread,
-                        const int tmax,
-                        const int genmax,
-                        const int g_patho_init,
-                        const float range_food,
-                        const float range_agents,
-                        const float range_move,
-                        const int handling_time,
-                        const int regen_time,
-                        float pTransmit,
-                        const int initialInfections,
-                        const float costInfect,
-                        const int nThreads,
-                        const float dispersal,
-                        const bool infect_percent,
-                        const float mProb,
-                        const float mSize);
 
 #endif // SIMULATIONS_H
