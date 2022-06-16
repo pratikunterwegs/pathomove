@@ -275,6 +275,8 @@ S4 run_pathomove(const int scenario,
         Named("pTransmit") = pTransmit,
         Named("initialInfections") = initialInfections,
         Named("costInfect") = costInfect,
+        Named("infect_percent") = infection_cost_type,
+        Named("vertical_infection") = vertical_infection,
         Named("dispersal") = dispersal,
         Named("mProb") = mProb,
         Named("mSize") = mSize
@@ -283,8 +285,6 @@ S4 run_pathomove(const int scenario,
     // ecological parameters list
     Rcpp::List eco_param_list = Rcpp::List::create(
         Named("scenario") = scenario_str,
-        Named("infect_percent") = infection_cost_type,
-        Named("vertical_infection") = vertical_infection,
         Named("genmax") = genmax,
         Named("g_patho_init") = (scenario == 0 ? NA_REAL : g_patho_init),
         Named("nItems") = nItems,
