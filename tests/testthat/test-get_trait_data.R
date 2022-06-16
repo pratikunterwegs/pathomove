@@ -1,7 +1,7 @@
 test_that("Test getting trait data", {
   # skip("skipped")
   # parameters
-  data_s4 <- run_pathomove_s4(
+  data <- run_pathomove(
     scenario = 2,
     popsize = 10,
     nItems = 180,
@@ -29,7 +29,7 @@ test_that("Test getting trait data", {
 
   # get trait data from pathomove output
   trait_data <- get_trait_data(
-    data_s4
+    data
   )
 
   # check for class, at least data.frame
@@ -39,6 +39,13 @@ test_that("Test getting trait data", {
   
   # check network function
   networks = get_networks(
-    data_s4
+    data
   )
+  invisible(
+    lapply(networks,
+      testthat::expect_s3_class,
+      class = "tbl_graph"
+    )
+  )
+  
 })
