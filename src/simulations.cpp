@@ -79,10 +79,12 @@ Rcpp::List simulation::do_simulation() {
         case 3:
             if(gen == gen_init) {
                 pop.introducePathogen(initialInfections);
-                gens_patho_intro.push_back(gen);
+                // gens_patho_intro.push_back(gen);
                 Rcpp::Rcout << "New spillover event occurring at gen:" << gen << "\n";
+                // draw new intro generation
+                gen_init += (gens_to_spillover(rng) + 1); // add one to handle zeroes
             }
-            gen_init += gens_to_spillover(rng);
+            break;
         default:
             break;
         }
