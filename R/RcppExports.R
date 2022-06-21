@@ -19,7 +19,10 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' arguments to the corresponding R function.
 #'
 #' @param scenario The pathomove scenario: 0 for no pathogen, 1 for 
-#' persistent introduction across generations, and 2 for a single introduction.
+#' persistent introduction across generations, 
+#' 2 for a single introduction,
+#' and 3 for sporadic introductions drawn from a geometric distribution
+#' specified by `spillover_rate`.
 #' @param popsize The population size.
 #' @param nItems How many food items on the landscape.
 #' @param landsize The size of the landscape as a numeric (double).
@@ -58,9 +61,12 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' While high, this may be more appropriate for a small population; change this
 #' value and \code{popsize} to test the simulation's sensitivity to these values.
 #' @param mSize Controls the mutational step size, and represents the scale
-#' parameter of a Cauchy distribution. 
+#' parameter of a Cauchy distribution.
+#' @param spillover_rate For scenario 3, the probability parameter _p_ of a
+#' geometric distribution from which the number of generations until the next
+#' pathogen introduction are drawn.
 #' @return An S4 class, `pathomove_output`, with simulation outcomes.
-run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, vertical, mProb, mSize) {
-    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, vertical, mProb, mSize)
+run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, vertical, mProb, mSize, spillover_rate) {
+    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, vertical, mProb, mSize, spillover_rate)
 }
 
