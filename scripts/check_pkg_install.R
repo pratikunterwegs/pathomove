@@ -14,7 +14,6 @@ detach(package:pathomove)
 library(pathomove)
 library(data.table)
 library(ggplot2)
-library(data.table)
 
 l <- pathomove::get_test_landscape(
   nItems = 1800,
@@ -176,7 +175,7 @@ ggraph(g, layout = "mds") +
   geom_edge_link()
 
 #### check S4 class output ####
-a = pathomove::run_pathomove_s4(
+a = pathomove::run_pathomove(
   scenario = 2,
   popsize = 500,
   nItems = 1800,
@@ -256,3 +255,33 @@ ggplot(sdf)+
   geom_col(
     aes(gen, N, fill = as.factor(infect_src))
   )
+
+#### check sporadic spillover ####
+a = pathomove::run_pathomove(
+  scenario = 3,
+  popsize = 300,
+  nItems = 1800,
+  landsize = 60,
+  nClusters = 60,
+  clusterSpread = 1,
+  tmax = 100,
+  genmax = 500,
+  g_patho_init = 250,
+  range_food = 1,
+  range_agents = 1,
+  range_move = 1,
+  handling_time = 5,
+  regen_time = 50,
+  pTransmit = 0.05,
+  initialInfections = 20,
+  costInfect = 0.25,
+  nThreads = 2,
+  dispersal = 3.0, # for local-ish dispersal
+  infect_percent = FALSE,
+  vertical = F,
+  mProb = 0.01,
+  mSize = 0.01,
+  spillover_rate = 0.5
+)
+
+plot(a@generations, a@infections_per_gen, type = "b")
