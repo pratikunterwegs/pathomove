@@ -113,8 +113,11 @@ Rcpp::List simulation::do_simulation() {
 
             // count associations
             pop.countAssoc(nThreads);
-            if((scenario > 0) && (gen >= gen_init)) {
-                // disease
+            // relate to g_patho_init, which is the point of regime shift
+            // NOT gen_init, which is when pathogens are introduced
+            // this allows for vertical transmission
+            if((scenario > 0) && (gen >= g_patho_init)) {
+                // disease spread
                 pop.pathogenSpread();
             }
 
