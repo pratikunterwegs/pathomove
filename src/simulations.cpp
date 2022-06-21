@@ -49,7 +49,7 @@ Rcpp::List simulation::do_simulation() {
 
     // geometric distribution for pathogen introduction gen
     std::geometric_distribution<int> gens_to_spillover(spillover_rate);
-    std::vector<int> gens_patho_intro;
+    std::vector<int> gens_patho_intro {g_patho_init};
 
     // go over gens
     for(int gen = 0; gen < genmax; gen++) {
@@ -79,7 +79,7 @@ Rcpp::List simulation::do_simulation() {
         case 3:
             if(gen == gen_init) {
                 pop.introducePathogen(initialInfections);
-                // gens_patho_intro.push_back(gen);
+                if(gen > g_patho_init) gens_patho_intro.push_back(gen);
                 Rcpp::Rcout << "New spillover event occurring at gen:" << gen << "\n";
                 // draw new intro generation
                 gen_init += (gens_to_spillover(rng) + 1); // add one to handle zeroes
@@ -113,6 +113,7 @@ Rcpp::List simulation::do_simulation() {
 
             // count associations
             pop.countAssoc(nThreads);
+
             // relate to g_patho_init, which is the point of regime shift
             // NOT gen_init, which is when pathogens are introduced
             // this allows for vertical transmission
@@ -156,7 +157,7 @@ Rcpp::List simulation::do_simulation() {
 
     return Rcpp::List::create(
         Named("gen_data") = gen_data.getGenData(),
-        Named("gens_patho_init") = gens_patho_intro,
+        Named("gens_patho_intro") = gens_patho_intro,
         Named("edgeLists") = edgeLists,
         Named("gens_edge_lists") = gens_edge_lists,
         Named("move_pre") = mdPre.getMoveData(),
@@ -278,6 +279,9 @@ S4 run_pathomove(const int scenario,
     case 2:
         scenario_str = "single spillover";
         break;
+    case 3:
+        scenario_str = "sporadic spillover";
+        break;
     default:
         scenario_str = "unknown scenario";
         break;
@@ -310,8 +314,7 @@ S4 run_pathomove(const int scenario,
     Rcpp::List eco_param_list = Rcpp::List::create(
         Named("scenario") = scenario_str,
         Named("genmax") = genmax,
-        Named("g_patho_init") = (scenario == 0 ? NA_REAL : 
-            (scenario == 3 ? pathomoveOutput['gens_patho_init'] : g_patho_init)),
+        Named("g_patho_init") = (scenario == 0 ? NA_REAL : g_patho_init),
         Named("spillover_rate") = (scenario == 3 ? NA_REAL : spillover_rate),
         Named("nItems") = nItems,
         Named("landsize") = landsize,
@@ -326,6 +329,7 @@ S4 run_pathomove(const int scenario,
     x.slot("agent_parameters") = Rcpp::wrap(agents_param_list);
     x.slot("eco_parameters") = Rcpp::wrap(eco_param_list);
     x.slot("generations") = Rcpp::wrap(gen_data["gens"]);
+    x.slot("gens_patho_intro") = Rcpp::wrap(pathomoveOutput["gens_patho_intro"]);
     x.slot("infections_per_gen") = Rcpp::wrap(gen_data["n_infected"]);
     x.slot("trait_data") = Rcpp::wrap(pop_data);
     x.slot("edge_lists") = Rcpp::wrap(pathomoveOutput["edgeLists"]);
