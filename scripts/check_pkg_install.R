@@ -258,15 +258,15 @@ ggplot(sdf)+
 
 #### check sporadic spillover ####
 a = pathomove::run_pathomove(
-  scenario = 3,
-  popsize = 300,
+  scenario = 1,
+  popsize = 500,
   nItems = 1800,
   landsize = 60,
   nClusters = 60,
   clusterSpread = 1,
   tmax = 100,
   genmax = 500,
-  g_patho_init = 250,
+  g_patho_init = 300,
   range_food = 1,
   range_agents = 1,
   range_move = 1,
@@ -274,14 +274,40 @@ a = pathomove::run_pathomove(
   regen_time = 50,
   pTransmit = 0.05,
   initialInfections = 20,
-  costInfect = 0.25,
+  costInfect = 0.5,
   nThreads = 2,
-  dispersal = 3.0, # for local-ish dispersal
+  dispersal = 2.0, # for local-ish dispersal
   infect_percent = FALSE,
   vertical = F,
   mProb = 0.01,
   mSize = 0.01,
-  spillover_rate = 0.5
+  spillover_rate = 0.01
 )
 
 plot(a@generations, a@infections_per_gen, type = "b")
+
+a@gens_patho_intro
+
+b = pathomove::get_trait_data(a)
+pathomove::get_social_strategy(b)
+
+d = b[, .N, by = c("gen", "social_strat")]
+
+ggplot(d)+
+  geom_col(
+    aes(
+      gen, N, fill = social_strat
+    )
+  )
+# +
+#   geom_vline(
+#     xintercept = a@gens_patho_intro
+#   )
+
+ggplot(b)+
+  stat_summary(
+    aes(
+      gen, energy
+    ),
+    binwidth = c(100, NA)
+  )
