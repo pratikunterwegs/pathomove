@@ -24,7 +24,8 @@ test_that("Pathomove returns S4 output", {
     infect_percent = FALSE,
     vertical = FALSE,
     mProb = 0.001,
-    mSize = 0.001
+    mSize = 0.001,
+    spillover_rate = 0.01
   )
 
   # check is list
@@ -85,7 +86,8 @@ test_that("pathomove fails when infections > agents", {
         infect_percent = FALSE,
         vertical = FALSE,
         mProb = 0.001,
-        mSize = 0.001
+        mSize = 0.001,
+        spillover_rate = 0.01
       )
     }
   )
