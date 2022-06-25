@@ -16,6 +16,8 @@ Defines the \code{pathomove_output} class.
 
 \item{\code{generations}}{integer.}
 
+\item{\code{gens_patho_intro}}{integer.}
+
 \item{\code{infections_per_gen}}{integer.}
 
 \item{\code{trait_data}}{list.}

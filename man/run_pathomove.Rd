@@ -27,12 +27,16 @@ run_pathomove(
   infect_percent,
   vertical,
   mProb,
-  mSize
+  mSize,
+  spillover_rate
 )
 }
 \arguments{
 \item{scenario}{The pathomove scenario: 0 for no pathogen, 1 for
-persistent introduction across generations, and 2 for a single introduction.}
+persistent introduction across generations,
+2 for a single introduction,
+and 3 for sporadic introductions drawn from a geometric distribution
+specified by \code{spillover_rate}.}
 
 \item{popsize}{The population size.}
 
@@ -94,6 +98,10 @@ value and \code{popsize} to test the simulation's sensitivity to these values.}
 
 \item{mSize}{Controls the mutational step size, and represents the scale
 parameter of a Cauchy distribution.}
+
+\item{spillover_rate}{For scenario 3, the probability parameter \emph{p} of a
+geometric distribution from which the number of generations until the next
+pathogen introduction are drawn.}
 }
 \value{
 An S4 class, \code{pathomove_output}, with simulation outcomes.

@@ -25,6 +25,7 @@ check_pathomove_output <- function(object) {
 #' @slot agent_parameters list.
 #' @slot eco_parameters list.
 #' @slot generations integer.
+#' @slot gens_patho_intro integer.
 #' @slot infections_per_gen integer.
 #' @slot trait_data list.
 #' @slot edge_list list.
@@ -40,6 +41,7 @@ setClass(
     agent_parameters = "list",
     eco_parameters = "list",
     generations = "integer",
+    gens_patho_intro = "integer",
     infections_per_gen = "integer",
     trait_data = "list",
     edge_lists = "list",
@@ -51,6 +53,7 @@ setClass(
     agent_parameters = list(),
     eco_parameters = list(),
     generations = NA_integer_,
+    gens_patho_intro = NA_integer_,
     infections_per_gen = NA_integer_,
     trait_data = list(),
     edge_lists = list(),

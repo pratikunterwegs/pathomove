@@ -24,7 +24,8 @@ test_that("Test getting trait data", {
     infect_percent = FALSE,
     vertical = FALSE,
     mProb = 0.001,
-    mSize = 0.001
+    mSize = 0.001,
+    spillover_rate = 0.01
   )
 
   # get trait data from pathomove output

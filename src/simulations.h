@@ -27,7 +27,8 @@ public:
                const bool infect_percent,
                const bool vertical,
                const float mProb,
-               const float mSize):
+               const float mSize,
+               const float spillover_rate):
         // population, food, and data structures
         pop (popsize, range_agents, range_food, range_move, handling_time, pTransmit, vertical),
         food(nItems, landsize, nClusters, clusterSpread, regen_time),
@@ -50,6 +51,7 @@ public:
         initialInfections(initialInfections),
         costInfect(costInfect),
         pTransmit(pTransmit),
+        spillover_rate(spillover_rate),
 
         // parallelisation
         nThreads (nThreads),
@@ -79,6 +81,8 @@ public:
     const int regen_time, initialInfections;
     const float costInfect;
     float pTransmit;
+    const float spillover_rate;
+
     int nThreads;
     const float dispersal;
     const bool infect_percent;
