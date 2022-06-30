@@ -98,13 +98,13 @@ Rcpp::List simulation::do_simulation() {
             // movement section
             pop.move(food, nThreads);
 
-            // log movement
-            if(gen == std::max(gen_init - 1, 2)) {
-                mdPre.updateMoveData(pop, t);
-            }
-            if(gen == (genmax - 1)) {
-                mdPost.updateMoveData(pop, t);
-            }
+            // // log movement
+            // if(gen == std::max(gen_init - 1, 2)) {
+            //     mdPre.updateMoveData(pop, t);
+            // }
+            // if(gen == (genmax - 1)) {
+            //     mdPost.updateMoveData(pop, t);
+            // }
 
             // foraging -- split into parallelised picking
             // and non-parallel exploitation
@@ -159,9 +159,9 @@ Rcpp::List simulation::do_simulation() {
         Named("gen_data") = gen_data.getGenData(),
         Named("gens_patho_intro") = gens_patho_intro,
         Named("edgeLists") = edgeLists,
-        Named("gens_edge_lists") = gens_edge_lists,
-        Named("move_pre") = mdPre.getMoveData(),
-        Named("move_post") = mdPost.getMoveData()
+        Named("gens_edge_lists") = gens_edge_lists //,
+        // Named("move_pre") = mdPre.getMoveData(),
+        // Named("move_post") = mdPost.getMoveData()
     );
 }
 
