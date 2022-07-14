@@ -92,3 +92,39 @@ test_that("pathomove fails when infections > agents", {
     }
   )
 })
+
+test_that("Pathomove multithreading works", {
+  # skip("skipped")
+  # parameters
+  data <- run_pathomove(
+    scenario = 2,
+    popsize = 10,
+    nItems = 180,
+    landsize = 10,
+    nClusters = 10,
+    clusterSpread = 1,
+    tmax = 100,
+    genmax = 10,
+    g_patho_init = 5,
+    range_food = 1.0,
+    range_agents = 1.0,
+    range_move = 1.0,
+    handling_time = 5,
+    regen_time = 50,
+    pTransmit = 0.05,
+    initialInfections = 4,
+    costInfect = 0.25,
+    nThreads = 2,
+    dispersal = 3.0,
+    infect_percent = FALSE,
+    vertical = FALSE,
+    mProb = 0.001,
+    mSize = 0.001,
+    spillover_rate = 0.01
+  )
+
+  # check is list
+  testthat::expect_s4_class(
+    data, "pathomove_output"
+  )
+})
