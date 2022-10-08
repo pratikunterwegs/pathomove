@@ -35,28 +35,24 @@ Population pop(popsize, range_agents, range_food, range_move, handling_time,
 // associated context should be wrapped in braced.
 context("Population initialisation works") {
   test_that("Population has right size") {
-    expect_true(pop.nAgents == popsize);
+    CATCH_CHECK(pop.nAgents == popsize);
   }
 
   test_that("Population vectors have right sizes") {
-    expect_true(pop.sF.size() == popsize);
+    CATCH_CHECK(pop.sF.size() == popsize);
   }
 
   test_that("Population has right ranges") {
-    expect_true(pop.range_agents == range_agents);
-    expect_true(pop.range_food == range_food);
-    expect_true(pop.range_move == range_move);
-  }
-
-  test_that("Population vector has right value before assignment") {
-    expect_true(std::abs(pop.sF[0] - 0.f) < 1e-3);
+    CATCH_CHECK(pop.range_agents == range_agents);
+    CATCH_CHECK(pop.range_food == range_food);
+    CATCH_CHECK(pop.range_move == range_move);
   }
 
   // set population traits
   pop.setTrait(test_mSize);
 
   test_that("Population vector has right value after assignment") {
-    expect_false(std::abs(pop.sF[0] - 0.f) < 1e-5);
+    CATCH_CHECK(pop.sF[0] != 0.f); // superfluous, as float comparisons bad
   }
 }
 
@@ -72,24 +68,24 @@ Resources land(nItems, landsize, nClusters, clusterSpread, regen_time);
 // Population position on the landscape
 context("Population position initialisation works") {
   test_that("Population on null island before position set") {
-    expect_true((pop.coordX[0] - 0.f) < 1e-5);
+    CATCH_CHECK(pop.coordX[0] == Approx(0.f).epsilon(1e-5));
   }
 
   pop.initPos(land);
 
   test_that("Population on random pos after position set") {
-    expect_false((pop.coordX[0] - 0.f) < 1e-5);
+    CATCH_CHECK(pop.coordX[0] > 0.f);
   }
 
   test_that("Population within boundaries") {
     float max_pos_x = 0.f;
-    float min_pos_y = 0.f;
+    float min_pos_y = landsize;
     for (size_t i = 0; i < pop.coordX.size(); i++) {
       max_pos_x = (pop.coordX[i] > max_pos_x) ? pop.coordX[i] : max_pos_x;
       min_pos_y = (pop.coordY[i] < min_pos_y) ? pop.coordY[i] : min_pos_y;
     }
     // float comparison but a bit less precise
-    expect_true(max_pos_x - landsize < 1e-2);
-    expect_true(min_pos_y - 0.f < 1e2);
+    CATCH_CHECK(max_pos_x < landsize);
+    CATCH_CHECK(min_pos_y > 0.f);
   }
 }

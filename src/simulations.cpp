@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
-#include <random>
 #include <vector>
 
 using namespace Rcpp;
@@ -13,7 +12,7 @@ using namespace Rcpp;
 Rcpp::List simulation::do_simulation() {
   unsigned seed = static_cast<unsigned>(
       std::chrono::system_clock::now().time_since_epoch().count());
-  rng.seed(seed);
+  gen.seed(seed);
 
   // prepare landscape and pop
   food.initResources();
@@ -50,8 +49,9 @@ Rcpp::List simulation::do_simulation() {
   }
   int gen_init = g_patho_init;
 
-  // geometric distribution for pathogen introduction gen
-  std::geometric_distribution<int> gens_to_spillover(spillover_rate);
+  // when do spillovers occur
+  auto gen_spillover_happens =
+      Rcpp::rbinom(genmax - gen_init, 1, spillover_rate);
   std::vector<int> gens_patho_intro{g_patho_init};
 
   // go over gens
@@ -79,13 +79,9 @@ Rcpp::List simulation::do_simulation() {
       }
       break;
     case 3:
-      if (gen == gen_init) {
+      if (gen_spillover_happens(genmax - gen)) {
         pop.introducePathogen(initialInfections);
-        if (gen > g_patho_init)
-          gens_patho_intro.push_back(gen);
         Rcpp::Rcout << "New spillover event occurring at gen:" << gen << "\n";
-        // draw new intro generation
-        gen_init += (gens_to_spillover(rng) + 1); // add one to handle zeroes
       }
       break;
     default:
@@ -98,7 +94,7 @@ Rcpp::List simulation::do_simulation() {
       food.regenerate();
       pop.updateRtree();
       // movement section
-      pop.move(food, nThreads);
+      pop.move(food, multithreaded);
 
       // // log movement
       // if(gen == std::max(gen_init - 1, 2)) {
@@ -110,11 +106,11 @@ Rcpp::List simulation::do_simulation() {
 
       // foraging -- split into parallelised picking
       // and non-parallel exploitation
-      pop.pickForageItem(food, nThreads);
+      pop.pickForageItem(food, multithreaded);
       pop.doForage(food);
 
       // count associations
-      pop.countAssoc(nThreads);
+      pop.countAssoc();
 
       // relate to g_patho_init, which is the point of regime shift
       // NOT gen_init, which is when pathogens are introduced
@@ -159,10 +155,7 @@ Rcpp::List simulation::do_simulation() {
   return Rcpp::List::create(Named("gen_data") = gen_data.getGenData(),
                             Named("gens_patho_intro") = gens_patho_intro,
                             Named("edgeLists") = edgeLists,
-                            Named("gens_edge_lists") = gens_edge_lists //,
-                            // Named("move_pre") = mdPre.getMoveData(),
-                            // Named("move_post") = mdPost.getMoveData()
-  );
+                            Named("gens_edge_lists") = gens_edge_lists);
 }
 
 //' Runs the pathomove simulation and return a `pathomove_output` object.
@@ -192,8 +185,7 @@ Rcpp::List simulation::do_simulation() {
 //' @param pTransmit Probability of transmission.
 //' @param initialInfections Agents infected per event.
 //' @param costInfect The per-timestep cost of pathogen infection.
-//' @param nThreads How many threads to parallelise over. Set to 1 to run on
-//' the HPC Peregrine cluster.
+//' @param multithreaded Boolean. Whether to use TBB multithreading.
 //' @param dispersal A float value; the standard deviation of a normal
 //' distribution centred on zero, which determines how far away from its parent
 //' each individual is initialised. The standard value is 5 percent of the
@@ -224,27 +216,31 @@ Rcpp::List simulation::do_simulation() {
 //' @export
 //' @return An S4 class, `pathomove_output`, with simulation outcomes.
 // [[Rcpp::export]]
-S4 run_pathomove(const int scenario, const int popsize, const int nItems,
-                 const float landsize, const int nClusters,
-                 const float clusterSpread, const int tmax, const int genmax,
-                 const int g_patho_init, const float range_food,
-                 const float range_agents, const float range_move,
-                 const int handling_time, const int regen_time, float pTransmit,
-                 const int initialInfections, const float costInfect,
-                 const int nThreads, const float dispersal,
-                 const bool infect_percent, const bool vertical,
-                 const float mProb, const float mSize,
-                 const float spillover_rate) {
+S4 run_pathomove(const int scenario = 2, const int popsize = 500,
+                 const int nItems = 1800, const float landsize = 60,
+                 const int nClusters = 60, const float clusterSpread = 1,
+                 const int tmax = 100, const int genmax = 100,
+                 const int g_patho_init = 3000, const float range_food = 1.0,
+                 const float range_agents = 1.0, const float range_move = 1.0,
+                 const int handling_time = 5, const int regen_time = 50,
+                 float pTransmit = 0.05, const int initialInfections = 20,
+                 const float costInfect = 0.25, const bool multithreaded = true,
+                 const float dispersal = 2.0, const bool infect_percent = false,
+                 const bool vertical = false, const float mProb = 0.01,
+                 const float mSize = 0.01, const float spillover_rate = 1.0) {
   // check that intial infections is less than popsize
   if (initialInfections > popsize) {
-    Rcpp::stop("More infections than agents!");
+    Rcpp::stop("Error: Initial infections must be less than popsize");
+  }
+  if (g_patho_init > genmax) {
+    Rcpp::stop("Error: G_patho_init must be less than genmax");
   }
   // make simulation class with input parameters
   simulation this_sim(
       popsize, scenario, nItems, landsize, nClusters, clusterSpread, tmax,
       genmax, g_patho_init, range_food, range_agents, range_move, handling_time,
-      regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal,
-      infect_percent, vertical, mProb, mSize, spillover_rate);
+      regen_time, pTransmit, initialInfections, costInfect, multithreaded,
+      dispersal, infect_percent, vertical, mProb, mSize, spillover_rate);
   // do the simulation using the simulation class function
   Rcpp::List pathomoveOutput = this_sim.do_simulation();
 
