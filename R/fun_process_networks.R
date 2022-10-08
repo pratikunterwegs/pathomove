@@ -7,13 +7,15 @@
 #' @return A list of \code{tidygraph} objects.
 #' @export
 get_networks <- function(output, assoc_threshold = 5) {
-  
-  agent_parameters = output@agent_parameters
-  eco_parameters = output@eco_parameters
+  # set variables to NULL
+  from <- NULL
+  to <- NULL
+
+  agent_parameters <- output@agent_parameters
+  eco_parameters <- output@eco_parameters
 
   # edgelist collection and work
   el <- output@edge_lists
-  el_gens = output@gens_edge_lists
 
   el <- lapply(el, function(le) {
     le <- le[le$assoc > assoc_threshold, ]
@@ -28,20 +30,20 @@ get_networks <- function(output, assoc_threshold = 5) {
 
   # handle nodes
   nodes <- output@trait_data
-  nodes <- nodes[output@generations %in% output@gens_edge_lists] # id data for el
+  nodes <- nodes[output@generations %in% output@gens_edge_lists] # id data fr el
 
   # work on nodes
-  nodes <- Map(nodes, output@gens_edge_lists, 
-      f = function(n, g) {
+  nodes <- Map(nodes, output@gens_edge_lists,
+    f = function(n, g) {
       n$gen <- g
-      n$id <- seq(nrow(n))
+      n$id <- seq_len(nrow(n))
       data.table::setDT(n)
 
       # add simulation parameter data
       n[, names(agent_parameters) := agent_parameters]
       n[, names(eco_parameters) := eco_parameters]
 
-      n = get_social_strategy(n)
+      n <- get_social_strategy(n)
       n
     }
   )
@@ -73,8 +75,13 @@ get_networks <- function(output, assoc_threshold = 5) {
 #' @return A data.table of SIR data.
 #' @export
 handle_sir_data <- function(data, digits = 1) {
+  # set variables to NULL
+  time <- NULL
+  times <- NULL
+  agents <- NULL
+
   d <- lapply(data, data.table::as.data.table)
-  d <- Map(d, seq(length(d)), f = function(data, repl) {
+  d <- Map(d, seq_along(length(d)), f = function(data, repl) {
     data$repl <- repl
     data
   })

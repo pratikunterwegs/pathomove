@@ -7,6 +7,11 @@
 #' @import data.table
 #'
 get_social_strategy <- function(df) {
+  # set variables to NULL
+  social_strat <- NULL
+  sH <- NULL
+  sN <- NULL
+
   assertthat::assert_that(
     all(c("sH", "sN") %in% names(df)),
     msg = "get_social_strat: data does not have social weights"
@@ -27,6 +32,10 @@ get_social_strategy <- function(df) {
 #' @return Nothing. Transforms weights by reference. See data.table.
 #' @export
 get_functional_variation <- function(df) {
+  # set variables to NULL
+  sF <- NULL
+  sH <- NULL
+  sN <- NULL
   data.table::setDT(df)
 
   assertthat::assert_that(
@@ -52,6 +61,11 @@ get_functional_variation <- function(df) {
 #' @import data.table
 #'
 get_si_importance <- function(df) {
+  # set variables to NULL
+  sH <- NULL
+  sN <- NULL
+  si_imp <- NULL
+
   assertthat::assert_that(
     all(c("sH", "sN") %in% names(df)),
     msg = "get_social_strat: data does not have social weights"
@@ -70,6 +84,10 @@ get_si_importance <- function(df) {
 #' the sum of negative scaled agent weights.
 #' @export
 get_agent_avoidance <- function(df) {
+  agent_avoidance <- NULL
+  sH <- NULL
+  sF <- NULL
+  sN <- NULL
   assertthat::assert_that(
     all(c("sH", "sN") %in% names(df)),
     msg = "get_agent_avoidance: data does not have social weights"
