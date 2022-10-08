@@ -4,6 +4,7 @@
 
 #include "agents.h"
 #include "parameters.h"
+#include <boost/random/bernoulli_distribution.hpp>
 
 /// function to infect n individuals
 void Population::introducePathogen(const int &initialInfections) {
@@ -29,7 +30,7 @@ void Population::introducePathogen(const int &initialInfections) {
 
 /// function to spread pathogen
 void Population::pathogenSpread() {
-  std::bernoulli_distribution transmission(pTransmit);
+  boost::random::bernoulli_distribution<> transmission(pTransmit);
   // looping through agents, query rtree for neighbours
   for (int i = 0; i < nAgents; i++) {
     // spread to neighbours if self infected
@@ -44,7 +45,7 @@ void Population::pathogenSpread() {
           size_t toInfect = nbrsId[j];
           if (!infected[toInfect]) {
             // infect neighbours with prob p
-            if (transmission(rng)) {
+            if (transmission(gen)) {
               infected[toInfect] = true;
               srcInfect[toInfect] = 2;
             }
