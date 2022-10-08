@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
-#include <random>
 #include <vector>
 
 #include "agents.h"
