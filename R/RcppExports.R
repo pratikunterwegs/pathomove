@@ -9,17 +9,21 @@
 #' @param clusterSpread Dispersal of items around cluster centres.
 #' @param regen_time Regeneration time, in timesteps.
 #' @return A data frame of the evolved population traits.
+#' @export
 get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen_time) {
     .Call(`_pathomove_get_test_landscape`, nItems, landsize, nClusters, clusterSpread, regen_time)
 }
+
+#' @importFrom RcppParallel RcppParallelLibs
+NULL
 
 #' Runs the pathomove simulation and return a `pathomove_output` object.
 #'
 #' @description Run the simulation using parameters passed as
 #' arguments to the corresponding R function.
 #'
-#' @param scenario The pathomove scenario: 0 for no pathogen, 1 for 
-#' persistent introduction across generations, 
+#' @param scenario The pathomove scenario: 0 for no pathogen, 1 for
+#' persistent introduction across generations,
 #' 2 for a single introduction,
 #' and 3 for sporadic introductions drawn from a geometric distribution
 #' specified by `spillover_rate`.
@@ -30,7 +34,8 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' @param clusterSpread How dispersed food is around the cluster centre.
 #' @param tmax The number of timesteps per generation.
 #' @param genmax The maximum number of generations per simulation.
-#' @param g_patho_init The generation in which to begin introducing the pathogen.
+#' @param g_patho_init The generation in which to begin introducing the
+#' pathogen.
 #' @param range_food The sensory range for food.
 #' @param range_agents The sensory range for agents.
 #' @param range_move The movement range for agents.
@@ -39,34 +44,37 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' @param pTransmit Probability of transmission.
 #' @param initialInfections Agents infected per event.
 #' @param costInfect The per-timestep cost of pathogen infection.
-#' @param nThreads How many threads to parallelise over. Set to 1 to run on
-#' the HPC Peregrine cluster.
+#' @param multithreaded Boolean. Whether to use TBB multithreading.
 #' @param dispersal A float value; the standard deviation of a normal
 #' distribution centred on zero, which determines how far away from its parent
 #' each individual is initialised. The standard value is 5 percent of the
 #' landscape size (\code{landsize}), and represents local dispersal.
 #' Setting this to 10 percent is already almost equivalent to global dispersal.
 #' @param infect_percent A boolean value; whether the infection depletes a
-#' percentage of daily energy (\code{TRUE}) or whether a fixed value 
+#' percentage of daily energy (\code{TRUE}) or whether a fixed value
 #' (\code{FALSE}) is subtracted from net energy.
-#' For \code{infect_percent = TRUE}, the net energy remaining after \code{T} 
+#' For \code{infect_percent = TRUE}, the net energy remaining after \code{T}
 #' timesteps of infection is \code{N * (1 - cost_infect) ^ T}, where \code{N}
 #' is total intake.
-#' For \code{infect_percent = FALSE}, the net energy remaining after \code{T} 
+#' For \code{infect_percent = FALSE}, the net energy remaining after \code{T}
 #' timesteps of infection is \code{N - (cost_infect * T)}, where \code{N}
 #' is total intake.
 #' @param vertical Should the pathogen be transmitted vertically? Should be
-#' set to `TRUE` for a realistic implementation of scenario 3, _single spillover_.
+#' set to `TRUE` for a realistic implementation of scenario 3, _single
+#' spillover_.
 #' @param mProb The probability of mutation. The suggested value is 0.01.
-#' While high, this may be more appropriate for a small population; change this
-#' value and \code{popsize} to test the simulation's sensitivity to these values.
-#' @param mSize Controls the mutational step size, and represents the scale
-#' parameter of a Cauchy distribution.
+#' While high, this may be more appropriate for a small population;
+#' change this value and \code{popsize} to test the simulation's sensitivity to
+#' these values.
+#' @param mSize Controls the mutational step size, and represents
+#' the scale parameter of a Cauchy distribution.
 #' @param spillover_rate For scenario 3, the probability parameter _p_ of a
 #' geometric distribution from which the number of generations until the next
 #' pathogen introduction are drawn.
+#'
+#' @export
 #' @return An S4 class, `pathomove_output`, with simulation outcomes.
-run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, vertical, mProb, mSize, spillover_rate) {
-    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, vertical, mProb, mSize, spillover_rate)
+run_pathomove <- function(scenario = 2L, popsize = 500L, nItems = 1800L, landsize = 60, nClusters = 60L, clusterSpread = 1, tmax = 100L, genmax = 100L, g_patho_init = 3000L, range_food = 1.0, range_agents = 1.0, range_move = 1.0, handling_time = 5L, regen_time = 50L, pTransmit = 0.05, initialInfections = 20L, costInfect = 0.25, multithreaded = TRUE, dispersal = 2.0, infect_percent = FALSE, vertical = FALSE, mProb = 0.01, mSize = 0.01, spillover_rate = 1.0) {
+    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, multithreaded, dispersal, infect_percent, vertical, mProb, mSize, spillover_rate)
 }
 
