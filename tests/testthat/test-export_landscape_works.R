@@ -12,6 +12,6 @@ test_that("Landscape export function", {
   )
 
   testthat::expect_true(
-    all(c("x", "y", "tAvail") %in% colnames(land))
+    all(c("x", "y") %in% colnames(land))
   )
 })

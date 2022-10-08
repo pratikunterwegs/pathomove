@@ -1,5 +1,4 @@
 test_that("Pathomove returns S4 output", {
-  # skip("skipped")
   # parameters
   data <- run_pathomove(
     scenario = 2,
@@ -19,7 +18,7 @@ test_that("Pathomove returns S4 output", {
     pTransmit = 0.05,
     initialInfections = 4,
     costInfect = 0.25,
-    nThreads = 1,
+    multithreaded = FALSE,
     dispersal = 3.0,
     infect_percent = FALSE,
     vertical = FALSE,
@@ -57,7 +56,6 @@ test_that("Pathomove returns S4 output", {
 # test for simple simulation failure when there are more infections
 # than agents
 test_that("pathomove fails when infections > agents", {
-  # skip("skipped")
   # parameters
   popsize <- 20
 
@@ -81,7 +79,7 @@ test_that("pathomove fails when infections > agents", {
         pTransmit = 0.05,
         initialInfections = popsize + 1,
         costInfect = 0.25,
-        nThreads = 1,
+        multithreaded = FALSE,
         dispersal = 3.0,
         infect_percent = FALSE,
         vertical = FALSE,
@@ -94,7 +92,6 @@ test_that("pathomove fails when infections > agents", {
 })
 
 test_that("Pathomove multithreading works", {
-  # skip("skipped")
   # parameters
   data <- run_pathomove(
     scenario = 2,
@@ -114,7 +111,7 @@ test_that("Pathomove multithreading works", {
     pTransmit = 0.05,
     initialInfections = 4,
     costInfect = 0.25,
-    nThreads = 2,
+    multithreaded = TRUE,
     dispersal = 3.0,
     infect_percent = FALSE,
     vertical = FALSE,
