@@ -14,7 +14,7 @@ public:
              const float range_agents, const float range_move,
              const int handling_time, const int regen_time, float pTransmit,
              const int initialInfections, const float costInfect,
-             const int nThreads, const float dispersal,
+             const bool multithreaded, const float dispersal,
              const bool infect_percent, const bool vertical, const float mProb,
              const float mSize, const float spillover_rate)
       : // population, food, and data structures
@@ -39,7 +39,7 @@ public:
         pTransmit(pTransmit), spillover_rate(spillover_rate),
 
         // parallelisation
-        nThreads(nThreads),
+        multithreaded(multithreaded),
 
         // natal dispersal and pathogen cost structure
         dispersal(dispersal), infect_percent(infect_percent),
@@ -64,10 +64,9 @@ public:
   float pTransmit;
   const float spillover_rate;
 
-  int nThreads;
+  const bool multithreaded;
   const float dispersal;
-  const bool infect_percent;
-  const bool vertical;
+  const bool infect_percent, vertical;
 
   const float mProb, mSize;
 
