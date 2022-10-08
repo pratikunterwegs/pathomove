@@ -2,9 +2,9 @@
 
 <!-- badges: start -->
   [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-  [![R build status](https://github.com/pratikunterwegs/pathomove/workflows/R-CMD-check/badge.svg)](https://github.com/pratikunterwegs/pathomove/actions)
   [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6331816.svg)](https://doi.org/10.5281/zenodo.6331816)
   [![Codecov test coverage](https://codecov.io/gh/pratikunterwegs/pathomove/branch/main/graph/badge.svg)](https://codecov.io/gh/pratikunterwegs/pathomove?branch=main)
+[![R-CMD-check](https://github.com/pratikunterwegs/pathomove/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pratikunterwegs/pathomove/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 This repository holds the source code for the _Pathomove_ simulation, a spatially explicit, individual-based, evolutionary model of the evolution of animal social movement strategies under the risk of pathogen transmission.
