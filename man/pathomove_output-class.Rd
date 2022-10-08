@@ -22,8 +22,8 @@ Defines the \code{pathomove_output} class.
 
 \item{\code{trait_data}}{list.}
 
-\item{\code{edge_list}}{list.}
+\item{\code{edge_lists}}{list.}
 
-\item{\code{gens_edge_list}}{list.}
+\item{\code{gens_edge_lists}}{list.}
 }}
 
