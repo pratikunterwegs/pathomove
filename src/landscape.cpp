@@ -45,7 +45,7 @@ void Resources::initResources() {
       static_cast<int>(std::floor(static_cast<float>(regen_time) * 0.1)));
 
   // initialise rtree and set counter value
-  bgi::rtree<value, bgi::quadratic<16> > tmpRtree;
+  bgi::rtree<value, bgi::quadratic<16>> tmpRtree;
   for (int i = 0; i < nItems; ++i) {
     point p = point(coordX[i], coordY[i]);
     tmpRtree.insert(std::make_pair(p, i));
@@ -88,10 +88,10 @@ void Resources::regenerate() {
 //' @param regen_time Regeneration time, in timesteps.
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
-Rcpp::DataFrame get_test_landscape(const int& nItems, const float& landsize,
-                                   const int& nClusters,
-                                   const float& clusterSpread,
-                                   const int& regen_time) {
+Rcpp::DataFrame get_test_landscape(const int &nItems, const float &landsize,
+                                   const int &nClusters,
+                                   const float &clusterSpread,
+                                   const int &regen_time) {
   unsigned seed = static_cast<unsigned>(
       std::chrono::system_clock::now().time_since_epoch().count());
   rng.seed(seed);

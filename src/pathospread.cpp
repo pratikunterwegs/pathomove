@@ -6,7 +6,7 @@
 #include "parameters.h"
 
 /// function to infect n individuals
-void Population::introducePathogen(const int& initialInfections) {
+void Population::introducePathogen(const int &initialInfections) {
   // recount for safety
   countInfected();
   // introduce new pathogen
@@ -18,7 +18,7 @@ void Population::introducePathogen(const int& initialInfections) {
       // toggle infected agents boolean for infected
       infected[order[i]] = true;
       timeInfected[order[i]] = 1;
-      srcInfect[order[i]] = 2;  // count as inherited?
+      srcInfect[order[i]] = 2; // count as inherited?
     }
   }
   // count after
@@ -34,7 +34,7 @@ void Population::pathogenSpread() {
   for (int i = 0; i < nAgents; i++) {
     // spread to neighbours if self infected
     if (infected[i]) {
-      timeInfected[i]++;  // increase time infecetd
+      timeInfected[i]++; // increase time infecetd
       // get neigbour ids
       std::vector<int> nbrsId = getNeighbourId(coordX[i], coordY[i]);
 
@@ -56,8 +56,8 @@ void Population::pathogenSpread() {
 }
 
 /// function for pathogen cost --- use old formula
-void Population::pathogenCost(const float& costInfect,
-                              const bool& infect_percent) {
+void Population::pathogenCost(const float &costInfect,
+                              const bool &infect_percent) {
   for (int i = 0; i < nAgents; i++) {
     if (infected[i]) {
       if (infect_percent) {

@@ -46,7 +46,7 @@ Rcpp::List simulation::do_simulation() {
 
   // handle pathogen introduction generation
   if (scenario == 0) {
-    pTransmit = 0.f;  // jsut to be sure
+    pTransmit = 0.f; // jsut to be sure
   }
   int gen_init = g_patho_init;
 
@@ -64,31 +64,32 @@ Rcpp::List simulation::do_simulation() {
 
     // switch for pathogen introductions
     switch (scenario) {
-      case 0:
-        break;
-      case 1:  // maintained for backwards compatibility but not necessary
-        if (gen >= gen_init) {
-          pop.introducePathogen(initialInfections);
-        }
-        break;
-      case 2:
-        if (gen == gen_init) {
-          pop.introducePathogen(initialInfections);
-          Rcpp::Rcout << "Single spillover event occurring at gen:" << gen
-                      << "\n";
-        }
-        break;
-      case 3:
-        if (gen == gen_init) {
-          pop.introducePathogen(initialInfections);
-          if (gen > g_patho_init) gens_patho_intro.push_back(gen);
-          Rcpp::Rcout << "New spillover event occurring at gen:" << gen << "\n";
-          // draw new intro generation
-          gen_init += (gens_to_spillover(rng) + 1);  // add one to handle zeroes
-        }
-        break;
-      default:
-        break;
+    case 0:
+      break;
+    case 1: // maintained for backwards compatibility but not necessary
+      if (gen >= gen_init) {
+        pop.introducePathogen(initialInfections);
+      }
+      break;
+    case 2:
+      if (gen == gen_init) {
+        pop.introducePathogen(initialInfections);
+        Rcpp::Rcout << "Single spillover event occurring at gen:" << gen
+                    << "\n";
+      }
+      break;
+    case 3:
+      if (gen == gen_init) {
+        pop.introducePathogen(initialInfections);
+        if (gen > g_patho_init)
+          gens_patho_intro.push_back(gen);
+        Rcpp::Rcout << "New spillover event occurring at gen:" << gen << "\n";
+        // draw new intro generation
+        gen_init += (gens_to_spillover(rng) + 1); // add one to handle zeroes
+      }
+      break;
+    default:
+      break;
     }
 
     // timesteps start here
@@ -131,8 +132,8 @@ Rcpp::List simulation::do_simulation() {
     assert(pop.nInfected <= pop.nAgents);
 
     // population infection cost by time, if infected
-    pop.energy = pop.intake;                       // first make energy = intake
-    pop.pathogenCost(costInfect, infect_percent);  // now energy minus costs
+    pop.energy = pop.intake;                      // first make energy = intake
+    pop.pathogenCost(costInfect, infect_percent); // now energy minus costs
 
     // update gendata
     if ((gen == (genmax - 1)) | (gen % increment_log == 0)) {
@@ -158,7 +159,7 @@ Rcpp::List simulation::do_simulation() {
   return Rcpp::List::create(Named("gen_data") = gen_data.getGenData(),
                             Named("gens_patho_intro") = gens_patho_intro,
                             Named("edgeLists") = edgeLists,
-                            Named("gens_edge_lists") = gens_edge_lists  //,
+                            Named("gens_edge_lists") = gens_edge_lists //,
                             // Named("move_pre") = mdPre.getMoveData(),
                             // Named("move_post") = mdPost.getMoveData()
   );
@@ -182,18 +183,18 @@ Rcpp::List simulation::do_simulation() {
 //' @param tmax The number of timesteps per generation.
 //' @param genmax The maximum number of generations per simulation.
 //' @param g_patho_init The generation in which to begin introducing the
-//' pathogen. 
-//' @param range_food The sensory range for food. 
-//' @param range_agents The sensory range for agents. 
-//' @param range_move The movement range for agents. 
-//' @param handling_time The handling time. 
-//' @param regen_time The item regeneration time. 
-//' @param pTransmit Probability of transmission. 
+//' pathogen.
+//' @param range_food The sensory range for food.
+//' @param range_agents The sensory range for agents.
+//' @param range_move The movement range for agents.
+//' @param handling_time The handling time.
+//' @param regen_time The item regeneration time.
+//' @param pTransmit Probability of transmission.
 //' @param initialInfections Agents infected per event.
-// ' @param costInfect The per-timestep cost of pathogen infection.
-// ' @param nThreads How many threads to parallelise over. Set to 1 to run on
-// ' the HPC Peregrine cluster.
-// ' @param dispersal A float value; the standard deviation of a normal
+//' @param costInfect The per-timestep cost of pathogen infection.
+//' @param nThreads How many threads to parallelise over. Set to 1 to run on
+//' the HPC Peregrine cluster.
+//' @param dispersal A float value; the standard deviation of a normal
 //' distribution centred on zero, which determines how far away from its parent
 //' each individual is initialised. The standard value is 5 percent of the
 //' landscape size (\code{landsize}), and represents local dispersal.
@@ -209,16 +210,18 @@ Rcpp::List simulation::do_simulation() {
 //' is total intake.
 //' @param vertical Should the pathogen be transmitted vertically? Should be
 //' set to `TRUE` for a realistic implementation of scenario 3, _single
-//' spillover_. 
-//' @param mProb The probability of mutation. The suggested value is 0.01. 
+//' spillover_.
+//' @param mProb The probability of mutation. The suggested value is 0.01.
 //' While high, this may be more appropriate for a small population;
 //' change this value and \code{popsize} to test the simulation's sensitivity to
-//' these values. 
-//' @param mSize Controls the mutational step size, and represents 
-//' the scale parameter of a Cauchy distribution. 
-//' @param spillover_rate For scenario 3, the probability parameter _p_ of a 
-//' geometric distribution from which the number of generations until the next 
-//' pathogen introduction are drawn. 
+//' these values.
+//' @param mSize Controls the mutational step size, and represents
+//' the scale parameter of a Cauchy distribution.
+//' @param spillover_rate For scenario 3, the probability parameter _p_ of a
+//' geometric distribution from which the number of generations until the next
+//' pathogen introduction are drawn.
+//'
+//' @export
 //' @return An S4 class, `pathomove_output`, with simulation outcomes.
 // [[Rcpp::export]]
 S4 run_pathomove(const int scenario, const int popsize, const int nItems,
@@ -253,26 +256,26 @@ S4 run_pathomove(const int scenario, const int popsize, const int nItems,
   // return scenario as string
   Rcpp::String scenario_str("scenario_here");
   switch (scenario) {
-    case 0:
-      scenario_str = "no pathogen";
-      Rcpp::Rcout << "No pathogen introduction\n";
-      break;
-    case 1:
-      if (g_patho_init == 0)
-        scenario_str = "endemic pathogen";
-      else
-        scenario_str = "novel pathogen";
-      Rcpp::Rcout << "Pathogen introduced from gen:" << g_patho_init << "\n";
-      break;
-    case 2:
-      scenario_str = "single spillover";
-      break;
-    case 3:
-      scenario_str = "sporadic spillover";
-      break;
-    default:
-      scenario_str = "unknown scenario";
-      break;
+  case 0:
+    scenario_str = "no pathogen";
+    Rcpp::Rcout << "No pathogen introduction\n";
+    break;
+  case 1:
+    if (g_patho_init == 0)
+      scenario_str = "endemic pathogen";
+    else
+      scenario_str = "novel pathogen";
+    Rcpp::Rcout << "Pathogen introduced from gen:" << g_patho_init << "\n";
+    break;
+  case 2:
+    scenario_str = "single spillover";
+    break;
+  case 3:
+    scenario_str = "sporadic spillover";
+    break;
+  default:
+    scenario_str = "unknown scenario";
+    break;
   }
 
   Rcpp::String infection_cost_type = infect_percent ? "percent" : "absolute";

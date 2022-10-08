@@ -24,19 +24,13 @@ typedef std::pair<point, unsigned> value;
 
 // items class
 struct Resources {
- public:
+public:
   Resources(const int nItems, const float landsize, const int nClusters,
             const float clusterSpread, const int regen_time)
-      : nItems(nItems),
-        dSize(landsize),
-        nClusters(nClusters),
-        clusterSpread(clusterSpread),
-        regen_time(regen_time),
-        coordX(nItems, 0.0f),
-        coordY(nItems, 0.0f),
-        available(nItems, true),
-        counter(nItems, 0),
-        nAvailable(nItems) {}
+      : nItems(nItems), dSize(landsize), nClusters(nClusters),
+        clusterSpread(clusterSpread), regen_time(regen_time),
+        coordX(nItems, 0.0f), coordY(nItems, 0.0f), available(nItems, true),
+        counter(nItems, 0), nAvailable(nItems) {}
   ~Resources() {}
 
   const int nItems;
@@ -50,7 +44,7 @@ struct Resources {
   std::vector<int> counter;
   int nAvailable;
   // make rtree
-  bgi::rtree<value, bgi::quadratic<16> > rtree;
+  bgi::rtree<value, bgi::quadratic<16>> rtree;
 
   // funs to init with nCentres
   void initResources();
@@ -58,4 +52,4 @@ struct Resources {
   void regenerate();
 };
 
-#endif  // LANDSCAPE_H
+#endif // LANDSCAPE_H

@@ -30,7 +30,7 @@ void Population::shufflePop() {
 // to update agent Rtree
 void Population::updateRtree() {
   // initialise rtree
-  bgi::rtree<value, bgi::quadratic<16> > tmpRtree;
+  bgi::rtree<value, bgi::quadratic<16>> tmpRtree;
   for (int i = 0; i < nAgents; ++i) {
     point p = point(coordX[i], coordY[i]);
     tmpRtree.insert(std::make_pair(p, i));
@@ -43,7 +43,7 @@ void Population::updateRtree() {
 std::uniform_real_distribution<float> agent_ran_pos(0.0f, 1.f);
 
 // function for initial positions
-void Population::initPos(Resources food) {
+void Population::initPos(const Resources &food) {
   for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
     coordX[i] = agent_ran_pos(rng) * food.dSize;
     initX[i] = coordX[i];
@@ -54,7 +54,7 @@ void Population::initPos(Resources food) {
 }
 
 // set agent trait
-void Population::setTrait(const float& mSize) {
+void Population::setTrait(const float &mSize) {
   // create a cauchy distribution, mSize is the scale
   std::cauchy_distribution<float> agent_ran_trait(0.f, mSize);
 
@@ -65,24 +65,25 @@ void Population::setTrait(const float& mSize) {
   }
 }
 
-float get_distance(const float& x1, const float& x2, const float& y1, const float& y2) {
+float get_distance(const float &x1, const float &x2, const float &y1,
+                   const float &y2) {
   return std::sqrt(std::pow((x1 - x2), 2) + std::pow((y1 - y2), 2));
 }
 
 // general function for agents within distance
-std::pair<int, int> Population::countAgents(const float& xloc,
-                                            const float& yloc) {
+std::pair<int, int> Population::countAgents(const float &xloc,
+                                            const float &yloc) {
   int handlers = 0;
   int nonhandlers = 0;
   std::vector<value> near_agents;
   // query for a simple box
-  agentRtree.query(bgi::satisfies([&](value const& v) {
+  agentRtree.query(bgi::satisfies([&](value const &v) {
                      return bg::distance(v.first, point(xloc, yloc)) <
                             range_agents;
                    }),
                    std::back_inserter(near_agents));
 
-  BOOST_FOREACH (value const& v, near_agents) {
+  BOOST_FOREACH (value const &v, near_agents) {
     if (counter[v.second] > 0)
       handlers++;
     else
@@ -95,19 +96,19 @@ std::pair<int, int> Population::countAgents(const float& xloc,
 }
 
 // function for near agent ids
-std::vector<int> Population::getNeighbourId(const float& xloc,
-                                            const float& yloc) {
+std::vector<int> Population::getNeighbourId(const float &xloc,
+                                            const float &yloc) {
   std::vector<int> agent_id;
   std::vector<value> near_agents;
   // query for a simple box
   // neighbours for associations are counted over the MOVEMENT RANGE
-  agentRtree.query(bgi::satisfies([&](value const& v) {
+  agentRtree.query(bgi::satisfies([&](value const &v) {
                      return bg::distance(v.first, point(xloc, yloc)) <
                             range_move;
                    }),
                    std::back_inserter(near_agents));
 
-  BOOST_FOREACH (value const& v, near_agents) {
+  BOOST_FOREACH (value const &v, near_agents) {
     agent_id.push_back(v.second);
   }
   near_agents.clear();
@@ -117,21 +118,21 @@ std::vector<int> Population::getNeighbourId(const float& xloc,
 }
 
 // general function for items within distance
-int Population::countFood(const Resources& food, const float& xloc,
-                          const float& yloc) {
+int Population::countFood(const Resources &food, const float &xloc,
+                          const float &yloc) {
   int nFood = 0;
   std::vector<value> near_food;
 
   // check any available
   if (food.nAvailable > 0) {
     // query for a simple box
-    food.rtree.query(bgi::satisfies([&](value const& v) {
+    food.rtree.query(bgi::satisfies([&](value const &v) {
                        return bg::distance(v.first, point(xloc, yloc)) <
                               range_food;
                      }),
                      std::back_inserter(near_food));
 
-    BOOST_FOREACH (value const& v, near_food) {
+    BOOST_FOREACH (value const &v, near_food) {
       // count only which are available!
       if (food.available[v.second]) {
         nFood++;
@@ -144,21 +145,21 @@ int Population::countFood(const Resources& food, const float& xloc,
 }
 
 // function for the nearest available food item
-std::vector<int> Population::getFoodId(const Resources& food, const float& xloc,
-                                       const float& yloc) {
+std::vector<int> Population::getFoodId(const Resources &food, const float &xloc,
+                                       const float &yloc) {
   std::vector<int> food_id;
   std::vector<value> near_food;
   // check any available
   if (food.nAvailable > 0) {
     // query for a simple box
     // food is accessed over the MOVEMENT RANGE
-    food.rtree.query(bgi::satisfies([&](value const& v) {
+    food.rtree.query(bgi::satisfies([&](value const &v) {
                        return bg::distance(v.first, point(xloc, yloc)) <
                               range_move;
                      }),
                      std::back_inserter(near_food));
 
-    BOOST_FOREACH (value const& v, near_food) {
+    BOOST_FOREACH (value const &v, near_food) {
       // count only which are available!
       if (food.available[v.second]) {
         food_id.push_back(v.second);
@@ -177,7 +178,7 @@ std::normal_distribution<float> noise(0.f, 0.01f);
 std::cauchy_distribution<float> noise_cauchy(0.f, 0.001f);
 
 /// population movement function
-void Population::move(const Resources& food, const int& nThreads) {
+void Population::move(const Resources &food, const int &nThreads) {
   float twopi = 2.f * M_PI;
 
   // what increment for 3 samples in a circle around the agent
@@ -191,7 +192,7 @@ void Population::move(const Resources& food, const int& nThreads) {
   }
 
   // make random noise for each individual and each sample
-  std::vector<std::vector<float> > noise_v(
+  std::vector<std::vector<float>> noise_v(
       nAgents, std::vector<float>(static_cast<int>(n_samples), 0.f));
   for (size_t i_ = 0; i_ < noise_v.size(); i_++) {
     for (size_t j_ = 0; j_ < static_cast<size_t>(n_samples); j_++) {
@@ -204,11 +205,11 @@ void Population::move(const Resources& food, const int& nThreads) {
   if (nThreads > 1) {
     // any number above 1 will allow automatic n threads
     tbb::task_scheduler_init _tbb(
-        tbb::task_scheduler_init::automatic);  // automatic for now
+        tbb::task_scheduler_init::automatic); // automatic for now
     // try parallel
     tbb::parallel_for(
         tbb::blocked_range<unsigned>(1, order.size()),
-        [&](const tbb::blocked_range<unsigned>& r) {
+        [&](const tbb::blocked_range<unsigned> &r) {
           for (unsigned i = r.begin(); i < r.end(); ++i) {
             int id = order[i];
             if (counter[id] > 0) {
@@ -263,7 +264,7 @@ void Population::move(const Resources& food, const int& nThreads) {
                 float suit_dest =
                     ((sF[id] * foodHere) + (sH[id] * agentCounts.first) +
                      (sN[id] * agentCounts.second) +
-                     noise_v[id][j]  // add same very very small noise to all
+                     noise_v[id][j] // add same very very small noise to all
                     );
 
                 if (suit_dest > suit_origin) {
@@ -346,7 +347,7 @@ void Population::move(const Resources& food, const int& nThreads) {
           float suit_dest =
               ((sF[id] * foodHere) + (sH[id] * agentCounts.first) +
                (sN[id] * agentCounts.second) +
-               noise_v[id][j]  // add same very very small noise to all
+               noise_v[id][j] // add same very very small noise to all
               );
 
           if (suit_dest > suit_origin) {
@@ -379,7 +380,7 @@ void Population::move(const Resources& food, const int& nThreads) {
 }
 
 // function to paralellise choice of forage item
-void Population::pickForageItem(const Resources& food, const int& nThreads) {
+void Population::pickForageItem(const Resources &food, const int &nThreads) {
   shufflePop();
   // nearest food
   std::vector<int> idTargetFood(nAgents, -1);
@@ -387,10 +388,10 @@ void Population::pickForageItem(const Resources& food, const int& nThreads) {
   if (nThreads > 1) {
     // loop over agents --- no shuffling required here
     tbb::task_scheduler_init _tbb(
-        tbb::task_scheduler_init::automatic);  // automatic for now
+        tbb::task_scheduler_init::automatic); // automatic for now
     // try parallel foraging --- agents pick a target item
     tbb::parallel_for(tbb::blocked_range<unsigned>(1, order.size()),
-                      [&](const tbb::blocked_range<unsigned>& r) {
+                      [&](const tbb::blocked_range<unsigned> &r) {
                         for (unsigned i = r.begin(); i < r.end(); ++i) {
                           if ((counter[i] > 0) | (food.nAvailable == 0)) {
                             // nothing -- agent cannot forage or there is no
@@ -433,7 +434,7 @@ void Population::pickForageItem(const Resources& food, const int& nThreads) {
 }
 
 // function to exploitatively forage on picked forage items
-void Population::doForage(Resources& food) {
+void Population::doForage(Resources &food) {
   // all agents have picked a food item if they can forage
   // now forage in a serial loop --- this cannot be parallelised
   // this order is randomised
@@ -442,11 +443,11 @@ void Population::doForage(Resources& food) {
     if ((counter[id] > 0) | (food.nAvailable == 0)) {
       // nothing
     } else {
-      int thisItem = forageItem[id];  // the item picked by this agent
+      int thisItem = forageItem[id]; // the item picked by this agent
       // check selected item is available
       if (thisItem != -1) {
         counter[id] = handling_time;
-        intake[id] += 1.0;  // increased here --- not as described.
+        intake[id] += 1.0; // increased here --- not as described.
 
         // reset food availability
         food.available[thisItem] = false;
@@ -457,7 +458,7 @@ void Population::doForage(Resources& food) {
   }
 }
 
-void Population::countAssoc(const int& nThreads) {
+void Population::countAssoc(const int &nThreads) {
   for (int i = 0; i < nAgents; ++i) {
     // count nearby agents and update raw associations
     std::vector<int> nearby_agents = getNeighbourId(coordX[i], coordY[i]);
@@ -475,7 +476,7 @@ void Population::countAssoc(const int& nThreads) {
 std::vector<float> Population::handleFitness() {
   // sort vec fitness
   std::vector<float> vecFitness = energy;
-  std::sort(vecFitness.begin(), vecFitness.end());  // sort to to get min-max
+  std::sort(vecFitness.begin(), vecFitness.end()); // sort to to get min-max
   // scale to max fitness
   float maxFitness = vecFitness[vecFitness.size() - 1];
   float minFitness = vecFitness[0];
@@ -492,9 +493,9 @@ std::vector<float> Population::handleFitness() {
 }
 
 // fun for replication
-void Population::Reproduce(const Resources& food, const bool& infect_percent,
-                           const float& dispersal, const float& mProb,
-                           const float& mSize) {
+void Population::Reproduce(const Resources &food, const bool &infect_percent,
+                           const float &dispersal, const float &mProb,
+                           const float &mSize) {
   // rng for probability of vertical transmission
   // currently same as prob for horizontal
   std::bernoulli_distribution verticalInfect(pTransmit);
@@ -553,11 +554,15 @@ void Population::Reproduce(const Resources& food, const bool& infect_percent,
     coord_y_2[a] = coordY[parent_id] + sprout(rng);
 
     // robustly wrap positions
-    if (coord_x_2[a] < 0.f) coord_x_2[a] = food.dSize + coord_x_2[a];
-    if (coord_x_2[a] > food.dSize) coord_x_2[a] = coord_x_2[a] - food.dSize;
+    if (coord_x_2[a] < 0.f)
+      coord_x_2[a] = food.dSize + coord_x_2[a];
+    if (coord_x_2[a] > food.dSize)
+      coord_x_2[a] = coord_x_2[a] - food.dSize;
 
-    if (coord_y_2[a] < 0.f) coord_y_2[a] = food.dSize + coord_y_2[a];
-    if (coord_y_2[a] > food.dSize) coord_y_2[a] = coord_y_2[a] - food.dSize;
+    if (coord_y_2[a] < 0.f)
+      coord_y_2[a] = food.dSize + coord_y_2[a];
+    if (coord_y_2[a] > food.dSize)
+      coord_y_2[a] = coord_y_2[a] - food.dSize;
 
     // vertical transmission of infection if set to TRUE
     if (vertical) {
