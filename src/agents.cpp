@@ -7,9 +7,11 @@
 
 #include <algorithm>
 #include <boost/foreach.hpp>
+#include <boost/random/bernoulli_distribution.hpp>
+#include <boost/random/discrete_distribution.hpp>
+#include <boost/range/algorithm.hpp>
 #include <cassert>
 #include <iostream>
-#include <random>
 #include <vector>
 
 #include "landscape.h"
@@ -21,9 +23,9 @@ void Population::shufflePop() {
     for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
       order[i] = i;
     }
-    std::random_shuffle(order.begin(), order.end());
+    boost::range::random_shuffle(order);
   } else {
-    std::random_shuffle(order.begin(), order.end());
+    boost::range::random_shuffle(order);
   }
 }
 
@@ -39,15 +41,14 @@ void Population::updateRtree() {
   tmpRtree.clear();
 }
 
-// uniform distribution for agent position
-std::uniform_real_distribution<float> agent_ran_pos(0.0f, 1.f);
-
 // function for initial positions
 void Population::initPos(const Resources &food) {
+  Rcpp::NumericVector rd_x = Rcpp::runif(nAgents);
+  Rcpp::NumericVector rd_y = Rcpp::runif(nAgents);
   for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-    coordX[i] = agent_ran_pos(rng) * food.dSize;
+    coordX[i] = rd_x(i) * food.dSize;
     initX[i] = coordX[i];
-    coordY[i] = agent_ran_pos(rng) * food.dSize;
+    coordY[i] = rd_y(i) * food.dSize;
     initY[i] = coordY[i];
   }
   updateRtree();
@@ -56,13 +57,9 @@ void Population::initPos(const Resources &food) {
 // set agent trait
 void Population::setTrait(const float &mSize) {
   // create a cauchy distribution, mSize is the scale
-  std::cauchy_distribution<float> agent_ran_trait(0.f, mSize);
-
-  for (int i = 0; i < nAgents; i++) {
-    sF[i] = agent_ran_trait(rng);
-    sH[i] = agent_ran_trait(rng);
-    sN[i] = agent_ran_trait(rng);
-  }
+  sF = Rcpp::as<std::vector<float>>(Rcpp::rcauchy(nAgents, 0.0, mSize));
+  sH = Rcpp::as<std::vector<float>>(Rcpp::rcauchy(nAgents, 0.0, mSize));
+  sN = Rcpp::as<std::vector<float>>(Rcpp::rcauchy(nAgents, 0.0, mSize));
 }
 
 float get_distance(const float &x1, const float &x2, const float &y1,
@@ -173,16 +170,12 @@ std::vector<int> Population::getFoodId(const Resources &food, const float &xloc,
   return food_id;
 }
 
-/// rng for suitability
-std::normal_distribution<float> noise(0.f, 0.01f);
-std::cauchy_distribution<float> noise_cauchy(0.f, 0.001f);
-
 /// population movement function
-void Population::move(const Resources &food, const int &nThreads) {
-  float twopi = 2.f * M_PI;
+void Population::move(const Resources &food, const bool &multithreaded) {
+  const float twopi = 2.f * M_PI;
 
   // what increment for 3 samples in a circle around the agent
-  float increment = twopi / n_samples;
+  const float increment = twopi / n_samples;
   float angle = 0.f;
   // for this increment what angles to sample at
   std::vector<float> sample_angles(static_cast<int>(n_samples), 0.f);
@@ -192,23 +185,20 @@ void Population::move(const Resources &food, const int &nThreads) {
   }
 
   // make random noise for each individual and each sample
-  std::vector<std::vector<float>> noise_v(
-      nAgents, std::vector<float>(static_cast<int>(n_samples), 0.f));
-  for (size_t i_ = 0; i_ < noise_v.size(); i_++) {
-    for (size_t j_ = 0; j_ < static_cast<size_t>(n_samples); j_++) {
-      noise_v[i_][j_] = noise(rng);
-    }
+  Rcpp::NumericMatrix noise_v(nAgents, n_samples);
+  for (size_t i_ = 0; i_ < n_samples; i_++) {
+    noise_v(_, i_) = Rcpp::rnorm(nAgents, 0.0f, 0.01f);
   }
 
   shufflePop();
   // loop over agents --- randomise
-  if (nThreads > 1) {
+  if (multithreaded) {
     // any number above 1 will allow automatic n threads
-    tbb::task_scheduler_init _tbb(
-        tbb::task_scheduler_init::automatic); // automatic for now
+    unsigned int p = tbb::task_scheduler_init::default_num_threads();
+
     // try parallel
     tbb::parallel_for(
-        tbb::blocked_range<unsigned>(1, order.size()),
+        tbb::blocked_range<unsigned>(1, nAgents),
         [&](const tbb::blocked_range<unsigned> &r) {
           for (unsigned i = r.begin(); i < r.end(); ++i) {
             int id = order[i];
@@ -264,7 +254,7 @@ void Population::move(const Resources &food, const int &nThreads) {
                 float suit_dest =
                     ((sF[id] * foodHere) + (sH[id] * agentCounts.first) +
                      (sN[id] * agentCounts.second) +
-                     noise_v[id][j] // add same very very small noise to all
+                     noise_v(id, j) // add same very very small noise to all
                     );
 
                 if (suit_dest > suit_origin) {
@@ -294,7 +284,7 @@ void Population::move(const Resources &food, const int &nThreads) {
             }
           }
         });
-  } else if (nThreads == 1) {
+  } else {
     for (int i = 0; i < nAgents; ++i) {
       int id = order[i];
       if (counter[id] > 0) {
@@ -347,7 +337,7 @@ void Population::move(const Resources &food, const int &nThreads) {
           float suit_dest =
               ((sF[id] * foodHere) + (sH[id] * agentCounts.first) +
                (sN[id] * agentCounts.second) +
-               noise_v[id][j] // add same very very small noise to all
+               noise_v(id, j) // add same very very small noise to all
               );
 
           if (suit_dest > suit_origin) {
@@ -380,17 +370,18 @@ void Population::move(const Resources &food, const int &nThreads) {
 }
 
 // function to paralellise choice of forage item
-void Population::pickForageItem(const Resources &food, const int &nThreads) {
+void Population::pickForageItem(const Resources &food,
+                                const bool &multithreaded) {
   shufflePop();
   // nearest food
   std::vector<int> idTargetFood(nAgents, -1);
 
-  if (nThreads > 1) {
+  if (multithreaded) {
     // loop over agents --- no shuffling required here
-    tbb::task_scheduler_init _tbb(
-        tbb::task_scheduler_init::automatic); // automatic for now
+    unsigned int p = tbb::task_scheduler_init::default_num_threads();
+
     // try parallel foraging --- agents pick a target item
-    tbb::parallel_for(tbb::blocked_range<unsigned>(1, order.size()),
+    tbb::parallel_for(tbb::blocked_range<unsigned>(1, nAgents),
                       [&](const tbb::blocked_range<unsigned> &r) {
                         for (unsigned i = r.begin(); i < r.end(); ++i) {
                           if ((counter[i] > 0) | (food.nAvailable == 0)) {
@@ -411,7 +402,7 @@ void Population::pickForageItem(const Resources &food, const int &nThreads) {
                           }
                         }
                       });
-  } else if (nThreads == 1) {
+  } else {
     for (int i = 0; i < nAgents; ++i) {
       if ((counter[i] > 0) | (food.nAvailable == 0)) {
         // nothing -- agent cannot forage or there is no food
@@ -458,7 +449,7 @@ void Population::doForage(Resources &food) {
   }
 }
 
-void Population::countAssoc(const int &nThreads) {
+void Population::countAssoc() {
   for (int i = 0; i < nAgents; ++i) {
     // count nearby agents and update raw associations
     std::vector<int> nearby_agents = getNeighbourId(coordX[i], coordY[i]);
@@ -483,10 +474,12 @@ std::vector<float> Population::handleFitness() {
 
   // reset to energy
   vecFitness = energy;
+  // error in fitness
+  Rcpp::NumericVector rd_fitness = Rcpp::rnorm(nAgents, 0.0f, 0.01f);
   // rescale copied energy vector by min anx max fitness
   for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-    vecFitness[i] =
-        ((vecFitness[i] - minFitness) / (maxFitness - minFitness)) + noise(rng);
+    vecFitness[i] = ((vecFitness[i] - minFitness) / (maxFitness - minFitness)) +
+                    rd_fitness(i);
   }
 
   return vecFitness;
@@ -496,16 +489,10 @@ std::vector<float> Population::handleFitness() {
 void Population::Reproduce(const Resources &food, const bool &infect_percent,
                            const float &dispersal, const float &mProb,
                            const float &mSize) {
-  // rng for probability of vertical transmission
+  // boost random for probability of vertical transmission
   // currently same as prob for horizontal
-  std::bernoulli_distribution verticalInfect(pTransmit);
+  boost::random::bernoulli_distribution<> verticalInfect(pTransmit);
 
-  // mutation probability and size distribution --- inefficient but oh well
-  std::bernoulli_distribution mutation_happens(mProb);
-  std::cauchy_distribution<float> mutation_size(0.0, mSize);
-
-  // choose the range over which individuals are dispersed
-  std::normal_distribution<float> sprout(0.f, dispersal);
   std::vector<float> vecFitness;
   // normalise intake if percent infect is not true
   if (infect_percent) {
@@ -515,8 +502,8 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
   }
 
   // set up weighted lottery
-  std::discrete_distribution<> weightedLottery(vecFitness.begin(),
-                                               vecFitness.end());
+  boost::random::discrete_distribution<> weightedLottery(vecFitness.begin(),
+                                                         vecFitness.end());
 
   // get parent trait based on weighted lottery
   std::vector<float> tmp_sF(nAgents, 0.f);
@@ -542,16 +529,20 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
   std::vector<float> coord_x_2(nAgents, 0.f);
   std::vector<float> coord_y_2(nAgents, 0.f);
 
+  // Get sprout distances
+  Rcpp::NumericVector sprout_x = Rcpp::rnorm(nAgents, 0.0f, dispersal);
+  Rcpp::NumericVector sprout_y = Rcpp::rnorm(nAgents, 0.0f, dispersal);
+
   for (int a = 0; a < nAgents; a++) {
-    size_t parent_id = static_cast<size_t>(weightedLottery(rng));
+    size_t parent_id = static_cast<size_t>(weightedLottery(gen));
 
     tmp_sF[a] = sF[parent_id];
     tmp_sH[a] = sH[parent_id];
     tmp_sN[a] = sN[parent_id];
 
     // inherit positions from parent
-    coord_x_2[a] = coordX[parent_id] + sprout(rng);
-    coord_y_2[a] = coordY[parent_id] + sprout(rng);
+    coord_x_2[a] = coordX[parent_id] + sprout_x(parent_id);
+    coord_y_2[a] = coordY[parent_id] + sprout_y(parent_id);
 
     // robustly wrap positions
     if (coord_x_2[a] < 0.f)
@@ -567,7 +558,7 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
     // vertical transmission of infection if set to TRUE
     if (vertical) {
       if (infected[parent_id]) {
-        if (verticalInfect(rng)) {
+        if (verticalInfect(gen)) {
           infected_2[a] = true;
           srcInfect[a] = 1;
         }
@@ -596,15 +587,23 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
 
   // mutate trait: trait shifts up or down with an equal prob
   // trait mutation prob is mProb, in a two step process
+  auto mutation_sF = Rcpp::rbinom(nAgents, 1, mProb);
+  auto mutation_sH = Rcpp::rbinom(nAgents, 1, mProb);
+  auto mutation_sN = Rcpp::rbinom(nAgents, 1, mProb);
+
+  Rcpp::NumericVector mut_size_sF = Rcpp::rcauchy(nAgents, 0.0f, mSize);
+  Rcpp::NumericVector mut_size_sH = Rcpp::rcauchy(nAgents, 0.0f, mSize);
+  Rcpp::NumericVector mut_size_sN = Rcpp::rcauchy(nAgents, 0.0f, mSize);
+
   for (int a = 0; a < nAgents; a++) {
-    if (mutation_happens(rng)) {
-      tmp_sF[a] = tmp_sF[a] + mutation_size(rng);
+    if (mutation_sF(a)) {
+      tmp_sF[a] = tmp_sF[a] + mut_size_sF(a);
     }
-    if (mutation_happens(rng)) {
-      tmp_sH[a] = tmp_sH[a] + mutation_size(rng);
+    if (mutation_sH(a)) {
+      tmp_sH[a] = tmp_sH[a] + mut_size_sH(a);
     }
-    if (mutation_happens(rng)) {
-      tmp_sN[a] = tmp_sN[a] + mutation_size(rng);
+    if (mutation_sN(a)) {
+      tmp_sN[a] = tmp_sN[a] + mut_size_sN(a);
     }
   }
 
