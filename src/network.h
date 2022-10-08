@@ -11,7 +11,7 @@ using namespace Rcpp;
 // network should be a member of population later
 // network has funs to return network metrics and the adj matrix
 struct Network {
- public:
+public:
   Network(const int popsize) : nVertices(popsize), adjMat(popsize, popsize) {}
   ~Network() {}
 

@@ -14,4 +14,4 @@ extern std::mt19937 rng;
 // landscape
 const double foodEnergy = 1.0;
 
-#endif  // PARAMETERS_H
+#endif // PARAMETERS_H

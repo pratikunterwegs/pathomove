@@ -13,11 +13,9 @@
 // define a struct holding a vector of data frames which holds generation wise
 // data
 struct genData {
- public:
+public:
   genData(const int genmax, const int popsize, const int increment)
-      : genmax(genmax),
-        increment(increment),
-        gSampled(genmax / increment),
+      : genmax(genmax), increment(increment), gSampled(genmax / increment),
         // generation wise dataframe
         // energy
         gIntake(gSampled, std::vector<float>(popsize, 0.f)),
@@ -37,31 +35,27 @@ struct genData {
         gSrc(gSampled, std::vector<int>(popsize, 1)),
         gMoved(gSampled, std::vector<float>(popsize, 0.f)),
         // generation specific data
-        gNInfected(gSampled, 0),
-        gens(gSampled, 0)  //,
-                           // gPbsnDiameter (gSampled, 0.f),
-                           // gPbsnGlobEff (gSampled, 0.f)
-  {}
+        gNInfected(gSampled, 0), gens(gSampled, 0) {}
   ~genData() {}
 
   const int genmax;
   const int increment;
   const int gSampled;
-  std::vector<std::vector<float> > gIntake;
-  std::vector<std::vector<float> > gEnergy;
-  std::vector<std::vector<float> > gSF;
-  std::vector<std::vector<float> > gSH;
-  std::vector<std::vector<float> > gSN;
+  std::vector<std::vector<float>> gIntake;
+  std::vector<std::vector<float>> gEnergy;
+  std::vector<std::vector<float>> gSF;
+  std::vector<std::vector<float>> gSH;
+  std::vector<std::vector<float>> gSN;
 
-  std::vector<std::vector<float> > gX;
-  std::vector<std::vector<float> > gY;
-  std::vector<std::vector<float> > gXn;
-  std::vector<std::vector<float> > gYn;
+  std::vector<std::vector<float>> gX;
+  std::vector<std::vector<float>> gY;
+  std::vector<std::vector<float>> gXn;
+  std::vector<std::vector<float>> gYn;
 
-  std::vector<std::vector<int> > gAssoc;
-  std::vector<std::vector<int> > gTInfected;
-  std::vector<std::vector<int> > gSrc;
-  std::vector<std::vector<float> > gMoved;
+  std::vector<std::vector<int>> gAssoc;
+  std::vector<std::vector<int>> gTInfected;
+  std::vector<std::vector<int>> gSrc;
+  std::vector<std::vector<float>> gMoved;
 
   std::vector<int> gNInfected;
   std::vector<int> gens;
@@ -75,10 +69,9 @@ struct genData {
 };
 
 struct moveData {
- public:
+public:
   moveData(const int tmax, const int popsize)
-      : tmax(tmax),
-        popsize(popsize),
+      : tmax(tmax), popsize(popsize),
         timesteps(tmax, std::vector<int>(popsize, 0)),
         x(tmax, std::vector<float>(popsize, 0)),
         y(tmax, std::vector<float>(popsize, 0)) {}
@@ -86,12 +79,12 @@ struct moveData {
 
   const int tmax;
   const int popsize;
-  std::vector<std::vector<int> > timesteps;
-  std::vector<std::vector<float> > x;
-  std::vector<std::vector<float> > y;
+  std::vector<std::vector<int>> timesteps;
+  std::vector<std::vector<float>> x;
+  std::vector<std::vector<float>> y;
 
   void updateMoveData(Population &pop, const int t_);
   Rcpp::List getMoveData();
 };
 
-#endif  //
+#endif //

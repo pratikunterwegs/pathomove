@@ -8,8 +8,8 @@ void genData::updateGenData(Population &pop, const int g_) {
   // std::vector<float> measures = pop.pbsn.ntwkMeasures();
 
   // get pop data
-  gIntake[i] = pop.intake;  // this returns the intake! not the net energy
-  gEnergy[i] = pop.energy;  // this returns the net energy, fitness proxy
+  gIntake[i] = pop.intake; // this returns the intake! not the net energy
+  gEnergy[i] = pop.energy; // this returns the net energy, fitness proxy
   gSF[i] = pop.sF;
   gSH[i] = pop.sH;
   gSN[i] = pop.sN;
