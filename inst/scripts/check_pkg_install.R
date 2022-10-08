@@ -3,11 +3,11 @@ remove.packages("pathomove")
 
 Rcpp::compileAttributes()
 devtools::build(vignettes = FALSE)
-{
-  sink(file = "install_output.log")
-  devtools::install(upgrade = "never", build_vignettes = FALSE)
-  sink()
-}
+
+sink(file = "install_output.log")
+devtools::install(upgrade = "never", build_vignettes = FALSE)
+sink()
+
 devtools::document()
 
 detach(package:pathomove)
@@ -24,33 +24,24 @@ l <- pathomove::get_test_landscape(
 )
 ggplot(l) +
   geom_point(
-    aes(x, y, col = tAvail)
-    # size = 0.3
+    aes(x, y)
   ) +
   geom_segment(
     x = 0, y = 0,
     xend = 2, yend = 0
   ) +
-  scale_colour_viridis_b(
-    option = "H",
-    direction = 1,
-    breaks = c(0, 1, 2, 5, 10)
-  ) +
   coord_equal()
 
-# {t1 = Sys.time()
-# invisible(
-#   x = {
-a <- pathomove::run_pathomove(
+a = pathomove::run_pathomove(
   scenario = 2,
-  popsize = 10,
+  popsize = 500,
   nItems = 180,
   landsize = 60,
   nClusters = 60,
   clusterSpread = 1,
   tmax = 100,
   genmax = 10,
-  g_patho_init = 500,
+  g_patho_init = 10,
   range_food = 1.0,
   range_agents = 1.0,
   range_move = 1.0,
@@ -59,17 +50,44 @@ a <- pathomove::run_pathomove(
   pTransmit = 0.05,
   initialInfections = 4,
   costInfect = 0.25,
-  nThreads = 1,
+  multithreaded = TRUE,
   dispersal = 3.0,
   infect_percent = FALSE,
   vertical = FALSE,
   mProb = 0.001,
-  mSize = 0.001
+  mSize = 0.001,
+  spillover_rate = 1.0
 )
-#   }
-# )
-# t2 = Sys.time()
-# t2 - t1}
+
+microbenchmark::microbenchmark(
+  pathomove::run_pathomove(
+    scenario = 2,
+    popsize = 500,
+    nItems = 180,
+    landsize = 60,
+    nClusters = 60,
+    clusterSpread = 1,
+    tmax = 100,
+    genmax = 100,
+    g_patho_init = 10,
+    range_food = 1.0,
+    range_agents = 1.0,
+    range_move = 1.0,
+    handling_time = 5,
+    regen_time = 50,
+    pTransmit = 0.05,
+    initialInfections = 4,
+    costInfect = 0.25,
+    multithreaded = TRUE,
+    dispersal = 3.0,
+    infect_percent = FALSE,
+    vertical = FALSE,
+    mProb = 0.001,
+    mSize = 0.001,
+    spillover_rate = 1.0
+  ),
+  times = 10
+)
 
 # movement data
 m1 <- a[["move_pre"]] |> rbindlist()
@@ -80,31 +98,23 @@ m1_summary <- m1[, unlist(lapply(.SD, function(x) {
     first = first(x),
     last = last(x)
   )
-}), recursive = F), by = c("id"), .SDcols = c("x", "y")]
+}), recursive = FALSE), by = c("id"), .SDcols = c("x", "y")]
 
 m2_summary <- m2[, unlist(lapply(.SD, function(x) {
   list(
     first = first(x),
     last = last(x)
   )
-}), recursive = F), by = c("id"), .SDcols = c("x", "y")]
+}), recursive = FALSE), by = c("id"), .SDcols = c("x", "y")]
 
 ggplot(m1) +
   geom_point(
-    aes(x, y, group = id, col = id),
-    # size = 0.1
+    aes(x, y, group = id, col = id)
   ) +
-  # geom_point(
-  #   aes(x, y, col = id),
-  #   # size = 0.1
-  # )+
   scale_colour_viridis_c(
     option = "H"
   ) +
-  coord_equal(
-    # xlim = c(0, 50),
-    # ylim = c(0, 50)
-  )
+  coord_equal()
 
 data <- a
 a <- data[[1]]
@@ -115,13 +125,12 @@ plot(a[["gens"]], a[["n_infected"]], type = "o", pch = 16)
 #### handle data ####
 b <- copy(a)
 b <- Map(function(l, g) {
-  l$id <- seq(nrow(l))
+  l$id <- seq_len(nrow(l))
   l$gen <- g
   l
 }, b$pop_data, b$gens)
 b <- rbindlist(b)
 b
-# b = b[(gen %% 100 == 0) | (gen == 9999),]
 
 #### examine strategies ####
 d <- copy(b)
@@ -153,13 +162,10 @@ ggplot(b[variable %in% c("intake", "moved")]) +
   ) +
   facet_wrap(~variable, scales = "free")
 
-# energy = b[variable == "energy",]
 wts <- b[!variable %in% c("energy", "assoc", "t_infec", "moved", "degree"), ]
 
 #### explore network ####
 library(igraph)
-# g = data[["matrices"]][4:6]
-# g = g[[3]]
 setnames(b, "assoc", "weight")
 g <- igraph::graph_from_data_frame(b[b$weight > 0, ], directed = FALSE)
 
@@ -175,7 +181,7 @@ ggraph(g, layout = "mds") +
   geom_edge_link()
 
 #### check S4 class output ####
-a = pathomove::run_pathomove(
+a <- pathomove::run_pathomove(
   scenario = 2,
   popsize = 500,
   nItems = 1800,
@@ -193,71 +199,71 @@ a = pathomove::run_pathomove(
   pTransmit = 0.05,
   initialInfections = 20,
   costInfect = 0.25,
-  nThreads = 2,
+  multithreaded = TRUE,
   dispersal = 3.0, # for local-ish dispersal
   infect_percent = FALSE,
-  vertical = F,
+  vertical = FALSE,
   mProb = 0.01,
   mSize = 0.01
 )
 
 pathomove::plot_pathomove(a)
 
-trait = Map(
+trait <- Map(
   a@trait_data, a@generations,
   f = function(df, g) {
-    df$gen = g
+    df$gen <- g
     df
   }
 ) |> rbindlist()
 
-trait |> 
-  ggplot(aes(gen, intake))+
-  stat_summary(geom = "line")+
+trait |>
+  ggplot(aes(gen, intake)) +
+  stat_summary(geom = "line") +
   geom_vline(
     aes(xintercept = 700),
     col = "red"
   )
-  annotate(
-    geom = "vline",
-    xintercept = 700, col = 2
-  )
-  geom_bin_2d(
-    binwidth = c(2, 1)
-  )+
+annotate(
+  geom = "vline",
+  xintercept = 700, col = 2
+)
+geom_bin_2d(
+  binwidth = c(2, 1)
+) +
   scale_fill_viridis_c(
     option = "A", direction = -1
   )
 
-trait |> 
-  ggplot(aes(gen, moved))+
+trait |>
+  ggplot(aes(gen, moved)) +
   geom_bin_2d(
     binwidth = c(2, 5)
-  )+
+  ) +
   scale_fill_viridis_c(
     option = "A", direction = -1
   )
 
 get_social_strategy(trait)
 
-tdf = trait[, .N, by = c("gen", "social_strat")]
+tdf <- trait[, .N, by = c("gen", "social_strat")]
 
-ggplot(tdf)+
+ggplot(tdf) +
   geom_col(
     aes(gen, N, fill = social_strat)
-  )+
+  ) +
   scale_fill_viridis_d(
     direction = -1
   )
 
-sdf = trait[, .N, by = c("gen", "infect_src")]
-ggplot(sdf)+
+sdf <- trait[, .N, by = c("gen", "infect_src")]
+ggplot(sdf) +
   geom_col(
     aes(gen, N, fill = as.factor(infect_src))
   )
 
 #### check sporadic spillover ####
-a = pathomove::run_pathomove(
+a <- pathomove::run_pathomove(
   scenario = 1,
   popsize = 500,
   nItems = 1800,
@@ -275,10 +281,10 @@ a = pathomove::run_pathomove(
   pTransmit = 0.05,
   initialInfections = 20,
   costInfect = 0.5,
-  nThreads = 2,
+  multithreaded = TRUE,
   dispersal = 2.0, # for local-ish dispersal
   infect_percent = FALSE,
-  vertical = F,
+  vertical = FALSE,
   mProb = 0.01,
   mSize = 0.01,
   spillover_rate = 0.01
@@ -288,23 +294,20 @@ plot(a@generations, a@infections_per_gen, type = "b")
 
 a@gens_patho_intro
 
-b = pathomove::get_trait_data(a)
+b <- pathomove::get_trait_data(a)
 pathomove::get_social_strategy(b)
 
-d = b[, .N, by = c("gen", "social_strat")]
+d <- b[, .N, by = c("gen", "social_strat")]
 
-ggplot(d)+
+ggplot(d) +
   geom_col(
     aes(
-      gen, N, fill = social_strat
+      gen, N,
+      fill = social_strat
     )
   )
-# +
-#   geom_vline(
-#     xintercept = a@gens_patho_intro
-#   )
 
-ggplot(b)+
+ggplot(b) +
   stat_summary(
     aes(
       gen, energy
