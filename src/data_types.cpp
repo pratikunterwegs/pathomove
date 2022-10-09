@@ -13,6 +13,7 @@ void genData::updateGenData(Population &pop, const int g_) {
   gSF[i] = pop.sF;
   gSH[i] = pop.sH;
   gSN[i] = pop.sN;
+  gSI[i] = pop.sI;
   gX[i] = pop.initX;
   gY[i] = pop.initY;
   gXn[i] = pop.coordX;
@@ -20,13 +21,9 @@ void genData::updateGenData(Population &pop, const int g_) {
   gAssoc[i] = pop.associations;
   gTInfected[i] = pop.timeInfected;
   gSrc[i] = pop.srcInfect;
-  // gDegree[i] = pop.pbsn.getDegree();
   gNInfected[i] = pop.nInfected;
   gMoved[i] = pop.moved;
-
   gens[i] = g_;
-  // gPbsnDiameter[i] = measures[0];
-  // gPbsnGlobEff[i] = measures[1];
 }
 
 // function to return gen data as an rcpp list
@@ -36,6 +33,7 @@ Rcpp::List genData::getGenData() {
     gDataList[i] = DataFrame::create(
         Named("intake") = gIntake[i], Named("energy") = gEnergy[i],
         Named("sF") = gSF[i], Named("sH") = gSH[i], Named("sN") = gSN[i],
+        Named("sI") = gSI[i],
         Named("x") = gX[i], Named("y") = gY[i], Named("xn") = gXn[i],
         Named("yn") = gYn[i], Named("assoc") = gAssoc[i],
         Named("t_infec") = gTInfected[i], Named("infect_src") = gSrc[i],
