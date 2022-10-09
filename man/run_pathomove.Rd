@@ -14,6 +14,7 @@ run_pathomove(
   tmax = 100L,
   genmax = 100L,
   g_patho_init = 3000L,
+  n_samples = 5,
   range_food = 1,
   range_agents = 1,
   range_move = 1,
@@ -26,6 +27,7 @@ run_pathomove(
   dispersal = 2,
   infect_percent = FALSE,
   vertical = FALSE,
+  evolve_sI = FALSE,
   mProb = 0.01,
   mSize = 0.01,
   spillover_rate = 1
@@ -54,6 +56,8 @@ specified by \code{spillover_rate}.}
 
 \item{g_patho_init}{The generation in which to begin introducing the
 pathogen.}
+
+\item{n_samples}{How many points to sample in the neighbourhood.}
 
 \item{range_food}{The sensory range for food.}
 
@@ -92,6 +96,11 @@ is total intake.}
 \item{vertical}{Should the pathogen be transmitted vertically? Should be
 set to \code{TRUE} for a realistic implementation of scenario 3, \emph{single
 spillover}.}
+
+\item{evolve_sI}{Should individuals be able to sense infection status and
+evolve a weight \code{sI} that affects suitability based on the number of
+infected neighbours. Initially set to 0, and allowed to evolve only after
+the pathogen is introduced.}
 
 \item{mProb}{The probability of mutation. The suggested value is 0.01.
 While high, this may be more appropriate for a small population;

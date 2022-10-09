@@ -26,8 +26,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // run_pathomove
-S4 run_pathomove(const int scenario, const int popsize, const int nItems, const float landsize, const int nClusters, const float clusterSpread, const int tmax, const int genmax, const int g_patho_init, const float range_food, const float range_agents, const float range_move, const int handling_time, const int regen_time, float pTransmit, const int initialInfections, const float costInfect, const bool multithreaded, const float dispersal, const bool infect_percent, const bool vertical, const float mProb, const float mSize, const float spillover_rate);
-RcppExport SEXP _pathomove_run_pathomove(SEXP scenarioSEXP, SEXP popsizeSEXP, SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterSpreadSEXP, SEXP tmaxSEXP, SEXP genmaxSEXP, SEXP g_patho_initSEXP, SEXP range_foodSEXP, SEXP range_agentsSEXP, SEXP range_moveSEXP, SEXP handling_timeSEXP, SEXP regen_timeSEXP, SEXP pTransmitSEXP, SEXP initialInfectionsSEXP, SEXP costInfectSEXP, SEXP multithreadedSEXP, SEXP dispersalSEXP, SEXP infect_percentSEXP, SEXP verticalSEXP, SEXP mProbSEXP, SEXP mSizeSEXP, SEXP spillover_rateSEXP) {
+S4 run_pathomove(const int scenario, const int popsize, const int nItems, const float landsize, const int nClusters, const float clusterSpread, const int tmax, const int genmax, const int g_patho_init, const float n_samples, const float range_food, const float range_agents, const float range_move, const int handling_time, const int regen_time, float pTransmit, const int initialInfections, const float costInfect, const bool multithreaded, const float dispersal, const bool infect_percent, const bool vertical, const bool evolve_sI, const float mProb, const float mSize, const float spillover_rate);
+RcppExport SEXP _pathomove_run_pathomove(SEXP scenarioSEXP, SEXP popsizeSEXP, SEXP nItemsSEXP, SEXP landsizeSEXP, SEXP nClustersSEXP, SEXP clusterSpreadSEXP, SEXP tmaxSEXP, SEXP genmaxSEXP, SEXP g_patho_initSEXP, SEXP n_samplesSEXP, SEXP range_foodSEXP, SEXP range_agentsSEXP, SEXP range_moveSEXP, SEXP handling_timeSEXP, SEXP regen_timeSEXP, SEXP pTransmitSEXP, SEXP initialInfectionsSEXP, SEXP costInfectSEXP, SEXP multithreadedSEXP, SEXP dispersalSEXP, SEXP infect_percentSEXP, SEXP verticalSEXP, SEXP evolve_sISEXP, SEXP mProbSEXP, SEXP mSizeSEXP, SEXP spillover_rateSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -40,6 +40,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int >::type tmax(tmaxSEXP);
     Rcpp::traits::input_parameter< const int >::type genmax(genmaxSEXP);
     Rcpp::traits::input_parameter< const int >::type g_patho_init(g_patho_initSEXP);
+    Rcpp::traits::input_parameter< const float >::type n_samples(n_samplesSEXP);
     Rcpp::traits::input_parameter< const float >::type range_food(range_foodSEXP);
     Rcpp::traits::input_parameter< const float >::type range_agents(range_agentsSEXP);
     Rcpp::traits::input_parameter< const float >::type range_move(range_moveSEXP);
@@ -52,10 +53,11 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const float >::type dispersal(dispersalSEXP);
     Rcpp::traits::input_parameter< const bool >::type infect_percent(infect_percentSEXP);
     Rcpp::traits::input_parameter< const bool >::type vertical(verticalSEXP);
+    Rcpp::traits::input_parameter< const bool >::type evolve_sI(evolve_sISEXP);
     Rcpp::traits::input_parameter< const float >::type mProb(mProbSEXP);
     Rcpp::traits::input_parameter< const float >::type mSize(mSizeSEXP);
     Rcpp::traits::input_parameter< const float >::type spillover_rate(spillover_rateSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_pathomove(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, multithreaded, dispersal, infect_percent, vertical, mProb, mSize, spillover_rate));
+    rcpp_result_gen = Rcpp::wrap(run_pathomove(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, n_samples, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, multithreaded, dispersal, infect_percent, vertical, evolve_sI, mProb, mSize, spillover_rate));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -64,7 +66,7 @@ RcppExport SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_pathomove_get_test_landscape", (DL_FUNC) &_pathomove_get_test_landscape, 5},
-    {"_pathomove_run_pathomove", (DL_FUNC) &_pathomove_run_pathomove, 24},
+    {"_pathomove_run_pathomove", (DL_FUNC) &_pathomove_run_pathomove, 26},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

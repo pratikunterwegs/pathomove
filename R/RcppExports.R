@@ -36,6 +36,7 @@ NULL
 #' @param genmax The maximum number of generations per simulation.
 #' @param g_patho_init The generation in which to begin introducing the
 #' pathogen.
+#' @param n_samples How many points to sample in the neighbourhood.
 #' @param range_food The sensory range for food.
 #' @param range_agents The sensory range for agents.
 #' @param range_move The movement range for agents.
@@ -62,6 +63,10 @@ NULL
 #' @param vertical Should the pathogen be transmitted vertically? Should be
 #' set to `TRUE` for a realistic implementation of scenario 3, _single
 #' spillover_.
+#' @param evolve_sI Should individuals be able to sense infection status and
+#' evolve a weight `sI` that affects suitability based on the number of
+#' infected neighbours. Initially set to 0, and allowed to evolve only after
+#' the pathogen is introduced.
 #' @param mProb The probability of mutation. The suggested value is 0.01.
 #' While high, this may be more appropriate for a small population;
 #' change this value and \code{popsize} to test the simulation's sensitivity to
@@ -74,7 +79,7 @@ NULL
 #'
 #' @export
 #' @return An S4 class, `pathomove_output`, with simulation outcomes.
-run_pathomove <- function(scenario = 2L, popsize = 500L, nItems = 1800L, landsize = 60, nClusters = 60L, clusterSpread = 1, tmax = 100L, genmax = 100L, g_patho_init = 3000L, range_food = 1.0, range_agents = 1.0, range_move = 1.0, handling_time = 5L, regen_time = 50L, pTransmit = 0.05, initialInfections = 20L, costInfect = 0.25, multithreaded = TRUE, dispersal = 2.0, infect_percent = FALSE, vertical = FALSE, mProb = 0.01, mSize = 0.01, spillover_rate = 1.0) {
-    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, multithreaded, dispersal, infect_percent, vertical, mProb, mSize, spillover_rate)
+run_pathomove <- function(scenario = 2L, popsize = 500L, nItems = 1800L, landsize = 60, nClusters = 60L, clusterSpread = 1, tmax = 100L, genmax = 100L, g_patho_init = 3000L, n_samples = 5.0, range_food = 1.0, range_agents = 1.0, range_move = 1.0, handling_time = 5L, regen_time = 50L, pTransmit = 0.05, initialInfections = 20L, costInfect = 0.25, multithreaded = TRUE, dispersal = 2.0, infect_percent = FALSE, vertical = FALSE, evolve_sI = FALSE, mProb = 0.01, mSize = 0.01, spillover_rate = 1.0) {
+    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, n_samples, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, multithreaded, dispersal, infect_percent, vertical, evolve_sI, mProb, mSize, spillover_rate)
 }
 
