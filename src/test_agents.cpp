@@ -19,6 +19,7 @@
 #include "agents.h"
 
 const int popsize = 100;
+const float n_samples = 5.f;
 const float range_food = 1.f;
 const float range_agents = 1.f;
 const float range_move = 0.5f;
@@ -26,9 +27,10 @@ const int handling_time = 5;
 const float p_transmit = 0.1;
 const float test_mSize = 0.001;
 const float vertical = false;
+
 // make test population
-Population pop(popsize, range_agents, range_food, range_move, handling_time,
-               p_transmit, vertical);
+Population pop(popsize, n_samples, range_agents, range_food, range_move,
+               handling_time, p_transmit, vertical);
 
 // Initialize a unit test context. This is similar to how you
 // might begin an R test file with 'context()', expect the
