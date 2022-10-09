@@ -223,9 +223,14 @@ void Population::move(const Resources &food, const bool &multithreaded) {
                   ((sF[id] * foodHere) + (sH[id] * agentCounts.first) +
                    (sN[id] * agentCounts.second));
 
+              // add self-isolation coefficient
+              if(use_sI) {
+                suit_origin += sI[id] * infected[id] * (agentCounts.first + agentCounts.second);
+              }
+
               float newX = sampleX;
               float newY = sampleY;
-              // now sample at three locations around
+              // now sample at n locations around
               for (size_t j = 0; j < sample_angles.size(); j++) {
                 float t1_ = static_cast<float>(cos(sample_angles[j]));
                 float t2_ = static_cast<float>(sin(sample_angles[j]));
@@ -256,6 +261,9 @@ void Population::move(const Resources &food, const bool &multithreaded) {
                      (sN[id] * agentCounts.second) +
                      noise_v(id, j) // add same very very small noise to all
                     );
+                if(use_sI) {
+                  suit_dest += sI[id] * infected[id] * (agentCounts.first + agentCounts.second);
+                }
 
                 if (suit_dest > suit_origin) {
                   // where does the individual really go
@@ -306,6 +314,9 @@ void Population::move(const Resources &food, const bool &multithreaded) {
         float suit_origin =
             ((sF[id] * foodHere) + (sH[id] * agentCounts.first) +
              (sN[id] * agentCounts.second));
+        if(use_sI) {
+          suit_origin += sI[id] * infected[id] * (agentCounts.first + agentCounts.second);
+        }
 
         float newX = sampleX;
         float newY = sampleY;
@@ -339,6 +350,9 @@ void Population::move(const Resources &food, const bool &multithreaded) {
                (sN[id] * agentCounts.second) +
                noise_v(id, j) // add same very very small noise to all
               );
+          if(use_sI) {
+            suit_dest += sI[id] * infected[id] * (agentCounts.first + agentCounts.second);
+          }
 
           if (suit_dest > suit_origin) {
             // where does the individual really go
@@ -509,6 +523,7 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
   std::vector<float> tmp_sF(nAgents, 0.f);
   std::vector<float> tmp_sH(nAgents, 0.f);
   std::vector<float> tmp_sN(nAgents, 0.f);
+  std::vector<float> tmp_sI(nAgents, 0.f);
 
   // infected or not for vertical transmission
   std::vector<bool> infected_2(nAgents, false);
@@ -540,6 +555,9 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
     tmp_sH[a] = sH[parent_id];
     tmp_sN[a] = sN[parent_id];
 
+    // sI inherited only after patho intro
+    if(use_sI) tmp_sI[a] = sI[parent_id];
+
     // inherit positions from parent
     coord_x_2[a] = coordX[parent_id] + sprout_x(parent_id);
     coord_y_2[a] = coordY[parent_id] + sprout_y(parent_id);
@@ -560,7 +578,7 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
       if (infected[parent_id]) {
         if (verticalInfect(gen)) {
           infected_2[a] = true;
-          srcInfect[a] = 1;
+          srcInfect[a] = -2; // -2 for parents
         }
       }
     }
@@ -607,6 +625,17 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
     }
   }
 
+  if(use_sI) {
+    auto mutation_sI = Rcpp::rbinom(nAgents, 1, mProb);
+    Rcpp::NumericVector mut_size_sI = Rcpp::rcauchy(nAgents, 0.0f, mSize);
+
+    for (int a = 0; a < nAgents; a++) {
+      if (mutation_sI(a)) {
+        tmp_sI[a] = tmp_sI[a] + mut_size_sI(a);
+      }
+    }
+  }
+
   // reset nInfected and count natal infections
   // from vertical transmission
   countInfected();
@@ -615,10 +644,12 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
   std::swap(sF, tmp_sF);
   std::swap(sH, tmp_sH);
   std::swap(sN, tmp_sN);
+  if(use_sI) std::swap(sI, tmp_sI);
 
   tmp_sF.clear();
   tmp_sH.clear();
   tmp_sN.clear();
+  tmp_sI.clear();
 
   // swap energy
   std::vector<float> tmpEnergy(nAgents, 0.001);

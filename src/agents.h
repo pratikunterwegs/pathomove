@@ -15,22 +15,22 @@
 // Agent class
 struct Population {
 public:
-  Population(const int popsize, const float range_agents,
+  Population(const int popsize, const float n_samples, const float range_agents,
              const float range_food, const float range_move,
-             const int handling_time, float pTransmit, bool vertical)
+             const int handling_time, float pTransmit, const bool vertical)
       :
 
         // agents, positions, energy and traits
         nAgents(popsize), coordX(popsize, 0.0f), coordY(popsize, 0.0f),
         initX(popsize, 0.0f), initY(popsize, 0.0f), intake(popsize, 0.001f),
         energy(popsize, 0.001f), sF(popsize, 0.f), sH(popsize, 0.f),
-        sN(popsize, 0.f),
+        sN(popsize, 0.f), sI(popsize, 0.f),
 
         // counters for handling and social metrics
         counter(popsize, 0), associations(popsize, 0),
 
         // agent sensory parameters
-        n_samples(5.f), range_agents(range_agents), range_food(range_food),
+        n_samples(n_samples), range_agents(range_agents), range_food(range_food),
         range_move(range_move), handling_time(handling_time),
 
         // vectors for agent order, infection status, time infected
@@ -52,7 +52,7 @@ public:
   const int nAgents;
   std::vector<float> coordX, coordY, initX, initY, intake, energy;
   // weights
-  std::vector<float> sF, sH, sN;
+  std::vector<float> sF, sH, sN, sI;
 
   // counter and metrics
   std::vector<int> counter, associations;
@@ -67,6 +67,7 @@ public:
   std::vector<int> timeInfected;
   float pTransmit;
   const bool vertical;
+  bool use_sI = false; // initially false
 
   // the number of infected agents
   int nInfected;
