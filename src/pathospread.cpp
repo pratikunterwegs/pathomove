@@ -19,7 +19,7 @@ void Population::introducePathogen(const int &initialInfections) {
       // toggle infected agents boolean for infected
       infected[order[i]] = true;
       timeInfected[order[i]] = 1;
-      srcInfect[order[i]] = 2; // count as inherited?
+      srcInfect[order[i]] = -1; // random, forced infection source
     }
   }
   // count after
@@ -47,7 +47,7 @@ void Population::pathogenSpread() {
             // infect neighbours with prob p
             if (transmission(gen)) {
               infected[toInfect] = true;
-              srcInfect[toInfect] = 2;
+              srcInfect[toInfect] = i; // who infects whom
             }
           }
         }
