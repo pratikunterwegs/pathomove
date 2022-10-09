@@ -33,9 +33,8 @@ Rcpp::List genData::getGenData() {
     gDataList[i] = DataFrame::create(
         Named("intake") = gIntake[i], Named("energy") = gEnergy[i],
         Named("sF") = gSF[i], Named("sH") = gSH[i], Named("sN") = gSN[i],
-        Named("sI") = gSI[i],
-        Named("x") = gX[i], Named("y") = gY[i], Named("xn") = gXn[i],
-        Named("yn") = gYn[i], Named("assoc") = gAssoc[i],
+        Named("sI") = gSI[i], Named("x") = gX[i], Named("y") = gY[i],
+        Named("xn") = gXn[i], Named("yn") = gYn[i], Named("assoc") = gAssoc[i],
         Named("t_infec") = gTInfected[i], Named("infect_src") = gSrc[i],
         Named("moved") = gMoved[i]);
   }

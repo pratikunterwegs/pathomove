@@ -46,7 +46,7 @@ Rcpp::List simulation::do_simulation() {
   // when do spillovers occur
   auto gen_spillover_happens =
       Rcpp::rbinom(genmax - g_patho_init, 1, spillover_rate);
-  
+
   Rcpp::IntegerVector gens_patho_intro = Rcpp::seq(g_patho_init, genmax - 1);
 
   gens_patho_intro = gens_patho_intro[gen_spillover_happens > 0];
@@ -65,13 +65,15 @@ Rcpp::List simulation::do_simulation() {
       break;
     case 1:
       if (gen >= g_patho_init) {
-        if(evolve_sI) pop.use_sI = true; // turn on use and evol of sI
+        if (evolve_sI)
+          pop.use_sI = true; // turn on use and evol of sI
         pop.introducePathogen(initialInfections);
       }
       break;
     case 2:
       if (gen == g_patho_init) {
-        if(evolve_sI) pop.use_sI = true;
+        if (evolve_sI)
+          pop.use_sI = true;
         pop.introducePathogen(initialInfections);
         Rcpp::Rcout << "Single spillover event occurring at gen:" << gen
                     << "\n";
@@ -79,7 +81,8 @@ Rcpp::List simulation::do_simulation() {
       break;
     case 3:
       if ((gen == g_patho_init) || gen_spillover_happens(genmax - gen)) {
-        if(evolve_sI) pop.use_sI = true;
+        if (evolve_sI)
+          pop.use_sI = true;
         pop.introducePathogen(initialInfections);
         Rcpp::Rcout << "New spillover event occurring at gen:" << gen << "\n";
       }
@@ -225,16 +228,16 @@ S4 run_pathomove(const int scenario = 2, const int popsize = 500,
                  const int nItems = 1800, const float landsize = 60,
                  const int nClusters = 60, const float clusterSpread = 1,
                  const int tmax = 100, const int genmax = 100,
-                 const int g_patho_init = 3000, 
-                 const float n_samples = 5.0, const float range_food = 1.0,
-                 const float range_agents = 1.0, const float range_move = 1.0,
-                 const int handling_time = 5, const int regen_time = 50,
-                 float pTransmit = 0.05, const int initialInfections = 20,
+                 const int g_patho_init = 3000, const float n_samples = 5.0,
+                 const float range_food = 1.0, const float range_agents = 1.0,
+                 const float range_move = 1.0, const int handling_time = 5,
+                 const int regen_time = 50, float pTransmit = 0.05,
+                 const int initialInfections = 20,
                  const float costInfect = 0.25, const bool multithreaded = true,
                  const float dispersal = 2.0, const bool infect_percent = false,
-                 const bool vertical = false, 
-                 const bool evolve_sI = false, const float mProb = 0.01,
-                 const float mSize = 0.01, const float spillover_rate = 1.0) {
+                 const bool vertical = false, const bool evolve_sI = false,
+                 const float mProb = 0.01, const float mSize = 0.01,
+                 const float spillover_rate = 1.0) {
   // check that intial infections is less than popsize
   if (initialInfections > popsize) {
     Rcpp::stop("Error: Initial infections must be less than popsize");
@@ -243,12 +246,12 @@ S4 run_pathomove(const int scenario = 2, const int popsize = 500,
     Rcpp::stop("Error: G_patho_init must be less than genmax");
   }
   // make simulation class with input parameters
-  simulation this_sim(
-      popsize, scenario, nItems, landsize, nClusters, clusterSpread, tmax,
-      genmax, g_patho_init, n_samples, range_food, range_agents, range_move, handling_time,
-      regen_time, pTransmit, initialInfections, costInfect, multithreaded,
-      dispersal, infect_percent, vertical, evolve_sI, 
-      mProb, mSize, spillover_rate);
+  simulation this_sim(popsize, scenario, nItems, landsize, nClusters,
+                      clusterSpread, tmax, genmax, g_patho_init, n_samples,
+                      range_food, range_agents, range_move, handling_time,
+                      regen_time, pTransmit, initialInfections, costInfect,
+                      multithreaded, dispersal, infect_percent, vertical,
+                      evolve_sI, mProb, mSize, spillover_rate);
   // do the simulation using the simulation class function
   Rcpp::List pathomoveOutput = this_sim.do_simulation();
 
@@ -295,9 +298,8 @@ S4 run_pathomove(const int scenario = 2, const int popsize = 500,
       Named("costInfect") = costInfect,
       Named("infect_percent") = infection_cost_type,
       Named("vertical_infection") = vertical_infection,
-      Named("evolve_sI") = evolve_sI,
-      Named("dispersal") = dispersal, Named("mProb") = mProb,
-      Named("mSize") = mSize);
+      Named("evolve_sI") = evolve_sI, Named("dispersal") = dispersal,
+      Named("mProb") = mProb, Named("mSize") = mSize);
 
   // ecological parameters list
   Rcpp::List eco_param_list = Rcpp::List::create(

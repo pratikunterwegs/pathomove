@@ -224,8 +224,9 @@ void Population::move(const Resources &food, const bool &multithreaded) {
                    (sN[id] * agentCounts.second));
 
               // add self-isolation coefficient
-              if(use_sI) {
-                suit_origin += sI[id] * infected[id] * (agentCounts.first + agentCounts.second);
+              if (use_sI) {
+                suit_origin += sI[id] * infected[id] *
+                               (agentCounts.first + agentCounts.second);
               }
 
               float newX = sampleX;
@@ -261,8 +262,9 @@ void Population::move(const Resources &food, const bool &multithreaded) {
                      (sN[id] * agentCounts.second) +
                      noise_v(id, j) // add same very very small noise to all
                     );
-                if(use_sI) {
-                  suit_dest += sI[id] * infected[id] * (agentCounts.first + agentCounts.second);
+                if (use_sI) {
+                  suit_dest += sI[id] * infected[id] *
+                               (agentCounts.first + agentCounts.second);
                 }
 
                 if (suit_dest > suit_origin) {
@@ -314,8 +316,9 @@ void Population::move(const Resources &food, const bool &multithreaded) {
         float suit_origin =
             ((sF[id] * foodHere) + (sH[id] * agentCounts.first) +
              (sN[id] * agentCounts.second));
-        if(use_sI) {
-          suit_origin += sI[id] * infected[id] * (agentCounts.first + agentCounts.second);
+        if (use_sI) {
+          suit_origin +=
+              sI[id] * infected[id] * (agentCounts.first + agentCounts.second);
         }
 
         float newX = sampleX;
@@ -350,8 +353,9 @@ void Population::move(const Resources &food, const bool &multithreaded) {
                (sN[id] * agentCounts.second) +
                noise_v(id, j) // add same very very small noise to all
               );
-          if(use_sI) {
-            suit_dest += sI[id] * infected[id] * (agentCounts.first + agentCounts.second);
+          if (use_sI) {
+            suit_dest += sI[id] * infected[id] *
+                         (agentCounts.first + agentCounts.second);
           }
 
           if (suit_dest > suit_origin) {
@@ -556,7 +560,8 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
     tmp_sN[a] = sN[parent_id];
 
     // sI inherited only after patho intro
-    if(use_sI) tmp_sI[a] = sI[parent_id];
+    if (use_sI)
+      tmp_sI[a] = sI[parent_id];
 
     // inherit positions from parent
     coord_x_2[a] = coordX[parent_id] + sprout_x(parent_id);
@@ -625,7 +630,7 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
     }
   }
 
-  if(use_sI) {
+  if (use_sI) {
     auto mutation_sI = Rcpp::rbinom(nAgents, 1, mProb);
     Rcpp::NumericVector mut_size_sI = Rcpp::rcauchy(nAgents, 0.0f, mSize);
 
@@ -644,7 +649,8 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
   std::swap(sF, tmp_sF);
   std::swap(sH, tmp_sH);
   std::swap(sN, tmp_sN);
-  if(use_sI) std::swap(sI, tmp_sI);
+  if (use_sI)
+    std::swap(sI, tmp_sI);
 
   tmp_sF.clear();
   tmp_sH.clear();

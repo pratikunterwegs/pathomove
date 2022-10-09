@@ -30,8 +30,9 @@ public:
         counter(popsize, 0), associations(popsize, 0),
 
         // agent sensory parameters
-        n_samples(n_samples), range_agents(range_agents), range_food(range_food),
-        range_move(range_move), handling_time(handling_time),
+        n_samples(n_samples), range_agents(range_agents),
+        range_food(range_food), range_move(range_move),
+        handling_time(handling_time),
 
         // vectors for agent order, infection status, time infected
         order(popsize, 1), forageItem(popsize, -1),
