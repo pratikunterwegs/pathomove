@@ -1,5 +1,4 @@
 test_that("Test getting trait data", {
-  # skip("skipped")
   # parameters
   data <- run_pathomove(
     scenario = 2,
@@ -19,7 +18,7 @@ test_that("Test getting trait data", {
     pTransmit = 0.05,
     initialInfections = 4,
     costInfect = 0.25,
-    nThreads = 1,
+    multithreaded = FALSE,
     dispersal = 3.0,
     infect_percent = FALSE,
     vertical = FALSE,
@@ -37,9 +36,9 @@ test_that("Test getting trait data", {
   testthat::expect_s3_class(
     trait_data, "data.frame"
   )
-  
+
   # check network function
-  networks = get_networks(
+  networks <- get_networks(
     data
   )
   invisible(
@@ -48,5 +47,4 @@ test_that("Test getting trait data", {
       class = "tbl_graph"
     )
   )
-  
 })

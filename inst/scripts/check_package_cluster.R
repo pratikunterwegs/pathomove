@@ -2,12 +2,6 @@
 library(pathomove)
 password <- readLines("data/password")
 
-# check cluster
-# pathomove::check_prepare_cluster(
-#   ssh_con = "p284074@peregrine.hpc.rug.nl",
-#   password = password
-# )
-
 # prepare parameters
 pathomove::make_parameter_file(
   scenario = 2,
@@ -27,7 +21,7 @@ pathomove::make_parameter_file(
   pTransmit = "0.05",
   initialInfections = 20,
   costInfect = c(0.005, 0.01, 0.02),
-  nThreads = 1,
+  multithreaded = FALSE,
   replicates = 1,
   which_file = "data/parameters/parameters_test.csv"
 )

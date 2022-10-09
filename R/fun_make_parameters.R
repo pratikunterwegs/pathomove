@@ -18,7 +18,7 @@ make_parameter_file <- function(replicates,
   )
 
   # assign unique id called ofi
-  parameters$ofi <- as.integer(Sys.time()) + seq(nrow(parameters))
+  parameters$ofi <- as.integer(Sys.time()) + seq_len(nrow(parameters))
 
   # write file
   data.table::fwrite(

@@ -1,16 +1,17 @@
 #ifndef LANDSCAPE_H
 #define LANDSCAPE_H
 
-#include <vector>
 #include <Rcpp.h>
+
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/index/rtree.hpp>
+#include <vector>
 using namespace Rcpp;
 #include <algorithm>
-#include <random>
-#include <functional>
 #include <chrono>
+#include <functional>
+
 #include "parameters.h"
 
 // apparently some types
@@ -23,41 +24,31 @@ typedef std::pair<point, unsigned> value;
 // items class
 struct Resources {
 public:
-    Resources(const int nItems,
-              const float landsize,
-              const int nClusters,
-              const float clusterSpread,
-              const int regen_time) :
-        nItems(nItems),
-        dSize(landsize),
-        nClusters(nClusters),
-        clusterSpread(clusterSpread),
-        regen_time(regen_time),
-        coordX(nItems, 0.0f),
-        coordY(nItems, 0.0f),
-        available(nItems, true),
-        counter(nItems, 0),
-        nAvailable(nItems)
-    {}
-    ~Resources() {}
+  Resources(const int nItems, const float landsize, const int nClusters,
+            const float clusterSpread, const int regen_time)
+      : nItems(nItems), dSize(landsize), nClusters(nClusters),
+        clusterSpread(clusterSpread), regen_time(regen_time),
+        coordX(nItems, 0.0f), coordY(nItems, 0.0f), available(nItems, true),
+        counter(nItems, 0), nAvailable(nItems) {}
+  ~Resources() {}
 
-    const int nItems;
-    const float dSize;
-    const int nClusters;
-    const float clusterSpread;
-    const int regen_time;
-    std::vector<float> coordX;
-    std::vector<float> coordY;
-    std::vector<bool> available;
-    std::vector<int> counter;
-    int nAvailable;
-    // make rtree
-    bgi::rtree< value, bgi::quadratic<16> > rtree;
+  const int nItems;
+  const float dSize;
+  const int nClusters;
+  const float clusterSpread;
+  const int regen_time;
+  std::vector<float> coordX;
+  std::vector<float> coordY;
+  std::vector<bool> available;
+  std::vector<int> counter;
+  int nAvailable;
+  // make rtree
+  bgi::rtree<value, bgi::quadratic<16>> rtree;
 
-    // funs to init with nCentres
-    void initResources();
-    void countAvailable();
-    void regenerate();
+  // funs to init with nCentres
+  void initResources();
+  void countAvailable();
+  void regenerate();
 };
 
 #endif // LANDSCAPE_H

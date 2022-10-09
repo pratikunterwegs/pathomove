@@ -2,9 +2,9 @@
 
 <!-- badges: start -->
   [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-  [![R build status](https://github.com/pratikunterwegs/pathomove/workflows/R-CMD-check/badge.svg)](https://github.com/pratikunterwegs/pathomove/actions)
   [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6331816.svg)](https://doi.org/10.5281/zenodo.6331816)
   [![Codecov test coverage](https://codecov.io/gh/pratikunterwegs/pathomove/branch/main/graph/badge.svg)](https://codecov.io/gh/pratikunterwegs/pathomove?branch=main)
+[![R-CMD-check](https://github.com/pratikunterwegs/pathomove/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pratikunterwegs/pathomove/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 This repository holds the source code for the _Pathomove_ simulation, a spatially explicit, individual-based, evolutionary model of the evolution of animal social movement strategies under the risk of pathogen transmission.
@@ -125,7 +125,7 @@ devtools::install_github("pratikunterwegs/pathomove")
 
 - Multi-threading: This package uses Intel's TBB library for multi-threading, which substantially improves the speed of the underlying C++ code. This is especially noticeable when running large population sizes, or many generations. This functionality is confirmed to work on both Windows and Linux systems, as above.
 
-  Multi-threading can be turned on for the lone function that uses it, `pathomove::run_pathomove`, by passing a number greater than 1 to the argument `nThreads`.
+  Multi-threading can be turned on for the lone function that uses it, `pathomove::run_pathomove`, by setting the `multithreaded` argument to `TRUE`.
 
 - High-performance computing clusters: The installation of this package on an Ubuntu-based HPC cluster can be automated by running the shell script provided in the `bash/` folder. The example below shows how to install it on the University of Groningen's HPC cluster.
 
@@ -146,7 +146,7 @@ devtools::install_github("pratikunterwegs/pathomove")
 
 - Mass job submission to an HPC cluster: The function `use_cluster` in `R/fun_use_cluster.R` can be used to run multiple replicates of this simulation, or multiple parameter combinations; *please use this advanced functionality carefully.*
 
-- Multi-threading caveat for high-performance computing clusters: When using (an Ubuntu-based) HPC cluster, multi-threading may not work, even when the cluster has TBB available and loaded. It is not entirely clear why. When using an HPC cluster, set `nThreads = 1`, to use single-threaded alternatives of multi-threaded functions.
+- Multi-threading caveat for high-performance computing clusters: When using (an Ubuntu-based) HPC cluster, multi-threading may not work, even when the cluster has TBB available and loaded. It is not entirely clear why. When using an HPC cluster, set `multithreaded = FALSE`, to use single-threaded alternatives of multi-threaded functions.
 
 - MacOS: This package likely does _not_ work on MacOS. This is related to using Intel's TBB library for multi-threading. Users can try to use the single-threaded option at their own risk.
 
@@ -184,12 +184,12 @@ The basic workflow for the package is:
 
 ```r
 # run a single replicate with a single combination of parameters
-pathomove::run_pathomove(..., nThreads = 8)
+pathomove::run_pathomove(..., multithreaded = TRUE)
 ```
 
 Here, '`...`' indicates the many function arguments, such as population size, landscape size, the number of generations, and when the pathogen is introduced.
 
-`nThreads` controls multi-threading to speed up the simulation. Any value > 1 results in automatic use of as many threads as TBB decides internally.
+`multithreaded` controls multi-threading to speed up the simulation, `TRUE` results in automatic use of as many threads as TBB decides internally.
 
 ### HPC cluster use
 

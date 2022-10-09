@@ -12,9 +12,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
-Depends:
-    methods
+RoxygenNote: 7.2.1
 LinkingTo: 
     Rcpp,
     RcppParallel,
@@ -27,7 +25,8 @@ Imports:
     assertthat,
     data.table,
     glue,
-    tidygraph
+    tidygraph,
+    methods
 Suggests: 
     testthat (>= 3.0.0),
     ssh,
@@ -36,7 +35,6 @@ Suggests:
     rmarkdown,
     covr
 SystemRequirements: 
-    GNU make,
     C++14
 VignetteBuilder: knitr
 Config/testthat/edition: 3

@@ -52,7 +52,7 @@ ggplot(l) +
   ) +
   scale_colour_viridis_c(
     option = "H"
-  )+
+  ) +
   coord_equal()
 ```
 
@@ -60,9 +60,9 @@ ggplot(l) +
 
 ```{r echo=TRUE}
 # run a test simulation.
-# see the help using ?run_pathomove 
+# see the help using ?run_pathomove
 # for an explanation of the parameters
-data = pathomove::run_pathomove(
+data <- pathomove::run_pathomove(
   scenario = 2,
   popsize = 200,
   nItems = 1000,
@@ -80,7 +80,7 @@ data = pathomove::run_pathomove(
   pTransmit = 0.05,
   initialInfections = 40,
   costInfect = 0.25,
-  nThreads = 2,
+  multithreaded = TRUE,
   dispersal = 2.0,
   infect_percent = FALSE,
   mProb = 0.001,
@@ -136,7 +136,7 @@ m1 <- data[["move_pre"]] |> rbindlist()
 m2 <- data[["move_post"]] |> rbindlist()
 
 # examine the movement patterns
-p1 = ggplot(m1) +
+p1 <- ggplot(m1) +
   geom_point(
     aes(x, y, group = id, col = id)
   ) +
@@ -160,7 +160,7 @@ ggsave(
 
 ```{r echo=TRUE, eval=TRUE}
 # access list element by name
-gen_data = data[["gen_data"]]
+gen_data <- data[["gen_data"]]
 
 # check names to determine elements
 names(gen_data)
@@ -180,22 +180,22 @@ This should show:
 
 ```{r echo=TRUE, eval=TRUE}
 # assign the generation to each element of pop_data
-pop_data = Map(
+pop_data <- Map(
   gen_data[["pop_data"]], gen_data[["gens"]],
   f = function(df, g) {
-    
+
     # assign individual id
-    df$id = seq(nrow(df))
+    df$id <- seq_len(nrow(df))
 
     # assign generation
-    df$gen = g
+    df$gen <- g
 
     df
   }
 )
 
 # bind the list into a single data.table
-pop_data = rbindlist(pop_data)
+pop_data <- rbindlist(pop_data)
 ```
 
 ```{r echo=TRUE, eval=TRUE}
@@ -233,7 +233,7 @@ The simulation edge lists data are in the named element _edgeLists_. They can be
 
 ```{r echo=TRUE, eval=TRUE}
 # access edge list data
-networks = data[["edgeLists"]]
+networks <- data[["edgeLists"]]
 
 # examine column names: these are id1, id2, id1-id2 associations
 names(networks[[1]])
@@ -243,15 +243,15 @@ names(networks[[1]])
 library(igraph)
 
 # make tidygraph objects from edgelists
-networks = Map(
+networks <- Map(
   networks,
   f = function(g) {
     # change the name of the associations column
     # this allows the graph to be weighted
-    setnames(g, "assoc", "weight", skip_absent = T)
+    setnames(g, "assoc", "weight", skip_absent = TRUE)
 
     # only take those connections where the weight is > 5
-    g = igraph::graph_from_data_frame(g[g$weight > 5, ], directed = FALSE)
+    g <- igraph::graph_from_data_frame(g[g$weight > 5, ], directed = FALSE)
   }
 )
 ```

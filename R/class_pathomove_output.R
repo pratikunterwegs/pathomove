@@ -28,11 +28,11 @@ check_pathomove_output <- function(object) {
 #' @slot gens_patho_intro integer.
 #' @slot infections_per_gen integer.
 #' @slot trait_data list.
-#' @slot edge_list list.
-#' @slot gens_edge_list list.
+#' @slot edge_lists list.
+#' @slot gens_edge_lists list.
 #'
 #' @export
-setClass(
+methods::setClass(
   # name of the class
   Class = "pathomove_output",
 

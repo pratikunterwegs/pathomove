@@ -11,6 +11,10 @@
 #'
 get_trait_data <- function(object,
                            scaled_preferences = TRUE) {
+  # setting variables to NULL
+  sF <- NULL
+  sH <- NULL
+  sN <- NULL
   assertthat::assert_that(
     class(object) == "pathomove_output",
     msg = "pmv get traits: object is not pathomove output"

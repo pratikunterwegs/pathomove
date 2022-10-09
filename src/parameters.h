@@ -5,11 +5,12 @@
 // [[Rcpp::plugins("cpp14")]]
 // [[Rcpp::depends(BH)]]
 // [[Rcpp::depends(RcppParallel)]]
+//' @importFrom RcppParallel RcppParallelLibs
 
-#include <random>
+#include <boost/random/mersenne_twister.hpp>
 #include <chrono>
 
-extern std::mt19937 rng;
+extern boost::mt19937 gen;
 
 // landscape
 const double foodEnergy = 1.0;

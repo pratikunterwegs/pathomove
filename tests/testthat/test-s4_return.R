@@ -1,5 +1,4 @@
 test_that("Pathomove returns S4 output", {
-  # skip("skipped")
   # parameters
   data <- run_pathomove(
     scenario = 2,
@@ -19,7 +18,7 @@ test_that("Pathomove returns S4 output", {
     pTransmit = 0.05,
     initialInfections = 4,
     costInfect = 0.25,
-    nThreads = 1,
+    multithreaded = FALSE,
     dispersal = 3.0,
     infect_percent = FALSE,
     vertical = FALSE,
@@ -57,7 +56,6 @@ test_that("Pathomove returns S4 output", {
 # test for simple simulation failure when there are more infections
 # than agents
 test_that("pathomove fails when infections > agents", {
-  # skip("skipped")
   # parameters
   popsize <- 20
 
@@ -81,7 +79,7 @@ test_that("pathomove fails when infections > agents", {
         pTransmit = 0.05,
         initialInfections = popsize + 1,
         costInfect = 0.25,
-        nThreads = 1,
+        multithreaded = FALSE,
         dispersal = 3.0,
         infect_percent = FALSE,
         vertical = FALSE,
@@ -90,5 +88,40 @@ test_that("pathomove fails when infections > agents", {
         spillover_rate = 0.01
       )
     }
+  )
+})
+
+test_that("Pathomove multithreading works", {
+  # parameters
+  data <- run_pathomove(
+    scenario = 2,
+    popsize = 10,
+    nItems = 180,
+    landsize = 10,
+    nClusters = 10,
+    clusterSpread = 1,
+    tmax = 100,
+    genmax = 10,
+    g_patho_init = 5,
+    range_food = 1.0,
+    range_agents = 1.0,
+    range_move = 1.0,
+    handling_time = 5,
+    regen_time = 50,
+    pTransmit = 0.05,
+    initialInfections = 4,
+    costInfect = 0.25,
+    multithreaded = TRUE,
+    dispersal = 3.0,
+    infect_percent = FALSE,
+    vertical = FALSE,
+    mProb = 0.001,
+    mSize = 0.001,
+    spillover_rate = 0.01
+  )
+
+  # check is list
+  testthat::expect_s4_class(
+    data, "pathomove_output"
   )
 })
