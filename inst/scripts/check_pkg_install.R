@@ -33,29 +33,30 @@ ggplot(l) +
   coord_equal()
 
 a = pathomove::run_pathomove(
-  scenario = 2,
+  scenario = 1,
   popsize = 500,
   nItems = 180,
   landsize = 60,
   nClusters = 60,
   clusterSpread = 1,
   tmax = 100,
-  genmax = 10,
-  g_patho_init = 10,
+  genmax = 2000,
+  g_patho_init = 1000,
   range_food = 1.0,
   range_agents = 1.0,
   range_move = 1.0,
   handling_time = 5,
   regen_time = 50,
   pTransmit = 0.05,
-  initialInfections = 4,
+  initialInfections = 20,
   costInfect = 0.25,
   multithreaded = TRUE,
-  dispersal = 3.0,
+  dispersal = 2.0,
   infect_percent = FALSE,
   vertical = FALSE,
-  mProb = 0.001,
-  mSize = 0.001,
+  evolve_sI = TRUE,
+  mProb = 0.01,
+  mSize = 0.01,
   spillover_rate = 1.0
 )
 
