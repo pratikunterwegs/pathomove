@@ -27,10 +27,11 @@ const int handling_time = 5;
 const float p_transmit = 0.1;
 const float test_mSize = 0.001;
 const float vertical = false;
+const float reprod_threshold = false;
 
 // make test population
 Population pop(popsize, n_samples, range_agents, range_food, range_move,
-               handling_time, p_transmit, vertical);
+               handling_time, p_transmit, p_transmit, vertical, false);
 
 // Initialize a unit test context. This is similar to how you
 // might begin an R test file with 'context()', expect the
