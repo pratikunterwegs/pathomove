@@ -10,16 +10,17 @@ public:
   simulation(const int popsize, const int scenario, const int nItems,
              const float landsize, const int nClusters,
              const float clusterSpread, const int tmax, const int genmax,
-             const int g_patho_init, const float range_food,
-             const float range_agents, const float range_move,
-             const int handling_time, const int regen_time, float pTransmit,
-             const int initialInfections, const float costInfect,
-             const bool multithreaded, const float dispersal,
-             const bool infect_percent, const bool vertical, const float mProb,
+             const int g_patho_init, const float n_samples,
+             const float range_food, const float range_agents,
+             const float range_move, const int handling_time,
+             const int regen_time, float pTransmit, const int initialInfections,
+             const float costInfect, const bool multithreaded,
+             const float dispersal, const bool infect_percent,
+             const bool vertical, const bool evolve_sI, const float mProb,
              const float mSize, const float spillover_rate)
       : // population, food, and data structures
-        pop(popsize, range_agents, range_food, range_move, handling_time,
-            pTransmit, vertical),
+        pop(popsize, n_samples, range_agents, range_food, range_move,
+            handling_time, pTransmit, vertical),
         food(nItems, landsize, nClusters, clusterSpread, regen_time),
         gen_data(genmax, popsize,
                  std::max(static_cast<int>(static_cast<float>(genmax) * 0.001f),
@@ -30,9 +31,9 @@ public:
         g_patho_init(g_patho_init),
 
         // agent perception and behaviour, food growth
-        range_food(range_food), range_agents(range_agents),
-        range_move(range_move), handling_time(handling_time),
-        regen_time(regen_time),
+        n_samples(n_samples), range_food(range_food),
+        range_agents(range_agents), range_move(range_move),
+        handling_time(handling_time), regen_time(regen_time),
 
         // disease parameters
         initialInfections(initialInfections), costInfect(costInfect),
@@ -43,7 +44,7 @@ public:
 
         // natal dispersal and pathogen cost structure
         dispersal(dispersal), infect_percent(infect_percent),
-        vertical(vertical),
+        vertical(vertical), evolve_sI(evolve_sI),
 
         // mutation probability and step size
         mProb(mProb), mSize(mSize),
@@ -56,7 +57,7 @@ public:
   Resources food;
   genData gen_data;
   const int scenario, tmax, genmax, g_patho_init;
-  const float range_food, range_agents, range_move;
+  const float n_samples, range_food, range_agents, range_move;
   const int handling_time;
 
   const int regen_time, initialInfections;
@@ -66,7 +67,7 @@ public:
 
   const bool multithreaded;
   const float dispersal;
-  const bool infect_percent, vertical;
+  const bool infect_percent, vertical, evolve_sI;
 
   const float mProb, mSize;
 

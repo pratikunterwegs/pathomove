@@ -23,6 +23,7 @@ public:
         gSF(gSampled, std::vector<float>(popsize, 0.f)),
         gSH(gSampled, std::vector<float>(popsize, 0.f)),
         gSN(gSampled, std::vector<float>(popsize, 0.f)),
+        gSI(gSampled, std::vector<float>(popsize, 0.f)),
         // initial positions
         gX(gSampled, std::vector<float>(popsize, 0.f)),
         gY(gSampled, std::vector<float>(popsize, 0.f)),
@@ -40,28 +41,14 @@ public:
   const int genmax;
   const int increment;
   const int gSampled;
-  std::vector<std::vector<float>> gIntake;
-  std::vector<std::vector<float>> gEnergy;
-  std::vector<std::vector<float>> gSF;
-  std::vector<std::vector<float>> gSH;
-  std::vector<std::vector<float>> gSN;
+  std::vector<std::vector<float>> gIntake, gEnergy, gSF, gSH, gSN, gSI;
 
-  std::vector<std::vector<float>> gX;
-  std::vector<std::vector<float>> gY;
-  std::vector<std::vector<float>> gXn;
-  std::vector<std::vector<float>> gYn;
+  std::vector<std::vector<float>> gX, gY, gXn, gYn;
 
-  std::vector<std::vector<int>> gAssoc;
-  std::vector<std::vector<int>> gTInfected;
-  std::vector<std::vector<int>> gSrc;
+  std::vector<std::vector<int>> gAssoc, gTInfected, gSrc;
   std::vector<std::vector<float>> gMoved;
 
-  std::vector<int> gNInfected;
-  std::vector<int> gens;
-
-  // network metrics
-  // std::vector<float> gPbsnDiameter;
-  // std::vector<float> gPbsnGlobEff;
+  std::vector<int> gNInfected, gens;
 
   void updateGenData(Population &pop, const int g_);
   Rcpp::List getGenData();
@@ -79,8 +66,7 @@ public:
   const int tmax;
   const int popsize;
   std::vector<std::vector<int>> timesteps;
-  std::vector<std::vector<float>> x;
-  std::vector<std::vector<float>> y;
+  std::vector<std::vector<float>> x, y;
 
   void updateMoveData(Population &pop, const int t_);
   Rcpp::List getMoveData();
