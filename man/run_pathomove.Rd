@@ -21,6 +21,7 @@ run_pathomove(
   handling_time = 5L,
   regen_time = 50L,
   pTransmit = 0.05,
+  p_vTransmit = 0.5,
   initialInfections = 20L,
   costInfect = 0.25,
   multithreaded = TRUE,
@@ -28,6 +29,7 @@ run_pathomove(
   infect_percent = FALSE,
   vertical = FALSE,
   evolve_sI = FALSE,
+  reprod_threshold = FALSE,
   mProb = 0.01,
   mSize = 0.01,
   spillover_rate = 1
@@ -71,6 +73,8 @@ pathogen.}
 
 \item{pTransmit}{Probability of transmission.}
 
+\item{p_vTransmit}{Probability of vertical transmission.}
+
 \item{initialInfections}{Agents infected per event.}
 
 \item{costInfect}{The per-timestep cost of pathogen infection.}
@@ -101,6 +105,15 @@ spillover}.}
 evolve a weight \code{sI} that affects suitability based on the number of
 infected neighbours. Initially set to 0, and allowed to evolve only after
 the pathogen is introduced.}
+
+\item{reprod_threshold}{Boolean determining whether reproduction is
+contingent on a positive energy balance. Set to \code{FALSE} by default.
+\strong{Note:} Turning this option on liable to cause early termination of the
+simulation if and when no agents have a positive energy balance.
+The simulation will exit with a message that logs the last generation
+and return data from the last generation before population extinction.
+This could be avoided by setting disease costs (much) lower than the default
+or by choosing the \emph{percentage costs} option via \code{infect_percent = TRUE}.}
 
 \item{mProb}{The probability of mutation. The suggested value is 0.01.
 While high, this may be more appropriate for a small population;

@@ -43,6 +43,7 @@ NULL
 #' @param handling_time The handling time.
 #' @param regen_time The item regeneration time.
 #' @param pTransmit Probability of transmission.
+#' @param p_vTransmit Probability of vertical transmission.
 #' @param initialInfections Agents infected per event.
 #' @param costInfect The per-timestep cost of pathogen infection.
 #' @param multithreaded Boolean. Whether to use TBB multithreading.
@@ -67,6 +68,14 @@ NULL
 #' evolve a weight `sI` that affects suitability based on the number of
 #' infected neighbours. Initially set to 0, and allowed to evolve only after
 #' the pathogen is introduced.
+#' @param reprod_threshold Boolean determining whether reproduction is
+#' contingent on a positive energy balance. Set to `FALSE` by default.
+#' **Note:** Turning this option on liable to cause early termination of the
+#' simulation if and when no agents have a positive energy balance.
+#' The simulation will exit with a message that logs the last generation
+#' and return data from the last generation before population extinction.
+#' This could be avoided by setting disease costs (much) lower than the default
+#' or by choosing the _percentage costs_ option via `infect_percent = TRUE`.
 #' @param mProb The probability of mutation. The suggested value is 0.01.
 #' While high, this may be more appropriate for a small population;
 #' change this value and \code{popsize} to test the simulation's sensitivity to
@@ -79,7 +88,7 @@ NULL
 #'
 #' @export
 #' @return An S4 class, `pathomove_output`, with simulation outcomes.
-run_pathomove <- function(scenario = 2L, popsize = 500L, nItems = 1800L, landsize = 60, nClusters = 60L, clusterSpread = 1, tmax = 100L, genmax = 100L, g_patho_init = 3000L, n_samples = 5.0, range_food = 1.0, range_agents = 1.0, range_move = 1.0, handling_time = 5L, regen_time = 50L, pTransmit = 0.05, initialInfections = 20L, costInfect = 0.25, multithreaded = TRUE, dispersal = 2.0, infect_percent = FALSE, vertical = FALSE, evolve_sI = FALSE, mProb = 0.01, mSize = 0.01, spillover_rate = 1.0) {
-    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, n_samples, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, multithreaded, dispersal, infect_percent, vertical, evolve_sI, mProb, mSize, spillover_rate)
+run_pathomove <- function(scenario = 2L, popsize = 500L, nItems = 1800L, landsize = 60, nClusters = 60L, clusterSpread = 1, tmax = 100L, genmax = 100L, g_patho_init = 3000L, n_samples = 5.0, range_food = 1.0, range_agents = 1.0, range_move = 1.0, handling_time = 5L, regen_time = 50L, pTransmit = 0.05, p_vTransmit = 0.5, initialInfections = 20L, costInfect = 0.25, multithreaded = TRUE, dispersal = 2.0, infect_percent = FALSE, vertical = FALSE, evolve_sI = FALSE, reprod_threshold = FALSE, mProb = 0.01, mSize = 0.01, spillover_rate = 1.0) {
+    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, n_samples, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, p_vTransmit, initialInfections, costInfect, multithreaded, dispersal, infect_percent, vertical, evolve_sI, reprod_threshold, mProb, mSize, spillover_rate)
 }
 
