@@ -13,18 +13,17 @@ public:
              const int g_patho_init, const float n_samples,
              const float range_food, const float range_agents,
              const float range_move, const int handling_time,
-             const int regen_time, float pTransmit, const int initialInfections,
-             const float costInfect, const bool multithreaded,
-             const float dispersal, const bool infect_percent,
-             const bool vertical, const bool evolve_sI, const float mProb,
-             const float mSize, const float spillover_rate)
+             const int regen_time, float pTransmit, const float p_vTransmit,
+             const int initialInfections, const float costInfect,
+             const bool multithreaded, const float dispersal,
+             const bool infect_percent, const bool vertical,
+             const bool evolve_sI, const bool reprod_threshold,
+             const float mProb, const float mSize, const float spillover_rate)
       : // population, food, and data structures
         pop(popsize, n_samples, range_agents, range_food, range_move,
-            handling_time, pTransmit, vertical),
+            handling_time, pTransmit, p_vTransmit, vertical, reprod_threshold),
         food(nItems, landsize, nClusters, clusterSpread, regen_time),
-        gen_data(genmax, popsize,
-                 std::max(static_cast<int>(static_cast<float>(genmax) * 0.001f),
-                          2)), // increment hardcoded
+        gen_data(), // increment hardcoded
 
         // eco-evolutionary parameters
         scenario(scenario), tmax(tmax), genmax(genmax),
@@ -45,12 +44,10 @@ public:
         // natal dispersal and pathogen cost structure
         dispersal(dispersal), infect_percent(infect_percent),
         vertical(vertical), evolve_sI(evolve_sI),
+        reprod_threshold(reprod_threshold),
 
         // mutation probability and step size
-        mProb(mProb), mSize(mSize),
-
-        // movement data
-        mdPre(tmax, popsize), mdPost(tmax, popsize) {}
+        mProb(mProb), mSize(mSize) {}
   ~simulation() {}
 
   Population pop;
@@ -67,11 +64,9 @@ public:
 
   const bool multithreaded;
   const float dispersal;
-  const bool infect_percent, vertical, evolve_sI;
+  const bool infect_percent, vertical, evolve_sI, reprod_threshold;
 
   const float mProb, mSize;
-
-  moveData mdPre, mdPost;
 
   // funs
   Rcpp::List do_simulation();
