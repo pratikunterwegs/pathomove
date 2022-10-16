@@ -481,6 +481,12 @@ void Population::countAssoc() {
   }
 }
 
+/// small function to check whether individuals have a positive energy balance
+const bool Population::check_reprod_threshold() {
+  return (std::count_if(energy.begin(), energy.end(),
+                        [](float energy_f) { return energy_f > 0.f; }) > 0);
+}
+
 /// minor function to normalise vector
 std::vector<float> Population::handleFitness() {
   // sort vec fitness
@@ -492,15 +498,48 @@ std::vector<float> Population::handleFitness() {
 
   // reset to energy
   vecFitness = energy;
-  // error in fitness
-  Rcpp::NumericVector rd_fitness = Rcpp::rnorm(nAgents, 0.0f, 0.01f);
   // rescale copied energy vector by min anx max fitness
   for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-    vecFitness[i] = ((vecFitness[i] - minFitness) / (maxFitness - minFitness)) +
-                    rd_fitness(i);
+    vecFitness[i] = ((vecFitness[i] - minFitness) / (maxFitness - minFitness));
   }
 
   return vecFitness;
+}
+
+/// prepare function to handle fitness and offer parents when applying a
+/// reproduction threshold
+std::pair<std::vector<int>, std::vector<float>>
+Population::applyReprodThreshold() {
+  std::vector<float> energy_pos;
+  std::vector<int> id_pos;
+
+  float this_agent_energy = 0.f;
+  // add only agents with positive energy
+  for (size_t i = 0; i < nAgents; i++) {
+    this_agent_energy = energy[i];
+    if (this_agent_energy > 0.f) {
+      id_pos.push_back(i);
+      energy_pos.push_back(this_agent_energy);
+    }
+  }
+
+  // count agents remaining
+  const int agents_remaining = id_pos.size();
+  assert(agents_remaining > 0 && "Reprod threshold: no agents remaining");
+
+  // normalise energy between 0 and 1
+  std::vector<float> vecFitness = energy_pos;
+  std::sort(vecFitness.begin(), vecFitness.end()); // sort to to get min-max
+  // scale to max fitness
+  float maxFitness = vecFitness[vecFitness.size() - 1];
+  float minFitness = vecFitness[0];
+
+  // rescale copied energy vector by min anx max fitness
+  for (size_t i = 0; i < static_cast<size_t>(agents_remaining); i++) {
+    energy_pos[i] = ((energy_pos[i] - minFitness) / (maxFitness - minFitness));
+  }
+
+  return std::pair<std::vector<int>, std::vector<float>>(id_pos, energy_pos);
 }
 
 // fun for replication
@@ -509,17 +548,22 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
                            const float &mSize) {
   // boost random for probability of vertical transmission
   // currently same as prob for horizontal
-  boost::random::bernoulli_distribution<> verticalInfect(pTransmit);
+  boost::random::bernoulli_distribution<> verticalInfect(p_vTransmit);
 
+  // prepare to deal with fitness and reproduction options
+  std::pair<std::vector<int>, std::vector<float>> thresholded_parents;
   std::vector<float> vecFitness;
-  // normalise intake if percent infect is not true
-  if (infect_percent) {
+
+  if (reprod_threshold) {
+    thresholded_parents = applyReprodThreshold();
+    vecFitness = thresholded_parents.second;
+  } else if (infect_percent) {
     vecFitness = energy;
   } else {
     vecFitness = handleFitness();
   }
 
-  // set up weighted lottery
+  // set up weighted lottery based on the vector of fitnesses
   boost::random::discrete_distribution<> weightedLottery(vecFitness.begin(),
                                                          vecFitness.end());
 
@@ -554,6 +598,11 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
 
   for (int a = 0; a < nAgents; a++) {
     size_t parent_id = static_cast<size_t>(weightedLottery(gen));
+
+    // mod the parent id if a reprod threshold is applied, this helps refer
+    // to the id in the thresholded parents vector
+    if (reprod_threshold)
+      parent_id = thresholded_parents.first[parent_id];
 
     tmp_sF[a] = sF[parent_id];
     tmp_sH[a] = sH[parent_id];

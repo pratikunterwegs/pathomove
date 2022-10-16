@@ -17,7 +17,8 @@ struct Population {
 public:
   Population(const int popsize, const float n_samples, const float range_agents,
              const float range_food, const float range_move,
-             const int handling_time, float pTransmit, const bool vertical)
+             const int handling_time, float pTransmit, const float p_vTransmit,
+             const bool vertical, const bool reprod_threshold)
       :
 
         // agents, positions, energy and traits
@@ -40,7 +41,8 @@ public:
         timeInfected(popsize, 0),
 
         // disease parameters and total pop infected
-        pTransmit(pTransmit), vertical(vertical), nInfected(0),
+        pTransmit(pTransmit), p_vTransmit(p_vTransmit), vertical(vertical),
+        reprod_threshold(reprod_threshold), nInfected(0),
 
         // infection source and distance moved
         srcInfect(popsize, 0), moved(popsize, 0.f),
@@ -66,8 +68,8 @@ public:
   std::vector<int> order, forageItem;
   std::vector<bool> infected;
   std::vector<int> timeInfected;
-  float pTransmit;
-  const bool vertical;
+  float pTransmit, p_vTransmit;
+  const bool vertical, reprod_threshold;
   bool use_sI = false; // initially false
 
   // the number of infected agents
@@ -123,6 +125,10 @@ public:
 
   // counting proximity based interactions
   void countAssoc();
+
+  // check whether any agents pass the reproduction threshold
+  const bool check_reprod_threshold();
+  std::pair<std::vector<int>, std::vector<float>> applyReprodThreshold();
 
   // functions for the network
   // there is no function to update the network, this is handled in countAssoc
