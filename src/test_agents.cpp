@@ -55,7 +55,7 @@ context("Population initialisation works") {
   pop.setTrait(test_mSize);
 
   test_that("Population vector has right value after assignment") {
-    CATCH_CHECK(pop.sF[0] != 0.f); // superfluous, as float comparisons bad
+    CATCH_CHECK(pop.sF[0] != 0.f);  // superfluous, as float comparisons bad
   }
 }
 

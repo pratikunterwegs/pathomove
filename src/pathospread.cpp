@@ -1,10 +1,10 @@
 /// define functions for pathogen spread
 
+#include <boost/random/bernoulli_distribution.hpp>
 #include <unordered_set>
 
 #include "agents.h"
 #include "parameters.h"
-#include <boost/random/bernoulli_distribution.hpp>
 
 /// function to infect n individuals
 void Population::introducePathogen(const int &initialInfections) {
@@ -19,7 +19,7 @@ void Population::introducePathogen(const int &initialInfections) {
       // toggle infected agents boolean for infected
       infected[order[i]] = true;
       timeInfected[order[i]] = 1;
-      srcInfect[order[i]] = -1; // random, forced infection source
+      srcInfect[order[i]] = -1;  // random, forced infection source
     }
   }
   // count after
@@ -42,7 +42,7 @@ void Population::pathogenSpread() {
   for (int i = 0; i < nAgents; i++) {
     // spread to neighbours if self infected
     if (infected[i]) {
-      timeInfected[i]++; // increase time infecetd
+      timeInfected[i]++;  // increase time infecetd
       // get neigbour ids
       std::vector<int> nbrsId = getNeighbourId(coordX[i], coordY[i]);
 
@@ -54,7 +54,7 @@ void Population::pathogenSpread() {
             // infect neighbours with prob p
             if (transmission(gen)) {
               infected[toInfect] = true;
-              srcInfect[toInfect] = i; // who infects whom
+              srcInfect[toInfect] = i;  // who infects whom
             }
           }
         }

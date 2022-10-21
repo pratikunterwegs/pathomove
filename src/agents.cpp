@@ -260,7 +260,7 @@ void Population::move(const Resources &food, const bool &multithreaded) {
                 float suit_dest =
                     ((sF[id] * foodHere) + (sH[id] * agentCounts.first) +
                      (sN[id] * agentCounts.second) +
-                     noise_v(id, j) // add same very very small noise to all
+                     noise_v(id, j)  // add same very very small noise to all
                     );
                 if (use_sI) {
                   suit_dest += sI[id] * infected[id] *
@@ -351,7 +351,7 @@ void Population::move(const Resources &food, const bool &multithreaded) {
           float suit_dest =
               ((sF[id] * foodHere) + (sH[id] * agentCounts.first) +
                (sN[id] * agentCounts.second) +
-               noise_v(id, j) // add same very very small noise to all
+               noise_v(id, j)  // add same very very small noise to all
               );
           if (use_sI) {
             suit_dest += sI[id] * infected[id] *
@@ -452,11 +452,11 @@ void Population::doForage(Resources &food) {
     if ((counter[id] > 0) | (food.nAvailable == 0)) {
       // nothing
     } else {
-      int thisItem = forageItem[id]; // the item picked by this agent
+      int thisItem = forageItem[id];  // the item picked by this agent
       // check selected item is available
       if (thisItem != -1) {
         counter[id] = handling_time;
-        intake[id] += 1.0; // increased here --- not as described.
+        intake[id] += 1.0;  // increased here --- not as described.
 
         // reset food availability
         food.available[thisItem] = false;
@@ -491,7 +491,7 @@ const bool Population::check_reprod_threshold() {
 std::vector<float> Population::handleFitness() {
   // sort vec fitness
   std::vector<float> vecFitness = energy;
-  std::sort(vecFitness.begin(), vecFitness.end()); // sort to to get min-max
+  std::sort(vecFitness.begin(), vecFitness.end());  // sort to to get min-max
   // scale to max fitness
   float maxFitness = vecFitness[vecFitness.size() - 1];
   float minFitness = vecFitness[0];
@@ -529,7 +529,7 @@ Population::applyReprodThreshold() {
 
   // normalise energy between 0 and 1
   std::vector<float> vecFitness = energy_pos;
-  std::sort(vecFitness.begin(), vecFitness.end()); // sort to to get min-max
+  std::sort(vecFitness.begin(), vecFitness.end());  // sort to to get min-max
   // scale to max fitness
   float maxFitness = vecFitness[vecFitness.size() - 1];
   float minFitness = vecFitness[0];
@@ -601,38 +601,32 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
 
     // mod the parent id if a reprod threshold is applied, this helps refer
     // to the id in the thresholded parents vector
-    if (reprod_threshold)
-      parent_id = thresholded_parents.first[parent_id];
+    if (reprod_threshold) parent_id = thresholded_parents.first[parent_id];
 
     tmp_sF[a] = sF[parent_id];
     tmp_sH[a] = sH[parent_id];
     tmp_sN[a] = sN[parent_id];
 
     // sI inherited only after patho intro
-    if (use_sI)
-      tmp_sI[a] = sI[parent_id];
+    if (use_sI) tmp_sI[a] = sI[parent_id];
 
     // inherit positions from parent
     coord_x_2[a] = coordX[parent_id] + sprout_x(parent_id);
     coord_y_2[a] = coordY[parent_id] + sprout_y(parent_id);
 
     // robustly wrap positions
-    if (coord_x_2[a] < 0.f)
-      coord_x_2[a] = food.dSize + coord_x_2[a];
-    if (coord_x_2[a] > food.dSize)
-      coord_x_2[a] = coord_x_2[a] - food.dSize;
+    if (coord_x_2[a] < 0.f) coord_x_2[a] = food.dSize + coord_x_2[a];
+    if (coord_x_2[a] > food.dSize) coord_x_2[a] = coord_x_2[a] - food.dSize;
 
-    if (coord_y_2[a] < 0.f)
-      coord_y_2[a] = food.dSize + coord_y_2[a];
-    if (coord_y_2[a] > food.dSize)
-      coord_y_2[a] = coord_y_2[a] - food.dSize;
+    if (coord_y_2[a] < 0.f) coord_y_2[a] = food.dSize + coord_y_2[a];
+    if (coord_y_2[a] > food.dSize) coord_y_2[a] = coord_y_2[a] - food.dSize;
 
     // vertical transmission of infection if set to TRUE
     if (vertical) {
       if (infected[parent_id]) {
         if (verticalInfect(gen)) {
           infected_2[a] = true;
-          srcInfect[a] = -2; // -2 for parents
+          srcInfect[a] = -2;  // -2 for parents
         }
       }
     }
@@ -698,8 +692,7 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
   std::swap(sF, tmp_sF);
   std::swap(sH, tmp_sH);
   std::swap(sN, tmp_sN);
-  if (use_sI)
-    std::swap(sI, tmp_sI);
+  if (use_sI) std::swap(sI, tmp_sI);
 
   tmp_sF.clear();
   tmp_sH.clear();
