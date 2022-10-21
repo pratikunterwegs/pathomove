@@ -28,9 +28,17 @@ get_networks <- function(output, assoc_threshold = 5) {
     le
   })
 
-  # handle nodes
+  # handle nodes when there are more node data than edgelists, as with default
   nodes <- output@trait_data
   nodes <- nodes[output@generations %in% output@gens_edge_lists] # id data fr el
+
+  # handle if there are more edge lists than node lists
+  if (length(output@generations) < length(output@gens_edge_lists)) {
+    keep_indices <- output@gens_edge_lists %in%
+      output@generations
+    output@gens_edge_lists <- output@gens_edge_lists[keep_indices]
+    el <- el[keep_indices]
+  }
 
   # work on nodes
   nodes <- Map(nodes, output@gens_edge_lists,

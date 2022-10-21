@@ -24,8 +24,15 @@ void Population::introducePathogen(const int &initialInfections) {
   }
   // count after
   countInfected();
-  assert(nInfected == initialInfections &&
-         "wrong number of initial infections");
+
+  // unless infect vertical is true, in which case there might be more
+  if (vertical) {
+    assert((nInfected >= initialInfections) &&
+           "wrong number of initial infections");
+  } else {
+    assert(nInfected == initialInfections &&
+           "wrong number of initial infections");
+  }
 }
 
 /// function to spread pathogen
@@ -81,26 +88,4 @@ void Population::countInfected() {
     }
   }
   assert(nInfected <= nAgents);
-}
-
-/// proportion of infection sources
-float Population::propSrcInfection() {
-  int vertical = 0;
-  int horizontal = 0;
-  for (int i = 0; i < nAgents; i++) {
-    if (infected[i]) {
-      if (srcInfect[i] == 1) {
-        vertical++;
-      } else if (srcInfect[i] == 2) {
-        horizontal++;
-      }
-    }
-  }
-  // Rcpp::Rcout << "# horizontal infections = " << horizontal << "\n";
-  float propSource = (vertical == 0 && horizontal == 0)
-                         ? 0.f
-                         : (static_cast<float>(horizontal) /
-                            static_cast<float>(vertical + horizontal));
-
-  return propSource;
 }

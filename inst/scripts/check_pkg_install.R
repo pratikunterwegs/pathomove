@@ -32,8 +32,9 @@ ggplot(l) +
   ) +
   coord_equal()
 
+# check basic simulation run
 a = pathomove::run_pathomove(
-  scenario = 2,
+  scenario = 1,
   popsize = 500,
   nItems = 180,
   landsize = 60,
@@ -41,14 +42,14 @@ a = pathomove::run_pathomove(
   clusterSpread = 1,
   tmax = 100,
   genmax = 10,
-  g_patho_init = 10,
+  g_patho_init = 7,
   range_food = 1.0,
   range_agents = 1.0,
   range_move = 1.0,
   handling_time = 5,
   regen_time = 50,
   pTransmit = 0.05,
-  initialInfections = 4,
+  initialInfections = 100,
   costInfect = 0.25,
   multithreaded = TRUE,
   dispersal = 3.0,
@@ -57,6 +58,54 @@ a = pathomove::run_pathomove(
   mProb = 0.001,
   mSize = 0.001,
   spillover_rate = 1.0
+)
+
+# check scenario with single introduction and vertical trasnmission
+a = pathomove::run_pathomove(
+  scenario = 2,
+  popsize = 500,
+  nItems = 180,
+  landsize = 60,
+  nClusters = 60,
+  clusterSpread = 1,
+  tmax = 100,
+  genmax = 200,
+  g_patho_init = 20,
+  range_food = 1.0,
+  range_agents = 1.0,
+  range_move = 1.0,
+  handling_time = 5,
+  regen_time = 50,
+  pTransmit = 0.05,
+  p_vTransmit = 0.75,
+  initialInfections = 100,
+  costInfect = 0.25,
+  multithreaded = TRUE,
+  dispersal = 3.0,
+  infect_percent = FALSE,
+  vertical = TRUE,
+  mProb = 0.001,
+  mSize = 0.001,
+  spillover_rate = 0.2
+)
+
+# check that high costs result in safe simulation ending
+# check scenario with single introduction and vertical trasnmission
+a = pathomove::run_pathomove(
+  scenario = 1,
+  popsize = 500,
+  nItems = 180,
+  landsize = 60,
+  nClusters = 60,
+  clusterSpread = 1,
+  tmax = 100,
+  genmax = 10,
+  g_patho_init = 3,
+  p_vTransmit = 0.75,
+  initialInfections = 500,
+  costInfect = 1.0,
+  infect_percent = FALSE,
+  reprod_threshold = TRUE
 )
 
 microbenchmark::microbenchmark(

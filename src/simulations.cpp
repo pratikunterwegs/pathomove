@@ -134,16 +134,34 @@ Rcpp::List simulation::do_simulation() {
     pop.energy = pop.intake;                      // first make energy = intake
     pop.pathogenCost(costInfect, infect_percent); // now energy minus costs
 
+    // check if any agents can reproduce if reproduction threshold is applied
+    bool reprod_threshold_met = true;
+    if (reprod_threshold) {
+      reprod_threshold_met = pop.check_reprod_threshold();
+      if (!reprod_threshold_met) {
+        Rcpp::Rcout
+            << "Warning: all agents' energy < 0, ending simulation at gen = "
+            << gen << "\n";
+      }
+    }
+
     // update gendata
-    if ((gen == (genmax - 1)) | (gen % increment_log == 0)) {
+    if ((gen == (genmax - 1)) || (gen % increment_log == 0) ||
+        (!reprod_threshold_met)) {
       // Rcpp::Rcout << "logging data at gen: " << gen << "\n";
       gen_data.updateGenData(pop, gen);
     }
 
-    if ((gen == 0) | ((gen % (genmax / 10)) == 0) | (gen == genmax - 1)) {
+    if ((gen == 0) || ((gen % (genmax / 10)) == 0) || (gen == genmax - 1) ||
+        (!reprod_threshold_met)) {
       edgeLists.push_back(pop.pbsn.getNtwkDf());
       gens_edge_lists.push_back(gen);
       Rcpp::Rcout << "gen: " << gen << " --- logged edgelist\n";
+    }
+
+    // break here if population is extinct
+    if (!reprod_threshold_met) {
+      break;
     }
 
     // reproduce
@@ -187,6 +205,7 @@ Rcpp::List simulation::do_simulation() {
 //' @param handling_time The handling time.
 //' @param regen_time The item regeneration time.
 //' @param pTransmit Probability of transmission.
+//' @param p_vTransmit Probability of vertical transmission.
 //' @param initialInfections Agents infected per event.
 //' @param costInfect The per-timestep cost of pathogen infection.
 //' @param multithreaded Boolean. Whether to use TBB multithreading.
@@ -211,6 +230,14 @@ Rcpp::List simulation::do_simulation() {
 //' evolve a weight `sI` that affects suitability based on the number of
 //' infected neighbours. Initially set to 0, and allowed to evolve only after
 //' the pathogen is introduced.
+//' @param reprod_threshold Boolean determining whether reproduction is
+//' contingent on a positive energy balance. Set to `FALSE` by default.
+//' **Note:** Turning this option on liable to cause early termination of the
+//' simulation if and when no agents have a positive energy balance.
+//' The simulation will exit with a message that logs the last generation
+//' and return data from the last generation before population extinction.
+//' This could be avoided by setting disease costs (much) lower than the default
+//' or by choosing the _percentage costs_ option via `infect_percent = TRUE`.
 //' @param mProb The probability of mutation. The suggested value is 0.01.
 //' While high, this may be more appropriate for a small population;
 //' change this value and \code{popsize} to test the simulation's sensitivity to
@@ -232,26 +259,27 @@ S4 run_pathomove(const int scenario = 2, const int popsize = 500,
                  const float range_food = 1.0, const float range_agents = 1.0,
                  const float range_move = 1.0, const int handling_time = 5,
                  const int regen_time = 50, float pTransmit = 0.05,
+                 const float p_vTransmit = 0.5,
                  const int initialInfections = 20,
                  const float costInfect = 0.25, const bool multithreaded = true,
                  const float dispersal = 2.0, const bool infect_percent = false,
                  const bool vertical = false, const bool evolve_sI = false,
-                 const float mProb = 0.01, const float mSize = 0.01,
-                 const float spillover_rate = 1.0) {
+                 const bool reprod_threshold = false, const float mProb = 0.01,
+                 const float mSize = 0.01, const float spillover_rate = 1.0) {
   // check that intial infections is less than popsize
   if (initialInfections > popsize) {
     Rcpp::stop("Error: Initial infections must be less than popsize");
   }
-  if (g_patho_init > genmax) {
+  if (g_patho_init >= genmax) {
     Rcpp::stop("Error: G_patho_init must be less than genmax");
   }
   // make simulation class with input parameters
-  simulation this_sim(popsize, scenario, nItems, landsize, nClusters,
-                      clusterSpread, tmax, genmax, g_patho_init, n_samples,
-                      range_food, range_agents, range_move, handling_time,
-                      regen_time, pTransmit, initialInfections, costInfect,
-                      multithreaded, dispersal, infect_percent, vertical,
-                      evolve_sI, mProb, mSize, spillover_rate);
+  simulation this_sim(
+      popsize, scenario, nItems, landsize, nClusters, clusterSpread, tmax,
+      genmax, g_patho_init, n_samples, range_food, range_agents, range_move,
+      handling_time, regen_time, pTransmit, p_vTransmit, initialInfections,
+      costInfect, multithreaded, dispersal, infect_percent, vertical, evolve_sI,
+      reprod_threshold, mProb, mSize, spillover_rate);
   // do the simulation using the simulation class function
   Rcpp::List pathomoveOutput = this_sim.do_simulation();
 
@@ -294,6 +322,7 @@ S4 run_pathomove(const int scenario = 2, const int popsize = 500,
       Named("popsize") = popsize, Named("range_food") = range_food,
       Named("range_agents") = range_agents, Named("range_move") = range_move,
       Named("handling_time") = handling_time, Named("pTransmit") = pTransmit,
+      Named("p_vTransmit") = (vertical ? p_vTransmit : 0.f),
       Named("initialInfections") = initialInfections,
       Named("costInfect") = costInfect,
       Named("infect_percent") = infection_cost_type,

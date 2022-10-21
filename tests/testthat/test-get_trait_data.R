@@ -1,7 +1,7 @@
 test_that("Test getting trait data", {
   # parameters
   data <- run_pathomove(
-    scenario = 2,
+    scenario = 1,
     popsize = 10,
     nItems = 180,
     landsize = 10,
