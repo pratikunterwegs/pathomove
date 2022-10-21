@@ -10,10 +10,6 @@
 using namespace Rcpp;
 
 Rcpp::List simulation::do_simulation() {
-  unsigned seed = static_cast<unsigned>(
-      std::chrono::system_clock::now().time_since_epoch().count());
-  gen.seed(seed);
-
   // prepare landscape and pop
   food.initResources();
   food.countAvailable();
@@ -61,34 +57,31 @@ Rcpp::List simulation::do_simulation() {
 
     // switch for pathogen introductions
     switch (scenario) {
-    case 0:
-      break;
-    case 1:
-      if (gen >= g_patho_init) {
-        if (evolve_sI)
-          pop.use_sI = true; // turn on use and evol of sI
-        pop.introducePathogen(initialInfections);
-      }
-      break;
-    case 2:
-      if (gen == g_patho_init) {
-        if (evolve_sI)
-          pop.use_sI = true;
-        pop.introducePathogen(initialInfections);
-        Rcpp::Rcout << "Single spillover event occurring at gen:" << gen
-                    << "\n";
-      }
-      break;
-    case 3:
-      if ((gen == g_patho_init) || gen_spillover_happens(genmax - gen)) {
-        if (evolve_sI)
-          pop.use_sI = true;
-        pop.introducePathogen(initialInfections);
-        Rcpp::Rcout << "New spillover event occurring at gen:" << gen << "\n";
-      }
-      break;
-    default:
-      break;
+      case 0:
+        break;
+      case 1:
+        if (gen >= g_patho_init) {
+          if (evolve_sI) pop.use_sI = true;  // turn on use and evol of sI
+          pop.introducePathogen(initialInfections);
+        }
+        break;
+      case 2:
+        if (gen == g_patho_init) {
+          if (evolve_sI) pop.use_sI = true;
+          pop.introducePathogen(initialInfections);
+          Rcpp::Rcout << "Single spillover event occurring at gen:" << gen
+                      << "\n";
+        }
+        break;
+      case 3:
+        if ((gen == g_patho_init) || gen_spillover_happens(genmax - gen)) {
+          if (evolve_sI) pop.use_sI = true;
+          pop.introducePathogen(initialInfections);
+          Rcpp::Rcout << "New spillover event occurring at gen:" << gen << "\n";
+        }
+        break;
+      default:
+        break;
     }
 
     // timesteps start here
@@ -131,8 +124,8 @@ Rcpp::List simulation::do_simulation() {
     assert(pop.nInfected <= pop.nAgents);
 
     // population infection cost by time, if infected
-    pop.energy = pop.intake;                      // first make energy = intake
-    pop.pathogenCost(costInfect, infect_percent); // now energy minus costs
+    pop.energy = pop.intake;                       // first make energy = intake
+    pop.pathogenCost(costInfect, infect_percent);  // now energy minus costs
 
     // check if any agents can reproduce if reproduction threshold is applied
     bool reprod_threshold_met = true;
@@ -247,6 +240,7 @@ Rcpp::List simulation::do_simulation() {
 //' @param spillover_rate For scenario 3, the probability parameter _p_ of a
 //' geometric distribution from which the number of generations until the next
 //' pathogen introduction are drawn.
+//' @param seed A numeric integer for the simulation seed.
 //'
 //' @export
 //' @return An S4 class, `pathomove_output`, with simulation outcomes.
@@ -265,7 +259,8 @@ S4 run_pathomove(const int scenario = 2, const int popsize = 500,
                  const float dispersal = 2.0, const bool infect_percent = false,
                  const bool vertical = false, const bool evolve_sI = false,
                  const bool reprod_threshold = false, const float mProb = 0.01,
-                 const float mSize = 0.01, const float spillover_rate = 1.0) {
+                 const float mSize = 0.01, const float spillover_rate = 1.0,
+                 const int seed = 0) {
   // check that intial infections is less than popsize
   if (initialInfections > popsize) {
     Rcpp::stop("Error: Initial infections must be less than popsize");
@@ -273,6 +268,10 @@ S4 run_pathomove(const int scenario = 2, const int popsize = 500,
   if (g_patho_init >= genmax) {
     Rcpp::stop("Error: G_patho_init must be less than genmax");
   }
+
+  // set seed
+  gen.seed(seed);
+
   // make simulation class with input parameters
   simulation this_sim(
       popsize, scenario, nItems, landsize, nClusters, clusterSpread, tmax,
@@ -291,26 +290,26 @@ S4 run_pathomove(const int scenario = 2, const int popsize = 500,
   // return scenario as string
   Rcpp::String scenario_str("scenario_here");
   switch (scenario) {
-  case 0:
-    scenario_str = "no pathogen";
-    Rcpp::Rcout << "No pathogen introduction\n";
-    break;
-  case 1:
-    if (g_patho_init == 0)
-      scenario_str = "endemic pathogen";
-    else
-      scenario_str = "novel pathogen";
-    Rcpp::Rcout << "Pathogen introduced from gen:" << g_patho_init << "\n";
-    break;
-  case 2:
-    scenario_str = "single spillover";
-    break;
-  case 3:
-    scenario_str = "sporadic spillover";
-    break;
-  default:
-    scenario_str = "unknown scenario";
-    break;
+    case 0:
+      scenario_str = "no pathogen";
+      Rcpp::Rcout << "No pathogen introduction\n";
+      break;
+    case 1:
+      if (g_patho_init == 0)
+        scenario_str = "endemic pathogen";
+      else
+        scenario_str = "novel pathogen";
+      Rcpp::Rcout << "Pathogen introduced from gen:" << g_patho_init << "\n";
+      break;
+    case 2:
+      scenario_str = "single spillover";
+      break;
+    case 3:
+      scenario_str = "sporadic spillover";
+      break;
+    default:
+      scenario_str = "unknown scenario";
+      break;
   }
 
   Rcpp::String infection_cost_type = infect_percent ? "percent" : "absolute";
