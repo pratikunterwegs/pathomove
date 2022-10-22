@@ -3,13 +3,12 @@
 
 // function to update gendata
 void genData::updateGenData(Population &pop, const int g_) {
-
   gDataList.push_back(Rcpp::DataFrame::create(
       // get pop data
       Rcpp::Named("intake") =
-          pop.intake, // this returns the intake! not the net energy
+          pop.intake,  // this returns the intake! not the net energy
       Rcpp::Named("energy") =
-          pop.energy, // this returns the net energy, fitness proxy
+          pop.energy,  // this returns the net energy, fitness proxy
       Rcpp::Named("sF") = pop.sF, Rcpp::Named("sH") = pop.sH,
       Rcpp::Named("sN") = pop.sN, Rcpp::Named("sI") = pop.sI,
       Rcpp::Named("x") = pop.initX, Rcpp::Named("y") = pop.initY,
@@ -25,7 +24,6 @@ void genData::updateGenData(Population &pop, const int g_) {
 
 // function to return gen data as an rcpp list
 Rcpp::List genData::getGenData() {
-
   Rcpp::List dataToReturn =
       Rcpp::List::create(Named("pop_data") = gDataList, Named("gens") = gens,
                          Named("n_infected") = gNInfected);
