@@ -489,21 +489,18 @@ const bool Population::check_reprod_threshold() {
 
 /// minor function to normalise vector
 std::vector<float> Population::handleFitness() {
-  // sort vec fitness
-  std::vector<float> vecFitness = energy;
-  std::sort(vecFitness.begin(), vecFitness.end());  // sort to to get min-max
-  // scale to max fitness
-  float maxFitness = vecFitness[vecFitness.size() - 1];
-  float minFitness = vecFitness[0];
+  
+  Rcpp::NumericVector vecFitness = Rcpp::wrap(energy);
+  // random errors in fitness
+  Rcpp::NumericVector rd_fitness = Rcpp::rnorm(nAgents, 0.0f, 0.01f);
+  vecFitness = vecFitness + rd_fitness;
+  
+  float maxFitness = Rcpp::max(vecFitness);
+  float minFitness = Rcpp::min(vecFitness);
 
-  // reset to energy
-  vecFitness = energy;
-  // rescale copied energy vector by min anx max fitness
-  for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-    vecFitness[i] = ((vecFitness[i] - minFitness) / (maxFitness - minFitness));
-  }
+  vecFitness = (vecFitness - minFitness) / (maxFitness - minFitness);
 
-  return vecFitness;
+  return Rcpp::as<std::vector<float> > (vecFitness);
 }
 
 /// prepare function to handle fitness and offer parents when applying a
@@ -528,16 +525,13 @@ Population::applyReprodThreshold() {
   assert(agents_remaining > 0 && "Reprod threshold: no agents remaining");
 
   // normalise energy between 0 and 1
-  std::vector<float> vecFitness = energy_pos;
-  std::sort(vecFitness.begin(), vecFitness.end());  // sort to to get min-max
-  // scale to max fitness
-  float maxFitness = vecFitness[vecFitness.size() - 1];
-  float minFitness = vecFitness[0];
+  Rcpp::NumericVector vecFitness = Rcpp::wrap(energy_pos);
+  float maxFitness = Rcpp::max(vecFitness);
+  float minFitness = Rcpp::min(vecFitness);
 
-  // rescale copied energy vector by min anx max fitness
-  for (size_t i = 0; i < static_cast<size_t>(agents_remaining); i++) {
-    energy_pos[i] = ((energy_pos[i] - minFitness) / (maxFitness - minFitness));
-  }
+  vecFitness = (vecFitness - minFitness) / (maxFitness - minFitness);
+
+  energy_pos = Rcpp::as<std::vector<float> > (vecFitness);
 
   return std::pair<std::vector<int>, std::vector<float>>(id_pos, energy_pos);
 }
