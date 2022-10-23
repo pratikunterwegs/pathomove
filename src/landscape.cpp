@@ -22,8 +22,8 @@ void Resources::initResources() {
   Rcpp::NumericVector cluster_rd_x = Rcpp::runif(nClusters, 0.0f, dSize);
   Rcpp::NumericVector cluster_rd_y = Rcpp::runif(nClusters, 0.0f, dSize);
 
-  Rcpp::NumericVector rd_x = Rcpp::runif(nItems, 0.0f, clusterSpread);
-  Rcpp::NumericVector rd_y = Rcpp::runif(nItems, 0.0f, clusterSpread);
+  Rcpp::NumericVector rd_x = Rcpp::rnorm(nItems, 0.0f, clusterSpread);
+  Rcpp::NumericVector rd_y = Rcpp::rnorm(nItems, 0.0f, clusterSpread);
 
   for (size_t i = 0; i < static_cast<size_t>(nClusters); i++) {
     centreCoordX[i] = cluster_rd_x(i);
