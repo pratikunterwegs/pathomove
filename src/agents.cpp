@@ -241,10 +241,10 @@ void Population::move(const Resources &food, const bool &multithreaded) {
                 sampleY = coordY[id] + (range_agents * t2_);
 
                 // crudely wrap sampling location
-                if ((sampleX > food.dSize) | (sampleX < 0.f)) {
+                if ((sampleX > food.dSize) || (sampleX < 0.f)) {
                   sampleX = std::fabs(std::fmod(sampleX, food.dSize));
                 }
-                if ((sampleY > food.dSize) | (sampleY < 0.f)) {
+                if ((sampleY > food.dSize) || (sampleY < 0.f)) {
                   sampleY = std::fabs(std::fmod(sampleY, food.dSize));
                 }
 
@@ -273,10 +273,10 @@ void Population::move(const Resources &food, const bool &multithreaded) {
                   newY = coordY[id] + (range_move * t2_);
 
                   // crudely wrap MOVEMENT location
-                  if ((newX > food.dSize) | (newX < 0.f)) {
+                  if ((newX > food.dSize) || (newX < 0.f)) {
                     newX = std::fabs(std::fmod(newX, food.dSize));
                   }
-                  if ((newY > food.dSize) | (newY < 0.f)) {
+                  if ((newY > food.dSize) || (newY < 0.f)) {
                     newY = std::fabs(std::fmod(newY, food.dSize));
                   }
 
@@ -333,10 +333,10 @@ void Population::move(const Resources &food, const bool &multithreaded) {
           sampleY = coordY[id] + (range_agents * t2_);
 
           // crudely wrap sampling location
-          if ((sampleX > food.dSize) | (sampleX < 0.f)) {
+          if ((sampleX > food.dSize) || (sampleX < 0.f)) {
             sampleX = std::fabs(std::fmod(sampleX, food.dSize));
           }
-          if ((sampleY > food.dSize) | (sampleY < 0.f)) {
+          if ((sampleY > food.dSize) || (sampleY < 0.f)) {
             sampleY = std::fabs(std::fmod(sampleY, food.dSize));
           }
 
@@ -364,10 +364,10 @@ void Population::move(const Resources &food, const bool &multithreaded) {
             newY = coordY[id] + (range_move * t2_);
 
             // crudely wrap MOVEMENT location
-            if ((newX > food.dSize) | (newX < 0.f)) {
+            if ((newX > food.dSize) || (newX < 0.f)) {
               newX = std::fabs(std::fmod(newX, food.dSize));
             }
-            if ((newY > food.dSize) | (newY < 0.f)) {
+            if ((newY > food.dSize) || (newY < 0.f)) {
               newY = std::fabs(std::fmod(newY, food.dSize));
             }
 
@@ -402,7 +402,7 @@ void Population::pickForageItem(const Resources &food,
     tbb::parallel_for(tbb::blocked_range<unsigned>(1, nAgents),
                       [&](const tbb::blocked_range<unsigned> &r) {
                         for (unsigned i = r.begin(); i < r.end(); ++i) {
-                          if ((counter[i] > 0) | (food.nAvailable == 0)) {
+                          if ((counter[i] > 0) || (food.nAvailable == 0)) {
                             // nothing -- agent cannot forage or there is no
                             // food
                           } else {
@@ -422,7 +422,7 @@ void Population::pickForageItem(const Resources &food,
                       });
   } else {
     for (int i = 0; i < nAgents; ++i) {
-      if ((counter[i] > 0) | (food.nAvailable == 0)) {
+      if ((counter[i] > 0) || (food.nAvailable == 0)) {
         // nothing -- agent cannot forage or there is no food
       } else {
         // find nearest item ids
@@ -449,7 +449,7 @@ void Population::doForage(Resources &food) {
   // this order is randomised
   for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
     int id = order[i];
-    if ((counter[id] > 0) | (food.nAvailable == 0)) {
+    if ((counter[id] > 0) || (food.nAvailable == 0)) {
       // nothing
     } else {
       int thisItem = forageItem[id];  // the item picked by this agent
@@ -552,15 +552,15 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
 
   // prepare to deal with fitness and reproduction options
   std::pair<std::vector<int>, std::vector<float>> thresholded_parents;
-  std::vector<float> vecFitness;
+  std::vector<float> vecFitness = handleFitness();
 
+  // handle vecFtiness (parents) in special cases
   if (reprod_threshold) {
     thresholded_parents = applyReprodThreshold();
     vecFitness = thresholded_parents.second;
-  } else if (infect_percent) {
+  } 
+  if (infect_percent) {
     vecFitness = energy;
-  } else {
-    vecFitness = handleFitness();
   }
 
   // set up weighted lottery based on the vector of fitnesses
@@ -611,8 +611,8 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
     if (use_sI) tmp_sI[a] = sI[parent_id];
 
     // inherit positions from parent
-    coord_x_2[a] = coordX[parent_id] + sprout_x(parent_id);
-    coord_y_2[a] = coordY[parent_id] + sprout_y(parent_id);
+    coord_x_2[a] = coordX[parent_id] + sprout_x(a);
+    coord_y_2[a] = coordY[parent_id] + sprout_y(a);
 
     // robustly wrap positions
     if (coord_x_2[a] < 0.f) coord_x_2[a] = food.dSize + coord_x_2[a];
