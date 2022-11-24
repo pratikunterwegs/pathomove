@@ -455,6 +455,12 @@ void Population::countAssoc(const int nThreads) {
     }
 }
 
+/// small function to check whether individuals have a positive energy balance
+const bool Population::check_reprod_threshold() {
+  return (std::count_if(energy.begin(), energy.end(),
+                        [](float energy_f) { return energy_f > 0.f; }) > 0);
+}
+
 /// minor function to normalise vector
 std::vector<float> Population::handleFitness() {
     // sort vec fitness
