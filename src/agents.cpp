@@ -178,6 +178,20 @@ std::vector<int> Population::getFoodId (
 std::normal_distribution<float> noise(0.f, 0.01f);
 std::cauchy_distribution<float> noise_cauchy(0.f, 0.001f);
 
+/// simple wrapping function
+// because std::fabs + std::fmod is somewhat suspicious
+// we assume values that are at most a little larger than max (max + 1) and
+// a little smaller than zero (-1)
+float wrap_pos(const float &p1, const float &pmax) {
+  if (p1 > pmax) {
+    return p1 - pmax;  // if agent exceeds max land
+  } else if (p1 < 0.f) {
+    return p1 + pmax;  // if agent has a negative coord
+  } else {
+    return p1;  // normal case
+  }
+}
+
 /// population movement function
 void Population::move(const Resources &food, const int nThreads) {
 
