@@ -12,51 +12,47 @@ using namespace Rcpp;
 std::mt19937 rng;
 
 void Resources::initResources() {
-    // generate n central items
-    std::vector<float> centreCoordX (nClusters);
-    std::vector<float> centreCoordY (nClusters);
+  // generate n central items
+  std::vector<float> centreCoordX(nClusters);
+  std::vector<float> centreCoordY(nClusters);
 
-    std::uniform_real_distribution<float> item_ran_pos(0.0f, dSize);
-    std::normal_distribution<float> item_cluster_spread(0.0f, clusterSpread);
+  // make item and cluster coords
+  Rcpp::NumericVector cluster_rd_x = Rcpp::runif(nClusters, 0.0f, dSize);
+  Rcpp::NumericVector cluster_rd_y = Rcpp::runif(nClusters, 0.0f, dSize);
 
-    for(size_t i = 0; i < static_cast<size_t>(nClusters); i++) {
+  Rcpp::NumericVector rd_x = Rcpp::rnorm(nItems, 0.0f, clusterSpread);
+  Rcpp::NumericVector rd_y = Rcpp::rnorm(nItems, 0.0f, clusterSpread);
 
-        centreCoordX[i] = item_ran_pos(rng);
-        centreCoordY[i] = item_ran_pos(rng);
+  for (size_t i = 0; i < static_cast<size_t>(nClusters); i++) {
+    centreCoordX[i] = cluster_rd_x(i);
+    centreCoordY[i] = cluster_rd_y(i);
+  }
 
-        // also add to main set
-        coordX[i] = centreCoordX[i];
-        coordY[i] = centreCoordY[i];
-    }
+  // generate items around
+  for (int i = nClusters; i < nItems; i++) {
+    coordX[i] = (centreCoordX[(i % nClusters)] + rd_x(i));
+    coordY[i] = (centreCoordY[(i % nClusters)] + rd_y(i));
 
-    // generate items around
-    for(int i = nClusters; i < nItems; i++) {
+    // wrap
+    coordX[i] = fmod(dSize + coordX[i], dSize);
+    coordY[i] = fmod(dSize + coordY[i], dSize);
+  }
 
-        coordX[i] = (centreCoordX[(i % nClusters)] + item_cluster_spread(rng));
-        coordY[i] = (centreCoordY[(i % nClusters)] + item_cluster_spread(rng));
+  // initialise rtree and set counter value
+  bgi::rtree<value, bgi::quadratic<16>> tmpRtree;
+  for (int i = 0; i < nItems; ++i) {
+    point p = point(coordX[i], coordY[i]);
+    tmpRtree.insert(std::make_pair(p, i));
+  }
 
-        // wrap
-        coordX[i] = fmod(dSize + coordX[i], dSize);
-        coordY[i] = fmod(dSize + coordY[i], dSize);
-    }
+  // initialise counters
+  // mean time
+  const int mean_time =
+      std::max(1, static_cast<int>(static_cast<float>(regen_time) / 10.f));
+  counter = Rcpp::as<std::vector<int>>(Rcpp::rpois(nItems, mean_time));
 
-    // dist to set random counter value
-    std::poisson_distribution<int> distRegen(static_cast<int>(std::floor(static_cast<float>(regen_time) * 0.1)));
-    
-    // initialise rtree and set counter value
-    bgi::rtree< value, bgi::quadratic<16> > tmpRtree;
-    for (int i = 0; i < nItems; ++i)
-    {
-        point p = point(coordX[i], coordY[i]);
-        tmpRtree.insert(std::make_pair(p, i));
-
-        counter[i] = distRegen(rng);
-        // set all to available
-        available[i] = (counter[i] == 0);
-    }
-
-    std::swap(rtree, tmpRtree);
-    tmpRtree.clear();
+  std::swap(rtree, tmpRtree);
+  tmpRtree.clear();
 }
 
 void Resources::countAvailable() {
