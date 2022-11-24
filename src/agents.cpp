@@ -1,19 +1,18 @@
 #define _USE_MATH_DEFINES
 /// code to make agents
-#include <vector>
-#include <cassert>
-#include <algorithm>
-#include <iostream>
-#include <random>
-
-#include <boost/foreach.hpp>
+#include "agents.h"
 
 #include <Rcpp.h>
 #include <RcppParallel.h>
 
-#include "network.h"
+#include <algorithm>
+#include <boost/foreach.hpp>
+#include <cassert>
+#include <iostream>
+#include <vector>
+
 #include "landscape.h"
-#include "agents.h"
+#include "network.h"
 
 // to shuffle pop id
 void Population::shufflePop() {
@@ -119,30 +118,30 @@ std::vector<int> Population::getNeighbourId (
 }
 
 // general function for items within distance
-int Population::countFood (
-    const Resources &food,
-    const float xloc, const float yloc) {
+int Population::countFood(const Resources &food, const float &xloc,
+                          const float &yloc) {
+  int nFood = 0;
+  std::vector<value> near_food;
 
-    int nFood = 0;
-    std::vector<value> near_food;
+  // check any available
+  if (food.nAvailable > 0) {
+    // query for a simple box
+    food.rtree.query(bgi::satisfies([&](value const &v) {
+                       return bg::distance(v.first, point(xloc, yloc)) <
+                              range_food;
+                     }),
+                     std::back_inserter(near_food));
 
-    // check any available
-    if (food.nAvailable > 0) {
-        // query for a simple box
-        food.rtree.query(bgi::satisfies([&](value const& v) {
-            return bg::distance(v.first, point(xloc, yloc)) < range_food;}),
-            std::back_inserter(near_food));
-
-        BOOST_FOREACH(value const& v, near_food) {
-            // count only which are available!
-            if (food.available[v.second]) {
-                nFood++;
-            }
-        }
-        near_food.clear();
+    BOOST_FOREACH (value const &v, near_food) {
+      // count only which are available!
+      if (food.available[v.second]) {
+        nFood++;
+      }
     }
+    near_food.clear();
+  }
 
-    return nFood;
+  return nFood;
 }
 
 // function for the nearest available food item
@@ -199,21 +198,21 @@ void Population::move(const Resources &food, const bool &multithreaded) {
   // what increment for n samples in a circle around the agent
   const float increment = twopi / n_samples;
 
-    // make random noise for each individual and each sample
+  // make random noise for each individual and each sample
   Rcpp::NumericMatrix noise_v(nAgents, n_samples);
   for (size_t i_ = 0; i_ < n_samples; i_++) {
     noise_v(_, i_) = Rcpp::rnorm(nAgents, 0.0f, 0.01f);
-    }    
+  }
 
   // loop over agents
   if (multithreaded) {
     // unsigned int p = tbb::task_scheduler_init::default_num_threads();
 
-        // try parallel
-        tbb::parallel_for(
+    // try parallel
+    tbb::parallel_for(
         tbb::blocked_range<unsigned>(0, nAgents),
         [&](const tbb::blocked_range<unsigned> &r) {
-                for (unsigned i = r.begin(); i < r.end(); ++i) {
+          for (unsigned i = r.begin(); i < r.end(); ++i) {
             // int id = order[i];
             if (counter[i] > 0) {
               counter[i]--;
@@ -223,10 +222,10 @@ void Population::move(const Resources &food, const bool &multithreaded) {
 
               // count local food items
               int foodHere = countFood(food, coordX[i], coordY[i]);
-                        // count local handlers and non-handlers
+              // count local handlers and non-handlers
               std::pair<int, int> agentCounts =
                   countAgents(coordX[i], coordY[i]);
-                        
+
               // get suitability of current location
               // implicit conversion from int to float as ints are promoted
               float suit_origin = (sF[i] * foodHere) +
@@ -235,29 +234,29 @@ void Population::move(const Resources &food, const bool &multithreaded) {
 
               // does the agent move at all? initially set to false
               bool agent_moves = false;
-                            
+
               // now sample at n locations around
               // j.first are angles, j.second are iterators
               for (std::pair<float, size_t> j(0.f, 0); j.first < twopi;
                    j.first += increment, j.second++) {
-                            // use range for agents to determine sample locs
+                // use range for agents to determine sample locs
                 float sampleX = coordX[i] + (range_agents * cos(j.first));
                 float sampleY = coordY[i] + (range_agents * sin(j.first));
 
-                            // crudely wrap sampling location
+                // crudely wrap sampling location
                 sampleX = wrap_pos(sampleX, food.dSize);
                 sampleY = wrap_pos(sampleY, food.dSize);
 
                 // count food items at sample location
                 foodHere = countFood(food, sampleX, sampleY);
                 // count handlers and non-handlers at sample location
-                            std::pair<int, int> agentCounts = countAgents(sampleX, sampleY);
+                std::pair<int, int> agentCounts = countAgents(sampleX, sampleY);
 
                 float suit_dest =
                     (sF[i] * foodHere) + (sH[i] * agentCounts.first) +
                     (sN[i] * agentCounts.second) + noise_v(i, j.second);
 
-                            if (suit_dest > suit_origin) {
+                if (suit_dest > suit_origin) {
                   // the agent moves
                   agent_moves = true;
                   // which angle the agent choses from the angles vector
@@ -265,14 +264,14 @@ void Population::move(const Resources &food, const bool &multithreaded) {
                   // update 'suit_origin' to be the highest suitability
                   // encountered
                   suit_origin = suit_dest;
-                                }
-                                }
+                }
+              }
               // distance to be moved // agent_moves promoted to float
               moved[i] += (agent_moves * range_move);
 
               if (agent_moves && (choice < 0.f)) {
                 Rcpp::stop("Error: Agent moved but choice not logged");
-                            }
+              }
 
               // which angle does the agent move to // agent_moves promoted
               coordX[i] += (agent_moves * range_move * cos(choice));
@@ -281,11 +280,11 @@ void Population::move(const Resources &food, const bool &multithreaded) {
               // wrap locations
               coordX[i] = wrap_pos(coordX[i], food.dSize);
               coordY[i] = wrap_pos(coordY[i], food.dSize);
-                    }
-                }
+            }
+          }
         });
   } else {
-        for (int i = 0; i < nAgents; ++i) {
+    for (int i = 0; i < nAgents; ++i) {
       // int id = order[i];
       if (counter[i] > 0) {
         counter[i]--;
@@ -295,9 +294,9 @@ void Population::move(const Resources &food, const bool &multithreaded) {
 
         // count local food items
         int foodHere = countFood(food, coordX[i], coordY[i]);
-                // count local handlers and non-handlers
+        // count local handlers and non-handlers
         std::pair<int, int> agentCounts = countAgents(coordX[i], coordY[i]);
-                
+
         // get suitability of current location
         // implicit conversion from int to float as ints are promoted
         float suit_origin = (sF[i] * foodHere) + (sH[i] * agentCounts.first) +
@@ -305,28 +304,28 @@ void Population::move(const Resources &food, const bool &multithreaded) {
 
         // does the agent move at all? initially set to false
         bool agent_moves = false;
-                    
+
         // now sample at n locations around
         // j.first are angles, j.second are iterators
         for (std::pair<float, size_t> j(0.f, 0); j.first < twopi;
              j.first += increment, j.second++) {
-                    // use range for agents to determine sample locs
+          // use range for agents to determine sample locs
           float sampleX = coordX[i] + (range_agents * cos(j.first));
           float sampleY = coordY[i] + (range_agents * sin(j.first));
 
-                    // crudely wrap sampling location
+          // crudely wrap sampling location
           sampleX = wrap_pos(sampleX, food.dSize);
           sampleY = wrap_pos(sampleY, food.dSize);
-                    
+
           // count food items at sample location
           foodHere = countFood(food, sampleX, sampleY);
           // count handlers and non-handlers at sample location
-                    std::pair<int, int> agentCounts = countAgents(sampleX, sampleY);
+          std::pair<int, int> agentCounts = countAgents(sampleX, sampleY);
 
           float suit_dest = (sF[i] * foodHere) + (sH[i] * agentCounts.first) +
                             (sN[i] * agentCounts.second) + noise_v(i, j.second);
 
-                    if (suit_dest > suit_origin) {
+          if (suit_dest > suit_origin) {
             // the agent moves
             agent_moves = true;
             // which angle the agent choses from the angles vector
@@ -334,14 +333,14 @@ void Population::move(const Resources &food, const bool &multithreaded) {
             // update 'suit_origin' to be the highest suitability
             // encountered
             suit_origin = suit_dest;
-                        }
-                        }
+          }
+        }
         // distance to be moved // agent_moves promoted to float
         moved[i] += (agent_moves * range_move);
 
         if (agent_moves && (choice < 0.f)) {
           Rcpp::stop("Error: Agent moved but choice not logged");
-                    }
+        }
 
         // which angle does the agent move to // agent_moves promoted
         coordX[i] += (agent_moves * range_move * cos(choice));
@@ -350,11 +349,11 @@ void Population::move(const Resources &food, const bool &multithreaded) {
         // wrap locations
         coordX[i] = wrap_pos(coordX[i], food.dSize);
         coordY[i] = wrap_pos(coordY[i], food.dSize);
-                }
-            }
-        }
+      }
     }
-    
+  }
+}
+
 
 // function to paralellise choice of forage item
 void Population::pickForageItem(const Resources &food, const int nThreads){
@@ -518,16 +517,15 @@ Population::applyReprodThreshold() {
 void Population::Reproduce(const Resources &food, const bool &infect_percent,
                            const float &dispersal, const float &mProb,
                            const float &mSize) {
-  // boost random for probability of vertical transmission
-    // currently same as prob for horizontal
+  // draw vertical infectons
   auto v_infect = Rcpp::rbinom(nAgents, 1, pTransmit);
 
   // prepare to deal with fitness and reproduction options
   std::pair<std::vector<int>, std::vector<float>> thresholded_parents;
   std::vector<float> vecFitness = handleFitness();
 
-    if (infect_percent) {
-         vecFitness = energy;
+  if (infect_percent) {
+    vecFitness = energy;
   }
   // handle vecFtiness (parents) in special cases
   if (reprod_threshold && infect_percent) {
@@ -541,51 +539,51 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
   } 
   if (infect_percent) {
     vecFitness = energy;
-    }
+  }
 
   // set up weighted lottery based on the vector of fitnesses
-    std::discrete_distribution<> weightedLottery(vecFitness.begin(), vecFitness.end());
+  std::discrete_distribution<> weightedLottery(vecFitness.begin(), vecFitness.end());
 
-    // get parent trait based on weighted lottery
+  // get parent trait based on weighted lottery
   std::vector<float> tmp_sF(nAgents, 0.f);
   std::vector<float> tmp_sH(nAgents, 0.f);
   std::vector<float> tmp_sN(nAgents, 0.f);
-    
-    // infected or not for vertical transmission
+
+  // infected or not for vertical transmission
   std::vector<bool> infected_2(nAgents, false);
 
-    // reset infection source
+  // reset infection source
   srcInfect = std::vector<int>(nAgents, 0);
 
-    // reset associations
+  // reset associations
   associations = std::vector<int>(nAgents, 0);
 
-    // reset distance moved
+  // reset distance moved
   moved = std::vector<float>(nAgents, 0.f);
 
-    // reset adjacency matrix
-    pbsn.adjMat = Rcpp::NumericMatrix(nAgents, nAgents);
+  // reset adjacency matrix
+  pbsn.adjMat = Rcpp::NumericMatrix(nAgents, nAgents);
 
-    // positions
+  // positions
   std::vector<float> coord_x_2(nAgents, 0.f);
   std::vector<float> coord_y_2(nAgents, 0.f);
 
   // Get sprout distances
   Rcpp::NumericVector sprout_x = Rcpp::rnorm(nAgents, 0.0f, dispersal);
   Rcpp::NumericVector sprout_y = Rcpp::rnorm(nAgents, 0.0f, dispersal);
-    
-    for (int a = 0; a < nAgents; a++) {
-        size_t parent_id = static_cast<size_t>(weightedLottery(rng));
+
+  for (int a = 0; a < nAgents; a++) {
+    size_t parent_id = static_cast<size_t>(weightedLottery(rng));
 
     // mod the parent id if a reprod threshold is applied, this helps refer
     // to the id in the thresholded parents vector
     if (reprod_threshold) parent_id = thresholded_parents.first[parent_id];
 
-        tmp_sF[a] = sF[parent_id];
-        tmp_sH[a] = sH[parent_id];
-        tmp_sN[a] = sN[parent_id];
+    tmp_sF[a] = sF[parent_id];
+    tmp_sH[a] = sH[parent_id];
+    tmp_sN[a] = sN[parent_id];
 
-        // inherit positions from parent
+    // inherit positions from parent
     coord_x_2[a] = coordX[parent_id] + sprout_x(a);
     coord_y_2[a] = coordY[parent_id] + sprout_y(a);
 
@@ -593,38 +591,38 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
     coord_x_2[a] = wrap_pos(coord_x_2[a], food.dSize);
     coord_y_2[a] = wrap_pos(coord_y_2[a], food.dSize);
 
-        // vertical transmission of infection if set to TRUE
-        if (vertical) {
+    // vertical transmission of infection if set to TRUE
+    if (vertical) {
       if (infected[parent_id]) {
         if (v_infect(a)) {
-                    infected_2[a] = true;
+          infected_2[a] = true;
           srcInfect[a] = -2;  // -2 for parents
-                }
-            }
         }
+      }
     }
+  }
 
-    // swap infected and infected_2
-    std::swap(infected, infected_2);
-    infected_2.clear();
+  // swap infected and infected_2
+  std::swap(infected, infected_2);
+  infected_2.clear();
 
-    // swap coords --- this initialises individuals near their parent's position
-    std::swap(coordX, coord_x_2);
-    std::swap(coordY, coord_y_2);
+  // swap coords --- this initialises individuals near their parent's position
+  std::swap(coordX, coord_x_2);
+  std::swap(coordY, coord_y_2);
   coord_x_2.clear();
   coord_y_2.clear();
 
-    // update initial positions!
-    initX = coordX;
-    initY = coordY;
+  // update initial positions!
+  initX = coordX;
+  initY = coordY;
 
-    // reset counter and time infected
+  // reset counter and time infected
   counter = std::vector<int>(nAgents, 0);
   timeInfected = std::vector<int>(nAgents, 0);
-    assert(static_cast<int>(counter.size()) == nAgents && "counter size wrong");
+  assert(static_cast<int>(counter.size()) == nAgents && "counter size wrong");
 
-    // mutate trait: trait shifts up or down with an equal prob
-    // trait mutation prob is mProb, in a two step process
+  // mutate trait: trait shifts up or down with an equal prob
+  // trait mutation prob is mProb, in a two step process
   auto mutation_sF = Rcpp::rbinom(nAgents, 1, mProb);
   auto mutation_sH = Rcpp::rbinom(nAgents, 1, mProb);
   auto mutation_sN = Rcpp::rbinom(nAgents, 1, mProb);
@@ -633,38 +631,38 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
   Rcpp::NumericVector mut_size_sH = Rcpp::rcauchy(nAgents, 0.0f, mSize);
   Rcpp::NumericVector mut_size_sN = Rcpp::rcauchy(nAgents, 0.0f, mSize);
 
-    for (int a = 0; a < nAgents; a++) {
+  for (int a = 0; a < nAgents; a++) {
     if (mutation_sF(a)) {
       tmp_sF[a] = tmp_sF[a] + mut_size_sF(a);
-        }
+    }
     if (mutation_sH(a)) {
       tmp_sH[a] = tmp_sH[a] + mut_size_sH(a);
-        }
+    }
     if (mutation_sN(a)) {
       tmp_sN[a] = tmp_sN[a] + mut_size_sN(a);
-        }
     }
-    
-    // reset nInfected and count natal infections
-    // from vertical transmission
-    countInfected();
+  }
 
-    // swap trait matrices
-    std::swap(sF, tmp_sF);
-    std::swap(sH, tmp_sH);
-    std::swap(sN, tmp_sN);
+  // reset nInfected and count natal infections
+  // from vertical transmission
+  countInfected();
+
+  // swap trait matrices
+  std::swap(sF, tmp_sF);
+  std::swap(sH, tmp_sH);
+  std::swap(sN, tmp_sN);
 
   tmp_sF.clear();
   tmp_sH.clear();
   tmp_sN.clear();
-    
-    // swap energy
-  std::vector<float> tmpEnergy(nAgents, 0.001);
-    std::swap(energy, tmpEnergy);
-    tmpEnergy.clear();
 
-    // swap intake
+  // swap energy
+  std::vector<float> tmpEnergy(nAgents, 0.001);
+  std::swap(energy, tmpEnergy);
+  tmpEnergy.clear();
+
+  // swap intake
   std::vector<float> tmpIntake(nAgents, 0.001);
-    std::swap(intake, tmpIntake);
-    tmpIntake.clear();
+  std::swap(intake, tmpIntake);
+  tmpIntake.clear();
 }
