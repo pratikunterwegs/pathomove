@@ -193,219 +193,168 @@ float wrap_pos(const float &p1, const float &pmax) {
 }
 
 /// population movement function
-void Population::move(const Resources &food, const int nThreads) {
+void Population::move(const Resources &food, const bool &multithreaded) {
+  const float twopi = 2.f * M_PI;
 
-    float twopi = 2.f * M_PI;
-    
-    // what increment for 3 samples in a circle around the agent
-    float increment = twopi / n_samples;
-    float angle = 0.f;
-    // for this increment what angles to sample at
-    std::vector<float> sample_angles (static_cast<int>(n_samples), 0.f);
-    for (int i_ = 0; i_ < static_cast<int>(n_samples); i_++)
-    {
-        sample_angles[i_] = angle;
-        angle += increment;
-    }
+  // what increment for n samples in a circle around the agent
+  const float increment = twopi / n_samples;
 
     // make random noise for each individual and each sample
-    std::vector<std::vector<float> > noise_v (nAgents, std::vector<float>(static_cast<int>(n_samples), 0.f));
-    for (size_t i_ = 0; i_ < noise_v.size(); i_++)
-    {
-        for (size_t j_ = 0; j_ < static_cast<size_t>(n_samples); j_++)
-        {
-            noise_v[i_][j_] = noise(rng);
-        }
+  Rcpp::NumericMatrix noise_v(nAgents, n_samples);
+  for (size_t i_ = 0; i_ < n_samples; i_++) {
+    noise_v(_, i_) = Rcpp::rnorm(nAgents, 0.0f, 0.01f);
     }    
 
-    shufflePop();
-    // loop over agents --- randomise
-    if (nThreads > 1) {
-        // any number above 1 will allow automatic n threads
-        tbb::task_scheduler_init _tbb(tbb::task_scheduler_init::automatic); // automatic for now
+  // loop over agents
+  if (multithreaded) {
+    // unsigned int p = tbb::task_scheduler_init::default_num_threads();
+
         // try parallel
         tbb::parallel_for(
-            tbb::blocked_range<unsigned>(1, order.size()),
-            [&](const tbb::blocked_range<unsigned>& r) {
+        tbb::blocked_range<unsigned>(0, nAgents),
+        [&](const tbb::blocked_range<unsigned> &r) {
                 for (unsigned i = r.begin(); i < r.end(); ++i) {
-                    int id = order[i];
-                    if (counter[id] > 0) {
-                        counter[id] --;
-                    }
-                    else {
-                        // first assess current location
-                        float sampleX = coordX[id];
-                        float sampleY = coordY[id]; 
+            // int id = order[i];
+            if (counter[i] > 0) {
+              counter[i]--;
+            } else {
+              // first assess current location, this is angle '-1'
+              float choice = -1.f;
 
-                        float foodHere = 0.f;
-                        // count local food only if items are available
-                        if(food.nAvailable > 0) {
-                            foodHere = static_cast<float>(countFood(
-                                food, sampleX, sampleY
-                            ));
-                        }
+              // count local food items
+              int foodHere = countFood(food, coordX[i], coordY[i]);
                         // count local handlers and non-handlers
-                        std::pair<int, int> agentCounts = countAgents(sampleX, sampleY);
+              std::pair<int, int> agentCounts =
+                  countAgents(coordX[i], coordY[i]);
                         
-                        // get suitability current
-                        float suit_origin = (
-                            (sF[id] * foodHere) + (sH[id] * agentCounts.first) +
-                            (sN[id] * agentCounts.second)
-                        );
+              // get suitability of current location
+              // implicit conversion from int to float as ints are promoted
+              float suit_origin = (sF[i] * foodHere) +
+                                  (sH[i] * agentCounts.first) +
+                                  (sN[i] * agentCounts.second);
 
-                        float newX = sampleX;
-                        float newY = sampleY;
-                        // now sample at three locations around
-                        for(size_t j = 0; j < sample_angles.size(); j++) {
-                            float t1_ = static_cast<float>(cos(sample_angles[j]));
-                            float t2_ = static_cast<float>(sin(sample_angles[j]));
+              // does the agent move at all? initially set to false
+              bool agent_moves = false;
                             
+              // now sample at n locations around
+              // j.first are angles, j.second are iterators
+              for (std::pair<float, size_t> j(0.f, 0); j.first < twopi;
+                   j.first += increment, j.second++) {
                             // use range for agents to determine sample locs
-                            sampleX = coordX[id] + (range_agents * t1_);
-                            sampleY = coordY[id] + (range_agents * t2_);
+                float sampleX = coordX[i] + (range_agents * cos(j.first));
+                float sampleY = coordY[i] + (range_agents * sin(j.first));
 
                             // crudely wrap sampling location
-                            if((sampleX > food.dSize) | (sampleX < 0.f)) {
-                                sampleX = std::fabs(std::fmod(sampleX, food.dSize));
-                            }
-                            if((sampleY > food.dSize) | (sampleY < 0.f)) {
-                                sampleY = std::fabs(std::fmod(sampleY, food.dSize));
-                            }
+                sampleX = wrap_pos(sampleX, food.dSize);
+                sampleY = wrap_pos(sampleY, food.dSize);
 
-                            // count food at sample locations if any available
-                            if(food.nAvailable > 0) {
-                                foodHere = static_cast<float>(countFood(
-                                    food, sampleX, sampleY
-                                ));
-                            }
-                            
-                            // count local handlers and non-handlers
+                // count food items at sample location
+                foodHere = countFood(food, sampleX, sampleY);
+                // count handlers and non-handlers at sample location
                             std::pair<int, int> agentCounts = countAgents(sampleX, sampleY);
 
-                            float suit_dest = (
-                                (sF[id] * foodHere) + (sH[id] * agentCounts.first) +
-                                (sN[id] * agentCounts.second) +
-                                noise_v[id][j] // add same very very small noise to all
-                            );
+                float suit_dest =
+                    (sF[i] * foodHere) + (sH[i] * agentCounts.first) +
+                    (sN[i] * agentCounts.second) + noise_v(i, j.second);
 
                             if (suit_dest > suit_origin) {
-                                // where does the individual really go
-                                newX = coordX[id] + (range_move * t1_);
-                                newY = coordY[id] + (range_move * t2_);
-
-                                // crudely wrap MOVEMENT location
-                                if((newX > food.dSize) | (newX < 0.f)) {
-                                    newX = std::fabs(std::fmod(newX, food.dSize));
+                  // the agent moves
+                  agent_moves = true;
+                  // which angle the agent choses from the angles vector
+                  choice = j.first;
+                  // update 'suit_origin' to be the highest suitability
+                  // encountered
+                  suit_origin = suit_dest;
                                 }
-                                if((newY > food.dSize) | (newY < 0.f)) {
-                                    newY = std::fabs(std::fmod(newY, food.dSize));
                                 }
+              // distance to be moved // agent_moves promoted to float
+              moved[i] += (agent_moves * range_move);
 
-                                assert(newX < food.dSize && newX > 0.f);
-                                assert(newY < food.dSize && newY > 0.f);
-                                suit_origin = suit_dest;
+              if (agent_moves && (choice < 0.f)) {
+                Rcpp::stop("Error: Agent moved but choice not logged");
                             }
-                        }
-                        // distance to be moved
-                        moved[id] += range_move;
 
-                        // set locations
-                        coordX[id] = newX; coordY[id] = newY;
+              // which angle does the agent move to // agent_moves promoted
+              coordX[i] += (agent_moves * range_move * cos(choice));
+              coordY[i] += (agent_moves * range_move * sin(choice));
+
+              // wrap locations
+              coordX[i] = wrap_pos(coordX[i], food.dSize);
+              coordY[i] = wrap_pos(coordY[i], food.dSize);
                     }
                 }
-            }
-        );
-    } else if (nThreads == 1) {
+        });
+  } else {
         for (int i = 0; i < nAgents; ++i) {
-            int id = order[i];
-            if (counter[id] > 0) {
-                counter[id] --;
-            }
-            else {
-                // first assess current location
-                float sampleX = coordX[id];
-                float sampleY = coordY[id]; 
+      // int id = order[i];
+      if (counter[i] > 0) {
+        counter[i]--;
+      } else {
+        // first assess current location, this is angle '-1'
+        float choice = -1.f;
 
-                float foodHere = 0.f;
-                // count local food only if items are available
-                if(food.nAvailable > 0) {
-                    foodHere = static_cast<float>(countFood(
-                        food, sampleX, sampleY
-                    ));
-                }
+        // count local food items
+        int foodHere = countFood(food, coordX[i], coordY[i]);
                 // count local handlers and non-handlers
-                std::pair<int, int> agentCounts = countAgents(sampleX, sampleY);
+        std::pair<int, int> agentCounts = countAgents(coordX[i], coordY[i]);
                 
-                // get suitability current
-                float suit_origin = (
-                    (sF[id] * foodHere) + (sH[id] * agentCounts.first) +
-                    (sN[id] * agentCounts.second)
-                );
+        // get suitability of current location
+        // implicit conversion from int to float as ints are promoted
+        float suit_origin = (sF[i] * foodHere) + (sH[i] * agentCounts.first) +
+                            (sN[i] * agentCounts.second);
 
-                float newX = sampleX;
-                float newY = sampleY;
-                // now sample at three locations around
-                for(size_t j = 0; j < sample_angles.size(); j++) {
-                    float t1_ = static_cast<float>(cos(sample_angles[j]));
-                    float t2_ = static_cast<float>(sin(sample_angles[j]));
+        // does the agent move at all? initially set to false
+        bool agent_moves = false;
                     
+        // now sample at n locations around
+        // j.first are angles, j.second are iterators
+        for (std::pair<float, size_t> j(0.f, 0); j.first < twopi;
+             j.first += increment, j.second++) {
                     // use range for agents to determine sample locs
-                    sampleX = coordX[id] + (range_agents * t1_);
-                    sampleY = coordY[id] + (range_agents * t2_);
+          float sampleX = coordX[i] + (range_agents * cos(j.first));
+          float sampleY = coordY[i] + (range_agents * sin(j.first));
 
                     // crudely wrap sampling location
-                    if((sampleX > food.dSize) | (sampleX < 0.f)) {
-                        sampleX = std::fabs(std::fmod(sampleX, food.dSize));
-                    }
-                    if((sampleY > food.dSize) | (sampleY < 0.f)) {
-                        sampleY = std::fabs(std::fmod(sampleY, food.dSize));
-                    }
-
-                    // count food at sample locations if any available
-                    if(food.nAvailable > 0) {
-                        foodHere = static_cast<float>(countFood(
-                            food, sampleX, sampleY
-                        ));
-                    }
+          sampleX = wrap_pos(sampleX, food.dSize);
+          sampleY = wrap_pos(sampleY, food.dSize);
                     
-                    // count local handlers and non-handlers
+          // count food items at sample location
+          foodHere = countFood(food, sampleX, sampleY);
+          // count handlers and non-handlers at sample location
                     std::pair<int, int> agentCounts = countAgents(sampleX, sampleY);
 
-                    float suit_dest = (
-                        (sF[id] * foodHere) + (sH[id] * agentCounts.first) +
-                        (sN[id] * agentCounts.second) +
-                        noise_v[id][j] // add same very very small noise to all
-                    );
+          float suit_dest = (sF[i] * foodHere) + (sH[i] * agentCounts.first) +
+                            (sN[i] * agentCounts.second) + noise_v(i, j.second);
 
                     if (suit_dest > suit_origin) {
-                        // where does the individual really go
-                        newX = coordX[id] + (range_move * t1_);
-                        newY = coordY[id] + (range_move * t2_);
-
-                        // crudely wrap MOVEMENT location
-                        if((newX > food.dSize) | (newX < 0.f)) {
-                            newX = std::fabs(std::fmod(newX, food.dSize));
+            // the agent moves
+            agent_moves = true;
+            // which angle the agent choses from the angles vector
+            choice = j.first;
+            // update 'suit_origin' to be the highest suitability
+            // encountered
+            suit_origin = suit_dest;
                         }
-                        if((newY > food.dSize) | (newY < 0.f)) {
-                            newY = std::fabs(std::fmod(newY, food.dSize));
                         }
+        // distance to be moved // agent_moves promoted to float
+        moved[i] += (agent_moves * range_move);
 
-                        assert(newX < food.dSize && newX > 0.f);
-                        assert(newY < food.dSize && newY > 0.f);
-                        suit_origin = suit_dest;
+        if (agent_moves && (choice < 0.f)) {
+          Rcpp::stop("Error: Agent moved but choice not logged");
                     }
-                }
-                // distance to be moved
-                moved[id] += range_move;
 
-                // set locations
-                coordX[id] = newX; coordY[id] = newY;
+        // which angle does the agent move to // agent_moves promoted
+        coordX[i] += (agent_moves * range_move * cos(choice));
+        coordY[i] += (agent_moves * range_move * sin(choice));
+
+        // wrap locations
+        coordX[i] = wrap_pos(coordX[i], food.dSize);
+        coordY[i] = wrap_pos(coordY[i], food.dSize);
+                }
             }
         }
-
     }
     
-}
 
 // function to paralellise choice of forage item
 void Population::pickForageItem(const Resources &food, const int nThreads){
