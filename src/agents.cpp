@@ -481,6 +481,39 @@ std::vector<float> Population::handleFitness() {
     return vecFitness;
 }
 
+/// prepare function to handle fitness and offer parents when applying a
+/// reproduction threshold
+std::pair<std::vector<int>, std::vector<float>>
+Population::applyReprodThreshold() {
+  std::vector<float> energy_pos;
+  std::vector<int> id_pos;
+
+  float this_agent_energy = 0.f;
+  // add only agents with positive energy
+  for (size_t i = 0; i < nAgents; i++) {
+    this_agent_energy = energy[i];
+    if (this_agent_energy > 0.f) {
+      id_pos.push_back(i);
+      energy_pos.push_back(this_agent_energy);
+    }
+  }
+
+  // count agents remaining
+  const int agents_remaining = id_pos.size();
+  assert(agents_remaining > 0 && "Reprod threshold: no agents remaining");
+
+  // normalise energy between 0 and 1
+  Rcpp::NumericVector vecFitness = Rcpp::wrap(energy_pos);
+  float maxFitness = Rcpp::max(vecFitness);
+  float minFitness = Rcpp::min(vecFitness);
+
+  vecFitness = (vecFitness - minFitness) / (maxFitness - minFitness);
+
+  energy_pos = Rcpp::as<std::vector<float> > (vecFitness);
+
+  return std::pair<std::vector<int>, std::vector<float>>(id_pos, energy_pos);
+}
+
 // fun for replication
 void Population::Reproduce(const Resources food, const bool infect_percent, 
     const float dispersal, const float mProb, const float mSize) 
