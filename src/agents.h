@@ -17,7 +17,7 @@ struct Population {
 public:
     Population(const int popsize, const float range_agents,
     const float range_food, const float range_move, const int handling_time,
-    float pTransmit, bool vertical) :
+    float pTransmit, bool vertical, const bool reprod_threshold) :
         // agents, positions, energy and traits
         nAgents (popsize),
         coordX (popsize, 0.0f),
@@ -51,6 +51,7 @@ public:
         // disease parameters and total pop infected
         pTransmit (pTransmit),
         vertical (vertical),
+        reprod_threshold(reprod_threshold),
         nInfected(0),
 
         // infection source and distance moved
@@ -91,6 +92,7 @@ public:
     std::vector<int> timeInfected;
     float pTransmit;
     const bool vertical;
+    const bool reprod_threshold;
 
     // the number of infected agents
     int nInfected;
@@ -114,7 +116,7 @@ public:
     // make rtree and get nearest agents and food
     void updateRtree();
 
-    int countFood (const Resources &food, const float xloc, const float yloc);
+    int countFood (const Resources &food, const float &xloc, const float &yloc);
     
     std::vector<int> getFoodId (
         const Resources &food,
@@ -129,17 +131,17 @@ public:
     );
 
     // functions to move and forage on a landscape
-    void move(const Resources &food, const int nThreads);
+    void move(const Resources &food, const bool &multithreaded);
     void pickForageItem(const Resources &food, const int nThreads);
     void doForage(Resources &food);
     
     // funs to handle fitness and reproduce
     std::vector<float> handleFitness();
-    void Reproduce(const Resources food, 
-        const bool infect_percent, 
-        const float dispersal,
-        const float mProb,
-        const float mSize
+    void Reproduce(const Resources &food, 
+        const bool &infect_percent, 
+        const float &dispersal,
+        const float &mProb,
+        const float &mSize
     );
     
     // pathogen dynamics -- initial infections, spread, and costs
@@ -153,6 +155,10 @@ public:
 
     // counting proximity based interactions
     void countAssoc(const int nThreads);
+
+    // check whether any agents pass the reproduction threshold
+    const bool check_reprod_threshold();
+    std::pair<std::vector<int>, std::vector<float>> applyReprodThreshold();
 
     // functions for the network
     // there is no function to update the network, this is handled in countAssoc
