@@ -206,8 +206,6 @@ void Population::move(const Resources &food, const bool &multithreaded) {
 
   // loop over agents
   if (multithreaded) {
-    // unsigned int p = tbb::task_scheduler_init::default_num_threads();
-
     // try parallel
     tbb::parallel_for(
         tbb::blocked_range<unsigned>(0, nAgents),
@@ -356,21 +354,20 @@ void Population::move(const Resources &food, const bool &multithreaded) {
 
 
 // function to paralellise choice of forage item
-void Population::pickForageItem(const Resources &food, const int nThreads){
+void Population::pickForageItem(const Resources &food, const bool &multithreaded){
     shufflePop();
     // nearest food
     std::vector<int> idTargetFood (nAgents, -1);
 
-    if (nThreads > 1)
+    if (multithreaded)
     {
         // loop over agents --- no shuffling required here
-        tbb::task_scheduler_init _tbb(tbb::task_scheduler_init::automatic); // automatic for now
         // try parallel foraging --- agents pick a target item
         tbb::parallel_for(
-            tbb::blocked_range<unsigned>(1, order.size()),
+            tbb::blocked_range<unsigned>(0, order.size()),
                 [&](const tbb::blocked_range<unsigned>& r) {
                 for (unsigned i = r.begin(); i < r.end(); ++i) {
-                    if ((counter[i] > 0) | (food.nAvailable == 0)) { 
+                    if ((counter[i] > 0) || (food.nAvailable == 0)) { 
                         // nothing -- agent cannot forage or there is no food
                     }
                     else {
@@ -388,10 +385,10 @@ void Population::pickForageItem(const Resources &food, const int nThreads){
                 }
             }
         );
-    } else if (nThreads == 1)
+    } else
     {
         for (int i = 0; i < nAgents; ++i) {
-            if ((counter[i] > 0) | (food.nAvailable == 0)) { 
+            if ((counter[i] > 0) || (food.nAvailable == 0)) { 
                 // nothing -- agent cannot forage or there is no food
             }
             else {
@@ -439,7 +436,7 @@ void Population::doForage(Resources &food) {
     }
 }
 
-void Population::countAssoc(const int nThreads) {
+void Population::countAssoc() {
     for (int i = 0; i < nAgents; ++i) {
         // count nearby agents and update raw associations
         std::vector<int> nearby_agents = getNeighbourId(coordX[i], coordY[i]);

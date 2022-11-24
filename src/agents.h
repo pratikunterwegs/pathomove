@@ -132,7 +132,7 @@ public:
 
     // functions to move and forage on a landscape
     void move(const Resources &food, const bool &multithreaded);
-    void pickForageItem(const Resources &food, const int nThreads);
+    void pickForageItem(const Resources &food, const bool &multithreaded);
     void doForage(Resources &food);
     
     // funs to handle fitness and reproduce
@@ -154,7 +154,7 @@ public:
     float propSrcInfection();
 
     // counting proximity based interactions
-    void countAssoc(const int nThreads);
+    void countAssoc();
 
     // check whether any agents pass the reproduction threshold
     const bool check_reprod_threshold();

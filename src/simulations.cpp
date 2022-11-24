@@ -96,7 +96,7 @@ Rcpp::List simulation::do_simulation() {
             food.regenerate();
             pop.updateRtree();
             // movement section
-            pop.move(food, nThreads > 1);
+            pop.move(food, multithreaded);
 
             // // log movement
             // if(gen == std::max(gen_init - 1, 2)) {
@@ -108,11 +108,11 @@ Rcpp::List simulation::do_simulation() {
 
             // foraging -- split into parallelised picking
             // and non-parallel exploitation
-            pop.pickForageItem(food, nThreads);
+            pop.pickForageItem(food, multithreaded);
             pop.doForage(food);
 
             // count associations
-            pop.countAssoc(nThreads);
+            pop.countAssoc();
 
             // relate to g_patho_init, which is the point of regime shift
             // NOT gen_init, which is when pathogens are introduced
@@ -208,8 +208,7 @@ Rcpp::List simulation::do_simulation() {
 //' @param pTransmit Probability of transmission.
 //' @param initialInfections Agents infected per event.
 //' @param costInfect The per-timestep cost of pathogen infection.
-//' @param nThreads How many threads to parallelise over. Set to 1 to run on
-//' the HPC Peregrine cluster.
+//' @param multithreaded Boolean. Whether multithreading using TBB to be used.
 //' @param dispersal A float value; the standard deviation of a normal
 //' distribution centred on zero, which determines how far away from its parent
 //' each individual is initialised. The standard value is 5 percent of the
@@ -253,7 +252,7 @@ S4 run_pathomove(const int scenario,
                 float pTransmit,
                 const int initialInfections,
                 const float costInfect,
-                const int nThreads,
+                const bool multithreaded,
                 const float dispersal,
                 const bool infect_percent,
                 const bool vertical,
@@ -278,7 +277,7 @@ S4 run_pathomove(const int scenario,
                         range_food, range_agents, range_move,
                         handling_time, regen_time,
                         pTransmit, initialInfections, 
-                        costInfect, nThreads, dispersal, infect_percent, vertical,
+                        costInfect, multithreaded, dispersal, infect_percent, vertical,
                         reprod_threshold,
                         mProb, mSize, spillover_rate);
     // do the simulation using the simulation class function                        
@@ -319,7 +318,7 @@ S4 run_pathomove(const int scenario,
     Rcpp::String vertical_infection = vertical ? "vertical" :
         "no_vertical";
     
-    // agents parameter list
+    // agents parameter list --- limit of 20 elements for manual lists!
     Rcpp::List agents_param_list = Rcpp::List::create(
         Named("popsize") = popsize,
         Named("range_food") = range_food,
@@ -331,6 +330,7 @@ S4 run_pathomove(const int scenario,
         Named("costInfect") = costInfect,
         Named("infect_percent") = infection_cost_type,
         Named("vertical_infection") = vertical_infection,
+        Named("reprod_threshold") = reprod_threshold,
         Named("dispersal") = dispersal,
         Named("mProb") = mProb,
         Named("mSize") = mSize

@@ -22,7 +22,7 @@ public:
                float pTransmit,
                const int initialInfections,
                const float costInfect,
-               const int nThreads,
+               const bool multithreaded,
                const float dispersal, 
                const bool infect_percent,
                const bool vertical,
@@ -55,7 +55,7 @@ public:
         spillover_rate(spillover_rate),
 
         // parallelisation
-        nThreads (nThreads),
+        multithreaded (multithreaded),
 
         // natal dispersal and pathogen cost structure
         dispersal(dispersal),
@@ -85,7 +85,7 @@ public:
     float pTransmit;
     const float spillover_rate;
 
-    int nThreads;
+    const bool multithreaded;
     const float dispersal;
     const bool infect_percent;
     const bool vertical, reprod_threshold;
