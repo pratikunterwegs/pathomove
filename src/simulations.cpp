@@ -96,7 +96,7 @@ Rcpp::List simulation::do_simulation() {
             food.regenerate();
             pop.updateRtree();
             // movement section
-            pop.move(food, nThreads);
+            pop.move(food, nThreads > 1);
 
             // // log movement
             // if(gen == std::max(gen_init - 1, 2)) {
@@ -133,17 +133,34 @@ Rcpp::List simulation::do_simulation() {
         pop.energy = pop.intake; // first make energy = intake
         pop.pathogenCost(costInfect, infect_percent); // now energy minus costs
 
-        // update gendata
-        if ((gen == (genmax - 1)) | (gen % increment_log == 0)) {
-
-            // Rcpp::Rcout << "logging data at gen: " << gen << "\n";
-            gen_data.updateGenData(pop, gen);
+        // check if any agents can reproduce if reproduction threshold is applied
+        bool reprod_threshold_met = true;
+        if (reprod_threshold) {
+        reprod_threshold_met = pop.check_reprod_threshold();
+            if (!reprod_threshold_met) {
+                Rcpp::Rcout
+                    << "Warning: all agents' energy < 0, ending simulation at gen = "
+                    << gen << "\n";
+            }
         }
 
-        if((gen == 0) | ((gen % (genmax / 10)) == 0) | (gen == genmax - 1)) {
-            edgeLists.push_back(pop.pbsn.getNtwkDf());
-            gens_edge_lists.push_back(gen);
-            Rcpp::Rcout << "gen: " << gen << " --- logged edgelist\n";
+        // update gendata
+        if ((gen == (genmax - 1)) || (gen % increment_log == 0) ||
+            (!reprod_threshold_met)) {
+        // Rcpp::Rcout << "logging data at gen: " << gen << "\n";
+        gen_data.updateGenData(pop, gen);
+        }
+
+        if ((gen == 0) || ((gen % (genmax / 10)) == 0) || (gen == genmax - 1) ||
+            (!reprod_threshold_met)) {
+        edgeLists.push_back(pop.pbsn.getNtwkDf());
+        gens_edge_lists.push_back(gen);
+        Rcpp::Rcout << "gen: " << gen << " --- logged edgelist\n";
+        }
+
+        // break here if population is extinct
+        if (!reprod_threshold_met) {
+            break;
         }
 
         // reproduce
@@ -209,6 +226,7 @@ Rcpp::List simulation::do_simulation() {
 //' is total intake.
 //' @param vertical Should the pathogen be transmitted vertically? Should be
 //' set to `TRUE` for a realistic implementation of scenario 3, _single spillover_.
+//' @param reprod_threshold Boolean, should individuals with negative energy reproduce.
 //' @param mProb The probability of mutation. The suggested value is 0.01.
 //' While high, this may be more appropriate for a small population; change this
 //' value and \code{popsize} to test the simulation's sensitivity to these values.
@@ -239,13 +257,20 @@ S4 run_pathomove(const int scenario,
                 const float dispersal,
                 const bool infect_percent,
                 const bool vertical,
+                const bool reprod_threshold,
                 const float mProb,
                 const float mSize,
                 const float spillover_rate) {
 
     // check that intial infections is less than popsize
-    if(initialInfections > popsize) {
-        Rcpp::stop("More infections than agents!");
+    if (initialInfections > popsize) {
+        Rcpp::stop("Error: Initial infections must be less than popsize");
+    }
+    if (g_patho_init >= genmax) {
+        Rcpp::stop("Error: G_patho_init must be less than genmax");
+    }
+    if (genmax < 10) {
+        Rcpp::warning("Simulation often crashes when 1 < genmax < 10");
     }
     // make simulation class with input parameters                            
     simulation this_sim(popsize, scenario, nItems, landsize,
@@ -254,6 +279,7 @@ S4 run_pathomove(const int scenario,
                         handling_time, regen_time,
                         pTransmit, initialInfections, 
                         costInfect, nThreads, dispersal, infect_percent, vertical,
+                        reprod_threshold,
                         mProb, mSize, spillover_rate);
     // do the simulation using the simulation class function                        
     Rcpp::List pathomoveOutput = this_sim.do_simulation();
