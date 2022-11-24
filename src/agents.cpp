@@ -515,78 +515,90 @@ Population::applyReprodThreshold() {
 }
 
 // fun for replication
-void Population::Reproduce(const Resources food, const bool infect_percent, 
-    const float dispersal, const float mProb, const float mSize) 
-{   
-    // rng for probability of vertical transmission
+void Population::Reproduce(const Resources &food, const bool &infect_percent,
+                           const float &dispersal, const float &mProb,
+                           const float &mSize) {
+  // boost random for probability of vertical transmission
     // currently same as prob for horizontal
-    std::bernoulli_distribution verticalInfect(pTransmit);
+  auto v_infect = Rcpp::rbinom(nAgents, 1, pTransmit);
 
-    // mutation probability and size distribution --- inefficient but oh well
-    std::bernoulli_distribution mutation_happens(mProb);
-    std::cauchy_distribution<float> mutation_size(0.0, mSize);
+  // prepare to deal with fitness and reproduction options
+  std::pair<std::vector<int>, std::vector<float>> thresholded_parents;
+  std::vector<float> vecFitness = handleFitness();
 
-    // choose the range over which individuals are dispersed
-    std::normal_distribution<float> sprout(0.f, dispersal);
-    std::vector<float> vecFitness;
-    //normalise intake if percent infect is not true
     if (infect_percent) {
          vecFitness = energy;
-    } else {
-        vecFitness = handleFitness();
+  }
+  // handle vecFtiness (parents) in special cases
+  if (reprod_threshold && infect_percent) {
+    Rcpp::stop(
+        "Error: Only one of 'reprod_threshold' and 'infect_percent' can be "
+        "true");
+  }
+  if (reprod_threshold) {
+    thresholded_parents = applyReprodThreshold();
+    vecFitness = thresholded_parents.second;
+  } 
+  if (infect_percent) {
+    vecFitness = energy;
     }
 
-    // set up weighted lottery
+  // set up weighted lottery based on the vector of fitnesses
     std::discrete_distribution<> weightedLottery(vecFitness.begin(), vecFitness.end());
 
     // get parent trait based on weighted lottery
-    std::vector<float> tmp_sF (nAgents, 0.f);
-    std::vector<float> tmp_sH (nAgents, 0.f);
-    std::vector<float> tmp_sN (nAgents, 0.f);
+  std::vector<float> tmp_sF(nAgents, 0.f);
+  std::vector<float> tmp_sH(nAgents, 0.f);
+  std::vector<float> tmp_sN(nAgents, 0.f);
     
     // infected or not for vertical transmission
-    std::vector<bool> infected_2 (nAgents, false);
+  std::vector<bool> infected_2(nAgents, false);
 
     // reset infection source
-    srcInfect = std::vector<int> (nAgents, 0);
+  srcInfect = std::vector<int>(nAgents, 0);
 
     // reset associations
-    associations = std::vector<int> (nAgents, 0);
+  associations = std::vector<int>(nAgents, 0);
 
     // reset distance moved
-    moved = std::vector<float> (nAgents, 0.f);
+  moved = std::vector<float>(nAgents, 0.f);
 
     // reset adjacency matrix
     pbsn.adjMat = Rcpp::NumericMatrix(nAgents, nAgents);
 
     // positions
-    std::vector<float> coord_x_2 (nAgents, 0.f);
-    std::vector<float> coord_y_2 (nAgents, 0.f);
+  std::vector<float> coord_x_2(nAgents, 0.f);
+  std::vector<float> coord_y_2(nAgents, 0.f);
+
+  // Get sprout distances
+  Rcpp::NumericVector sprout_x = Rcpp::rnorm(nAgents, 0.0f, dispersal);
+  Rcpp::NumericVector sprout_y = Rcpp::rnorm(nAgents, 0.0f, dispersal);
     
     for (int a = 0; a < nAgents; a++) {
         size_t parent_id = static_cast<size_t>(weightedLottery(rng));
+
+    // mod the parent id if a reprod threshold is applied, this helps refer
+    // to the id in the thresholded parents vector
+    if (reprod_threshold) parent_id = thresholded_parents.first[parent_id];
 
         tmp_sF[a] = sF[parent_id];
         tmp_sH[a] = sH[parent_id];
         tmp_sN[a] = sN[parent_id];
 
         // inherit positions from parent
-        coord_x_2[a] = coordX[parent_id] + sprout(rng);
-        coord_y_2[a] = coordY[parent_id] + sprout(rng);
+    coord_x_2[a] = coordX[parent_id] + sprout_x(a);
+    coord_y_2[a] = coordY[parent_id] + sprout_y(a);
 
-        // robustly wrap positions
-        if(coord_x_2[a] < 0.f) coord_x_2[a] = food.dSize + coord_x_2[a];
-        if(coord_x_2[a] > food.dSize) coord_x_2[a] = coord_x_2[a] - food.dSize;
-
-        if(coord_y_2[a] < 0.f) coord_y_2[a] = food.dSize + coord_y_2[a];
-        if(coord_y_2[a] > food.dSize) coord_y_2[a] = coord_y_2[a] - food.dSize;
+    // wrap locations
+    coord_x_2[a] = wrap_pos(coord_x_2[a], food.dSize);
+    coord_y_2[a] = wrap_pos(coord_y_2[a], food.dSize);
 
         // vertical transmission of infection if set to TRUE
         if (vertical) {
-            if(infected[parent_id]) {
-                if(verticalInfect(rng)) {
+      if (infected[parent_id]) {
+        if (v_infect(a)) {
                     infected_2[a] = true;
-                    srcInfect[a] = 1;
+          srcInfect[a] = -2;  // -2 for parents
                 }
             }
         }
@@ -599,28 +611,37 @@ void Population::Reproduce(const Resources food, const bool infect_percent,
     // swap coords --- this initialises individuals near their parent's position
     std::swap(coordX, coord_x_2);
     std::swap(coordY, coord_y_2);
-    coord_x_2.clear(); coord_y_2.clear();
+  coord_x_2.clear();
+  coord_y_2.clear();
 
     // update initial positions!
     initX = coordX;
     initY = coordY;
 
     // reset counter and time infected
-    counter = std::vector<int> (nAgents, 0);
-    timeInfected = std::vector<int> (nAgents, 0);
+  counter = std::vector<int>(nAgents, 0);
+  timeInfected = std::vector<int>(nAgents, 0);
     assert(static_cast<int>(counter.size()) == nAgents && "counter size wrong");
 
     // mutate trait: trait shifts up or down with an equal prob
     // trait mutation prob is mProb, in a two step process
+  auto mutation_sF = Rcpp::rbinom(nAgents, 1, mProb);
+  auto mutation_sH = Rcpp::rbinom(nAgents, 1, mProb);
+  auto mutation_sN = Rcpp::rbinom(nAgents, 1, mProb);
+
+  Rcpp::NumericVector mut_size_sF = Rcpp::rcauchy(nAgents, 0.0f, mSize);
+  Rcpp::NumericVector mut_size_sH = Rcpp::rcauchy(nAgents, 0.0f, mSize);
+  Rcpp::NumericVector mut_size_sN = Rcpp::rcauchy(nAgents, 0.0f, mSize);
+
     for (int a = 0; a < nAgents; a++) {
-        if(mutation_happens(rng)) {
-            tmp_sF[a] = tmp_sF[a] + mutation_size(rng);
+    if (mutation_sF(a)) {
+      tmp_sF[a] = tmp_sF[a] + mut_size_sF(a);
         }
-        if(mutation_happens(rng)) {
-            tmp_sH[a] = tmp_sH[a] + mutation_size(rng);
+    if (mutation_sH(a)) {
+      tmp_sH[a] = tmp_sH[a] + mut_size_sH(a);
         }
-        if(mutation_happens(rng)) {
-            tmp_sN[a] = tmp_sN[a] + mutation_size(rng);
+    if (mutation_sN(a)) {
+      tmp_sN[a] = tmp_sN[a] + mut_size_sN(a);
         }
     }
     
@@ -633,15 +654,17 @@ void Population::Reproduce(const Resources food, const bool infect_percent,
     std::swap(sH, tmp_sH);
     std::swap(sN, tmp_sN);
 
-    tmp_sF.clear(); tmp_sH.clear(); tmp_sN.clear();
+  tmp_sF.clear();
+  tmp_sH.clear();
+  tmp_sN.clear();
     
     // swap energy
-    std::vector<float> tmpEnergy (nAgents, 0.001);
+  std::vector<float> tmpEnergy(nAgents, 0.001);
     std::swap(energy, tmpEnergy);
     tmpEnergy.clear();
 
     // swap intake
-    std::vector<float> tmpIntake (nAgents, 0.001);
+  std::vector<float> tmpIntake(nAgents, 0.001);
     std::swap(intake, tmpIntake);
     tmpIntake.clear();
 }
