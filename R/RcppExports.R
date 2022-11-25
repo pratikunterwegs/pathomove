@@ -39,8 +39,7 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' @param pTransmit Probability of transmission.
 #' @param initialInfections Agents infected per event.
 #' @param costInfect The per-timestep cost of pathogen infection.
-#' @param nThreads How many threads to parallelise over. Set to 1 to run on
-#' the HPC Peregrine cluster.
+#' @param multithreaded Boolean. Whether multithreading using TBB to be used.
 #' @param dispersal A float value; the standard deviation of a normal
 #' distribution centred on zero, which determines how far away from its parent
 #' each individual is initialised. The standard value is 5 percent of the
@@ -57,6 +56,7 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' is total intake.
 #' @param vertical Should the pathogen be transmitted vertically? Should be
 #' set to `TRUE` for a realistic implementation of scenario 3, _single spillover_.
+#' @param reprod_threshold Boolean, should individuals with negative energy reproduce.
 #' @param mProb The probability of mutation. The suggested value is 0.01.
 #' While high, this may be more appropriate for a small population; change this
 #' value and \code{popsize} to test the simulation's sensitivity to these values.
@@ -66,7 +66,7 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' geometric distribution from which the number of generations until the next
 #' pathogen introduction are drawn.
 #' @return An S4 class, `pathomove_output`, with simulation outcomes.
-run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, vertical, mProb, mSize, spillover_rate) {
-    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, nThreads, dispersal, infect_percent, vertical, mProb, mSize, spillover_rate)
+run_pathomove <- function(scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, multithreaded, dispersal, infect_percent, vertical, reprod_threshold, mProb, mSize, spillover_rate) {
+    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, multithreaded, dispersal, infect_percent, vertical, reprod_threshold, mProb, mSize, spillover_rate)
 }
 
