@@ -18,8 +18,8 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' @description Run the simulation using parameters passed as
 #' arguments to the corresponding R function.
 #'
-#' @param scenario The pathomove scenario: 0 for no pathogen, 1 for 
-#' persistent introduction across generations, 
+#' @param scenario The pathomove scenario: 0 for no pathogen, 1 for
+#' persistent introduction across generations,
 #' 2 for a single introduction,
 #' and 3 for sporadic introductions drawn from a geometric distribution
 #' specified by `spillover_rate`.
@@ -30,7 +30,8 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' @param clusterSpread How dispersed food is around the cluster centre.
 #' @param tmax The number of timesteps per generation.
 #' @param genmax The maximum number of generations per simulation.
-#' @param g_patho_init The generation in which to begin introducing the pathogen.
+#' @param g_patho_init The generation in which to begin introducing the
+#' pathogen.
 #' @param range_food The sensory range for food.
 #' @param range_agents The sensory range for agents.
 #' @param range_move The movement range for agents.
@@ -46,20 +47,23 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' landscape size (\code{landsize}), and represents local dispersal.
 #' Setting this to 10 percent is already almost equivalent to global dispersal.
 #' @param infect_percent A boolean value; whether the infection depletes a
-#' percentage of daily energy (\code{TRUE}) or whether a fixed value 
+#' percentage of daily energy (\code{TRUE}) or whether a fixed value
 #' (\code{FALSE}) is subtracted from net energy.
-#' For \code{infect_percent = TRUE}, the net energy remaining after \code{T} 
+#' For \code{infect_percent = TRUE}, the net energy remaining after \code{T}
 #' timesteps of infection is \code{N * (1 - cost_infect) ^ T}, where \code{N}
 #' is total intake.
-#' For \code{infect_percent = FALSE}, the net energy remaining after \code{T} 
+#' For \code{infect_percent = FALSE}, the net energy remaining after \code{T}
 #' timesteps of infection is \code{N - (cost_infect * T)}, where \code{N}
 #' is total intake.
 #' @param vertical Should the pathogen be transmitted vertically? Should be
-#' set to `TRUE` for a realistic implementation of scenario 3, _single spillover_.
-#' @param reprod_threshold Boolean, should individuals with negative energy reproduce.
+#' set to `TRUE` for a realistic implementation of scenario 3,
+#' _single spillover_.
+#' @param reprod_threshold Boolean, should individuals with negative energy
+#' reproduce.
 #' @param mProb The probability of mutation. The suggested value is 0.01.
 #' While high, this may be more appropriate for a small population; change this
-#' value and \code{popsize} to test the simulation's sensitivity to these values.
+#' value and \code{popsize} to test the simulation's sensitivity to these
+#' parameters.
 #' @param mSize Controls the mutational step size, and represents the scale
 #' parameter of a Cauchy distribution.
 #' @param spillover_rate For scenario 3, the probability parameter _p_ of a

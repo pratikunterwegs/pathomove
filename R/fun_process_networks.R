@@ -7,13 +7,12 @@
 #' @return A list of \code{tidygraph} objects.
 #' @export
 get_networks <- function(output, assoc_threshold = 5) {
-  
-  agent_parameters = output@agent_parameters
-  eco_parameters = output@eco_parameters
+  agent_parameters <- output@agent_parameters
+  eco_parameters <- output@eco_parameters
 
   # edgelist collection and work
   el <- output@edge_lists
-  el_gens = output@gens_edge_lists
+  el_gens <- output@gens_edge_lists
 
   el <- lapply(el, function(le) {
     le <- le[le$assoc > assoc_threshold, ]
@@ -31,8 +30,8 @@ get_networks <- function(output, assoc_threshold = 5) {
   nodes <- nodes[output@generations %in% output@gens_edge_lists] # id data for el
 
   # work on nodes
-  nodes <- Map(nodes, output@gens_edge_lists, 
-      f = function(n, g) {
+  nodes <- Map(nodes, output@gens_edge_lists,
+    f = function(n, g) {
       n$gen <- g
       n$id <- seq(nrow(n))
       data.table::setDT(n)
@@ -41,7 +40,7 @@ get_networks <- function(output, assoc_threshold = 5) {
       n[, names(agent_parameters) := agent_parameters]
       n[, names(eco_parameters) := eco_parameters]
 
-      n = get_social_strategy(n)
+      n <- get_social_strategy(n)
       n
     }
   )
