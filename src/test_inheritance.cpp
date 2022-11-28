@@ -40,9 +40,8 @@ const float vertical = false;
 const float reprod_threshold = false;
 
 // make test population
-Population pop_3(popsize, range_agents, range_food, range_move,
-                 handling_time, p_transmit, vertical,
-                 reprod_threshold);
+Population pop_3(popsize, range_agents, range_food, range_move, handling_time,
+                 p_transmit, vertical, reprod_threshold);
 
 // Initialize a unit test context. This is similar to how you
 // might begin an R test file with 'context()', expect the

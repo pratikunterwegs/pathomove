@@ -57,8 +57,8 @@ const float vertical = false;
 const float reprod_threshold = false;
 
 // make test population
-Population pop_2(popsize, range_agents, range_food, range_move,
-                 handling_time, p_transmit, vertical, reprod_threshold);
+Population pop_2(popsize, range_agents, range_food, range_move, handling_time,
+                 p_transmit, vertical, reprod_threshold);
 
 // Initialize a unit test context. This is similar to how you
 // might begin an R test file with 'context()', expect the
@@ -116,10 +116,6 @@ context("Population movement works") {
 
   test_that("Agent moves correctly without multithreading") {
     pop_2.move(landscape, false);
-    std::cout << "\nAgent sF: " << pop_2.sF[0] << "\n";
-    std::cout << "Agent at: " << pop_2.coordX[0] << ", " << pop_2.coordY[0]
-              << "\n";
-    std::cout << "Agent moved = " << pop_2.moved[0] << "\n";
     // check that agent moves only once
     CATCH_CHECK(pop_2.moved[0] == Approx(1.0).epsilon(1e-3));
 
@@ -134,9 +130,6 @@ context("Population movement works") {
     pop_2.moved = {0.f};
 
     pop_2.move(landscape, true);
-    // std::cout << "Agent at: " << pop_2.coordX[0] << ", " << pop_2.coordY[0]
-    //           << "\n";
-    // std::cout << "Agent moved = " << pop_2.moved[0] << "\n";
 
     // check that agent moves only once
     CATCH_CHECK(pop_2.moved[0] == Approx(1.0).epsilon(1e-3));
@@ -152,16 +145,9 @@ context("Population movement works") {
     pop_2.moved = {0.f};
 
     pop_2.move(landscape, true);
-    // std::cout << "Agent at: " << pop_2.coordX[0] << ", " << pop_2.coordY[0]
-    //           << "\n";
-    // std::cout << "Agent moved = " << pop_2.moved[0] << "\n";
 
     pop_2.pickForageItem(landscape, true);
     pop_2.doForage(landscape);
-
-    // std::cout << "Agent counter: " << pop_2.counter[0] << "\n";
-    // std::cout << "Agent intake: " << pop_2.intake[0] << "\n";
-    // std::cout << "Agent energy = " << pop_2.energy[0] << "\n";
 
     // check that agent has item and already has intake
     CATCH_CHECK(pop_2.counter[0] == handling_time);

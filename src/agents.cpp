@@ -16,31 +16,26 @@
 
 // to shuffle pop id
 void Population::shufflePop() {
-    if (order[0] == order[nAgents - 1])
-    {
-        for (size_t i = 0; i < static_cast<size_t>(nAgents); i++)
-        {
-            order[i] = i;
-        }
-        std::random_shuffle ( order.begin(), order.end() );
+  if (order[0] == order[nAgents - 1]) {
+    for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
+      order[i] = i;
     }
-    else {
-        std::random_shuffle ( order.begin(), order.end() );
-    }
-    
+    std::random_shuffle(order.begin(), order.end());
+  } else {
+    std::random_shuffle(order.begin(), order.end());
+  }
 }
 
 // to update agent Rtree
-void Population::updateRtree () {
-    // initialise rtree
-    bgi::rtree< value, bgi::quadratic<16> > tmpRtree;
-    for (int i = 0; i < nAgents; ++i)
-    {
-        point p = point(coordX[i], coordY[i]);
-        tmpRtree.insert(std::make_pair(p, i));
-    }
-    std::swap(agentRtree, tmpRtree);
-    tmpRtree.clear();
+void Population::updateRtree() {
+  // initialise rtree
+  bgi::rtree<value, bgi::quadratic<16>> tmpRtree;
+  for (int i = 0; i < nAgents; ++i) {
+    point p = point(coordX[i], coordY[i]);
+    tmpRtree.insert(std::make_pair(p, i));
+  }
+  std::swap(agentRtree, tmpRtree);
+  tmpRtree.clear();
 }
 
 // uniform distribution for agent position
@@ -48,73 +43,76 @@ std::uniform_real_distribution<float> agent_ran_pos(0.0f, 1.f);
 
 // function for initial positions
 void Population::initPos(Resources food) {
-    for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-        coordX[i] = agent_ran_pos(rng) * food.dSize;
-        initX[i] = coordX[i];
-        coordY[i] = agent_ran_pos(rng) * food.dSize;
-        initY[i] = coordY[i];
-    }
-    updateRtree();
+  for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
+    coordX[i] = agent_ran_pos(rng) * food.dSize;
+    initX[i] = coordX[i];
+    coordY[i] = agent_ran_pos(rng) * food.dSize;
+    initY[i] = coordY[i];
+  }
+  updateRtree();
 }
 
 // set agent trait
 void Population::setTrait(const float mSize) {
+  // create a cauchy distribution, mSize is the scale
+  std::cauchy_distribution<float> agent_ran_trait(0.f, mSize);
 
-    // create a cauchy distribution, mSize is the scale
-    std::cauchy_distribution<float> agent_ran_trait(0.f, mSize);
-
-    for(int i = 0; i < nAgents; i++) {
-        sF[i] = agent_ran_trait(rng);
-        sH[i] = agent_ran_trait(rng);
-        sN[i] = agent_ran_trait(rng);
-    }
+  for (int i = 0; i < nAgents; i++) {
+    sF[i] = agent_ran_trait(rng);
+    sH[i] = agent_ran_trait(rng);
+    sN[i] = agent_ran_trait(rng);
+  }
 }
 
 float get_distance(float x1, float x2, float y1, float y2) {
-    return std::sqrt(std::pow((x1 - x2), 2) + std::pow((y1 - y2), 2));
+  return std::sqrt(std::pow((x1 - x2), 2) + std::pow((y1 - y2), 2));
 }
 
 // general function for agents within distance
-std::pair<int, int> Population::countAgents (
-    const float xloc, const float yloc) {
-    
-    int handlers = 0;
-    int nonhandlers = 0;
-    std::vector<value> near_agents;
-    // query for a simple box
-    agentRtree.query(bgi::satisfies([&](value const& v) {
-        return bg::distance(v.first, point(xloc, yloc)) < range_agents;}),
-        std::back_inserter(near_agents));
+std::pair<int, int> Population::countAgents(const float xloc,
+                                            const float yloc) {
+  int handlers = 0;
+  int nonhandlers = 0;
+  std::vector<value> near_agents;
+  // query for a simple box
+  agentRtree.query(bgi::satisfies([&](value const &v) {
+                     return bg::distance(v.first, point(xloc, yloc)) <
+                            range_agents;
+                   }),
+                   std::back_inserter(near_agents));
 
-    BOOST_FOREACH(value const& v, near_agents) {
-        
-        if(counter[v.second] > 0) handlers ++; else nonhandlers ++;
-    }
-    near_agents.clear();
-    // first element is number of near entities
-    // second is the identity of entities
-    return std::pair<int, int> {handlers, nonhandlers};
+  BOOST_FOREACH (value const &v, near_agents) {
+    if (counter[v.second] > 0)
+      handlers++;
+    else
+      nonhandlers++;
+  }
+  near_agents.clear();
+  // first element is number of near entities
+  // second is the identity of entities
+  return std::pair<int, int>{handlers, nonhandlers};
 }
 
 // function for near agent ids
-std::vector<int> Population::getNeighbourId (
-    const float xloc, const float yloc) {
-    
-    std::vector<int> agent_id;
-    std::vector<value> near_agents;
-    // query for a simple box
-    // neighbours for associations are counted over the MOVEMENT RANGE
-    agentRtree.query(bgi::satisfies([&](value const& v) {
-        return bg::distance(v.first, point(xloc, yloc)) < range_move;}),
-        std::back_inserter(near_agents));
+std::vector<int> Population::getNeighbourId(const float xloc,
+                                            const float yloc) {
+  std::vector<int> agent_id;
+  std::vector<value> near_agents;
+  // query for a simple box
+  // neighbours for associations are counted over the MOVEMENT RANGE
+  agentRtree.query(bgi::satisfies([&](value const &v) {
+                     return bg::distance(v.first, point(xloc, yloc)) <
+                            range_move;
+                   }),
+                   std::back_inserter(near_agents));
 
-    BOOST_FOREACH(value const& v, near_agents) {
-        agent_id.push_back(v.second);
-    }
-    near_agents.clear();
-    // first element is number of near entities
-    // second is the identity of entities
-    return agent_id;
+  BOOST_FOREACH (value const &v, near_agents) {
+    agent_id.push_back(v.second);
+  }
+  near_agents.clear();
+  // first element is number of near entities
+  // second is the identity of entities
+  return agent_id;
 }
 
 // general function for items within distance
@@ -145,32 +143,32 @@ int Population::countFood(const Resources &food, const float &xloc,
 }
 
 // function for the nearest available food item
-std::vector<int> Population::getFoodId (
-    const Resources &food,
-    const float xloc, const float yloc) {
-        
-    std::vector<int> food_id;
-    std::vector<value> near_food;
-    // check any available
-    if (food.nAvailable > 0) {
-        // query for a simple box
-        // food is accessed over the MOVEMENT RANGE
-        food.rtree.query(bgi::satisfies([&](value const& v) {
-            return bg::distance(v.first, point(xloc, yloc)) < range_move;}), 
-            std::back_inserter(near_food));
+std::vector<int> Population::getFoodId(const Resources &food, const float xloc,
+                                       const float yloc) {
+  std::vector<int> food_id;
+  std::vector<value> near_food;
+  // check any available
+  if (food.nAvailable > 0) {
+    // query for a simple box
+    // food is accessed over the MOVEMENT RANGE
+    food.rtree.query(bgi::satisfies([&](value const &v) {
+                       return bg::distance(v.first, point(xloc, yloc)) <
+                              range_move;
+                     }),
+                     std::back_inserter(near_food));
 
-        BOOST_FOREACH(value const& v, near_food) {
-            // count only which are available!
-            if (food.available[v.second]) {
-                food_id.push_back(v.second);
-            }
-        }
-        near_food.clear();
+    BOOST_FOREACH (value const &v, near_food) {
+      // count only which are available!
+      if (food.available[v.second]) {
+        food_id.push_back(v.second);
+      }
     }
+    near_food.clear();
+  }
 
-    // first element is number of near entities
-    // second is the identity of entities
-    return food_id;
+  // first element is number of near entities
+  // second is the identity of entities
+  return food_id;
 }
 
 /// rng for suitability
@@ -352,103 +350,96 @@ void Population::move(const Resources &food, const bool &multithreaded) {
   }
 }
 
-
 // function to paralellise choice of forage item
-void Population::pickForageItem(const Resources &food, const bool &multithreaded){
-    shufflePop();
-    // nearest food
-    std::vector<int> idTargetFood (nAgents, -1);
+void Population::pickForageItem(const Resources &food,
+                                const bool &multithreaded) {
+  shufflePop();
+  // nearest food
+  std::vector<int> idTargetFood(nAgents, -1);
 
-    if (multithreaded)
-    {
-        // loop over agents --- no shuffling required here
-        // try parallel foraging --- agents pick a target item
-        tbb::parallel_for(
-            tbb::blocked_range<unsigned>(0, order.size()),
-                [&](const tbb::blocked_range<unsigned>& r) {
-                for (unsigned i = r.begin(); i < r.end(); ++i) {
-                    if ((counter[i] > 0) || (food.nAvailable == 0)) { 
-                        // nothing -- agent cannot forage or there is no food
-                    }
-                    else {
-                        // find nearest item ids
-                        std::vector<int> theseItems = getFoodId(food, coordX[i], coordY[i]);
-                        int thisItem = -1;
+  if (multithreaded) {
+    // loop over agents --- no shuffling required here
+    // try parallel foraging --- agents pick a target item
+    tbb::parallel_for(tbb::blocked_range<unsigned>(0, order.size()),
+                      [&](const tbb::blocked_range<unsigned> &r) {
+                        for (unsigned i = r.begin(); i < r.end(); ++i) {
+                          if ((counter[i] > 0) || (food.nAvailable == 0)) {
+                            // nothing -- agent cannot forage or there is no
+                            // food
+                          } else {
+                            // find nearest item ids
+                            std::vector<int> theseItems =
+                                getFoodId(food, coordX[i], coordY[i]);
+                            int thisItem = -1;
 
-                        // check near items count
-                        if(theseItems.size() > 0) {
-                            // take first item by default
-                            thisItem = theseItems[0];
-                            idTargetFood[i] = thisItem;
+                            // check near items count
+                            if (theseItems.size() > 0) {
+                              // take first item by default
+                              thisItem = theseItems[0];
+                              idTargetFood[i] = thisItem;
+                            }
+                          }
                         }
-                    }
-                }
-            }
-        );
-    } else
-    {
-        for (int i = 0; i < nAgents; ++i) {
-            if ((counter[i] > 0) || (food.nAvailable == 0)) { 
-                // nothing -- agent cannot forage or there is no food
-            }
-            else {
-                // find nearest item ids
-                std::vector<int> theseItems = getFoodId(food, coordX[i], coordY[i]);
-                int thisItem = -1;
+                      });
+  } else {
+    for (int i = 0; i < nAgents; ++i) {
+      if ((counter[i] > 0) || (food.nAvailable == 0)) {
+        // nothing -- agent cannot forage or there is no food
+      } else {
+        // find nearest item ids
+        std::vector<int> theseItems = getFoodId(food, coordX[i], coordY[i]);
+        int thisItem = -1;
 
-                // check near items count
-                if(theseItems.size() > 0) {
-                    // take first item by default
-                    thisItem = theseItems[0];
-                    idTargetFood[i] = thisItem;
-                }
-            }
+        // check near items count
+        if (theseItems.size() > 0) {
+          // take first item by default
+          thisItem = theseItems[0];
+          idTargetFood[i] = thisItem;
         }
+      }
     }
+  }
 
-    forageItem = idTargetFood;
+  forageItem = idTargetFood;
 }
 
 // function to exploitatively forage on picked forage items
 void Population::doForage(Resources &food) {
-    // all agents have picked a food item if they can forage
-    // now forage in a serial loop --- this cannot be parallelised
-    // this order is randomised
-    for (size_t i = 0; i < static_cast<size_t>(nAgents); i++)
-    {
-        int id = order[i];
-        if ((counter[id] > 0) | (food.nAvailable == 0)) {
-            // nothing
-        } else {
-            int thisItem = forageItem[id]; //the item picked by this agent
-            // check selected item is available
-            if (thisItem != -1)
-            {
-                counter[id] = handling_time;
-                intake[id] += 1.0; // increased here --- not as described.
+  // all agents have picked a food item if they can forage
+  // now forage in a serial loop --- this cannot be parallelised
+  // this order is randomised
+  for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
+    int id = order[i];
+    if ((counter[id] > 0) | (food.nAvailable == 0)) {
+      // nothing
+    } else {
+      int thisItem = forageItem[id];  // the item picked by this agent
+      // check selected item is available
+      if (thisItem != -1) {
+        counter[id] = handling_time;
+        intake[id] += 1.0;  // increased here --- not as described.
 
-                // reset food availability
-                food.available[thisItem] = false;
-                food.counter[thisItem] = food.regen_time;
-                food.nAvailable --;
-            }
-        }
+        // reset food availability
+        food.available[thisItem] = false;
+        food.counter[thisItem] = food.regen_time;
+        food.nAvailable--;
+      }
     }
+  }
 }
 
 void Population::countAssoc() {
-    for (int i = 0; i < nAgents; ++i) {
-        // count nearby agents and update raw associations
-        std::vector<int> nearby_agents = getNeighbourId(coordX[i], coordY[i]);
-        associations[i] += nearby_agents.size();
+  for (int i = 0; i < nAgents; ++i) {
+    // count nearby agents and update raw associations
+    std::vector<int> nearby_agents = getNeighbourId(coordX[i], coordY[i]);
+    associations[i] += nearby_agents.size();
 
-        // loop over nearby agents and update association matrix
-        for (size_t j = 0; j < nearby_agents.size(); j++)
-        {
-            int target_agent = nearby_agents[j];
-            pbsn.adjMat (i, target_agent) += 1;
-        }
+    // loop over nearby agents and update association matrix
+    for (size_t j = 0; j < nearby_agents.size(); j++) {
+      int target_agent = nearby_agents[j];
+      pbsn.adjMat(i, target_agent) += 1;
     }
+  }
 }
 
 /// small function to check whether individuals have a positive energy balance
@@ -459,22 +450,22 @@ const bool Population::check_reprod_threshold() {
 
 /// minor function to normalise vector
 std::vector<float> Population::handleFitness() {
-    // sort vec fitness
-    std::vector<float> vecFitness = energy;
-    std::sort(vecFitness.begin(), vecFitness.end()); // sort to to get min-max
-    // scale to max fitness
-    float maxFitness = vecFitness[vecFitness.size()-1];
-    float minFitness = vecFitness[0];
+  // sort vec fitness
+  std::vector<float> vecFitness = energy;
+  std::sort(vecFitness.begin(), vecFitness.end());  // sort to to get min-max
+  // scale to max fitness
+  float maxFitness = vecFitness[vecFitness.size() - 1];
+  float minFitness = vecFitness[0];
 
-    // reset to energy
-    vecFitness = energy;
-    // rescale copied energy vector by min anx max fitness
-    for(size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-        vecFitness[i] = ((vecFitness[i]  - minFitness) / (maxFitness - minFitness)) +
-         noise(rng);
-    }
-    
-    return vecFitness;
+  // reset to energy
+  vecFitness = energy;
+  // rescale copied energy vector by min anx max fitness
+  for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
+    vecFitness[i] =
+        ((vecFitness[i] - minFitness) / (maxFitness - minFitness)) + noise(rng);
+  }
+
+  return vecFitness;
 }
 
 /// prepare function to handle fitness and offer parents when applying a
@@ -505,7 +496,7 @@ Population::applyReprodThreshold() {
 
   vecFitness = (vecFitness - minFitness) / (maxFitness - minFitness);
 
-  energy_pos = Rcpp::as<std::vector<float> > (vecFitness);
+  energy_pos = Rcpp::as<std::vector<float>>(vecFitness);
 
   return std::pair<std::vector<int>, std::vector<float>>(id_pos, energy_pos);
 }
@@ -533,13 +524,14 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
   if (reprod_threshold) {
     thresholded_parents = applyReprodThreshold();
     vecFitness = thresholded_parents.second;
-  } 
+  }
   if (infect_percent) {
     vecFitness = energy;
   }
 
   // set up weighted lottery based on the vector of fitnesses
-  std::discrete_distribution<> weightedLottery(vecFitness.begin(), vecFitness.end());
+  std::discrete_distribution<> weightedLottery(vecFitness.begin(),
+                                               vecFitness.end());
 
   // get parent trait based on weighted lottery
   std::vector<float> tmp_sF(nAgents, 0.f);

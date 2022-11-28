@@ -1,13 +1,15 @@
-#include <vector>
 #include <Rcpp.h>
+
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/index/rtree.hpp>
-using namespace Rcpp;
-#include "landscape.h"
 #include <vector>
+using namespace Rcpp;
 #include <algorithm>
 #include <functional>
+#include <vector>
+
+#include "landscape.h"
 
 std::mt19937 rng;
 
@@ -56,23 +58,22 @@ void Resources::initResources() {
 }
 
 void Resources::countAvailable() {
-    nAvailable = 0;
-    // counter set to max regeneration value on foraging
-    for (size_t i = 0; i < static_cast<size_t>(nItems); i++){
-        if(counter[i] == 0) {
-            nAvailable ++;
-        }
+  nAvailable = 0;
+  // counter set to max regeneration value on foraging
+  for (size_t i = 0; i < static_cast<size_t>(nItems); i++) {
+    if (counter[i] == 0) {
+      nAvailable++;
     }
+  }
 }
 
 void Resources::regenerate() {
-    for (int i = 0; i < nItems; i++)
-    {
-        counter[i] -= (counter[i] > 0 ? 1 : 0);
-        available[i] = (counter[i] == 0);
-    }
-    // set availability
-    countAvailable();
+  for (int i = 0; i < nItems; i++) {
+    counter[i] -= (counter[i] > 0 ? 1 : 0);
+    available[i] = (counter[i] == 0);
+  }
+  // set availability
+  countAvailable();
 }
 
 /// function to export landscape as matrix
@@ -85,20 +86,18 @@ void Resources::regenerate() {
 //' @param regen_time Regeneration time, in timesteps.
 //' @return A data frame of the evolved population traits.
 // [[Rcpp::export]]
-Rcpp::DataFrame get_test_landscape(
-        const int nItems, const float landsize,
-        const int nClusters, const float clusterSpread,
-        const int regen_time) {
-    
-    unsigned seed = static_cast<unsigned> (std::chrono::system_clock::now().time_since_epoch().count());
-    rng.seed(seed);
+Rcpp::DataFrame get_test_landscape(const int nItems, const float landsize,
+                                   const int nClusters,
+                                   const float clusterSpread,
+                                   const int regen_time) {
+  unsigned seed = static_cast<unsigned>(
+      std::chrono::system_clock::now().time_since_epoch().count());
+  rng.seed(seed);
 
-    Resources food (nItems, landsize, nClusters, clusterSpread, regen_time);
-    food.initResources();
+  Resources food(nItems, landsize, nClusters, clusterSpread, regen_time);
+  food.initResources();
 
-    return Rcpp::DataFrame::create(
-                Rcpp::Named("x") = food.coordX,
-                Rcpp::Named("y") = food.coordY,
-                Rcpp::Named("tAvail") = food.counter
-            );
+  return Rcpp::DataFrame::create(Rcpp::Named("x") = food.coordX,
+                                 Rcpp::Named("y") = food.coordY,
+                                 Rcpp::Named("tAvail") = food.counter);
 }
