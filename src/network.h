@@ -1,18 +1,22 @@
-#pragma once
+// Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
+/// the network structure, which holds an adjacency matrix
+#ifndef SRC_NETWORK_H_
+#define SRC_NETWORK_H_
 
-#include <Rcpp.h>
-
+// clang-format off
 #include <cassert>
 #include <vector>
 
-using namespace Rcpp;
+#include <Rcpp.h>
 
-/// the network structure, which holds an adjacency matrix
+// clang-format on
+
 // network should be a member of population later
 // network has funs to return network metrics and the adj matrix
 struct Network {
  public:
-  Network(const int popsize) : nVertices(popsize), adjMat(popsize, popsize) {}
+  explicit Network(const int popsize)
+      : nVertices(popsize), adjMat(popsize, popsize) {}
   ~Network() {}
 
   // members
@@ -24,3 +28,5 @@ struct Network {
   // std::vector<float> ntwkMeasures();
   // std::vector<int> getDegree();
 };
+
+#endif  // SRC_NETWORK_H_

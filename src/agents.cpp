@@ -1,18 +1,23 @@
+// Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
 #define _USE_MATH_DEFINES
 /// code to make agents
+
+// clang-format off
 #include "agents.h"
 
-#include <Rcpp.h>
-#include <RcppParallel.h>
-
 #include <algorithm>
-#include <boost/foreach.hpp>
 #include <cassert>
 #include <iostream>
+#include <utility>
 #include <vector>
 
 #include "landscape.h"
 #include "network.h"
+
+#include <Rcpp.h>
+#include <RcppParallel.h>
+#include <boost/foreach.hpp>
+// clang-format on
 
 // to shuffle pop id
 void Population::shufflePop() {
@@ -81,7 +86,7 @@ std::pair<int, int> Population::countAgents(const float xloc,
                    }),
                    std::back_inserter(near_agents));
 
-  BOOST_FOREACH (value const &v, near_agents) {
+  BOOST_FOREACH(value const &v, near_agents) {
     if (counter[v.second] > 0)
       handlers++;
     else
@@ -106,7 +111,7 @@ std::vector<int> Population::getNeighbourId(const float xloc,
                    }),
                    std::back_inserter(near_agents));
 
-  BOOST_FOREACH (value const &v, near_agents) {
+  BOOST_FOREACH(value const &v, near_agents) {
     agent_id.push_back(v.second);
   }
   near_agents.clear();
@@ -130,7 +135,7 @@ int Population::countFood(const Resources &food, const float &xloc,
                      }),
                      std::back_inserter(near_food));
 
-    BOOST_FOREACH (value const &v, near_food) {
+    BOOST_FOREACH(value const &v, near_food) {
       // count only which are available!
       if (food.available[v.second]) {
         nFood++;
@@ -157,7 +162,7 @@ std::vector<int> Population::getFoodId(const Resources &food, const float xloc,
                      }),
                      std::back_inserter(near_food));
 
-    BOOST_FOREACH (value const &v, near_food) {
+    BOOST_FOREACH(value const &v, near_food) {
       // count only which are available!
       if (food.available[v.second]) {
         food_id.push_back(v.second);
@@ -199,7 +204,7 @@ void Population::move(const Resources &food, const bool &multithreaded) {
   // make random noise for each individual and each sample
   Rcpp::NumericMatrix noise_v(nAgents, n_samples);
   for (size_t i_ = 0; i_ < n_samples; i_++) {
-    noise_v(_, i_) = Rcpp::rnorm(nAgents, 0.0f, 0.01f);
+    noise_v(Rcpp::_, i_) = Rcpp::rnorm(nAgents, 0.0f, 0.01f);
   }
 
   // loop over agents

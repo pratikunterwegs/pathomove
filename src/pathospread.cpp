@@ -1,9 +1,12 @@
+// Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
 /// define functions for pathogen spread
 
+// clang-format off
 #include <unordered_set>
 
-#include "agents.h"
 #include "parameters.h"
+#include "agents.h"
+// clang-format on
 
 /// function to infect n individuals
 void Population::introducePathogen(const int initialInfections) {

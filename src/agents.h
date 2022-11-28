@@ -1,16 +1,21 @@
-#ifndef AGENTS_H
-#define AGENTS_H
+// Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
+#ifndef SRC_AGENTS_H_
+#define SRC_AGENTS_H_
 
 #define _USE_MATH_DEFINES
 /// code to make agents
+// clang-format off
 #include <algorithm>
-#include <boost/foreach.hpp>
 #include <cassert>
 #include <iostream>
+#include <utility>
 #include <vector>
+
+#include <boost/foreach.hpp>
 
 #include "landscape.h"
 #include "network.h"
+// clang-format on
 
 // Agent class
 struct Population {
@@ -159,4 +164,4 @@ struct Population {
 // a dinky function for distance and passed to catch test
 float get_distance(float x1, float x2, float y1, float y2);
 
-#endif  // AGENTS_H
+#endif  // SRC_AGENTS_H_

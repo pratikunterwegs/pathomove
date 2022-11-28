@@ -1,3 +1,6 @@
+// Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
+
+// clang-format off
 #include "simulations.h"
 
 #include <Rcpp.h>
@@ -7,8 +10,7 @@
 #include <iostream>
 #include <random>
 #include <vector>
-
-using namespace Rcpp;
+// clang-format on
 
 Rcpp::List simulation::do_simulation() {
   unsigned seed = static_cast<unsigned>(
@@ -173,13 +175,12 @@ Rcpp::List simulation::do_simulation() {
 
   Rcpp::Rcout << "data prepared\n";
 
-  return Rcpp::List::create(Named("gen_data") = gen_data.getGenData(),
-                            Named("gens_patho_intro") = gens_patho_intro,
-                            Named("edgeLists") = edgeLists,
-                            Named("gens_edge_lists") = gens_edge_lists  //,
-                            // Named("move_pre") = mdPre.getMoveData(),
-                            // Named("move_post") = mdPost.getMoveData()
-  );
+  return Rcpp::List::create(Rcpp::Named("gen_data") = gen_data.getGenData(),
+                            Rcpp::Named("gens_patho_intro") = gens_patho_intro,
+                            Rcpp::Named("edgeLists") = edgeLists,
+                            Rcpp::Named("gens_edge_lists") = gens_edge_lists);
+  // Named("move_pre") = mdPre.getMoveData(),
+  // Named("move_post") = mdPost.getMoveData()
 }
 
 //' Runs the pathomove simulation and return a `pathomove_output` object.
@@ -240,17 +241,18 @@ Rcpp::List simulation::do_simulation() {
 //' pathogen introduction are drawn.
 //' @return An S4 class, `pathomove_output`, with simulation outcomes.
 // [[Rcpp::export]]
-S4 run_pathomove(const int scenario, const int popsize, const int nItems,
-                 const float landsize, const int nClusters,
-                 const float clusterSpread, const int tmax, const int genmax,
-                 const int g_patho_init, const float range_food,
-                 const float range_agents, const float range_move,
-                 const int handling_time, const int regen_time, float pTransmit,
-                 const int initialInfections, const float costInfect,
-                 const bool multithreaded, const float dispersal,
-                 const bool infect_percent, const bool vertical,
-                 const bool reprod_threshold, const float mProb,
-                 const float mSize, const float spillover_rate) {
+Rcpp::S4 run_pathomove(const int scenario, const int popsize, const int nItems,
+                       const float landsize, const int nClusters,
+                       const float clusterSpread, const int tmax,
+                       const int genmax, const int g_patho_init,
+                       const float range_food, const float range_agents,
+                       const float range_move, const int handling_time,
+                       const int regen_time, float pTransmit,
+                       const int initialInfections, const float costInfect,
+                       const bool multithreaded, const float dispersal,
+                       const bool infect_percent, const bool vertical,
+                       const bool reprod_threshold, const float mProb,
+                       const float mSize, const float spillover_rate) {
   // check that intial infections is less than popsize
   if (initialInfections > popsize) {
     Rcpp::stop("Error: Initial infections must be less than popsize");
@@ -307,28 +309,32 @@ S4 run_pathomove(const int scenario, const int popsize, const int nItems,
 
   // agents parameter list --- limit of 20 elements for manual lists!
   Rcpp::List agents_param_list = Rcpp::List::create(
-      Named("popsize") = popsize, Named("range_food") = range_food,
-      Named("range_agents") = range_agents, Named("range_move") = range_move,
-      Named("handling_time") = handling_time, Named("pTransmit") = pTransmit,
-      Named("initialInfections") = initialInfections,
-      Named("costInfect") = costInfect,
-      Named("infect_percent") = infection_cost_type,
-      Named("vertical_infection") = vertical_infection,
-      Named("reprod_threshold") = reprod_threshold,
-      Named("dispersal") = dispersal, Named("mProb") = mProb,
-      Named("mSize") = mSize);
+      Rcpp::Named("popsize") = popsize, Rcpp::Named("range_food") = range_food,
+      Rcpp::Named("range_agents") = range_agents,
+      Rcpp::Named("range_move") = range_move,
+      Rcpp::Named("handling_time") = handling_time,
+      Rcpp::Named("pTransmit") = pTransmit,
+      Rcpp::Named("initialInfections") = initialInfections,
+      Rcpp::Named("costInfect") = costInfect,
+      Rcpp::Named("infect_percent") = infection_cost_type,
+      Rcpp::Named("vertical_infection") = vertical_infection,
+      Rcpp::Named("reprod_threshold") = reprod_threshold,
+      Rcpp::Named("dispersal") = dispersal, Rcpp::Named("mProb") = mProb,
+      Rcpp::Named("mSize") = mSize);
 
   // ecological parameters list
   Rcpp::List eco_param_list = Rcpp::List::create(
-      Named("scenario") = scenario_str, Named("genmax") = genmax,
-      Named("g_patho_init") = (scenario == 0 ? NA_REAL : g_patho_init),
-      Named("spillover_rate") = (scenario == 3 ? NA_REAL : spillover_rate),
-      Named("nItems") = nItems, Named("landsize") = landsize,
-      Named("nClusters") = nClusters, Named("clusterSpread") = clusterSpread,
-      Named("tmax") = tmax, Named("regen_time") = regen_time);
+      Rcpp::Named("scenario") = scenario_str, Rcpp::Named("genmax") = genmax,
+      Rcpp::Named("g_patho_init") = (scenario == 0 ? NA_REAL : g_patho_init),
+      Rcpp::Named("spillover_rate") =
+          (scenario == 3 ? NA_REAL : spillover_rate),
+      Rcpp::Named("nItems") = nItems, Rcpp::Named("landsize") = landsize,
+      Rcpp::Named("nClusters") = nClusters,
+      Rcpp::Named("clusterSpread") = clusterSpread, Rcpp::Named("tmax") = tmax,
+      Rcpp::Named("regen_time") = regen_time);
 
   // create S4 class pathomove output and fill slots
-  S4 x("pathomove_output");
+  Rcpp::S4 x("pathomove_output");
   x.slot("agent_parameters") = Rcpp::wrap(agents_param_list);
   x.slot("eco_parameters") = Rcpp::wrap(eco_param_list);
   x.slot("generations") = Rcpp::wrap(gen_data["gens"]);

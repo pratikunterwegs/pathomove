@@ -1,15 +1,18 @@
+// Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
 #include <Rcpp.h>
+
+// clang-format off
+#include "landscape.h"
+
+#include <algorithm>
+#include <functional>
+#include <utility>
+#include <vector>
 
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/index/rtree.hpp>
-#include <vector>
-using namespace Rcpp;
-#include <algorithm>
-#include <functional>
-#include <vector>
-
-#include "landscape.h"
+// clang-format on
 
 std::mt19937 rng;
 

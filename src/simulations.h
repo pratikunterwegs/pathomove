@@ -1,9 +1,15 @@
-#ifndef SIMULATIONS_H
-#define SIMULATIONS_H
+// Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
+// simulation class for pathomove
+#ifndef SRC_SIMULATIONS_H_
+#define SRC_SIMULATIONS_H_
 
+// clang-format off
+#include <algorithm>
+
+#include "landscape.h"
 #include "agents.h"
 #include "data_types.h"
-#include "landscape.h"
+// clang-format on
 
 class simulation {
  public:
@@ -88,4 +94,4 @@ class simulation {
   Rcpp::List do_simulation();
 };
 
-#endif  // SIMULATIONS_H
+#endif  // SRC_SIMULATIONS_H_

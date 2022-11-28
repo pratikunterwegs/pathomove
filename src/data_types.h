@@ -1,6 +1,8 @@
-#ifndef DATA_TYPES_H
-#define DATA_TYPES_H
+// Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
 /// data types and related functions
+#ifndef SRC_DATA_TYPES_H_
+#define SRC_DATA_TYPES_H_
+
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -70,7 +72,7 @@ struct genData {
   // std::vector<float> gPbsnDiameter;
   // std::vector<float> gPbsnGlobEff;
 
-  void updateGenData(Population &pop, const int g_);
+  void updateGenData(const Population &pop, const int &g_);
   Rcpp::List getGenData();
 };
 
@@ -90,8 +92,8 @@ struct moveData {
   std::vector<std::vector<float> > x;
   std::vector<std::vector<float> > y;
 
-  void updateMoveData(Population &pop, const int t_);
+  void updateMoveData(const Population &pop, const int &t_);
   Rcpp::List getMoveData();
 };
 
-#endif  //
+#endif  // SRC_DATA_TYPES_H_

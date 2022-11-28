@@ -1,19 +1,23 @@
-#ifndef LANDSCAPE_H
-#define LANDSCAPE_H
+// Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
+#ifndef SRC_LANDSCAPE_H_
+#define SRC_LANDSCAPE_H_
+
+// clang-format off
+#include <algorithm>
+#include <chrono>
+#include <functional>
+#include <random>
+#include <utility>
+#include <vector>
 
 #include <Rcpp.h>
 
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/index/rtree.hpp>
-#include <vector>
-using namespace Rcpp;
-#include <algorithm>
-#include <chrono>
-#include <functional>
-#include <random>
 
 #include "parameters.h"
+// clang-format on
 
 // apparently some types
 namespace bg = boost::geometry;
@@ -58,4 +62,4 @@ struct Resources {
   void regenerate();
 };
 
-#endif  // LANDSCAPE_H
+#endif  // SRC_LANDSCAPE_H_
