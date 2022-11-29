@@ -251,7 +251,7 @@ void Population::move(const Resources &food, const bool &multithreaded) {
                 // count food items at sample location
                 foodHere = countFood(food, sampleX, sampleY);
                 // count handlers and non-handlers at sample location
-                std::pair<int, int> agentCounts = countAgents(sampleX, sampleY);
+                agentCounts = countAgents(sampleX, sampleY);
 
                 float suit_dest =
                     (sF[i] * foodHere) + (sH[i] * agentCounts.first) +
@@ -321,7 +321,7 @@ void Population::move(const Resources &food, const bool &multithreaded) {
           // count food items at sample location
           foodHere = countFood(food, sampleX, sampleY);
           // count handlers and non-handlers at sample location
-          std::pair<int, int> agentCounts = countAgents(sampleX, sampleY);
+          agentCounts = countAgents(sampleX, sampleY);
 
           float suit_dest = (sF[i] * foodHere) + (sH[i] * agentCounts.first) +
                             (sN[i] * agentCounts.second) + noise_v(i, j.second);
@@ -375,8 +375,6 @@ void Population::pickForageItem(const Resources &food,
                             // find nearest item ids
                             std::vector<int> theseItems =
                                 getFoodId(food, coordX[i], coordY[i]);
-                            int thisItem = -1;
-
                             // check near items count
                             if (theseItems.size() > 0) {
                               // take first item by default
@@ -393,7 +391,6 @@ void Population::pickForageItem(const Resources &food,
       } else {
         // find nearest item ids
         std::vector<int> theseItems = getFoodId(food, coordX[i], coordY[i]);
-        int thisItem = -1;
 
         // check near items count
         if (theseItems.size() > 0) {
@@ -480,13 +477,11 @@ Population::applyReprodThreshold() {
   std::vector<float> energy_pos;
   std::vector<int> id_pos;
 
-  float this_agent_energy = 0.f;
   // add only agents with positive energy
   for (size_t i = 0; i < nAgents; i++) {
-    this_agent_energy = energy[i];
-    if (this_agent_energy > 0.f) {
+    if (energy[i] > 0.f) {
       id_pos.push_back(i);
-      energy_pos.push_back(this_agent_energy);
+      energy_pos.push_back(energy[i]);
     }
   }
 
