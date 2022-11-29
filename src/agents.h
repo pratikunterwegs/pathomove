@@ -133,7 +133,7 @@ struct Population {
   // functions to move and forage on a landscape
   void move(const Resources &food, const bool &multithreaded);
   void pickForageItem(const Resources &food, const bool &multithreaded);
-  void doForage(Resources &food);
+  void doForage(Resources &food);  // NOLINT
 
   // funs to handle fitness and reproduce
   std::vector<float> handleFitness();

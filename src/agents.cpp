@@ -378,8 +378,7 @@ void Population::pickForageItem(const Resources &food,
                             // check near items count
                             if (theseItems.size() > 0) {
                               // take first item by default
-                              thisItem = theseItems[0];
-                              idTargetFood[i] = thisItem;
+                              idTargetFood[i] = theseItems[0];
                             }
                           }
                         }
@@ -395,8 +394,7 @@ void Population::pickForageItem(const Resources &food,
         // check near items count
         if (theseItems.size() > 0) {
           // take first item by default
-          thisItem = theseItems[0];
-          idTargetFood[i] = thisItem;
+          idTargetFood[i] = theseItems[0];
         }
       }
     }
