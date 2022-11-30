@@ -9,6 +9,7 @@
 #' @importFrom data.table .SD
 #' @importFrom data.table data.table
 #' @importFrom Rcpp sourceCpp
+#' @importFrom RcppParallel RcppParallelLibs
 #' @useDynLib pathomove, .registration = TRUE
 ## usethis namespace: end
 NULL
