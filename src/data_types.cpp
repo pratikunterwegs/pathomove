@@ -2,46 +2,28 @@
 #include "data_types.h"
 
 // function to update gendata
-void genData::updateGenData(const Population &pop, const int &g_) {
-  int i = g_ / increment;
-  // get social network measures
-  // std::vector<float> measures = pop.pbsn.ntwkMeasures();
+// function to update gendata
+void genData::updateGenData(const Population &pop, const int g_) {
+  gDataList.push_back(Rcpp::DataFrame::create(
+      // get pop data
+      Rcpp::Named("intake") =
+          pop.intake,  // this returns the intake! not the net energy
+      Rcpp::Named("energy") =
+          pop.energy,  // this returns the net energy, fitness proxy
+      Rcpp::Named("sF") = pop.sF, Rcpp::Named("sH") = pop.sH,
+      Rcpp::Named("sN") = pop.sN, Rcpp::Named("x") = pop.initX,
+      Rcpp::Named("y") = pop.initY, Rcpp::Named("xn") = pop.coordX,
+      Rcpp::Named("yn") = pop.coordY, Rcpp::Named("assoc") = pop.associations,
+      Rcpp::Named("t_infec") = pop.timeInfected,
+      Rcpp::Named("src_infect") = pop.srcInfect,
+      Rcpp::Named("moved") = pop.moved));
 
-  // get pop data
-  gIntake[i] = pop.intake;  // this returns the intake! not the net energy
-  gEnergy[i] = pop.energy;  // this returns the net energy, fitness proxy
-  gSF[i] = pop.sF;
-  gSH[i] = pop.sH;
-  gSN[i] = pop.sN;
-  gX[i] = pop.initX;
-  gY[i] = pop.initY;
-  gXn[i] = pop.coordX;
-  gYn[i] = pop.coordY;
-  gAssoc[i] = pop.associations;
-  gTInfected[i] = pop.timeInfected;
-  gSrc[i] = pop.srcInfect;
-  // gDegree[i] = pop.pbsn.getDegree();
-  gNInfected[i] = pop.nInfected;
-  gMoved[i] = pop.moved;
-
-  gens[i] = g_;
-  // gPbsnDiameter[i] = measures[0];
-  // gPbsnGlobEff[i] = measures[1];
+  gNInfected.push_back(pop.nInfected);
+  gens.push_back(g_);
 }
 
 // function to return gen data as an rcpp list
 Rcpp::List genData::getGenData() {
-  Rcpp::List gDataList(gSampled);
-  for (int i = 0; i < gSampled; i++) {
-    gDataList[i] = Rcpp::DataFrame::create(
-        Rcpp::Named("intake") = gIntake[i], Rcpp::Named("energy") = gEnergy[i],
-        Rcpp::Named("sF") = gSF[i], Rcpp::Named("sH") = gSH[i],
-        Rcpp::Named("sN") = gSN[i], Rcpp::Named("x") = gX[i],
-        Rcpp::Named("y") = gY[i], Rcpp::Named("xn") = gXn[i],
-        Rcpp::Named("yn") = gYn[i], Rcpp::Named("assoc") = gAssoc[i],
-        Rcpp::Named("t_infec") = gTInfected[i],
-        Rcpp::Named("infect_src") = gSrc[i], Rcpp::Named("moved") = gMoved[i]);
-  }
   Rcpp::List dataToReturn = Rcpp::List::create(
       Rcpp::Named("pop_data") = gDataList, Rcpp::Named("gens") = gens,
       Rcpp::Named("n_infected") = gNInfected);
@@ -49,7 +31,7 @@ Rcpp::List genData::getGenData() {
   return dataToReturn;
 }
 
-void moveData::updateMoveData(const Population &pop, const int &t_) {
+void moveData::updateMoveData(const Population &pop, const int t_) {
   assert(t_ <= tmax && "too many timesteps logged");
 
   timesteps[t_] = std::vector<int>(popsize, t_);
