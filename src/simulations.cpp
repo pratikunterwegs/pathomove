@@ -242,6 +242,7 @@ Rcpp::List simulation::do_simulation() {
 //' geometric distribution from which the number of generations until the next
 //' pathogen introduction are drawn.
 //' @return An S4 class, `pathomove_output`, with simulation outcomes.
+//' @export
 // [[Rcpp::export]]
 Rcpp::S4 run_pathomove(
     const int scenario = 1, const int popsize = 100, const int nItems = 1800,

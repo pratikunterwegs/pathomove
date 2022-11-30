@@ -88,6 +88,7 @@ void Resources::regenerate() {
 //' @param clusterSpread Dispersal of items around cluster centres.
 //' @param regen_time Regeneration time, in timesteps.
 //' @return A data frame of the evolved population traits.
+//' @export
 // [[Rcpp::export]]
 Rcpp::DataFrame get_test_landscape(const int nItems, const float landsize,
                                    const int nClusters,
