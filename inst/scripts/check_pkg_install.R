@@ -33,7 +33,7 @@ ggplot(l) +
   coord_equal()
 
 # check basic simulation run
-a = run_pathomove(
+a <- run_pathomove(
   scenario = 1,
   popsize = 500,
   nItems = 180,
@@ -52,7 +52,6 @@ a = run_pathomove(
   initialInfections = 20,
   costInfect = 0.25,
   multithreaded = TRUE,
-  # nThreads = 2,
   dispersal = 2.0,
   infect_percent = FALSE,
   vertical = FALSE,
