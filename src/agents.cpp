@@ -86,7 +86,7 @@ std::pair<int, int> Population::countAgents(const float xloc,
                    }),
                    std::back_inserter(near_agents));
 
-  BOOST_FOREACH(value const &v, near_agents) {
+  BOOST_FOREACH (value const &v, near_agents) {  // NOLINT
     if (counter[v.second] > 0)
       handlers++;
     else
@@ -111,7 +111,7 @@ std::vector<int> Population::getNeighbourId(const float xloc,
                    }),
                    std::back_inserter(near_agents));
 
-  BOOST_FOREACH(value const &v, near_agents) {
+  BOOST_FOREACH (value const &v, near_agents) {  // NOLINT
     agent_id.push_back(v.second);
   }
   near_agents.clear();
@@ -135,7 +135,7 @@ int Population::countFood(const Resources &food, const float &xloc,
                      }),
                      std::back_inserter(near_food));
 
-    BOOST_FOREACH(value const &v, near_food) {
+    BOOST_FOREACH (value const &v, near_food) {  // NOLINT
       // count only which are available!
       if (food.available[v.second]) {
         nFood++;
@@ -162,7 +162,7 @@ std::vector<int> Population::getFoodId(const Resources &food, const float xloc,
                      }),
                      std::back_inserter(near_food));
 
-    BOOST_FOREACH(value const &v, near_food) {
+    BOOST_FOREACH (value const &v, near_food) {  // NOLINT
       // count only which are available!
       if (food.available[v.second]) {
         food_id.push_back(v.second);
