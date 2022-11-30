@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iostream>
 #include <random>
+#include <string>
 #include <vector>
 // clang-format on
 
@@ -141,9 +142,8 @@ Rcpp::List simulation::do_simulation() {
     if (reprod_threshold) {
       reprod_threshold_met = pop.check_reprod_threshold();
       if (!reprod_threshold_met) {
-        Rcpp::Rcout
-            << "Warning: all agents' energy < 0, ending simulation at gen = "
-            << gen << "\n";
+        std::string no_energy_warning = "All agents' energy < 0, ending simulation at gen = " + std::to_string(gen) + "\n";
+        Rcpp::warning(no_energy_warning);
       }
     }
 
@@ -242,7 +242,7 @@ Rcpp::List simulation::do_simulation() {
 //' @return An S4 class, `pathomove_output`, with simulation outcomes.
 // [[Rcpp::export]]
 Rcpp::S4 run_pathomove(
-    const int scenario = 2, const int popsize = 100, const int nItems = 1800,
+    const int scenario = 1, const int popsize = 100, const int nItems = 1800,
     const float landsize = 60.0, const int nClusters = 60,
     const float clusterSpread = 1.0, const int tmax = 100,
     const int genmax = 100, const int g_patho_init = 70,
@@ -256,7 +256,7 @@ Rcpp::S4 run_pathomove(
     const float mSize = 0.01, const float spillover_rate = 1.0) {
   // check that intial infections is less than popsize
   if (initialInfections > popsize) {
-    Rcpp::stop("Error: Initial infections must be less than popsize");
+    Rcpp::stop("Error: Initial infections must be less than/equal to popsize");
   }
   if (g_patho_init >= genmax) {
     Rcpp::stop("Error: G_patho_init must be less than genmax");
