@@ -142,7 +142,9 @@ Rcpp::List simulation::do_simulation() {
     if (reprod_threshold) {
       reprod_threshold_met = pop.check_reprod_threshold();
       if (!reprod_threshold_met) {
-        std::string no_energy_warning = "All agents' energy < 0, ending simulation at gen = " + std::to_string(gen) + "\n";
+        std::string no_energy_warning =
+            "All agents' energy < 0, ending simulation at gen = " +
+            std::to_string(gen) + "\n";
         Rcpp::warning(no_energy_warning);
       }
     }
