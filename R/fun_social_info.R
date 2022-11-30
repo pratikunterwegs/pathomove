@@ -17,7 +17,7 @@ get_social_strategy <- function(df) {
     (sH > 0 & sN < 0), "handler tracking",
     (sH < 0 & sN > 0), "non-handler tracking",
     (sH < 0 & sN < 0), "agent avoiding"
-  )][]
+  )]
 }
 
 #' Get functional variation in movement weights.
@@ -40,7 +40,7 @@ get_functional_variation <- function(df) {
     x / (abs(sF) + abs(sH) + abs(sN))
   }),
   .SDcols = c("sF", "sH", "sN")
-  ][]
+  ]
 }
 
 #' Importance of social strategy.
@@ -59,7 +59,6 @@ get_si_importance <- function(df) {
   data.table::setDT(df)
   get_functional_variation(df)
   df[, si_imp := abs(sH) + abs(sN)]
-  df
 }
 
 #' Get agent avoidance.

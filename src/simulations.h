@@ -1,38 +1,36 @@
-#ifndef SIMULATIONS_H
-#define SIMULATIONS_H
+// Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
+// simulation class for pathomove
+#ifndef SRC_SIMULATIONS_H_
+#define SRC_SIMULATIONS_H_
 
-#include "data_types.h"
+// clang-format off
+#include <algorithm>
+
 #include "landscape.h"
 #include "agents.h"
+#include "data_types.h"
+// clang-format on
 
 class simulation {
-public:
-    simulation(const int popsize, const int scenario,
-               const int nItems, const float landsize,
-               const int nClusters,
-               const float clusterSpread,
-               const int tmax,
-               const int genmax,
-               const int g_patho_init,
-               const float range_food,
-               const float range_agents,
-               const float range_move,
-               const int handling_time,
-               const int regen_time,
-               float pTransmit,
-               const int initialInfections,
-               const float costInfect,
-               const int nThreads,
-               const float dispersal, 
-               const bool infect_percent,
-               const bool vertical,
-               const float mProb,
-               const float mSize,
-               const float spillover_rate):
-        // population, food, and data structures
-        pop (popsize, range_agents, range_food, range_move, handling_time, pTransmit, vertical),
+ public:
+  simulation(const int popsize, const int scenario, const int nItems,
+             const float landsize, const int nClusters,
+             const float clusterSpread, const int tmax, const int genmax,
+             const int g_patho_init, const float range_food,
+             const float range_agents, const float range_move,
+             const int handling_time, const int regen_time, float pTransmit,
+             const int initialInfections, const float costInfect,
+             const bool multithreaded, const float dispersal,
+             const bool infect_percent, const bool vertical,
+             const bool reprod_threshold, const float mProb, const float mSize,
+             const float spillover_rate)
+      :  // population, food, and data structures
+        pop(popsize, range_agents, range_food, range_move, handling_time,
+            pTransmit, vertical, reprod_threshold),
         food(nItems, landsize, nClusters, clusterSpread, regen_time),
-        gen_data (genmax, popsize, std::max(static_cast<int>(static_cast<float>(genmax) * 0.001f), 2)), // increment hardcoded
+        gen_data(genmax, popsize,
+                 std::max(static_cast<int>(static_cast<float>(genmax) * 0.001f),
+                          2)),  // increment hardcoded
 
         // eco-evolutionary parameters
         scenario(scenario),
@@ -54,12 +52,13 @@ public:
         spillover_rate(spillover_rate),
 
         // parallelisation
-        nThreads (nThreads),
+        multithreaded(multithreaded),
 
         // natal dispersal and pathogen cost structure
         dispersal(dispersal),
         infect_percent(infect_percent),
         vertical(vertical),
+        reprod_threshold(reprod_threshold),
 
         // mutation probability and step size
         mProb(mProb),
@@ -67,34 +66,32 @@ public:
 
         // movement data
         mdPre(tmax, popsize),
-        mdPost(tmax, popsize)
-    {}
-    ~simulation() {}
+        mdPost(tmax, popsize) {}
+  ~simulation() {}
 
-    Population pop;
-    Resources food;
-    genData gen_data;
-    const int scenario, tmax, genmax, g_patho_init;
-    const float range_food, range_agents, range_move;
-    const int handling_time;
+  Population pop;
+  Resources food;
+  genData gen_data;
+  const int scenario, tmax, genmax, g_patho_init;
+  const float range_food, range_agents, range_move;
+  const int handling_time;
 
-    const int regen_time, initialInfections;
-    const float costInfect;
-    float pTransmit;
-    const float spillover_rate;
+  const int regen_time, initialInfections;
+  const float costInfect;
+  float pTransmit;
+  const float spillover_rate;
 
-    int nThreads;
-    const float dispersal;
-    const bool infect_percent;
-    const bool vertical;
+  const bool multithreaded;
+  const float dispersal;
+  const bool infect_percent;
+  const bool vertical, reprod_threshold;
 
-    const float mProb, mSize;
+  const float mProb, mSize;
 
-    moveData mdPre, mdPost;
+  moveData mdPre, mdPost;
 
-    // funs
-    Rcpp::List do_simulation();
-
+  // funs
+  Rcpp::List do_simulation();
 };
 
-#endif // SIMULATIONS_H
+#endif  // SRC_SIMULATIONS_H_
