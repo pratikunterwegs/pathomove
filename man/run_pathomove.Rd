@@ -5,30 +5,31 @@
 \title{Runs the pathomove simulation and return a \code{pathomove_output} object.}
 \usage{
 run_pathomove(
-  scenario,
-  popsize,
-  nItems,
-  landsize,
-  nClusters,
-  clusterSpread,
-  tmax,
-  genmax,
-  g_patho_init,
-  range_food,
-  range_agents,
-  range_move,
-  handling_time,
-  regen_time,
-  pTransmit,
-  initialInfections,
-  costInfect,
-  nThreads,
-  dispersal,
-  infect_percent,
-  vertical,
-  mProb,
-  mSize,
-  spillover_rate
+  scenario = 1L,
+  popsize = 100L,
+  nItems = 1800L,
+  landsize = 60,
+  nClusters = 60L,
+  clusterSpread = 1,
+  tmax = 100L,
+  genmax = 100L,
+  g_patho_init = 70L,
+  range_food = 1,
+  range_agents = 1,
+  range_move = 1,
+  handling_time = 5L,
+  regen_time = 50L,
+  pTransmit = 0.05,
+  initialInfections = 20L,
+  costInfect = 0.25,
+  multithreaded = TRUE,
+  dispersal = 2,
+  infect_percent = FALSE,
+  vertical = FALSE,
+  reprod_threshold = FALSE,
+  mProb = 0.01,
+  mSize = 0.01,
+  spillover_rate = 1
 )
 }
 \arguments{
@@ -52,7 +53,8 @@ specified by \code{spillover_rate}.}
 
 \item{genmax}{The maximum number of generations per simulation.}
 
-\item{g_patho_init}{The generation in which to begin introducing the pathogen.}
+\item{g_patho_init}{The generation in which to begin introducing the
+pathogen.}
 
 \item{range_food}{The sensory range for food.}
 
@@ -70,8 +72,7 @@ specified by \code{spillover_rate}.}
 
 \item{costInfect}{The per-timestep cost of pathogen infection.}
 
-\item{nThreads}{How many threads to parallelise over. Set to 1 to run on
-the HPC Peregrine cluster.}
+\item{multithreaded}{Boolean. Whether multithreading using TBB to be used.}
 
 \item{dispersal}{A float value; the standard deviation of a normal
 distribution centred on zero, which determines how far away from its parent
@@ -90,11 +91,16 @@ timesteps of infection is \code{N - (cost_infect * T)}, where \code{N}
 is total intake.}
 
 \item{vertical}{Should the pathogen be transmitted vertically? Should be
-set to \code{TRUE} for a realistic implementation of scenario 3, \emph{single spillover}.}
+set to \code{TRUE} for a realistic implementation of scenario 3,
+\emph{single spillover}.}
+
+\item{reprod_threshold}{Boolean, should individuals with negative energy
+reproduce.}
 
 \item{mProb}{The probability of mutation. The suggested value is 0.01.
 While high, this may be more appropriate for a small population; change this
-value and \code{popsize} to test the simulation's sensitivity to these values.}
+value and \code{popsize} to test the simulation's sensitivity to these
+parameters.}
 
 \item{mSize}{Controls the mutational step size, and represents the scale
 parameter of a Cauchy distribution.}
