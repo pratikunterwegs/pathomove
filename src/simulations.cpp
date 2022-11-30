@@ -241,18 +241,19 @@ Rcpp::List simulation::do_simulation() {
 //' pathogen introduction are drawn.
 //' @return An S4 class, `pathomove_output`, with simulation outcomes.
 // [[Rcpp::export]]
-Rcpp::S4 run_pathomove(const int scenario, const int popsize, const int nItems,
-                       const float landsize, const int nClusters,
-                       const float clusterSpread, const int tmax,
-                       const int genmax, const int g_patho_init,
-                       const float range_food, const float range_agents,
-                       const float range_move, const int handling_time,
-                       const int regen_time, float pTransmit,
-                       const int initialInfections, const float costInfect,
-                       const bool multithreaded, const float dispersal,
-                       const bool infect_percent, const bool vertical,
-                       const bool reprod_threshold, const float mProb,
-                       const float mSize, const float spillover_rate) {
+Rcpp::S4 run_pathomove(
+    const int scenario = 2, const int popsize = 100, const int nItems = 1800,
+    const float landsize = 60.0, const int nClusters = 60,
+    const float clusterSpread = 1.0, const int tmax = 100,
+    const int genmax = 100, const int g_patho_init = 70,
+    const float range_food = 1.0, const float range_agents = 1.0,
+    const float range_move = 1.0, const int handling_time = 5,
+    const int regen_time = 50, float pTransmit = 0.05,
+    const int initialInfections = 20, const float costInfect = 0.25,
+    const bool multithreaded = true, const float dispersal = 2.0,
+    const bool infect_percent = false, const bool vertical = false,
+    const bool reprod_threshold = false, const float mProb = 0.01,
+    const float mSize = 0.01, const float spillover_rate = 1.0) {
   // check that intial infections is less than popsize
   if (initialInfections > popsize) {
     Rcpp::stop("Error: Initial infections must be less than popsize");
