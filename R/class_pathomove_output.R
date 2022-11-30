@@ -28,11 +28,13 @@ check_pathomove_output <- function(object) {
 #' @slot gens_patho_intro integer.
 #' @slot infections_per_gen integer.
 #' @slot trait_data list.
-#' @slot edge_list list.
-#' @slot gens_edge_list list.
+#' @slot edge_lists list.
+#' @slot gens_edge_lists list.
+#' @slot landscape data.frame
+#' @slot move_data list.
 #'
 #' @export
-setClass(
+methods::setClass(
   # name of the class
   Class = "pathomove_output",
 
@@ -45,7 +47,9 @@ setClass(
     infections_per_gen = "integer",
     trait_data = "list",
     edge_lists = "list",
-    gens_edge_lists = "integer"
+    gens_edge_lists = "integer",
+    landscape = "data.frame",
+    move_data = "list"
   ),
 
   # define the default values of the slots
@@ -57,7 +61,9 @@ setClass(
     infections_per_gen = NA_integer_,
     trait_data = list(),
     edge_lists = list(),
-    gens_edge_lists = NA_integer_
+    gens_edge_lists = NA_integer_,
+    landscape = data.frame(),
+    move_data = list()
   ),
 
   # check validity of class
