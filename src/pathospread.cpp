@@ -12,17 +12,12 @@
 void Population::introducePathogen(const int initialInfections) {
   // recount for safety
   countInfected();
-  // introduce new pathogen
-  shufflePop();
   // loop through the intended number of infections
   for (int i = 0; i < initialInfections; i++) {
-    // look for uninfected agents
-    if (!infected[order[i]]) {
-      // toggle infected agents boolean for infected
-      infected[order[i]] = true;
-      timeInfected[order[i]] = 1;
-      srcInfect[order[i]] = 2;  // count as inherited?
-    }
+    // toggle infected agents boolean for infected
+    infected[i] = true;
+    timeInfected[i] = 1;
+    srcInfect[i] = -2;  // count as forced
   }
   // count after
   countInfected();
@@ -49,7 +44,7 @@ void Population::pathogenSpread() {
             // infect neighbours with prob p
             if (transmission(rng)) {
               infected[toInfect] = true;
-              srcInfect[toInfect] = 2;
+              srcInfect[toInfect] = i;
             }
           }
         }
@@ -62,14 +57,12 @@ void Population::pathogenSpread() {
 void Population::pathogenCost(const float costInfect,
                               const bool infect_percent) {
   for (int i = 0; i < nAgents; i++) {
-    if (infected[i]) {
-      if (infect_percent) {
-        energy[i] = intake[i] * (std::pow((1.f - costInfect),
-                                          static_cast<float>(timeInfected[i])));
-      } else {
-        energy[i] =
-            intake[i] - (costInfect * static_cast<float>(timeInfected[i]));
-      }
+    if (infect_percent) {
+      energy[i] = intake[i] * (std::pow((1.f - costInfect),
+                                        static_cast<float>(timeInfected[i])));
+    } else {
+      energy[i] =
+          intake[i] - (costInfect * static_cast<float>(timeInfected[i]));
     }
   }
 }
@@ -83,26 +76,4 @@ void Population::countInfected() {
     }
   }
   assert(nInfected <= nAgents);
-}
-
-/// proportion of infection sources
-float Population::propSrcInfection() {
-  int vertical = 0;
-  int horizontal = 0;
-  for (int i = 0; i < nAgents; i++) {
-    if (infected[i]) {
-      if (srcInfect[i] == 1) {
-        vertical++;
-      } else if (srcInfect[i] == 2) {
-        horizontal++;
-      }
-    }
-  }
-  // Rcpp::Rcout << "# horizontal infections = " << horizontal << "\n";
-  float propSource = (vertical == 0 && horizontal == 0)
-                         ? 0.f
-                         : (static_cast<float>(horizontal) /
-                            static_cast<float>(vertical + horizontal));
-
-  return propSource;
 }
