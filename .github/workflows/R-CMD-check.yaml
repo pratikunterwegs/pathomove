@@ -29,6 +29,21 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
+      - name: Install system dependencies
+        if: runner.os == 'Linux'
+        run: |
+          while read -r cmd
+          do
+            eval sudo $cmd
+          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "22.04"))')
+      
+      - name: Install GSL and Boost dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt install libboost1.71-dev libboost-system-dev
+          sudo apt install libgsl-dev
+          sudo apt install libssh-dev
+      
       - uses: actions/checkout@v3
 
       - uses: r-lib/actions/setup-pandoc@v2
@@ -46,4 +61,5 @@ jobs:
 
       - uses: r-lib/actions/check-r-package@v2
         with:
+          error-on: '"error"'
           upload-snapshots: true
