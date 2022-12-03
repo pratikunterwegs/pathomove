@@ -27,7 +27,7 @@ pathomove::make_parameter_file(
   pTransmit = "0.05",
   initialInfections = 20,
   costInfect = c(0.005, 0.01, 0.02),
-  nThreads = 1,
+  multithreaded = TRUE,
   replicates = 1,
   which_file = "data/parameters/parameters_test.csv"
 )

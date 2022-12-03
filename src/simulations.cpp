@@ -102,13 +102,13 @@ Rcpp::List simulation::do_simulation() {
       // movement section
       pop.move(food, multithreaded);
 
-      // // log movement
-      // if(gen == std::max(gen_init - 1, 2)) {
-      //     mdPre.updateMoveData(pop, t);
-      // }
-      // if(gen == (genmax - 1)) {
-      //     mdPost.updateMoveData(pop, t);
-      // }
+      // log movement
+      if (gen == std::max(gen_init - 1, 2)) {
+        mdPre.updateMoveData(pop, t);
+      }
+      if (gen == (genmax - 1)) {
+        mdPost.updateMoveData(pop, t);
+      }
 
       // foraging -- split into parallelised picking
       // and non-parallel exploitation
@@ -177,12 +177,13 @@ Rcpp::List simulation::do_simulation() {
 
   Rcpp::Rcout << "data prepared\n";
 
-  return Rcpp::List::create(Rcpp::Named("gen_data") = gen_data.getGenData(),
-                            Rcpp::Named("gens_patho_intro") = gens_patho_intro,
-                            Rcpp::Named("edgeLists") = edgeLists,
-                            Rcpp::Named("gens_edge_lists") = gens_edge_lists);
-  // Named("move_pre") = mdPre.getMoveData(),
-  // Named("move_post") = mdPost.getMoveData()
+  return Rcpp::List::create(
+      Rcpp::Named("gen_data") = gen_data.getGenData(),
+      Rcpp::Named("gens_patho_intro") = gens_patho_intro,
+      Rcpp::Named("move_data_pre") = mdPre.getMoveData(),
+      Rcpp::Named("move_data_post") = mdPost.getMoveData(),
+      Rcpp::Named("edgeLists") = edgeLists,
+      Rcpp::Named("gens_edge_lists") = gens_edge_lists);
 }
 
 //' Runs the pathomove simulation and return a `pathomove_output` object.
@@ -242,6 +243,7 @@ Rcpp::List simulation::do_simulation() {
 //' geometric distribution from which the number of generations until the next
 //' pathogen introduction are drawn.
 //' @return An S4 class, `pathomove_output`, with simulation outcomes.
+//' @export
 // [[Rcpp::export]]
 Rcpp::S4 run_pathomove(
     const int scenario = 1, const int popsize = 100, const int nItems = 1800,
@@ -346,6 +348,12 @@ Rcpp::S4 run_pathomove(
   x.slot("trait_data") = Rcpp::wrap(pop_data);
   x.slot("edge_lists") = Rcpp::wrap(pathomoveOutput["edgeLists"]);
   x.slot("gens_edge_lists") = Rcpp::wrap(pathomoveOutput["gens_edge_lists"]);
+  x.slot("landscape") = Rcpp::DataFrame::create(
+      Rcpp::Named("x") = Rcpp::wrap(this_sim.food.coordX),
+      Rcpp::Named("y") = Rcpp::wrap(this_sim.food.coordY));
+  x.slot("move_data") = Rcpp::List::create(
+      Rcpp::Named("pre") = pathomoveOutput["move_data_pre"],
+      Rcpp::Named("post") = pathomoveOutput["move_data_post"]);
 
   return (x);
 }

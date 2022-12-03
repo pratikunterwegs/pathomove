@@ -1,24 +1,25 @@
 #### Check that R functions can get data from simulation output ####
 # get some simulation data
 nAgents <- 10L
+tmax <- 10L
 data <- run_pathomove(
   scenario = 1,
   popsize = nAgents,
   genmax = 10,
   g_patho_init = 5,
   initialInfections = nAgents,
-  tmax = 10
+  tmax = tmax
 ) # use default values but reduce generations and time
 
 # get trait data from pathomove output
-trait_data <- get_trait_data(
-  data
-)
+trait_data <- get_trait_data(data)
 
 # check network function
-networks <- get_networks(
-  data
-)
+networks <- get_networks(data)
+
+# check get movement function
+movement <- get_move_data(data)
+
 test_that("Get data from simulation output", {
   # check for class, at least data.frame
   expect_s3_class(
@@ -45,6 +46,14 @@ test_that("Get data from simulation output", {
   # check network data column names
   expect_snapshot(
     colnames(as.data.frame(networks[[1]]))
+  )
+
+  # check the movement data
+  expect_snapshot(
+    colnames(movement)
+  )
+  expect_identical(
+    max(movement$time), tmax - 1L
   )
 })
 

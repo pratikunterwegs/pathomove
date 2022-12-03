@@ -25,8 +25,6 @@ struct Network {
 
   // functions
   Rcpp::DataFrame getNtwkDf();
-  // std::vector<float> ntwkMeasures();
-  // std::vector<int> getDegree();
 };
 
 #endif  // SRC_NETWORK_H_
