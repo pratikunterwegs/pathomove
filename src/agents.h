@@ -70,34 +70,23 @@ struct Population {
 
   // agent count, coords, and energy
   const int nAgents;
-  std::vector<float> coordX;
-  std::vector<float> coordY;
-  std::vector<float> initX;
-  std::vector<float> initY;
-  std::vector<float> intake;
-  std::vector<float> energy;
+  std::vector<float> coordX, coordY, initX, initY, intake, energy;
   // weights
-  std::vector<float> sF;
-  std::vector<float> sH;
-  std::vector<float> sN;
+  std::vector<float> sF, sH, sN;
 
   // counter and metrics
-  std::vector<int> counter;
-  std::vector<int> associations;  // number of total interactions
-  // std::vector<int> degree;
+  std::vector<int> counter, associations;  // number of total interactions
 
   // sensory range and foraging
   const float n_samples, range_agents, range_food, range_move;
   const int handling_time;
 
   // shuffle vector and transmission
-  std::vector<int> order;
-  std::vector<int> forageItem;
+  std::vector<int> order, forageItem;
   std::vector<bool> infected;
   std::vector<int> timeInfected;
   float pTransmit;
-  const bool vertical;
-  const bool reprod_threshold;
+  const bool vertical, reprod_threshold;
 
   // the number of infected agents
   int nInfected;
@@ -115,20 +104,20 @@ struct Population {
   /// functions for the population ///
   // population order, trait and position randomiser
   void shufflePop();
-  void setTrait(const float mSize);
-  void initPos(Resources food);
+  void setTrait(const float &mSize);
+  void initPos(const Resources &food);
 
   // make rtree and get nearest agents and food
   void updateRtree();
 
   int countFood(const Resources &food, const float &xloc, const float &yloc);
 
-  std::vector<int> getFoodId(const Resources &food, const float xloc,
-                             const float yloc);
+  std::vector<int> getFoodId(const Resources &food, const float &xloc,
+                             const float &yloc);
 
-  std::pair<int, int> countAgents(const float xloc, const float yloc);
+  std::pair<int, int> countAgents(const float &xloc, const float &yloc);
 
-  std::vector<int> getNeighbourId(const float xloc, const float yloc);
+  std::vector<int> getNeighbourId(const float &xloc, const float &yloc);
 
   // functions to move and forage on a landscape
   void move(const Resources &food, const bool &multithreaded);
