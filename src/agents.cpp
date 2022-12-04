@@ -19,16 +19,18 @@
 #include <boost/foreach.hpp>
 // clang-format on
 
+// wrapper around R's RNG such that we get a uniform distribution over
+// [0,n) as required by the STL algorithm
+// taken from https://gallery.rcpp.org/articles/stl-random-shuffle/
+inline int randWrapper(const int n) { return floor(unif_rand() * n); }
+
 // to shuffle pop id
 void Population::shufflePop() {
-  if (order[0] == order[nAgents - 1]) {
-    for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-      order[i] = i;
-    }
-    std::random_shuffle(order.begin(), order.end());
-  } else {
-    std::random_shuffle(order.begin(), order.end());
-  }
+  Rcpp::IntegerVector order_agents = Rcpp::seq(0, nAgents - 1);
+
+  std::random_shuffle(order_agents.begin(), order_agents.end(), randWrapper);
+
+  order = Rcpp::as<std::vector<int>>(order_agents);
 }
 
 // to update agent Rtree
@@ -43,39 +45,30 @@ void Population::updateRtree() {
   tmpRtree.clear();
 }
 
-// uniform distribution for agent position
-std::uniform_real_distribution<float> agent_ran_pos(0.0f, 1.f);
-
 // function for initial positions
-void Population::initPos(Resources food) {
-  for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-    coordX[i] = agent_ran_pos(rng) * food.dSize;
-    initX[i] = coordX[i];
-    coordY[i] = agent_ran_pos(rng) * food.dSize;
-    initY[i] = coordY[i];
-  }
+// function for initial positions
+void Population::initPos(const Resources &food) {
+  coordX = Rcpp::as<std::vector<float>>(Rcpp::runif(nAgents, 0.f, food.dSize));
+  coordY = Rcpp::as<std::vector<float>>(Rcpp::runif(nAgents, 0.f, food.dSize));
   updateRtree();
 }
 
 // set agent trait
-void Population::setTrait(const float mSize) {
+void Population::setTrait(const float &mSize) {
   // create a cauchy distribution, mSize is the scale
-  std::cauchy_distribution<float> agent_ran_trait(0.f, mSize);
-
-  for (int i = 0; i < nAgents; i++) {
-    sF[i] = agent_ran_trait(rng);
-    sH[i] = agent_ran_trait(rng);
-    sN[i] = agent_ran_trait(rng);
-  }
+  sF = Rcpp::as<std::vector<float>>(Rcpp::rcauchy(nAgents, 0.0, mSize));
+  sH = Rcpp::as<std::vector<float>>(Rcpp::rcauchy(nAgents, 0.0, mSize));
+  sN = Rcpp::as<std::vector<float>>(Rcpp::rcauchy(nAgents, 0.0, mSize));
 }
 
-float get_distance(float x1, float x2, float y1, float y2) {
+float get_distance(const float &x1, const float &x2, const float &y1,
+                   const float &y2) {
   return std::sqrt(std::pow((x1 - x2), 2) + std::pow((y1 - y2), 2));
 }
 
 // general function for agents within distance
-std::pair<int, int> Population::countAgents(const float xloc,
-                                            const float yloc) {
+std::pair<int, int> Population::countAgents(const float &xloc,
+                                            const float &yloc) {
   int handlers = 0;
   int nonhandlers = 0;
   std::vector<value> near_agents;
@@ -99,8 +92,8 @@ std::pair<int, int> Population::countAgents(const float xloc,
 }
 
 // function for near agent ids
-std::vector<int> Population::getNeighbourId(const float xloc,
-                                            const float yloc) {
+std::vector<int> Population::getNeighbourId(const float &xloc,
+                                            const float &yloc) {
   std::vector<int> agent_id;
   std::vector<value> near_agents;
   // query for a simple box
@@ -148,8 +141,8 @@ int Population::countFood(const Resources &food, const float &xloc,
 }
 
 // function for the nearest available food item
-std::vector<int> Population::getFoodId(const Resources &food, const float xloc,
-                                       const float yloc) {
+std::vector<int> Population::getFoodId(const Resources &food, const float &xloc,
+                                       const float &yloc) {
   std::vector<int> food_id;
   std::vector<value> near_food;
   // check any available
@@ -175,10 +168,6 @@ std::vector<int> Population::getFoodId(const Resources &food, const float xloc,
   // second is the identity of entities
   return food_id;
 }
-
-/// rng for suitability
-std::normal_distribution<float> noise(0.f, 0.01f);
-std::cauchy_distribution<float> noise_cauchy(0.f, 0.001f);
 
 /// simple wrapping function
 // because std::fabs + std::fmod is somewhat suspicious
@@ -450,22 +439,19 @@ const bool Population::check_reprod_threshold() {
 
 /// minor function to normalise vector
 std::vector<float> Population::handleFitness() {
-  // sort vec fitness
-  std::vector<float> vecFitness = energy;
-  std::sort(vecFitness.begin(), vecFitness.end());  // sort to to get min-max
-  // scale to max fitness
-  float maxFitness = vecFitness[vecFitness.size() - 1];
-  float minFitness = vecFitness[0];
+  Rcpp::NumericVector vecFitness = Rcpp::wrap(energy);
+  // random errors in fitness
+  Rcpp::NumericVector rd_fitness = Rcpp::rnorm(nAgents, 0.0f, 0.01f);
+  vecFitness =
+      vecFitness + rd_fitness;  // add error to avoid all energies equal
 
-  // reset to energy
-  vecFitness = energy;
-  // rescale copied energy vector by min anx max fitness
-  for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
-    vecFitness[i] =
-        ((vecFitness[i] - minFitness) / (maxFitness - minFitness)) + noise(rng);
-  }
+  float maxFitness = Rcpp::max(vecFitness);
+  float minFitness = Rcpp::min(vecFitness);
 
-  return vecFitness;
+  vecFitness = (vecFitness - Rcpp::min(vecFitness)) /
+               (Rcpp::max(vecFitness) - Rcpp::min(vecFitness));
+
+  return Rcpp::as<std::vector<float>>(vecFitness);
 }
 
 /// prepare function to handle fitness and offer parents when applying a
@@ -485,14 +471,15 @@ Population::applyReprodThreshold() {
 
   // count agents remaining
   const int agents_remaining = id_pos.size();
-  assert(agents_remaining > 0 && "Reprod threshold: no agents remaining");
 
   // normalise energy between 0 and 1
   Rcpp::NumericVector vecFitness = Rcpp::wrap(energy_pos);
-  float maxFitness = Rcpp::max(vecFitness);
-  float minFitness = Rcpp::min(vecFitness);
+  Rcpp::NumericVector rd_fitness = Rcpp::rnorm(vecFitness.size(), 0.0f, 0.01f);
+  vecFitness =
+      vecFitness + rd_fitness;  // add error to avoid all energies equal
 
-  vecFitness = (vecFitness - minFitness) / (maxFitness - minFitness);
+  vecFitness = (vecFitness - Rcpp::min(vecFitness)) /
+               (Rcpp::max(vecFitness) - Rcpp::min(vecFitness));
 
   energy_pos = Rcpp::as<std::vector<float>>(vecFitness);
 
@@ -549,7 +536,7 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
   moved = std::vector<float>(nAgents, 0.f);
 
   // reset adjacency matrix
-  pbsn.adjMat = Rcpp::NumericMatrix(nAgents, nAgents);
+  pbsn.adjMat = Rcpp::IntegerMatrix(nAgents, nAgents);
 
   // positions
   std::vector<float> coord_x_2(nAgents, 0.f);
