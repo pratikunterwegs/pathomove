@@ -33,6 +33,8 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' @param genmax The maximum number of generations per simulation.
 #' @param g_patho_init The generation in which to begin introducing the
 #' pathogen.
+#' @param n_samples Integer. The number of directions around the current
+#' location to scan for cues.
 #' @param range_food The sensory range for food.
 #' @param range_agents The sensory range for agents.
 #' @param range_move The movement range for agents.
@@ -72,7 +74,7 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' pathogen introduction are drawn.
 #' @return An S4 class, `pathomove_output`, with simulation outcomes.
 #' @export
-run_pathomove <- function(scenario = 1L, popsize = 100L, nItems = 1800L, landsize = 60.0, nClusters = 60L, clusterSpread = 1.0, tmax = 100L, genmax = 100L, g_patho_init = 70L, range_food = 1.0, range_agents = 1.0, range_move = 1.0, handling_time = 5L, regen_time = 50L, pTransmit = 0.05, initialInfections = 20L, costInfect = 0.25, multithreaded = TRUE, dispersal = 2.0, infect_percent = FALSE, vertical = FALSE, reprod_threshold = FALSE, mProb = 0.01, mSize = 0.01, spillover_rate = 1.0) {
-    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, multithreaded, dispersal, infect_percent, vertical, reprod_threshold, mProb, mSize, spillover_rate)
+run_pathomove <- function(scenario = 1L, popsize = 100L, nItems = 1800L, landsize = 60.0, nClusters = 60L, clusterSpread = 1.0, tmax = 100L, genmax = 100L, g_patho_init = 70L, n_samples = 5L, range_food = 1.0, range_agents = 1.0, range_move = 1.0, handling_time = 5L, regen_time = 50L, pTransmit = 0.05, initialInfections = 20L, costInfect = 0.25, multithreaded = TRUE, dispersal = 2.0, infect_percent = FALSE, vertical = FALSE, reprod_threshold = FALSE, mProb = 0.01, mSize = 0.01, spillover_rate = 1.0) {
+    .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, n_samples, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, initialInfections, costInfect, multithreaded, dispersal, infect_percent, vertical, reprod_threshold, mProb, mSize, spillover_rate)
 }
 
