@@ -17,7 +17,7 @@ void Population::introducePathogen(const int initialInfections) {
     // toggle infected agents boolean for infected
     infected[i] = true;
     timeInfected[i] = 1;
-    srcInfect[i] = -2;  // count as forced
+    srcInfect[i] = R_PosInf;  // count as forced
   }
   // count after
   countInfected();
@@ -27,7 +27,6 @@ void Population::introducePathogen(const int initialInfections) {
 
 /// function to spread pathogen
 void Population::pathogenSpread() {
-  std::bernoulli_distribution transmission(pTransmit);
   // looping through agents, query rtree for neighbours
   for (int i = 0; i < nAgents; i++) {
     // spread to neighbours if self infected
@@ -37,14 +36,18 @@ void Population::pathogenSpread() {
       std::vector<int> nbrsId = getNeighbourId(coordX[i], coordY[i]);
 
       if (nbrsId.size() > 0) {
+        // draw whether neighbours will be infected
+        auto transmission = Rcpp::rbinom(nbrsId.size(), 1, pTransmit);
+
         // loop through neighbours
         for (size_t j = 0; j < nbrsId.size(); j++) {
           size_t toInfect = nbrsId[j];
+
           if (!infected[toInfect]) {
             // infect neighbours with prob p
-            if (transmission(rng)) {
+            if (transmission(j)) {
               infected[toInfect] = true;
-              srcInfect[toInfect] = i;
+              srcInfect[toInfect] = i + 1;  // who infects whom; +1 for 1 index
             }
           }
         }
