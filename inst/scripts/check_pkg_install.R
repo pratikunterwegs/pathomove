@@ -33,7 +33,7 @@ ggplot(l) +
   coord_equal()
 
 # check basic simulation run
-a = run_pathomove(
+a <- run_pathomove(
   scenario = 1,
   popsize = 500,
   nItems = 180,
@@ -41,8 +41,8 @@ a = run_pathomove(
   nClusters = 60,
   clusterSpread = 1,
   tmax = 100,
-  genmax = 500,
-  g_patho_init = 300,
+  genmax = 20,
+  g_patho_init = 10,
   range_food = 1.0,
   range_agents = 1.0,
   range_move = 1.0,
@@ -92,3 +92,27 @@ ggplot(b[gen > a@gens_patho_intro]) +
     aes(moved, assoc, col = social_strat)
   ) +
   scale_y_log10()
+
+
+#### plotting transmission trees ####
+df <- b[gen == max(gen)]
+
+chain <- get_transmission_chain(df)
+
+ggraph(chain, layout = "circlepack") +
+  # geom_edge_link(
+  #   edge_colour = "grey"
+  # ) +
+  geom_node_circle(
+    aes(fill = t_infec),
+    colour = "darkgrey"
+  ) +
+  coord_fixed() +
+  scale_fill_viridis_c(
+    option = "C",
+    direction = -1,
+    limits = c(1, NA),
+    na.value = "lightblue"
+  ) +
+  coord_equal() +
+  theme_void()
