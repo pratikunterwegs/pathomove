@@ -20,7 +20,7 @@
 // Agent class
 struct Population {
  public:
-  Population(const int popsize, const float range_agents,
+  Population(const int popsize, const int n_samples, const float range_agents,
              const float range_food, const float range_move,
              const int handling_time, float pTransmit, bool vertical,
              const bool reprod_threshold)
@@ -42,7 +42,7 @@ struct Population {
         // degree(popsize, 0),
 
         // agent sensory parameters
-        n_samples(5.f),
+        n_samples(n_samples),
         range_agents(range_agents),
         range_food(range_food),
         range_move(range_move),
@@ -61,7 +61,7 @@ struct Population {
         nInfected(0),
 
         // infection source and distance moved
-        srcInfect(popsize, 0),
+        srcInfect(popsize, NA_INTEGER),
         moved(popsize, 0.f),
 
         // a network object
@@ -78,7 +78,8 @@ struct Population {
   std::vector<int> counter, associations;  // number of total interactions
 
   // sensory range and foraging
-  const float n_samples, range_agents, range_food, range_move;
+  const int n_samples;
+  const float range_agents, range_food, range_move;
   const int handling_time;
 
   // shuffle vector and transmission
@@ -90,7 +91,7 @@ struct Population {
 
   // the number of infected agents
   int nInfected;
-  std::vector<int> srcInfect;
+  Rcpp::IntegerVector srcInfect;
 
   // movement distances
   std::vector<float> moved;

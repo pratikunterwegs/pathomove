@@ -188,7 +188,7 @@ void Population::move(const Resources &food, const bool &multithreaded) {
   const float twopi = 2.f * M_PI;
 
   // what increment for n samples in a circle around the agent
-  const float increment = twopi / n_samples;
+  const float increment = twopi / static_cast<float>(n_samples);
 
   // make random noise for each individual and each sample
   Rcpp::NumericMatrix noise_v(nAgents, n_samples);
@@ -445,9 +445,6 @@ std::vector<float> Population::handleFitness() {
   vecFitness =
       vecFitness + rd_fitness;  // add error to avoid all energies equal
 
-  float maxFitness = Rcpp::max(vecFitness);
-  float minFitness = Rcpp::min(vecFitness);
-
   vecFitness = (vecFitness - Rcpp::min(vecFitness)) /
                (Rcpp::max(vecFitness) - Rcpp::min(vecFitness));
 
@@ -474,7 +471,7 @@ Population::applyReprodThreshold() {
 
   // normalise energy between 0 and 1
   Rcpp::NumericVector vecFitness = Rcpp::wrap(energy_pos);
-  Rcpp::NumericVector rd_fitness = Rcpp::rnorm(vecFitness.size(), 0.0f, 0.01f);
+  Rcpp::NumericVector rd_fitness = Rcpp::rnorm(agents_remaining, 0.0f, 0.01f);
   vecFitness =
       vecFitness + rd_fitness;  // add error to avoid all energies equal
 
@@ -527,7 +524,7 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
   std::vector<bool> infected_2(nAgents, false);
 
   // reset infection source
-  srcInfect = std::vector<int>(nAgents, 0);
+  srcInfect = Rcpp::IntegerVector(nAgents, NA_INTEGER);
 
   // reset associations
   associations = std::vector<int>(nAgents, 0);
@@ -570,7 +567,7 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
       if (infected[parent_id]) {
         if (v_infect(a)) {
           infected_2[a] = true;
-          srcInfect[a] = -2;  // -2 for parents
+          srcInfect[a] = -parent_id;  // -id for each parent
         }
       }
     }
