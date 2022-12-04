@@ -25,4 +25,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: sudo apt-get install cppcheck
-      - run: cppcheck -i src/RcppExports.cpp --suppress=*:src/test_*.cpp --quiet --enable=performance,portability,warning,style --error-exitcode=1 src
+      - run: cppcheck -i src/RcppExports.cpp --suppress=*:src/test_*.cpp --enable=performance,portability,warning,style --error-exitcode=1 src
