@@ -12,12 +12,14 @@
 void Population::introducePathogen(const int initialInfections) {
   // recount for safety
   countInfected();
+  shufflePop();
   // loop through the intended number of infections
   for (int i = 0; i < initialInfections; i++) {
+    size_t id = order[i];
     // toggle infected agents boolean for infected
-    infected[i] = true;
-    timeInfected[i] = 1;
-    srcInfect[i] = R_PosInf;  // count as forced
+    infected[id] = true;
+    timeInfected[id] = 1;
+    srcInfect[id] = -2;  // count as forced
   }
   // count after
   countInfected();
@@ -27,10 +29,13 @@ void Population::introducePathogen(const int initialInfections) {
 
 /// function to spread pathogen
 void Population::pathogenSpread() {
+  std::bernoulli_distribution transmission(pTransmit);
+  std::vector<bool> new_infections (nAgents, false);  // new infections
   // looping through agents, query rtree for neighbours
   for (int i = 0; i < nAgents; i++) {
     // spread to neighbours if self infected
     if (infected[i]) {
+      new_infections[i] = true;
       timeInfected[i]++;  // increase time infecetd
       // get neigbour ids
       std::vector<int> nbrsId = getNeighbourId(coordX[i], coordY[i]);
@@ -45,15 +50,18 @@ void Population::pathogenSpread() {
 
           if (!infected[toInfect]) {
             // infect neighbours with prob p
-            if (transmission(j)) {
-              infected[toInfect] = true;
-              srcInfect[toInfect] = i + 1;  // who infects whom; +1 for 1 index
+            if (transmission(rng)) {
+              new_infections[toInfect] = true;
+              // infected[toInfect] = true;
+              srcInfect[toInfect] = i;
             }
           }
         }
       }
     }
   }
+  std::swap(infected, new_infections);
+  new_infections.clear();
 }
 
 /// function for pathogen cost --- use old formula
