@@ -397,14 +397,18 @@ void Population::doForage(Resources &food) {
   // all agents have picked a food item if they can forage
   // now forage in a serial loop --- this cannot be parallelised
   // this order is randomised
+  shufflePop();
   for (size_t i = 0; i < static_cast<size_t>(nAgents); i++) {
     int id = order[i];
-    if ((counter[id] > 0) | (food.nAvailable == 0)) {
+    if ((counter[id] > 0) || (food.nAvailable == 0) || (forageItem[id] == -1)) {
       // nothing
     } else {
+      // here we assume that the individual can forage, there is food
+      // WE MUST CHECK whether the picked item is available
       int thisItem = forageItem[id];  // the item picked by this agent
-      // check selected item is available
-      if (thisItem != -1) {
+
+      // IFF the item is available, then harvest it and mark it as unavailable
+      if (food.available[thisItem]) {
         counter[id] = handling_time;
         intake[id] += 1.0;  // increased here --- not as described.
 
