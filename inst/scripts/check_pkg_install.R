@@ -36,13 +36,13 @@ ggplot(l) +
 a <- run_pathomove(
   scenario = 1,
   popsize = 500,
-  nItems = 180,
+  nItems = 1800,
   landsize = 60,
   nClusters = 60,
   clusterSpread = 1,
   tmax = 100,
-  genmax = 20,
-  g_patho_init = 10,
+  genmax = 500,
+  g_patho_init = 300,
   range_food = 1.0,
   range_agents = 1.0,
   range_move = 1.0,
@@ -52,7 +52,6 @@ a <- run_pathomove(
   initialInfections = 20,
   costInfect = 0.25,
   multithreaded = TRUE,
-  # nThreads = 2,
   dispersal = 2.0,
   infect_percent = FALSE,
   vertical = FALSE,
@@ -87,19 +86,53 @@ ggplot(b) +
     binwidth = c(100, NA)
   )
 
+ggplot(b) +
+  stat_summary(
+    aes(
+      gen, intake
+    ),
+    binwidth = c(100, NA)
+  )
+
+ggplot(b) +
+  stat_summary(
+    aes(
+      gen, moved
+    ),
+    binwidth = c(100, NA)
+  )
+
+ggplot(b) +
+  stat_summary(
+    aes(
+      gen, assoc
+    )
+  )
+
+ggplot(b[, list(total_intake = sum(intake)), by = gen]) +
+  geom_path(
+    aes(gen, total_intake)
+  )
+
 ggplot(b[gen > a@gens_patho_intro]) +
-  geom_jitter(
+  stat_summary(
     aes(moved, assoc, col = social_strat)
   ) +
   scale_y_log10()
 
 
 #### plotting transmission trees ####
-df <- b[gen == max(gen)]
+df <- b[gen >= a@gens_patho_intro & gen %% 50 == 0,]
+df[, src_infect := fifelse(src_infect < 0, NA_real_, src_infect)]
+df[, src_infect := fifelse(t_infec == 0, NA_real_, src_infect + 1)]
 
-chain <- get_transmission_chain(df)
+df = split(df[, c("src_infect", "t_infec", "assoc", "gen")], by = "gen")
 
-ggraph(chain, layout = "circlepack") +
+chains = lapply(df, get_transmission_chain)
+
+library(ggraph)
+plots = lapply(chains, function(chain) {
+  ggraph(chain, layout = "circlepack") +
   # geom_edge_link(
   #   edge_colour = "grey"
   # ) +
@@ -116,3 +149,96 @@ ggraph(chain, layout = "circlepack") +
   ) +
   coord_equal() +
   theme_void()
+})
+
+library(patchwork)
+wrap_plots(plots, nrow = 2) +
+  plot_layout(guides = "collect")
+
+#### initial positions ####
+ggplot(b[gen == min(gen), c("x", "y")]) +
+  geom_point(
+    aes(x, y)
+  )
+
+#### plot movement ####
+md = get_move_data(a)
+
+ggplot(md[id %in% seq(100)]) +
+geom_point(
+    data = a@landscape,
+    aes(x, y),
+    shape = 1,
+    alpha = 1
+  ) +
+  geom_point(
+    aes(x, y, col = as.factor(id),
+      group = id
+    ),
+    size = 0.2,
+    show.legend = FALSE
+  ) +
+  facet_wrap(
+    ~type
+  )
+
+#### get network data ####
+networks = get_networks(a)
+
+ggraph(networks[["300"]], x = xn, y = yn)+
+  geom_edge_fan(
+    edge_width = 0.5,
+    aes(
+      edge_alpha = weight
+    ),
+    edge_color = "grey40",
+    show.legend = F
+  )+
+  geom_node_point(
+    aes(
+      fill = t_infec,
+      size = assoc
+    ),
+    shape = 21,
+    show.legend = T
+  )+
+  scale_size_continuous(
+    range = c(0.5, 3)
+  )+
+  colorspace::scale_fill_continuous_sequential(
+    palette = "Inferno",
+    limit = c(1, 100),
+    breaks = c(1, 10, 30, 100),
+    # direction = -1,
+    na.value = "lightblue",
+    trans = "sqrt"
+  )+
+  coord_equal(
+    expand = TRUE,
+    xlim = c(0, 60),
+    ylim = c(0, 60)
+  )+
+  theme_graph(
+    background = "white",
+    border = T,
+    base_size = 8,
+    plot_margin = margin(rep(0, 3))
+  )+
+  theme(
+    # axis.ticks = element_blank(),
+    # axis.text = element_blank(),
+    # axis.title = element_blank(),
+    legend.margin = margin(rep(0, 4)),
+    legend.position = "top",
+    legend.title = element_text(size = 6),
+    legend.key.height = unit(1, units = "mm"),
+    legend.key.width = unit(3, units = "mm"),
+    plot.background = element_blank()
+  )+
+  labs(
+    fill = "Time infected"
+  )+
+  guides(
+    size = "none",
+    edge_alpha = "none"
+  )
