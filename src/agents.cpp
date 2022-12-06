@@ -46,10 +46,11 @@ void Population::updateRtree() {
 }
 
 // function for initial positions
-// function for initial positions
 void Population::initPos(const Resources &food) {
   coordX = Rcpp::as<std::vector<float>>(Rcpp::runif(nAgents, 0.f, food.dSize));
   coordY = Rcpp::as<std::vector<float>>(Rcpp::runif(nAgents, 0.f, food.dSize));
+  initX = coordX;
+  initY = coordY;
   updateRtree();
 }
 
