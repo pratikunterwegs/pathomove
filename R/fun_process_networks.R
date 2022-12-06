@@ -116,10 +116,10 @@ handle_sir_data <- function(data, digits = 1) {
 #' was infected by which other individual, for all infected individuals, except
 #' the index cases (initial infections).
 #' @export
-get_transmission_chains <- function(df) {
+get_transmission_chain <- function(df) {
   df$id <- seq_len(nrow(df))
   assertthat::assert_that(
-    c("id", "src_infect") %in% colnames(df),
+    all(c("id", "src_infect") %in% colnames(df)),
     msg = "Data does not have infection source and agent id"
   )
   tidygraph::tbl_graph(
