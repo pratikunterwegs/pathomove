@@ -151,7 +151,4 @@ struct Population {
   // there is no function to update the network, this is handled in countAssoc
 };
 
-// a dinky function for distance and passed to catch test
-float get_distance(float x1, float x2, float y1, float y2);
-
 #endif  // SRC_AGENTS_H_
