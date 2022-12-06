@@ -62,11 +62,6 @@ void Population::setTrait(const float &mSize) {
   sN = Rcpp::as<std::vector<float>>(Rcpp::rcauchy(nAgents, 0.0, mSize));
 }
 
-float get_distance(const float &x1, const float &x2, const float &y1,
-                   const float &y2) {
-  return std::sqrt(std::pow((x1 - x2), 2) + std::pow((y1 - y2), 2));
-}
-
 // general function for agents within distance
 std::pair<int, int> Population::countAgents(const float &xloc,
                                             const float &yloc) {
@@ -165,8 +160,6 @@ std::vector<int> Population::getFoodId(const Resources &food, const float &xloc,
     near_food.clear();
   }
 
-  // first element is number of near entities
-  // second is the identity of entities
   return food_id;
 }
 
