@@ -351,14 +351,13 @@ void Population::move(const Resources &food, const bool &multithreaded) {
 // function to paralellise choice of forage item
 void Population::pickForageItem(const Resources &food,
                                 const bool &multithreaded) {
-  shufflePop();
   // nearest food
   std::vector<int> idTargetFood(nAgents, -1);
 
   if (multithreaded) {
     // loop over agents --- no shuffling required here
     // try parallel foraging --- agents pick a target item
-    tbb::parallel_for(tbb::blocked_range<unsigned>(0, order.size()),
+    tbb::parallel_for(tbb::blocked_range<unsigned>(0, nAgents),
                       [&](const tbb::blocked_range<unsigned> &r) {
                         for (unsigned i = r.begin(); i < r.end(); ++i) {
                           if ((counter[i] > 0) || (food.nAvailable == 0)) {
@@ -370,7 +369,10 @@ void Population::pickForageItem(const Resources &food,
                                 getFoodId(food, coordX[i], coordY[i]);
                             // check near items count
                             if (theseItems.size() > 0) {
-                              // take first item by default
+                              // take random item
+                              std::random_shuffle(theseItems.begin(),
+                                                  theseItems.end(),
+                                                  randWrapper);
                               idTargetFood[i] = theseItems[0];
                             }
                           }
@@ -386,7 +388,9 @@ void Population::pickForageItem(const Resources &food,
 
         // check near items count
         if (theseItems.size() > 0) {
-          // take first item by default
+          // take random item
+          std::random_shuffle(theseItems.begin(), theseItems.end(),
+                              randWrapper);
           idTargetFood[i] = theseItems[0];
         }
       }
