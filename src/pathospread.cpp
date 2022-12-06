@@ -29,13 +29,10 @@ void Population::introducePathogen(const int initialInfections) {
 
 /// function to spread pathogen
 void Population::pathogenSpread() {
-  std::bernoulli_distribution transmission(pTransmit);
-  std::vector<bool> new_infections (nAgents, false);  // new infections
   // looping through agents, query rtree for neighbours
   for (int i = 0; i < nAgents; i++) {
     // spread to neighbours if self infected
     if (infected[i]) {
-      new_infections[i] = true;
       timeInfected[i]++;  // increase time infecetd
       // get neigbour ids
       std::vector<int> nbrsId = getNeighbourId(coordX[i], coordY[i]);
@@ -50,9 +47,8 @@ void Population::pathogenSpread() {
 
           if (!infected[toInfect]) {
             // infect neighbours with prob p
-            if (transmission(rng)) {
-              new_infections[toInfect] = true;
-              // infected[toInfect] = true;
+            if (transmission(j)) {
+              infected[toInfect] = true;
               srcInfect[toInfect] = i;
             }
           }
@@ -60,8 +56,6 @@ void Population::pathogenSpread() {
       }
     }
   }
-  std::swap(infected, new_infections);
-  new_infections.clear();
 }
 
 /// function for pathogen cost --- use old formula
