@@ -29,7 +29,7 @@ Resources food_2(nItems, landsize, nClusters, clusterSpread, regen_time);
 
 // population parameters
 const int popsize = 5;
-const float n_samples = 4.f;
+const int n_samples = 4;
 const float range_food = 1.f;
 const float range_agents = 1.f;
 const float range_move = 1.f;
@@ -40,8 +40,8 @@ const float vertical = false;
 const float reprod_threshold = false;
 
 // make test population
-Population pop_3(popsize, range_agents, range_food, range_move, handling_time,
-                 p_transmit, vertical, reprod_threshold);
+Population pop_3(popsize, n_samples, range_agents, range_food, range_move,
+                 handling_time, p_transmit, vertical, reprod_threshold);
 
 // Initialize a unit test context. This is similar to how you
 // might begin an R test file with 'context()', expect the
@@ -97,7 +97,7 @@ context("Population inheritance without threshold") {
     }
 
     // reproduction with very low dispersal and mutation
-    pop_3.Reproduce(food_2, false, 0.001f, 1e-6f, 1e-6f);
+    pop_3.Reproduce(food_2, false, 0.f, 0.f, 0.f);
 
     // expect new pop_3 to have same sF as single nearby agent
     for (size_t i = 0; i < popsize; i++) {

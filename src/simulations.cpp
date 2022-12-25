@@ -205,6 +205,8 @@ Rcpp::List simulation::do_simulation() {
 //' @param genmax The maximum number of generations per simulation.
 //' @param g_patho_init The generation in which to begin introducing the
 //' pathogen.
+//' @param n_samples Integer. The number of directions around the current
+//' location to scan for cues.
 //' @param range_food The sensory range for food.
 //' @param range_agents The sensory range for agents.
 //' @param range_move The movement range for agents.
@@ -250,14 +252,15 @@ Rcpp::S4 run_pathomove(
     const float landsize = 60.0, const int nClusters = 60,
     const float clusterSpread = 1.0, const int tmax = 100,
     const int genmax = 100, const int g_patho_init = 70,
-    const float range_food = 1.0, const float range_agents = 1.0,
-    const float range_move = 1.0, const int handling_time = 5,
-    const int regen_time = 50, float pTransmit = 0.05,
-    const int initialInfections = 20, const float costInfect = 0.25,
-    const bool multithreaded = true, const float dispersal = 2.0,
-    const bool infect_percent = false, const bool vertical = false,
-    const bool reprod_threshold = false, const float mProb = 0.01,
-    const float mSize = 0.01, const float spillover_rate = 1.0) {
+    const int n_samples = 5, const float range_food = 1.0,
+    const float range_agents = 1.0, const float range_move = 1.0,
+    const int handling_time = 5, const int regen_time = 50,
+    float pTransmit = 0.05, const int initialInfections = 20,
+    const float costInfect = 0.25, const bool multithreaded = true,
+    const float dispersal = 2.0, const bool infect_percent = false,
+    const bool vertical = false, const bool reprod_threshold = false,
+    const float mProb = 0.01, const float mSize = 0.01,
+    const float spillover_rate = 1.0) {
   // check that intial infections is less than popsize
   if (initialInfections > popsize) {
     Rcpp::stop("Error: Initial infections must be less than/equal to popsize");
@@ -270,11 +273,11 @@ Rcpp::S4 run_pathomove(
   }
   // make simulation class with input parameters
   simulation this_sim(popsize, scenario, nItems, landsize, nClusters,
-                      clusterSpread, tmax, genmax, g_patho_init, range_food,
-                      range_agents, range_move, handling_time, regen_time,
-                      pTransmit, initialInfections, costInfect, multithreaded,
-                      dispersal, infect_percent, vertical, reprod_threshold,
-                      mProb, mSize, spillover_rate);
+                      clusterSpread, tmax, genmax, g_patho_init, n_samples,
+                      range_food, range_agents, range_move, handling_time,
+                      regen_time, pTransmit, initialInfections, costInfect,
+                      multithreaded, dispersal, infect_percent, vertical,
+                      reprod_threshold, mProb, mSize, spillover_rate);
   // do the simulation using the simulation class function
   Rcpp::List pathomoveOutput = this_sim.do_simulation();
 

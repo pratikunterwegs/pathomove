@@ -106,3 +106,38 @@ handle_sir_data <- function(data, digits = 1) {
   d <- d[, list(mean = mean(agents)), by = c("time", "class", "repl")]
   d
 }
+
+#' Get pathogen transmission chains
+#'
+#' @param df A dataframe with individual data, typically part of a
+#' `pathomove_output` object.
+#'
+#' @return A `tidygraph` object with a directed network showing which individual
+#' was infected by which other individual, for all infected individuals, except
+#' the index cases (initial infections).
+#' @export
+get_transmission_chain <- function(df) {
+  df$id <- seq_len(nrow(df))
+  assertthat::assert_that(
+    all(c("id", "src_infect") %in% colnames(df)),
+    msg = "Data does not have infection source and agent id"
+  )
+  tidygraph::tbl_graph(
+    nodes = df,
+    edges = df[!is.na(src_infect), c("src_infect", "id")],
+    directed = TRUE,
+    node_key = "id"
+  )
+}
+
+#' Get transmission chain sizes
+#'
+#' @param graph An object inheriting from class `igraph`, typically the output
+#' of `get_transmission_chains`.
+#'
+#' @return A vector of transmission chain sizes.
+#' @export
+get_chain_size <- function(graph) {
+  g_ <- igraph::decompose(graph)
+  unlist(lapply(g, igraph::ecount))
+}

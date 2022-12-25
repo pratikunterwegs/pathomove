@@ -21,7 +21,7 @@ struct Network {
 
   // members
   const int nVertices;
-  Rcpp::NumericMatrix adjMat;
+  Rcpp::IntegerMatrix adjMat;
 
   // functions
   Rcpp::DataFrame getNtwkDf();

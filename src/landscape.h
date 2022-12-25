@@ -48,8 +48,7 @@ struct Resources {
   const int nClusters;
   const float clusterSpread;
   const int regen_time;
-  std::vector<float> coordX;
-  std::vector<float> coordY;
+  std::vector<float> coordX, coordY;
   std::vector<bool> available;
   std::vector<int> counter;
   int nAvailable;

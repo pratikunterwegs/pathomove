@@ -16,17 +16,18 @@ class simulation {
   simulation(const int popsize, const int scenario, const int nItems,
              const float landsize, const int nClusters,
              const float clusterSpread, const int tmax, const int genmax,
-             const int g_patho_init, const float range_food,
-             const float range_agents, const float range_move,
-             const int handling_time, const int regen_time, float pTransmit,
-             const int initialInfections, const float costInfect,
-             const bool multithreaded, const float dispersal,
-             const bool infect_percent, const bool vertical,
-             const bool reprod_threshold, const float mProb, const float mSize,
+             const int g_patho_init, const int n_samples,
+             const float range_food, const float range_agents,
+             const float range_move, const int handling_time,
+             const int regen_time, float pTransmit, const int initialInfections,
+             const float costInfect, const bool multithreaded,
+             const float dispersal, const bool infect_percent,
+             const bool vertical, const bool reprod_threshold,
+             const float mProb, const float mSize,
              const float spillover_rate)
       :  // population, food, and data structures
-        pop(popsize, range_agents, range_food, range_move, handling_time,
-            pTransmit, vertical, reprod_threshold),
+        pop(popsize, n_samples, range_agents, range_food, range_move,
+            handling_time, pTransmit, vertical, reprod_threshold),
         food(nItems, landsize, nClusters, clusterSpread, regen_time),
         gen_data(),
 
@@ -37,6 +38,7 @@ class simulation {
         g_patho_init(g_patho_init),
 
         // agent perception and behaviour, food growth
+        n_samples(n_samples),
         range_food(range_food),
         range_agents(range_agents),
         range_move(range_move),
@@ -70,7 +72,7 @@ class simulation {
   Population pop;
   Resources food;
   genData gen_data;
-  const int scenario, tmax, genmax, g_patho_init;
+  const int scenario, tmax, genmax, g_patho_init, n_samples;
   const float range_food, range_agents, range_move;
   const int handling_time;
 

@@ -12,12 +12,14 @@
 void Population::introducePathogen(const int initialInfections) {
   // recount for safety
   countInfected();
+  shufflePop();
   // loop through the intended number of infections
   for (int i = 0; i < initialInfections; i++) {
+    size_t id = order[i];
     // toggle infected agents boolean for infected
-    infected[i] = true;
-    timeInfected[i] = 1;
-    srcInfect[i] = -2;  // count as forced
+    infected[id] = true;
+    timeInfected[id] = 1;
+    srcInfect[id] = -2;  // count as forced
   }
   // count after
   countInfected();
@@ -27,7 +29,6 @@ void Population::introducePathogen(const int initialInfections) {
 
 /// function to spread pathogen
 void Population::pathogenSpread() {
-  std::bernoulli_distribution transmission(pTransmit);
   // looping through agents, query rtree for neighbours
   for (int i = 0; i < nAgents; i++) {
     // spread to neighbours if self infected
@@ -37,12 +38,16 @@ void Population::pathogenSpread() {
       std::vector<int> nbrsId = getNeighbourId(coordX[i], coordY[i]);
 
       if (nbrsId.size() > 0) {
+        // draw whether neighbours will be infected
+        auto transmission = Rcpp::rbinom(nbrsId.size(), 1, pTransmit);
+
         // loop through neighbours
         for (size_t j = 0; j < nbrsId.size(); j++) {
           size_t toInfect = nbrsId[j];
+
           if (!infected[toInfect]) {
             // infect neighbours with prob p
-            if (transmission(rng)) {
+            if (transmission(j)) {
               infected[toInfect] = true;
               srcInfect[toInfect] = i;
             }

@@ -46,7 +46,7 @@ context("Items availability works correctly") {
 
 // population parameters
 const int popsize = 1;
-const float n_samples = 4.f;
+const int n_samples = 4;
 const float range_food = 1.f;
 const float range_agents = 1.f;
 const float range_move = 1.f;
@@ -57,8 +57,8 @@ const float vertical = false;
 const float reprod_threshold = false;
 
 // make test population
-Population pop_2(popsize, range_agents, range_food, range_move, handling_time,
-                 p_transmit, vertical, reprod_threshold);
+Population pop_2(popsize, n_samples, range_agents, range_food, range_move,
+                 handling_time, p_transmit, vertical, reprod_threshold);
 
 // Initialize a unit test context. This is similar to how you
 // might begin an R test file with 'context()', expect the
