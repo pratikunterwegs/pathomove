@@ -16,6 +16,20 @@
 
 std::mt19937 rng;
 
+/// simple wrapping function
+// because std::fabs + std::fmod is somewhat suspicious
+// we assume values that are at most a little larger than max (max + 1) and
+// a little smaller than zero (-1)
+float wrap_pos(const float &p1, const float &pmax) {
+  if (p1 > pmax) {
+    return p1 - pmax;
+  } else if (p1 < 0.f) {
+    return pmax + p1;
+  } else {
+    return p1;
+  }
+}
+
 void Resources::initResources() {
   // generate n central items
   std::vector<float> centreCoordX(nClusters);
