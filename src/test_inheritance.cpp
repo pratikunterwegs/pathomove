@@ -18,10 +18,10 @@
 
 #include "agents.h"
 
-// food_2 parameters
+// food_2 parameters, only one item
 const float landsize = 10.f;
-const int nItems = 10;
-const int nClusters = 10;
+const int nItems = 1;
+const int nClusters = 1;
 const float clusterSpread = 0.1f;
 const int regen_time = 50;
 
@@ -48,18 +48,18 @@ Population pop_3(popsize, n_samples, range_agents, range_food, range_move,
 // associated context should be wrapped in braced.
 context("Population inheritance without threshold") {
   // only a single agent is near food
-  pop_3.coordX = {3.3f, 0.f, 0.f, 0.f, 0.f};
-  pop_3.coordY = {3.f, 0.f, 0.f, 0.f, 0.f};
+  pop_3.coordX = {3.3f, 3.f, 0.f, 0.f, 0.f};
+  pop_3.coordY = {3.f, 3.f, 0.f, 0.f, 0.f};
   pop_3.updateRtree();
-  pop_3.sF = {10.0f, 0.f, 0.f, 0.f, 0.f};
+  pop_3.sF = {10.0f, 12.f, 0.f, 0.f, 0.f};
   pop_3.sH = {0.f, 0.f, 0.f, 0.f, 0.f};
   pop_3.sN = {0.f, 0.f, 0.f, 0.f, 0.f};
   pop_3.counter = {0, 0, 0, 0, 0};
 
   // food_2.initResources();
   food_2.countAvailable();
-  food_2.coordX = {4.5f, 4.1f, 4.1f, 4.2f, 4.3f, 4.5f, 4.2f, 4.1f, 4.2f, 4.1f};
-  food_2.coordY = {3.0f, 3.f, 3.f, 3.f, 3.f, 3.f, 3.f, 3.f, 3.f, 3.f};
+  food_2.coordX = {4.5f};
+  food_2.coordY = {3.0f};
   food_2.counter = std::vector<int>(nItems, 0);
   food_2.countAvailable();
   // initialise rtree and set counter value
@@ -71,19 +71,28 @@ context("Population inheritance without threshold") {
   food_2.rtree = tmpRtree;
 
   test_that("Agents away from items see none") {
-    int near_items = pop_3.countFood(food_2, pop_3.coordX[1], pop_3.coordY[1]);
+    int near_items = pop_3.countFood(food_2, pop_3.coordX[2], pop_3.coordY[2]);
     CATCH_CHECK(near_items == 0);  // found out manually using std::cout
   }
 
-  test_that("Agent inheritance works, no threshold") {
+  test_that("Agent foraging leads to exploitation competition") {
     pop_3.move(food_2, true);
     pop_3.pickForageItem(food_2, true);
     pop_3.doForage(food_2);
 
-    // check that far agents have no items
-    CATCH_CHECK(pop_3.counter[1] == 0);
-    CATCH_CHECK(pop_3.intake[1] == Approx(0.f).epsilon(1e-3));
-    CATCH_CHECK(pop_3.energy[1] == Approx(0.001f).epsilon(1e-3));
+    // check that either agent 0 or 1 has an item
+    CATCH_CHECK(((pop_3.counter[0] == 0) || (pop_3.counter[1] == 0)));
+    // check that ONLY one agent has an item
+    CATCH_CHECK(!((pop_3.counter[0] == 0) && (pop_3.counter[1] == 0)));
+    // check that one individual has gained intake
+    CATCH_CHECK(((pop_3.intake[0] == Approx(0.f).epsilon(1e-3)) ||
+                 (pop_3.intake[1] == Approx(0.f).epsilon(1e-3))));
+    // check that ONLY one individual has gained intake
+    CATCH_CHECK(!((pop_3.intake[0] == Approx(0.f).epsilon(1e-3)) &&
+                  (pop_3.intake[1] == Approx(0.f).epsilon(1e-3))));
+    // check that energy values remain zero
+    CATCH_CHECK(((pop_3.energy[0] == Approx(0.f).epsilon(1e-3)) &&
+                 (pop_3.energy[1] == Approx(0.f).epsilon(1e-3))));
 
     pop_3.energy = pop_3.intake;
 
@@ -93,16 +102,18 @@ context("Population inheritance without threshold") {
     std::vector<float> vfit = pop_3.handleFitness();
     for (size_t i = 0; i < popsize; i++) {
       // std::cout << "Agent " << i << " fitness = " << vfit[i] << "\n";
-      if (i > 0) CATCH_CHECK(vfit[0] > vfit[i]);
+      // check that one of the two has more energy than other agents
+      if (i > 1) CATCH_CHECK(((vfit[0] > vfit[i]) || (vfit[1] > vfit[i])));
     }
 
     // reproduction with very low dispersal and mutation
-    pop_3.Reproduce(food_2, false, 0.f, 0.f, 0.f);
+    pop_3.Reproduce(food_2, false, 0.001f, 1e-6f, 1e-6f);
 
     // expect new pop_3 to have same sF as single nearby agent
     for (size_t i = 0; i < popsize; i++) {
       // std::cout << "Agent " << i << " sF = " << pop_3.sF[i] << "\n";
-      CATCH_CHECK(pop_3.sF[i] == Approx(10.f).epsilon(1e-2));
+      CATCH_CHECK(((pop_3.sF[i] == Approx(10.f).epsilon(1e-2)) ||
+                   pop_3.sF[i] == Approx(12.f).epsilon(1e-2)));
     }
   }
 }
