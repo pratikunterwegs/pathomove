@@ -30,12 +30,15 @@ void Population::introducePathogen(const int initialInfections) {
 /// function to spread pathogen
 void Population::pathogenSpread() {
   // looping through agents, query rtree for neighbours
+  // pathogen spreads in random order
+  shufflePop();
   for (int i = 0; i < nAgents; i++) {
+    size_t id = order[i];
     // spread to neighbours if self infected
-    if (infected[i]) {
-      timeInfected[i]++;  // increase time infecetd
+    if (infected[id]) {
+      timeInfected[id]++;  // increase time infecetd
       // get neigbour ids
-      std::vector<int> nbrsId = getNeighbourId(coordX[i], coordY[i]);
+      std::vector<int> nbrsId = getNeighbourId(coordX[id], coordY[id]);
 
       if (nbrsId.size() > 0) {
         // draw whether neighbours will be infected
@@ -49,7 +52,7 @@ void Population::pathogenSpread() {
             // infect neighbours with prob p
             if (transmission(j)) {
               infected[toInfect] = true;
-              srcInfect[toInfect] = i;
+              srcInfect[toInfect] = id;
             }
           }
         }
