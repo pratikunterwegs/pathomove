@@ -219,7 +219,7 @@ void Population::move(const Resources &food, const bool &multithreaded) {
                 agentCounts = countAgents(sampleX, sampleY);
 
                 suit_dest = (sF[i] * foodHere) + (sH[i] * agentCounts.first) +
-                    (sN[i] * agentCounts.second) + noise_v(i, j.second);
+                            (sN[i] * agentCounts.second) + noise_v(i, j.second);
 
                 if (suit_dest > suit_origin) {
                   // the agent moves
@@ -283,7 +283,7 @@ void Population::move(const Resources &food, const bool &multithreaded) {
           agentCounts = countAgents(sampleX, sampleY);
 
           suit_dest = (sF[i] * foodHere) + (sH[i] * agentCounts.first) +
-                            (sN[i] * agentCounts.second) + noise_v(i, j.second);
+                      (sN[i] * agentCounts.second) + noise_v(i, j.second);
 
           if (suit_dest > suit_origin) {
             // the agent moves
