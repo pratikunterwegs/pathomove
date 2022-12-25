@@ -438,7 +438,7 @@ const bool Population::check_reprod_threshold() {
 std::vector<float> Population::handleFitness() {
   Rcpp::NumericVector vecFitness = Rcpp::wrap(energy);
   // random errors in fitness
-  Rcpp::NumericVector rd_fitness = Rcpp::rnorm(nAgents, 0.0f, 0.01f);
+  Rcpp::NumericVector rd_fitness = Rcpp::rnorm(nAgents, 0.0f, 1e-5f);
   vecFitness =
       vecFitness + rd_fitness;  // add error to avoid all energies equal
   vecFitness = (vecFitness - Rcpp::min(vecFitness)) /
@@ -467,7 +467,7 @@ Population::applyReprodThreshold() {
 
   // normalise energy between 0 and 1
   Rcpp::NumericVector vecFitness = Rcpp::wrap(energy_pos);
-  Rcpp::NumericVector rd_fitness = Rcpp::rnorm(agents_remaining, 0.0f, 0.01f);
+  Rcpp::NumericVector rd_fitness = Rcpp::rnorm(agents_remaining, 0.0f, 1e-5f);
   vecFitness =
       vecFitness + rd_fitness;  // add error to avoid all energies equal
 
