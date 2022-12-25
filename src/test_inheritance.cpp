@@ -97,7 +97,7 @@ context("Population inheritance without threshold") {
     }
 
     // reproduction with very low dispersal and mutation
-    pop_3.Reproduce(food_2, false, 0.001f, 1e-6f, 1e-6f);
+    pop_3.Reproduce(food_2, false, 0.f, 0.f, 0.f);
 
     // expect new pop_3 to have same sF as single nearby agent
     for (size_t i = 0; i < popsize; i++) {
