@@ -14,6 +14,7 @@ run_pathomove(
   tmax = 100L,
   genmax = 100L,
   g_patho_init = 70L,
+  n_samples = 5L,
   range_food = 1,
   range_agents = 1,
   range_move = 1,
@@ -55,6 +56,9 @@ specified by \code{spillover_rate}.}
 
 \item{g_patho_init}{The generation in which to begin introducing the
 pathogen.}
+
+\item{n_samples}{Integer. The number of directions around the current
+location to scan for cues.}
 
 \item{range_food}{The sensory range for food.}
 
