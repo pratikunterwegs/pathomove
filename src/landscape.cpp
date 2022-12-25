@@ -28,10 +28,14 @@ void Resources::initResources() {
   // generate n central items
   std::vector<float> centreCoordX(nClusters);
   std::vector<float> centreCoordY(nClusters);
+  const float padded_size_max = dSize * 0.95f;
+  const float padded_size_min = dSize * 0.05f;
 
   // make item and cluster coords
-  Rcpp::NumericVector cluster_rd_x = Rcpp::runif(nClusters, 0.0f, dSize);
-  Rcpp::NumericVector cluster_rd_y = Rcpp::runif(nClusters, 0.0f, dSize);
+  Rcpp::NumericVector cluster_rd_x =
+      Rcpp::runif(nClusters, padded_size_min, padded_size_max);
+  Rcpp::NumericVector cluster_rd_y =
+      Rcpp::runif(nClusters, padded_size_min, padded_size_max);
 
   Rcpp::NumericVector rd_x = Rcpp::rnorm(nItems, 0.0f, clusterSpread);
   Rcpp::NumericVector rd_y = Rcpp::rnorm(nItems, 0.0f, clusterSpread);
@@ -42,7 +46,7 @@ void Resources::initResources() {
   }
 
   // generate items around
-  for (int i = nClusters; i < nItems; i++) {
+  for (int i = 0; i < nItems; i++) {
     coordX[i] = (centreCoordX[(i % nClusters)] + rd_x(i));
     coordY[i] = (centreCoordY[(i % nClusters)] + rd_y(i));
 
