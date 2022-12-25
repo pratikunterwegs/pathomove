@@ -168,16 +168,7 @@ std::vector<int> Population::getFoodId(const Resources &food, const float &xloc,
 // we assume values that are at most a little larger than max (max + 1) and
 // a little smaller than zero (-1)
 float wrap_pos(const float &p1, const float &pmax) {
-  if (std::fabs(p1 / pmax) > 2.f) {
-    Rcpp::stop("Individuals moving far past boundary!\n");
-  }
-  if (p1 > pmax) {
-    return p1 - pmax;
-  }
-  if (p1 < 0.f) {
-    return pmax + p1;
-  }
-  return p1;
+  return p1 - pmax * std::floorf(p1 / pmax);
 }
 
 /// population movement function
