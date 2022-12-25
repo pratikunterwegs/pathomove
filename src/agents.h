@@ -26,12 +26,12 @@ struct Population {
              const bool reprod_threshold)
       :  // agents, positions, energy and traits
         nAgents(popsize),
-        coordX(popsize, 0.0f),
-        coordY(popsize, 0.0f),
-        initX(popsize, 0.0f),
-        initY(popsize, 0.0f),
-        intake(popsize, 0.001f),
-        energy(popsize, 0.001f),
+        coordX(popsize, 0.f),
+        coordY(popsize, 0.f),
+        initX(popsize, 0.f),
+        initY(popsize, 0.f),
+        intake(popsize, 0.f),
+        energy(popsize, 0.f),
         sF(popsize, 0.f),
         sH(popsize, 0.f),
         sN(popsize, 0.f),
