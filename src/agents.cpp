@@ -190,7 +190,7 @@ void Population::move(const Resources &food, const bool &multithreaded) {
   // make random noise for each individual and each sample
   Rcpp::NumericMatrix noise_v(nAgents, n_samples);
   for (size_t i_ = 0; i_ < n_samples; i_++) {
-    noise_v(Rcpp::_, i_) = Rcpp::rnorm(nAgents, 0.0f, 0.01f);
+    noise_v(Rcpp::_, i_) = Rcpp::rnorm(nAgents, 0.0f, 1e-5f);
   }
 
   // loop over agents
@@ -229,10 +229,6 @@ void Population::move(const Resources &food, const bool &multithreaded) {
                 // use range for agents to determine sample locs
                 float sampleX = coordX[i] + (range_agents * cos(j.first));
                 float sampleY = coordY[i] + (range_agents * sin(j.first));
-
-                // crudely wrap sampling location
-                sampleX = wrap_pos(sampleX, food.dSize);
-                sampleY = wrap_pos(sampleY, food.dSize);
 
                 // count food items at sample location
                 foodHere = countFood(food, sampleX, sampleY);
@@ -299,10 +295,6 @@ void Population::move(const Resources &food, const bool &multithreaded) {
           // use range for agents to determine sample locs
           float sampleX = coordX[i] + (range_agents * cos(j.first));
           float sampleY = coordY[i] + (range_agents * sin(j.first));
-
-          // crudely wrap sampling location
-          sampleX = wrap_pos(sampleX, food.dSize);
-          sampleY = wrap_pos(sampleY, food.dSize);
 
           // count food items at sample location
           foodHere = countFood(food, sampleX, sampleY);
