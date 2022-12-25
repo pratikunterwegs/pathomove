@@ -163,23 +163,6 @@ std::vector<int> Population::getFoodId(const Resources &food, const float &xloc,
   return food_id;
 }
 
-/// simple wrapping function
-// because std::fabs + std::fmod is somewhat suspicious
-// we assume values that are at most a little larger than max (max + 1) and
-// a little smaller than zero (-1)
-float wrap_pos(const float &p1, const float &pmax) {
-  if (std::fabs(p1 / pmax) > 2.f) {
-    Rcpp::stop("Individuals moving far past boundary!\n");
-  }
-  if (p1 > pmax) {
-    return p1 - pmax;
-  }
-  if (p1 < 0.f) {
-    return pmax + p1;
-  }
-  return p1;
-}
-
 /// population movement function
 void Population::move(const Resources &food, const bool &multithreaded) {
   const float twopi = 2.f * M_PI;
@@ -190,7 +173,7 @@ void Population::move(const Resources &food, const bool &multithreaded) {
   // make random noise for each individual and each sample
   Rcpp::NumericMatrix noise_v(nAgents, n_samples);
   for (size_t i_ = 0; i_ < n_samples; i_++) {
-    noise_v(Rcpp::_, i_) = Rcpp::rnorm(nAgents, 0.0f, 0.01f);
+    noise_v(Rcpp::_, i_) = Rcpp::rnorm(nAgents, 0.0f, 1e-3f);
   }
 
   // loop over agents
@@ -218,7 +201,7 @@ void Population::move(const Resources &food, const bool &multithreaded) {
               float suit_origin = (sF[i] * foodHere) +
                                   (sH[i] * agentCounts.first) +
                                   (sN[i] * agentCounts.second);
-
+              float suit_dest = suit_origin;
               // does the agent move at all? initially set to false
               bool agent_moves = false;
 
@@ -230,17 +213,12 @@ void Population::move(const Resources &food, const bool &multithreaded) {
                 float sampleX = coordX[i] + (range_agents * cos(j.first));
                 float sampleY = coordY[i] + (range_agents * sin(j.first));
 
-                // crudely wrap sampling location
-                sampleX = wrap_pos(sampleX, food.dSize);
-                sampleY = wrap_pos(sampleY, food.dSize);
-
                 // count food items at sample location
                 foodHere = countFood(food, sampleX, sampleY);
                 // count handlers and non-handlers at sample location
                 agentCounts = countAgents(sampleX, sampleY);
 
-                float suit_dest =
-                    (sF[i] * foodHere) + (sH[i] * agentCounts.first) +
+                suit_dest = (sF[i] * foodHere) + (sH[i] * agentCounts.first) +
                     (sN[i] * agentCounts.second) + noise_v(i, j.second);
 
                 if (suit_dest > suit_origin) {
@@ -288,7 +266,7 @@ void Population::move(const Resources &food, const bool &multithreaded) {
         // implicit conversion from int to float as ints are promoted
         float suit_origin = (sF[i] * foodHere) + (sH[i] * agentCounts.first) +
                             (sN[i] * agentCounts.second);
-
+        float suit_dest = suit_origin;
         // does the agent move at all? initially set to false
         bool agent_moves = false;
 
@@ -299,17 +277,12 @@ void Population::move(const Resources &food, const bool &multithreaded) {
           // use range for agents to determine sample locs
           float sampleX = coordX[i] + (range_agents * cos(j.first));
           float sampleY = coordY[i] + (range_agents * sin(j.first));
-
-          // crudely wrap sampling location
-          sampleX = wrap_pos(sampleX, food.dSize);
-          sampleY = wrap_pos(sampleY, food.dSize);
-
           // count food items at sample location
           foodHere = countFood(food, sampleX, sampleY);
           // count handlers and non-handlers at sample location
           agentCounts = countAgents(sampleX, sampleY);
 
-          float suit_dest = (sF[i] * foodHere) + (sH[i] * agentCounts.first) +
+          suit_dest = (sF[i] * foodHere) + (sH[i] * agentCounts.first) +
                             (sN[i] * agentCounts.second) + noise_v(i, j.second);
 
           if (suit_dest > suit_origin) {
