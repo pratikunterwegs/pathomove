@@ -163,14 +163,6 @@ std::vector<int> Population::getFoodId(const Resources &food, const float &xloc,
   return food_id;
 }
 
-/// simple wrapping function
-// because std::fabs + std::fmod is somewhat suspicious
-// we assume values that are at most a little larger than max (max + 1) and
-// a little smaller than zero (-1)
-float wrap_pos(const float &p1, const float &pmax) {
-  return p1 - pmax * std::floorf(p1 / pmax);
-}
-
 /// population movement function
 void Population::move(const Resources &food, const bool &multithreaded) {
   const float twopi = 2.f * M_PI;

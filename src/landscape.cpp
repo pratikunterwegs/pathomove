@@ -16,6 +16,14 @@
 
 std::mt19937 rng;
 
+/// simple wrapping function
+// because std::fabs + std::fmod is somewhat suspicious
+// we assume values that are at most a little larger than max (max + 1) and
+// a little smaller than zero (-1)
+float wrap_pos(const float &p1, const float &pmax) {
+  return p1 - pmax * std::floorf(p1 / pmax);
+}
+
 void Resources::initResources() {
   // generate n central items
   std::vector<float> centreCoordX(nClusters);
@@ -39,8 +47,8 @@ void Resources::initResources() {
     coordY[i] = (centreCoordY[(i % nClusters)] + rd_y(i));
 
     // wrap
-    coordX[i] = fmod(dSize + coordX[i], dSize);
-    coordY[i] = fmod(dSize + coordY[i], dSize);
+    coordX[i] = wrap_pos(dSize + coordX[i], dSize);
+    coordY[i] = wrap_pos(dSize + coordY[i], dSize);
   }
 
   // initialise rtree and set counter value

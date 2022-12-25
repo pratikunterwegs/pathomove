@@ -61,4 +61,6 @@ struct Resources {
   void regenerate();
 };
 
+float wrap_pos(const float &p1, const float &pmax);
+
 #endif  // SRC_LANDSCAPE_H_
