@@ -53,7 +53,7 @@ This model ties together a number of different concepts:
 
 3. The introduction and spread of an infectious pathogen between agents when they are close together. The pathogen causes a chronic 'disease', which reduces net energy, and hence fitness.
 
-<img src="inst/fig_schematic.png" height="200">
+<img src="inst/figures/fig_schematic.png" height="200">
 
 ---
 
