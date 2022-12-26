@@ -21,7 +21,7 @@ std::mt19937 rng;
 // we assume values that are at most a little larger than max (max + 1) and
 // a little smaller than zero (-1)
 float wrap_pos(const float &p1, const float &pmax) {
-  return p1 - pmax * std::floorf(p1 / pmax);
+  return p1 - pmax * std::floor(p1 / pmax);
 }
 
 void Resources::initResources() {
