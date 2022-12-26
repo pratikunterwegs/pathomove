@@ -124,7 +124,10 @@ get_transmission_chain <- function(df) {
   )
   tidygraph::tbl_graph(
     nodes = df,
-    edges = df[!is.na(src_infect), c("src_infect", "id")],
+    edges = df[
+      !(is.na(df$src_infect) | (df$src_infect <= 0)),
+      c("src_infect", "id")
+    ],
     directed = TRUE,
     node_key = "id"
   )
@@ -139,5 +142,5 @@ get_transmission_chain <- function(df) {
 #' @export
 get_chain_size <- function(graph) {
   g_ <- igraph::decompose(graph)
-  unlist(lapply(g, igraph::ecount))
+  unlist(lapply(g_, igraph::ecount))
 }
