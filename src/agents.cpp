@@ -471,7 +471,7 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
                            const float &dispersal, const float &mProb,
                            const float &mSize) {
   // draw vertical infectons
-  auto v_infect = Rcpp::rbinom(nAgents, 1, pTransmit);
+  auto v_infect = Rcpp::rbinom(nAgents, 1, p_v_transmit);
 
   // prepare to deal with fitness and reproduction options
   std::pair<std::vector<int>, std::vector<float>> thresholded_parents;
@@ -547,7 +547,7 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
       if (infected[parent_id]) {
         if (v_infect(a)) {
           infected_2[a] = true;
-          srcInfect[a] = -parent_id;  // -id for each parent
+          srcInfect[a] = -(parent_id + 1);  // -id for each parent
         }
       }
     }
