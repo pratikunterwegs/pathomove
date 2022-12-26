@@ -492,9 +492,6 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
     thresholded_parents = applyReprodThreshold();
     vecFitness = thresholded_parents.second;
   }
-  if (infect_percent) {
-    vecFitness = energy;
-  }
 
   // set up weighted lottery based on the vector of fitnesses
   std::discrete_distribution<> weightedLottery(vecFitness.begin(),
@@ -613,12 +610,12 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
   tmp_sN.clear();
 
   // swap energy
-  std::vector<float> tmpEnergy(nAgents, 0.001);
+  std::vector<float> tmpEnergy(nAgents, 0.f);
   std::swap(energy, tmpEnergy);
   tmpEnergy.clear();
 
   // swap intake
-  std::vector<float> tmpIntake(nAgents, 0.001);
+  std::vector<float> tmpIntake(nAgents, 0.f);
   std::swap(intake, tmpIntake);
   tmpIntake.clear();
 }
