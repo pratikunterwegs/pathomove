@@ -19,7 +19,8 @@ class simulation {
              const int g_patho_init, const int n_samples,
              const float range_food, const float range_agents,
              const float range_move, const int handling_time,
-             const int regen_time, float pTransmit, const int initialInfections,
+             const int regen_time, const float pTransmit,
+             const float p_v_transmit, const int initialInfections,
              const float costInfect, const bool multithreaded,
              const float dispersal, const bool infect_percent,
              const bool vertical, const bool reprod_threshold,
@@ -27,7 +28,7 @@ class simulation {
              const float spillover_rate)
       :  // population, food, and data structures
         pop(popsize, n_samples, range_agents, range_food, range_move,
-            handling_time, pTransmit, vertical, reprod_threshold),
+            handling_time, pTransmit, p_v_transmit, vertical, reprod_threshold),
         food(nItems, landsize, nClusters, clusterSpread, regen_time),
         gen_data(),
 
@@ -49,6 +50,7 @@ class simulation {
         initialInfections(initialInfections),
         costInfect(costInfect),
         pTransmit(pTransmit),
+        p_v_transmit(p_v_transmit),
         spillover_rate(spillover_rate),
 
         // parallelisation
@@ -78,7 +80,7 @@ class simulation {
 
   const int regen_time, initialInfections;
   const float costInfect;
-  float pTransmit;
+  const float pTransmit, p_v_transmit;
   const float spillover_rate;
 
   const bool multithreaded;
