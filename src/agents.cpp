@@ -113,11 +113,11 @@ std::vector<int> Population::getNeighbourId(const float &xloc,
 int Population::countFood(const Resources &food, const float &xloc,
                           const float &yloc) {
   int nFood = 0;
-  std::vector<value> near_food;
 
   // check any available
   if (food.nAvailable > 0) {
     // query for a simple box
+    std::vector<value> near_food;
     food.rtree.query(bgi::satisfies([&](value const &v) {
                        return bg::distance(v.first, point(xloc, yloc)) <
                               range_food;
@@ -140,10 +140,10 @@ int Population::countFood(const Resources &food, const float &xloc,
 std::vector<int> Population::getFoodId(const Resources &food, const float &xloc,
                                        const float &yloc) {
   std::vector<int> food_id;
-  std::vector<value> near_food;
   // check any available
   if (food.nAvailable > 0) {
     // query for a simple box
+    std::vector<value> near_food;
     // food is accessed over the MOVEMENT RANGE
     food.rtree.query(bgi::satisfies([&](value const &v) {
                        return bg::distance(v.first, point(xloc, yloc)) <
@@ -200,8 +200,7 @@ void Population::move(const Resources &food, const bool &multithreaded) {
               // implicit conversion from int to float as ints are promoted
               float suit_origin = (sF[i] * foodHere) +
                                   (sH[i] * agentCounts.first) +
-                                  (sN[i] * agentCounts.second) +
-                                  noise_v(i, 0);
+                                  (sN[i] * agentCounts.second) + noise_v(i, 0);
               float suit_dest = suit_origin;
 
               // does the agent move at all? initially set to false
@@ -221,9 +220,8 @@ void Population::move(const Resources &food, const bool &multithreaded) {
                 // count handlers and non-handlers at sample location
                 agentCounts = countAgents(sampleX, sampleY);
 
-                suit_dest =
-                    (sF[i] * foodHere) + (sH[i] * agentCounts.first) +
-                    (sN[i] * agentCounts.second) + noise_v(i, j.second);
+                suit_dest = (sF[i] * foodHere) + (sH[i] * agentCounts.first) +
+                            (sN[i] * agentCounts.second) + noise_v(i, j.second);
 
                 if (suit_dest > suit_origin) {
                   // the agent moves
@@ -239,7 +237,7 @@ void Population::move(const Resources &food, const bool &multithreaded) {
               moved[i] += (agent_moves ? range_move : 0.f);
 
               if (agent_moves) {
-                if(choice < 0.f) {
+                if (choice < 0.f) {
                   Rcpp::stop("Error: Agent moved but choice not logged");
                 }
                 // which angle does the agent move to // agent_moves promoted
@@ -290,7 +288,7 @@ void Population::move(const Resources &food, const bool &multithreaded) {
           agentCounts = countAgents(sampleX, sampleY);
 
           suit_dest = (sF[i] * foodHere) + (sH[i] * agentCounts.first) +
-                            (sN[i] * agentCounts.second) + noise_v(i, j.second);
+                      (sN[i] * agentCounts.second) + noise_v(i, j.second);
 
           if (suit_dest > suit_origin) {
             // the agent moves
@@ -306,7 +304,7 @@ void Population::move(const Resources &food, const bool &multithreaded) {
         moved[i] += (agent_moves ? range_move : 0.f);
 
         if (agent_moves) {
-          if(choice < 0.f) {
+          if (choice < 0.f) {
             Rcpp::stop("Error: Agent moved but choice not logged");
           }
           // which angle does the agent move to // agent_moves promoted
@@ -392,7 +390,7 @@ void Population::doForage(Resources &food) {
       // IFF the item is available, then harvest it and mark it as unavailable
       if (food.available[thisItem]) {
         counter[id] = handling_time;
-        intake[id] += 1.0;  // increased here --- not as described.
+        intake[id] += 1.f;  // increased here --- not as described.
 
         // reset food availability
         food.available[thisItem] = false;

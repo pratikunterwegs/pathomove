@@ -31,7 +31,7 @@ void Population::introducePathogen(const int initialInfections) {
 void Population::pathogenSpread() {
   // looping through agents, query rtree for neighbours
   // pathogen spreads in random order
-  shufflePop(); 
+  shufflePop();
   for (int i = 0; i < nAgents; i++) {
     // spread to neighbours if self infected
     size_t id = order[i];
