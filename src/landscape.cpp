@@ -16,14 +16,26 @@
 
 std::mt19937 rng;
 
+/// simple wrapping function
+// because std::fabs + std::fmod is somewhat suspicious
+// we assume values that are at most a little larger than max (max + 1) and
+// a little smaller than zero (-1)
+float wrap_pos(const float &p1, const float &pmax) {
+  return p1 - pmax * std::floor(p1 / pmax);
+}
+
 void Resources::initResources() {
   // generate n central items
   std::vector<float> centreCoordX(nClusters);
   std::vector<float> centreCoordY(nClusters);
+  const float padded_size_max = dSize * 0.95f;
+  const float padded_size_min = dSize * 0.05f;
 
   // make item and cluster coords
-  Rcpp::NumericVector cluster_rd_x = Rcpp::runif(nClusters, 0.0f, dSize);
-  Rcpp::NumericVector cluster_rd_y = Rcpp::runif(nClusters, 0.0f, dSize);
+  Rcpp::NumericVector cluster_rd_x =
+      Rcpp::runif(nClusters, padded_size_min, padded_size_max);
+  Rcpp::NumericVector cluster_rd_y =
+      Rcpp::runif(nClusters, padded_size_min, padded_size_max);
 
   Rcpp::NumericVector rd_x = Rcpp::rnorm(nItems, 0.0f, clusterSpread);
   Rcpp::NumericVector rd_y = Rcpp::rnorm(nItems, 0.0f, clusterSpread);
@@ -34,13 +46,13 @@ void Resources::initResources() {
   }
 
   // generate items around
-  for (int i = nClusters; i < nItems; i++) {
+  for (int i = 0; i < nItems; i++) {
     coordX[i] = (centreCoordX[(i % nClusters)] + rd_x(i));
     coordY[i] = (centreCoordY[(i % nClusters)] + rd_y(i));
 
     // wrap
-    coordX[i] = fmod(dSize + coordX[i], dSize);
-    coordY[i] = fmod(dSize + coordY[i], dSize);
+    coordX[i] = wrap_pos(dSize + coordX[i], dSize);
+    coordY[i] = wrap_pos(dSize + coordY[i], dSize);
   }
 
   // initialise rtree and set counter value

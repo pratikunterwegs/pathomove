@@ -11,25 +11,14 @@
 // header file.
 #include <testthat.h>
 
-#include "agents.h"
-
-// identical function as linking doesn't work
-float wrap_pos_2(const float &p1, const float &pmax) {
-  if (p1 > pmax) {
-    return p1 - pmax;
-  }
-  if (p1 < 0.f) {
-    return pmax + p1;
-  }
-  return p1;
-}
+#include "landscape.h"
 
 context("Position wrapping works") {
   const float landsize = 10.f;
   const float pos_over = 11.13f;
   const float pos_under = -1.13f;
-  float wrapped_over = wrap_pos_2(pos_over, landsize);
-  float wrapped_under = wrap_pos_2(pos_under, landsize);
+  float wrapped_over = wrap_pos(pos_over, landsize);
+  float wrapped_under = wrap_pos(pos_under, landsize);
   test_that("Position wrapping works") {
     CATCH_CHECK(wrapped_over == Approx(pos_over - landsize).epsilon(1e-3));
     CATCH_CHECK(wrapped_under == Approx(landsize + pos_under).epsilon(1e-3));
