@@ -11,10 +11,10 @@ data <- run_pathomove(
   tmax = tmax
 ) # use default values but reduce generations and time
 
-# Check that all individuals have the same infection source (-2, artificial)
+# Check that all individuals have the same infection source (0, artificial)
 test_that("Individuals infected artificially are correctly marked", {
   data <- get_trait_data(data)
   expect_identical(
-    unique(data[data$gen == max(data$gen), ]$src_infect), -2L
+    unique(data[data$gen == max(data$gen), ]$src_infect), 0L
   )
 })
