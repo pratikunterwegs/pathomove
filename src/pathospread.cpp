@@ -36,8 +36,6 @@ void Population::introducePathogen(const int initialInfections) {
   }
   // count after
   countInfected();
-  assert(nInfected == initialInfections &&
-         "wrong number of initial infections");
 }
 
 /// function to spread pathogen
