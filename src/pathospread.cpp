@@ -13,8 +13,11 @@ void Population::introducePathogen(const int initialInfections) {
   // recount for safety
   countInfected();
   shufflePop();
+  int agents_to_try = initialInfections;
+  int agents_remaining = nAgents;
+
   // loop through the intended number of infections
-  for (int i = 0; i < initialInfections; i++) {
+  for (int i = 0; i < agents_to_try; i++) {
     size_t id = order[i];
     // if agent is NOT ALREADY INFECTED
     if (!infected[id]) {
@@ -22,6 +25,13 @@ void Population::introducePathogen(const int initialInfections) {
       infected[id] = true;
       timeInfected[id] = 1;
       srcInfect[id] = 0;  // count as forced, 0
+    } else {
+      agents_to_try++;
+    }
+    // decrease the number of agents remaining to try
+    agents_remaining--;
+    if (agents_remaining == 0) {
+      break;
     }
   }
   // count after
