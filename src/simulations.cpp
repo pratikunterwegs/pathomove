@@ -39,8 +39,7 @@ Rcpp::List simulation::do_simulation() {
   Rcpp::IntegerVector gens_patho_intro = Rcpp::seq(g_patho_init, genmax - 1);
   auto gen_spillover_happens =
       Rcpp::rbinom(genmax - g_patho_init, 1, spillover_rate);
-  switch (scenario)
-  {
+  switch (scenario) {
   case 1:
     // do nothing as sequence is already prepared
     break;
