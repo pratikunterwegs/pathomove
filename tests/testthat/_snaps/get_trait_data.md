@@ -19,13 +19,13 @@
       [13] "moved"              "gen"                "id"                
       [16] "popsize"            "range_food"         "range_agents"      
       [19] "range_move"         "handling_time"      "pTransmit"         
-      [22] "initialInfections"  "costInfect"         "infect_percent"    
-      [25] "vertical_infection" "reprod_threshold"   "dispersal"         
-      [28] "mProb"              "mSize"              "scenario"          
-      [31] "genmax"             "g_patho_init"       "spillover_rate"    
-      [34] "nItems"             "landsize"           "nClusters"         
-      [37] "clusterSpread"      "tmax"               "regen_time"        
-      [40] "social_strat"      
+      [22] "p_v_transmit"       "initialInfections"  "costInfect"        
+      [25] "infect_percent"     "vertical_infection" "reprod_threshold"  
+      [28] "dispersal"          "mProb"              "mSize"             
+      [31] "scenario"           "genmax"             "g_patho_init"      
+      [34] "spillover_rate"     "nItems"             "landsize"          
+      [37] "nClusters"          "clusterSpread"      "tmax"              
+      [40] "regen_time"         "social_strat"      
 
 ---
 

@@ -17,14 +17,15 @@ library(ggplot2)
 
 l <- get_test_landscape(
   nItems = 1800,
-  landsize = 100,
+  landsize = 60,
   nClusters = 60,
   clusterSpread = 1,
   regen_time = 50
 )
 ggplot(l) +
   geom_point(
-    aes(x, y)
+    aes(x, y),
+    shape = 1, alpha = 0.3
   ) +
   geom_segment(
     x = 0, y = 0,
@@ -34,34 +35,35 @@ ggplot(l) +
 
 # check basic simulation run
 a <- run_pathomove(
-  scenario = 1,
+  scenario = 3,
   popsize = 500,
   nItems = 1800,
-  landsize = 50,
+  landsize = 60,
   nClusters = 60,
   clusterSpread = 1,
   tmax = 100,
-  genmax = 500,
-  g_patho_init = 300,
-  range_food = 1,
-  range_agents = 1,
-  range_move = 1,
+  genmax = 350,
+  g_patho_init = 200,
+  range_food = 1.0,
+  range_agents = 1.0,
+  range_move = 1.0,
   handling_time = 5,
   regen_time = 50,
   pTransmit = 0.05,
+  p_v_transmit = 0.33,
   initialInfections = 20,
-  costInfect = 0.2,
+  costInfect = 0.25,
   multithreaded = TRUE,
-  dispersal = 2,
+  dispersal = 2.0,
   infect_percent = FALSE,
-  vertical = FALSE,
+  vertical = TRUE,
   reprod_threshold = FALSE,
   mProb = 0.01,
   mSize = 0.01,
-  spillover_rate = 1.0
+  spillover_rate = 0.01
 )
 
-plot(a@generations, a@infections_per_gen, type = "b")
+plot(a@infections_per_gen, type = "b")
 
 a@gens_patho_intro
 
@@ -72,17 +74,27 @@ pathomove::get_social_strategy(b)
 
 d <- b[, .N, by = c("gen", "social_strat")]
 
-ggplot(d) +
+ggplot() +
   geom_col(
+    data = d,
     aes(
       gen, N,
       fill = social_strat
     ),
     width = a@eco_parameters$genmax / 100
   ) +
+  geom_line(
+    aes(
+      x = seq(min(a@generations), max(a@generations)),
+      y = a@infections_per_gen 
+    )
+  ) +
   geom_vline(
     xintercept = a@gens_patho_intro, linewidth = 0.2,
-    lty = 2
+    lty = 1, alpha = 0.4
+  ) +
+  coord_cartesian(
+    xlim = c(min(a@gens_patho_intro) - 50, NA)
   )
 
 ggplot(b) +
@@ -111,7 +123,6 @@ ggplot(b) +
 
 ggplot(b) +
   stat_summary(
-    fun = median,
     aes(
       gen, assoc
     )
@@ -123,8 +134,9 @@ ggplot(b[, list(total_intake = sum(intake)), by = gen]) +
   )
 
 ggplot(b[gen > a@gens_patho_intro]) +
-  stat_summary(
-    aes(moved, assoc, col = social_strat)
+  geom_jitter(
+    aes(moved, assoc, col = social_strat),
+    shape = 1, size = 0.2, alpha = 0.5
   ) +
   scale_y_log10()
 
@@ -138,15 +150,15 @@ ggplot(b[gen > a@gens_patho_intro]) +
 md = get_move_data(a)
 
 ggplot(md[id %in% seq(100)]) +
-geom_point(
+  geom_point(
     data = a@landscape,
     aes(x, y),
     shape = 1,
-    alpha = 1
+    alpha = 0.5
   ) +
-  geom_point(
+  geom_path(
     aes(x, y, col = as.factor(id),
-      group = id
+        group = id
     ),
     size = 0.2,
     show.legend = FALSE
@@ -158,21 +170,21 @@ geom_point(
 #### get network data ####
 networks = get_networks(a)
 library(ggraph)
-ggraph(networks[["300"]], x = x, y = y)+
+ggraph(networks[["210"]], x = x, y = y)+
   geom_point(
     data = a@landscape,
     aes(x, y),
     size = 0.2, col = "darkgreen",
     alpha = 0.5
   ) +
-  geom_edge_fan(
-    edge_width = 0.5,
-    aes(
-      edge_alpha = weight
-    ),
-    edge_color = "grey70",
-    show.legend = F
-  )+
+  # geom_edge_fan(
+  #   edge_width = 0.5,
+  #   aes(
+  #     edge_alpha = weight
+  #   ),
+  #   edge_color = "grey70",
+  #   show.legend = F
+  # ) +
   geom_node_point(
     aes(
       fill = t_infec,
@@ -180,10 +192,10 @@ ggraph(networks[["300"]], x = x, y = y)+
     ),
     shape = 21,
     show.legend = T
-  )+
+  ) 
   scale_size_continuous(
     range = c(0.5, 3)
-  )+
+  ) +
   colorspace::scale_fill_continuous_sequential(
     palette = "Inferno",
     limit = c(1, 100),
@@ -204,9 +216,6 @@ ggraph(networks[["300"]], x = x, y = y)+
     plot_margin = margin(rep(0, 3))
   )+
   theme(
-    # axis.ticks = element_blank(),
-    # axis.text = element_blank(),
-    # axis.title = element_blank(),
     legend.margin = margin(rep(0, 4)),
     legend.position = "top",
     legend.title = element_text(size = 6),

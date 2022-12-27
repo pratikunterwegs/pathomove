@@ -22,7 +22,8 @@ struct Population {
  public:
   Population(const int popsize, const int n_samples, const float range_agents,
              const float range_food, const float range_move,
-             const int handling_time, float pTransmit, bool vertical,
+             const int handling_time, const float pTransmit,
+             const float p_v_transmit, const bool vertical,
              const bool reprod_threshold)
       :  // agents, positions, energy and traits
         nAgents(popsize),
@@ -56,6 +57,7 @@ struct Population {
 
         // disease parameters and total pop infected
         pTransmit(pTransmit),
+        p_v_transmit(p_v_transmit),
         vertical(vertical),
         reprod_threshold(reprod_threshold),
         nInfected(0),
@@ -86,7 +88,7 @@ struct Population {
   std::vector<int> order, forageItem;
   std::vector<bool> infected;
   std::vector<int> timeInfected;
-  float pTransmit;
+  const float pTransmit, p_v_transmit;
   const bool vertical, reprod_threshold;
 
   // the number of infected agents

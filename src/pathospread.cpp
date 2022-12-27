@@ -13,18 +13,29 @@ void Population::introducePathogen(const int initialInfections) {
   // recount for safety
   countInfected();
   shufflePop();
+  int agents_to_try = initialInfections;
+  int agents_remaining = nAgents;
+
   // loop through the intended number of infections
-  for (int i = 0; i < initialInfections; i++) {
+  for (int i = 0; i < agents_to_try; i++) {
     size_t id = order[i];
-    // toggle infected agents boolean for infected
-    infected[id] = true;
-    timeInfected[id] = 1;
-    srcInfect[id] = -2;  // count as forced
+    // if agent is NOT ALREADY INFECTED
+    if (!infected[id]) {
+      // toggle infected agents boolean for infected
+      infected[id] = true;
+      timeInfected[id] = 1;
+      srcInfect[id] = 0;  // count as forced, 0
+    } else {
+      agents_to_try++;
+    }
+    // decrease the number of agents remaining to try
+    agents_remaining--;
+    if (agents_remaining == 0) {
+      break;
+    }
   }
   // count after
   countInfected();
-  assert(nInfected == initialInfections &&
-         "wrong number of initial infections");
 }
 
 /// function to spread pathogen
@@ -52,7 +63,7 @@ void Population::pathogenSpread() {
             // infect neighbours with prob p
             if (transmission(j)) {
               infected[toInfect] = true;
-              srcInfect[toInfect] = id;
+              srcInfect[toInfect] = id + 1;  // add 1 to id
             }
           }
         }

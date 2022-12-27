@@ -14,12 +14,14 @@ run_pathomove(
   tmax = 100L,
   genmax = 100L,
   g_patho_init = 70L,
+  n_samples = 5L,
   range_food = 1,
   range_agents = 1,
   range_move = 1,
   handling_time = 5L,
   regen_time = 50L,
   pTransmit = 0.05,
+  p_v_transmit = 0.05,
   initialInfections = 20L,
   costInfect = 0.25,
   multithreaded = TRUE,
@@ -56,6 +58,9 @@ specified by \code{spillover_rate}.}
 \item{g_patho_init}{The generation in which to begin introducing the
 pathogen.}
 
+\item{n_samples}{Integer. The number of directions around the current
+location to scan for cues.}
+
 \item{range_food}{The sensory range for food.}
 
 \item{range_agents}{The sensory range for agents.}
@@ -66,7 +71,9 @@ pathogen.}
 
 \item{regen_time}{The item regeneration time.}
 
-\item{pTransmit}{Probability of transmission.}
+\item{pTransmit}{Probability of transmission among individuals.}
+
+\item{p_v_transmit}{Probability of transmission from parents to offspring.}
 
 \item{initialInfections}{Agents infected per event.}
 

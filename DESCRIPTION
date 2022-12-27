@@ -26,6 +26,7 @@ Imports:
     assertthat,
     data.table,
     glue,
+    igraph,
     tidygraph,
     methods
 Suggests: 

@@ -31,7 +31,7 @@ const float vertical = false;
 
 // make test population
 Population pop(popsize, n_samples, range_agents, range_food, range_move,
-               handling_time, p_transmit, vertical, false);
+               handling_time, p_transmit, p_transmit, vertical, false);
 
 // Initialize a unit test context. This is similar to how you
 // might begin an R test file with 'context()', expect the
