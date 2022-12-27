@@ -35,11 +35,26 @@ Rcpp::List simulation::do_simulation() {
       std::max((static_cast<int>(static_cast<float>(genmax) * 0.001f)), 2);
 
   // get sequence of generations in which spillover happens
-  // when do spillovers occur
+  // when do introductions occur
+  Rcpp::IntegerVector gens_patho_intro = Rcpp::seq(g_patho_init, genmax - 1);
   auto gen_spillover_happens =
       Rcpp::rbinom(genmax - g_patho_init, 1, spillover_rate);
-  Rcpp::IntegerVector gens_patho_intro = Rcpp::seq(g_patho_init, genmax - 1);
-  gens_patho_intro = gens_patho_intro[gen_spillover_happens > 0];
+  switch (scenario)
+  {
+  case 1:
+    // do nothing as sequence is already prepared
+    break;
+  case 2:
+    // single spillover scenario
+    gens_patho_intro = Rcpp::IntegerVector::create(g_patho_init);
+    break;
+  case 3:
+    // sporadic spillover scenario
+    gens_patho_intro = gens_patho_intro[gen_spillover_happens > 0];
+    break;
+  default:
+    break;
+  }
 
   // go over gens
   for (int gen = 0; gen < genmax; gen++) {
@@ -109,7 +124,7 @@ Rcpp::List simulation::do_simulation() {
 
     pop.countInfected();
     // log n infected
-    n_infected[gen] = pop.nInfected;
+    n_infected(gen) = pop.nInfected;
     assert(pop.nInfected <= pop.nAgents);
 
     // population infection cost by time, if infected
@@ -305,8 +320,8 @@ Rcpp::S4 run_pathomove(
               << " Reproduction threshold: "
               << (reprod_threshold ? "On" : "Off") << "\n";
   Rcpp::Rcout << "Pathogen:\n "
-              << "p(Transmit): " << pTransmit << " | p(Vertical transmit) "
-              << (vertical ? 0.0 : p_v_transmit) << "\n "
+              << "p(Transmit): " << pTransmit << " | p(Vertical transmit): "
+              << (vertical ? p_v_transmit : 0.0) << "\n "
               << "Cost: " << costInfect
               << " | Initial infections: " << initialInfections << "\n\n";
   /* Messages section ends here */
@@ -358,7 +373,7 @@ Rcpp::S4 run_pathomove(
   x.slot("agent_parameters") = Rcpp::wrap(agents_param_list);
   x.slot("eco_parameters") = Rcpp::wrap(eco_param_list);
   x.slot("generations") = Rcpp::wrap(gen_data["gens"]);
-  x.slot("gens_patho_intro") = Rcpp::wrap(pathomoveOutput["gens_patho_intro"]);
+  x.slot("gens_patho_intro") = pathomoveOutput["gens_patho_intro"];
   x.slot("infections_per_gen") = Rcpp::wrap(pathomoveOutput["n_infected_gen"]);
   x.slot("trait_data") = Rcpp::wrap(pop_data);
   x.slot("edge_lists") = Rcpp::wrap(pathomoveOutput["edgeLists"]);
