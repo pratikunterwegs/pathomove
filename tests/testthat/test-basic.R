@@ -1,13 +1,16 @@
 #### Test all scenarios with minimal run times ####
 test_that("Pathomove basic runs with scenario 1", {
   # simulation runs with introduced pathogen
+  g_patho_init <- 5L
+  genmax <- 10L
+  initial_infections <- 5L
   data <- run_pathomove(
     scenario = 1,
     popsize = 10,
-    initialInfections = 5,
+    initialInfections = initial_infections,
     tmax = 10,
-    genmax = 10,
-    g_patho_init = 5
+    genmax = genmax,
+    g_patho_init = g_patho_init
   )
 
   # check for clas pathomove_output
@@ -21,28 +24,55 @@ test_that("Pathomove basic runs with scenario 1", {
   # expect equal lengths
   expect(
     length(data@trait_data) == length(data@generations),
-    failure_message = "not as many trait dataframes as generations"
+    failure_message = "Not as many trait dataframes as generations"
   )
 
   # expect equal lengths
-  expect(
-    length(data@edge_lists) == length(data@gens_edge_lists),
-    failure_message = "not as many trait dataframes as generations"
+  expect_identical(
+    length(data@edge_lists), length(data@gens_edge_lists),
+    "Not as many trait dataframes as generations"
+  )
+
+  # expect a full sequence of pathogen introductions
+  expect_identical(
+    seq(g_patho_init, genmax - 1),
+    data@gens_patho_intro
+  )
+
+  # expect a full sequence of pathogen introductions
+  expect_identical(
+    seq(g_patho_init, genmax - 1),
+    data@gens_patho_intro
+  )
+
+  # expect that there are infections in generations after g_patho_init
+  infections_per_gen <- data@infections_per_gen
+  infections_per_gen <- infections_per_gen[
+    # starting at i + 1 because Cpp counting
+    seq(min(data@gens_patho_intro) + 1, length(infections_per_gen))
+  ]
+  expect_true(
+    all(infections_per_gen >= initial_infections)
   )
 })
 
 #### Check that pathomove scenario 2 works ####
 test_that("Pathomove runs scenario 2", {
   # simulation runs with single spillover
-  expect_no_error(
-    run_pathomove(
-      scenario = 2,
-      popsize = 10,
-      initialInfections = 5,
-      tmax = 10,
-      genmax = 10,
-      g_patho_init = 5
-    )
+  g_patho_init <- 5L
+  genmax <- 10L
+  data <- run_pathomove(
+    scenario = 2,
+    popsize = 10,
+    initialInfections = 5,
+    tmax = 10,
+    genmax = genmax,
+    g_patho_init = g_patho_init
+  )
+  # expect a single element vector
+  expect_identical(
+    g_patho_init,
+    data@gens_patho_intro
   )
 })
 
