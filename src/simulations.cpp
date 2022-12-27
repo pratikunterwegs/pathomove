@@ -21,19 +21,8 @@ Rcpp::List simulation::do_simulation() {
   // prepare landscape and pop
   food.initResources();
   food.countAvailable();
-  Rcpp::Rcout << "landscape with " << food.nClusters << " clusters\n";
-
   pop.setTrait(mSize);
-  Rcpp::Rcout << "pop with " << pop.nAgents << " agents for " << genmax
-              << " gens " << tmax << " timesteps\n";
-
-  // prepare scenario
-  Rcpp::Rcout << "this is scenario " << scenario << "\n";
-
-  // agent random position in first gen
   pop.initPos(food);
-
-  Rcpp::Rcout << "initialised population positions\n";
   Rcpp::List edgeLists;
 
   // vector to hold generations in which edgelists are logged
@@ -41,13 +30,9 @@ Rcpp::List simulation::do_simulation() {
   // create object to count infections
   Rcpp::IntegerVector n_infected(genmax, 0);
 
-  Rcpp::Rcout << "created edge list object\n";
-
   // agent data logging increment
   int increment_log =
       std::max((static_cast<int>(static_cast<float>(genmax) * 0.001f)), 2);
-
-  Rcpp::Rcout << "logging data after gens: " << increment_log << "\n";
 
   // get sequence of generations in which spillover happens
   // when do spillovers occur
@@ -74,16 +59,12 @@ Rcpp::List simulation::do_simulation() {
       case 2:
         if (gen == g_patho_init) {
           pop.introducePathogen(initialInfections);
-          Rcpp::Rcout << "Single spillover event occurring at gen:" << gen
-                      << "\n";
         }
         break;
       case 3:
         if ((gen == g_patho_init) || (gen > g_patho_init)) {
           if (gen_spillover_happens(gen - g_patho_init)) {
             pop.introducePathogen(initialInfections);
-            Rcpp::Rcout << "New spillover event occurring at gen:" << gen
-                        << "\n";
           }
         }
         break;
@@ -173,7 +154,7 @@ Rcpp::List simulation::do_simulation() {
   }
   // all gens end here
 
-  Rcpp::Rcout << "data prepared\n";
+  Rcpp::Rcout << "Data prepared as an S4 class `pathomove_output`\n";
 
   return Rcpp::List::create(
       Rcpp::Named("gen_data") = gen_data.getGenData(),
@@ -271,6 +252,65 @@ Rcpp::S4 run_pathomove(
   if (genmax < 10) {
     Rcpp::warning("Simulation often crashes when 1 < genmax < 10");
   }
+
+  // Prepare data for simulation messages
+  // return scenario as string
+  std::string scenario_str("scenario_here");
+  std::string scenario_message = "this message";
+  switch (scenario) {
+    case 1:
+      if (g_patho_init == 0)
+        scenario_str = "Endemic pathogen";
+      else
+        scenario_str = "Novel pathogen";
+      scenario_message =
+          "Pathogen introduced from gen: " + std::to_string(g_patho_init) +
+          "\n";
+      break;
+    case 2:
+      scenario_str = "Single spillover";
+      scenario_message =
+          "Pathogen introduced once in gen: " + std::to_string(g_patho_init) +
+          "\n";
+      break;
+    case 3:
+      scenario_str = "Sporadic spillover";
+      scenario_message =
+          "Pathogen introduced with prob = " + std::to_string(spillover_rate) +
+          "from gen: " + std::to_string(g_patho_init) + "\n" +
+          " Generations with pathogen introduction stored in slot "
+          "`gens_patho_intro`\n";
+      break;
+    default:
+      Rcpp::stop(
+          "Unrecognised scenario option, choose from `1`, `2`, or `3`\n");
+      break;  // unnecessary
+  }
+
+  Rcpp::String infection_cost_type = infect_percent ? "percent" : "absolute";
+
+  Rcpp::String vertical_infection = vertical ? "vertical" : "no_vertical";
+
+  /* Section for simulation messages */
+  Rcpp::Rcout << "Running a `pathomove` simulation...\n";
+  Rcpp::Rcout << " Generations: " << genmax << " | Timesteps: " << tmax << "\n";
+  Rcpp::Rcout << " Scenario: " << scenario << ": " << scenario_str << "\n";
+  Rcpp::Rcout << " " + scenario_message;
+  Rcpp::Rcout << "Landscape:\n Size: " << landsize
+              << " | Food items: " << nItems << " | Clusters: " << nClusters
+              << " | Spread: " << clusterSpread << "\n";
+  Rcpp::Rcout << "Population:\n "
+              << "Population size: " << popsize
+              << " | Movement range: " << range_move << "\n"
+              << " Reproduction threshold: "
+              << (reprod_threshold ? "On" : "Off") << "\n";
+  Rcpp::Rcout << "Pathogen:\n "
+              << "p(Transmit): " << pTransmit << " | p(Vertical transmit) "
+              << (vertical ? 0.0 : p_v_transmit) << "\n "
+              << "Cost: " << costInfect
+              << " | Initial infections: " << initialInfections << "\n\n";
+  /* Messages section ends here */
+
   // make simulation class with input parameters
   simulation this_sim(popsize, scenario, nItems, landsize, nClusters,
                       clusterSpread, tmax, genmax, g_patho_init, n_samples,
@@ -280,40 +320,10 @@ Rcpp::S4 run_pathomove(
                       vertical, reprod_threshold, mProb, mSize, spillover_rate);
   // do the simulation using the simulation class function
   Rcpp::List pathomoveOutput = this_sim.do_simulation();
-
   // get generation data from output
   Rcpp::List gen_data = pathomoveOutput["gen_data"];
   // make list of dataframes of population traits
   Rcpp::List pop_data = gen_data["pop_data"];
-
-  // return scenario as string
-  Rcpp::String scenario_str("scenario_here");
-  switch (scenario) {
-    case 0:
-      scenario_str = "no pathogen";
-      Rcpp::Rcout << "No pathogen introduction\n";
-      break;
-    case 1:
-      if (g_patho_init == 0)
-        scenario_str = "endemic pathogen";
-      else
-        scenario_str = "novel pathogen";
-      Rcpp::Rcout << "Pathogen introduced from gen:" << g_patho_init << "\n";
-      break;
-    case 2:
-      scenario_str = "single spillover";
-      break;
-    case 3:
-      scenario_str = "sporadic spillover";
-      break;
-    default:
-      scenario_str = "unknown scenario";
-      break;
-  }
-
-  Rcpp::String infection_cost_type = infect_percent ? "percent" : "absolute";
-
-  Rcpp::String vertical_infection = vertical ? "vertical" : "no_vertical";
 
   // agents parameter list --- limit of 20 elements for manual lists!
   Rcpp::List agents_param_list = Rcpp::List::create(
@@ -333,7 +343,8 @@ Rcpp::S4 run_pathomove(
 
   // ecological parameters list
   Rcpp::List eco_param_list = Rcpp::List::create(
-      Rcpp::Named("scenario") = scenario_str, Rcpp::Named("genmax") = genmax,
+      Rcpp::Named("scenario") = Rcpp::wrap(scenario_str),
+      Rcpp::Named("genmax") = genmax,
       Rcpp::Named("g_patho_init") = (scenario == 0 ? NA_REAL : g_patho_init),
       Rcpp::Named("spillover_rate") =
           (scenario == 3 ? NA_REAL : spillover_rate),
