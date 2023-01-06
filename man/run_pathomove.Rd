@@ -117,8 +117,8 @@ parameter of a Cauchy distribution.}
 geometric distribution from which the number of generations until the next
 pathogen introduction are drawn.}
 
-\item{seed}{An integer number that is the seed for the R RNG as well as the
-C++ RNG.}
+\item{seed}{An integer number that is the seed for the R RNG. Defaults to
+zero.}
 }
 \value{
 An S4 class, \code{pathomove_output}, with simulation outcomes.

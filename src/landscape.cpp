@@ -19,9 +19,9 @@ std::mt19937 rng;
 /// @brief Function to set the R RNG seed
 /// @param seed An integer passed to run_pathomve
 void set_seed(const int &seed) {
-    Rcpp::Environment base_env("package:base");
-    Rcpp::Function set_seed_r = base_env["set.seed"];
-    set_seed_r(seed);
+  Rcpp::Environment base_env("package:base");
+  Rcpp::Function set_seed_r = base_env["set.seed"];
+  set_seed_r(seed);
 }
 
 /// simple wrapping function

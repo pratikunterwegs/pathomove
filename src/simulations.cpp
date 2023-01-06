@@ -36,19 +36,19 @@ Rcpp::List simulation::do_simulation() {
   auto gen_spillover_happens =
       Rcpp::rbinom(genmax - g_patho_init, 1, spillover_rate);
   switch (scenario) {
-  case 1:
-    // do nothing as sequence is already prepared
-    break;
-  case 2:
-    // single spillover scenario
-    gens_patho_intro = Rcpp::IntegerVector::create(g_patho_init);
-    break;
-  case 3:
-    // sporadic spillover scenario
-    gens_patho_intro = gens_patho_intro[gen_spillover_happens > 0];
-    break;
-  default:
-    break;
+    case 1:
+      // do nothing as sequence is already prepared
+      break;
+    case 2:
+      // single spillover scenario
+      gens_patho_intro = Rcpp::IntegerVector::create(g_patho_init);
+      break;
+    case 3:
+      // sporadic spillover scenario
+      gens_patho_intro = gens_patho_intro[gen_spillover_happens > 0];
+      break;
+    default:
+      break;
   }
 
   // go over gens
@@ -235,8 +235,8 @@ Rcpp::List simulation::do_simulation() {
 //' @param spillover_rate For scenario 3, the probability parameter _p_ of a
 //' geometric distribution from which the number of generations until the next
 //' pathogen introduction are drawn.
-//' @param seed An integer number that is the seed for the R RNG as well as the
-//' C++ RNG.
+//' @param seed An integer number that is the seed for the R RNG. Defaults to
+//' zero.
 //'
 //' @return An S4 class, `pathomove_output`, with simulation outcomes.
 //' @export
@@ -265,6 +265,12 @@ Rcpp::S4 run_pathomove(
   }
   if (genmax < 10) {
     Rcpp::warning("Simulation often crashes when 1 < genmax < 10");
+  }
+  if (multithreaded) {
+    Rcpp::warning(
+        "Multithreading is on and the simulation is NOT reproducible!\nSet "
+        "`multithreaded = FALSE` for a much slower but completely reproducible "
+        "simulation.");
   }
 
   // Prepare R and RNG seed
@@ -322,8 +328,9 @@ Rcpp::S4 run_pathomove(
               << " Reproduction threshold: "
               << (reprod_threshold ? "On" : "Off") << "\n";
   Rcpp::Rcout << "Pathogen:\n "
-              << "p(Transmit): " << pTransmit << " | p(Vertical transmit): "
-              << (vertical ? p_v_transmit : 0.0) << "\n "
+              << "p(Transmit): " << pTransmit
+              << " | p(Vertical transmit): " << (vertical ? p_v_transmit : 0.0)
+              << "\n "
               << "Cost: " << costInfect
               << " | Initial infections: " << initialInfections << "\n\n";
   /* Messages section ends here */

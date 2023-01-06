@@ -73,8 +73,8 @@ get_test_landscape <- function(nItems, landsize, nClusters, clusterSpread, regen
 #' @param spillover_rate For scenario 3, the probability parameter _p_ of a
 #' geometric distribution from which the number of generations until the next
 #' pathogen introduction are drawn.
-#' @param seed An integer number that is the seed for the R RNG as well as the
-#' C++ RNG.
+#' @param seed An integer number that is the seed for the R RNG. Defaults to
+#' zero.
 #'
 #' @return An S4 class, `pathomove_output`, with simulation outcomes.
 #' @export
