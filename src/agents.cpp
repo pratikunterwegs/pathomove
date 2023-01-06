@@ -493,7 +493,7 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
     thresholded_parents = applyReprodThreshold();
     vecFitness = Rcpp::wrap(thresholded_parents.second);
     // pick only thresholded parents
-    parent_id = Rcpp::wrap(thresholded_parents.first);
+    parent_identities = Rcpp::wrap(thresholded_parents.first);
   }
 
   // Sample parents vector using the weights from vecFitness
