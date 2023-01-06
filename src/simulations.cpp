@@ -14,10 +14,6 @@
 // clang-format on
 
 Rcpp::List simulation::do_simulation() {
-  unsigned seed = static_cast<unsigned>(
-      std::chrono::system_clock::now().time_since_epoch().count());
-  rng.seed(seed);
-
   // prepare landscape and pop
   food.initResources();
   food.countAvailable();
@@ -239,6 +235,9 @@ Rcpp::List simulation::do_simulation() {
 //' @param spillover_rate For scenario 3, the probability parameter _p_ of a
 //' geometric distribution from which the number of generations until the next
 //' pathogen introduction are drawn.
+//' @param seed An integer number that is the seed for the R RNG as well as the
+//' C++ RNG.
+//'
 //' @return An S4 class, `pathomove_output`, with simulation outcomes.
 //' @export
 // [[Rcpp::export]]
@@ -255,7 +254,8 @@ Rcpp::S4 run_pathomove(
     const bool multithreaded = true, const float dispersal = 2.0,
     const bool infect_percent = false, const bool vertical = false,
     const bool reprod_threshold = false, const float mProb = 0.01,
-    const float mSize = 0.01, const float spillover_rate = 1.0) {
+    const float mSize = 0.01, const float spillover_rate = 1.0,
+    const int seed = 0) {
   // check that intial infections is less than popsize
   if (initialInfections > popsize) {
     Rcpp::stop("Error: Initial infections must be less than/equal to popsize");
@@ -266,6 +266,9 @@ Rcpp::S4 run_pathomove(
   if (genmax < 10) {
     Rcpp::warning("Simulation often crashes when 1 < genmax < 10");
   }
+
+  // Prepare R and RNG seed
+  set_seed(seed);
 
   // Prepare data for simulation messages
   // return scenario as string

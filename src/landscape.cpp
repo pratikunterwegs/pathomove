@@ -16,6 +16,14 @@
 
 std::mt19937 rng;
 
+/// @brief Function to set the R RNG seed
+/// @param seed An integer passed to run_pathomve
+void set_seed(const int &seed) {
+    Rcpp::Environment base_env("package:base");
+    Rcpp::Function set_seed_r = base_env["set.seed"];
+    set_seed_r(seed);
+}
+
 /// simple wrapping function
 // because std::fabs + std::fmod is somewhat suspicious
 // we assume values that are at most a little larger than max (max + 1) and
@@ -106,10 +114,6 @@ Rcpp::DataFrame get_test_landscape(const int nItems, const float landsize,
                                    const int nClusters,
                                    const float clusterSpread,
                                    const int regen_time) {
-  unsigned seed = static_cast<unsigned>(
-      std::chrono::system_clock::now().time_since_epoch().count());
-  rng.seed(seed);
-
   Resources food(nItems, landsize, nClusters, clusterSpread, regen_time);
   food.initResources();
 

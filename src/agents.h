@@ -85,7 +85,8 @@ struct Population {
   const int handling_time;
 
   // shuffle vector and transmission
-  std::vector<int> order, forageItem;
+  Rcpp::IntegerVector order;
+  std::vector<int> forageItem;
   std::vector<bool> infected;
   std::vector<int> timeInfected;
   const float pTransmit, p_v_transmit;
@@ -128,7 +129,7 @@ struct Population {
   void doForage(Resources &food);  // NOLINT
 
   // funs to handle fitness and reproduce
-  std::vector<float> handleFitness();
+  Rcpp::NumericVector handleFitness();
   void Reproduce(const Resources &food, const bool &infect_percent,
                  const float &dispersal, const float &mProb,
                  const float &mSize);

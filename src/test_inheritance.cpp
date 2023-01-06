@@ -100,7 +100,7 @@ context("Population inheritance without threshold") {
     // std::cout << "Agent 0 intake = " << pop_3.intake[0] << "\n";
     // std::cout << "Agent 0 energy = " << pop_3.energy[0] << "\n";
 
-    std::vector<float> vfit = pop_3.handleFitness();
+    Rcpp::NumericVector vfit = pop_3.handleFitness();
     for (size_t i = 0; i < popsize; i++) {
       // std::cout << "Agent " << i << " fitness = " << vfit[i] << "\n";
       // check that one of the two has more energy than other agents

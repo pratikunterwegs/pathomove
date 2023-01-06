@@ -63,4 +63,7 @@ struct Resources {
 
 float wrap_pos(const float &p1, const float &pmax);
 
+/// function to set the simulation seed for R RNG
+void set_seed(const int &seed);
+
 #endif  // SRC_LANDSCAPE_H_
