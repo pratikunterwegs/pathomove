@@ -31,7 +31,8 @@ run_pathomove(
   reprod_threshold = FALSE,
   mProb = 0.01,
   mSize = 0.01,
-  spillover_rate = 1
+  spillover_rate = 1,
+  seed = 0L
 )
 }
 \arguments{
@@ -115,6 +116,9 @@ parameter of a Cauchy distribution.}
 \item{spillover_rate}{For scenario 3, the probability parameter \emph{p} of a
 geometric distribution from which the number of generations until the next
 pathogen introduction are drawn.}
+
+\item{seed}{An integer number that is the seed for the R RNG as well as the
+C++ RNG.}
 }
 \value{
 An S4 class, \code{pathomove_output}, with simulation outcomes.
