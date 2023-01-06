@@ -422,7 +422,7 @@ const bool Population::check_reprod_threshold() {
 }
 
 /// minor function to normalise vector
-std::vector<float> Population::handleFitness() {
+Rcpp::NumericVector Population::handleFitness() {
   Rcpp::NumericVector vecFitness = Rcpp::wrap(energy);
   // random errors in fitness
   Rcpp::NumericVector rd_fitness = Rcpp::rnorm(nAgents, 0.0f, 1e-5f);
@@ -431,7 +431,7 @@ std::vector<float> Population::handleFitness() {
   vecFitness = (vecFitness - Rcpp::min(vecFitness)) /
                (Rcpp::max(vecFitness) - Rcpp::min(vecFitness));
 
-  return Rcpp::as<std::vector<float>>(vecFitness);
+  return vecFitness;
 }
 
 /// prepare function to handle fitness and offer parents when applying a
@@ -475,10 +475,13 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
 
   // prepare to deal with fitness and reproduction options
   std::pair<std::vector<int>, std::vector<float>> thresholded_parents;
-  std::vector<float> vecFitness = handleFitness();
+  Rcpp::NumericVector vecFitness = handleFitness();
+
+  // prepare parent identity vector
+  Rcpp::IntegerVector parent_identities = Rcpp::seq(0, nAgents - 1);
 
   if (infect_percent) {
-    vecFitness = energy;
+    vecFitness = Rcpp::wrap(energy);
   }
   // handle vecFtiness (parents) in special cases
   if (reprod_threshold && infect_percent) {
@@ -488,12 +491,15 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
   }
   if (reprod_threshold) {
     thresholded_parents = applyReprodThreshold();
-    vecFitness = thresholded_parents.second;
+    vecFitness = Rcpp::wrap(thresholded_parents.second);
+    // pick only thresholded parents
+    parent_identities = Rcpp::wrap(thresholded_parents.first);
   }
 
-  // set up weighted lottery based on the vector of fitnesses
-  std::discrete_distribution<> weightedLottery(vecFitness.begin(),
-                                               vecFitness.end());
+  // Sample parents vector using the weights from vecFitness
+  // With replacement is true
+  Rcpp::IntegerVector chosen_parents =
+      Rcpp::sample(parent_identities, nAgents, true, vecFitness);
 
   // get parent trait based on weighted lottery
   std::vector<float> tmp_sF(nAgents, 0.f);
@@ -524,11 +530,11 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
   Rcpp::NumericVector sprout_y = Rcpp::rnorm(nAgents, 0.0f, dispersal);
 
   for (int a = 0; a < nAgents; a++) {
-    size_t parent_id = static_cast<size_t>(weightedLottery(rng));
+    size_t parent_id = chosen_parents[a];
 
     // mod the parent id if a reprod threshold is applied, this helps refer
     // to the id in the thresholded parents vector
-    if (reprod_threshold) parent_id = thresholded_parents.first[parent_id];
+    // if (reprod_threshold) parent_id = thresholded_parents.first[parent_id];
 
     tmp_sF[a] = sF[parent_id];
     tmp_sH[a] = sH[parent_id];

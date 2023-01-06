@@ -96,7 +96,7 @@ context("Population inheritance with a threshold") {
     // std::cout << "Agent 0 energy = " << pop_4.energy[0] << "\n";
 
     // check that diseased agent has lowest fitness
-    std::vector<float> vfit = pop_4.handleFitness();
+    Rcpp::NumericVector vfit = pop_4.handleFitness();
     for (size_t i = 0; i < popsize; i++) {
       // std::cout << "Agent " << i << " fitness = " << vfit[i] << "\n";
       if (i > 0) CATCH_CHECK(vfit[0] < vfit[i]);
