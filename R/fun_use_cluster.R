@@ -14,6 +14,7 @@ use_cluster <- function(ssh_con = "some_server",
                         password = "your_password",
                         script = "which_script.R",
                         folder = "pathomove",
+                        tag = "scenario_tag",
                         template_job = "some_template.sh",
                         parameter_file = "which_parameters.csv") {
 
@@ -56,7 +57,7 @@ use_cluster <- function(ssh_con = "some_server",
   # last line is R script command, replace this
   last_line <- length(job_shell_script)
   job_shell_script[last_line] <- glue::glue(
-    "Rscript {script} {parameter_file} ${{SLURM_ARRAY_TASK_ID}}"
+    "Rscript {script} {parameter_file} ${{SLURM_ARRAY_TASK_ID}} {tag}"
   )
 
   # write to full job
