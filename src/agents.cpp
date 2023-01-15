@@ -57,9 +57,9 @@ void Population::initPos(const Resources &food) {
 // set agent trait
 void Population::setTrait(const float &mSize) {
   // create a cauchy distribution, mSize is the scale
-  sF = Rcpp::as<std::vector<float>>(Rcpp::rnorm(nAgents, 0.0, mSize));
-  sH = Rcpp::as<std::vector<float>>(Rcpp::rnorm(nAgents, 0.0, mSize));
-  sN = Rcpp::as<std::vector<float>>(Rcpp::rnorm(nAgents, 0.0, mSize));
+  sF = Rcpp::as<std::vector<float>>(Rcpp::rcauchy(nAgents, 0.0, mSize));
+  sH = Rcpp::as<std::vector<float>>(Rcpp::rcauchy(nAgents, 0.0, mSize));
+  sN = Rcpp::as<std::vector<float>>(Rcpp::rcauchy(nAgents, 0.0, mSize));
 }
 
 // general function for agents within distance
