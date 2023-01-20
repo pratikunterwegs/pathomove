@@ -89,7 +89,7 @@ handle_sir_data <- function(data, digits = 1) {
   agents <- NULL
 
   d <- lapply(data, data.table::as.data.table)
-  d <- Map(d, seq_along(length(d)), f = function(data, repl) {
+  d <- Map(d, seq_along(d), f = function(data, repl) {
     data$repl <- repl
     data
   })
