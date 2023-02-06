@@ -1,2 +1,3 @@
 PKG_CPPFLAGS = -w
+PKG_CXXFLAGS = -I../inst/include
 PKG_CXX_STD = CXX14

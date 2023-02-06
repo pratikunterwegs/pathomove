@@ -16,7 +16,7 @@
 // file providing the definition, and let R CMD INSTALL
 // handle building and linking.
 
-#include "agents.h"
+#include <agent_dyn.h>
 
 // food_4 parameters, only one item
 const float landsize = 10.f;
