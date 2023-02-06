@@ -82,3 +82,7 @@ run_pathomove <- function(scenario = 1L, popsize = 100L, nItems = 1800L, landsiz
     .Call(`_pathomove_run_pathomove`, scenario, popsize, nItems, landsize, nClusters, clusterSpread, tmax, genmax, g_patho_init, n_samples, range_food, range_agents, range_move, handling_time, regen_time, pTransmit, p_v_transmit, initialInfections, costInfect, multithreaded, dispersal, infect_percent, vertical, reprod_threshold, mProb, mSize, spillover_rate, seed)
 }
 
+# Register entry points for exported C++ functions
+methods::setLoadAction(function(ns) {
+    .Call('_pathomove_RcppExport_registerCCallable', PACKAGE = 'pathomove')
+})
