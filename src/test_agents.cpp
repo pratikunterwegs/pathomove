@@ -16,7 +16,7 @@
 // file providing the definition, and let R CMD INSTALL
 // handle building and linking.
 
-#include "agents.h"
+#include <agent_dyn.h>
 
 const int popsize = 100;
 const int n_samples = 4;

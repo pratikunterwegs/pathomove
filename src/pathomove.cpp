@@ -1,7 +1,12 @@
 // Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
 
+// Enable C++14 via this plugin to suppress 'long long' errors
+// [[Rcpp::plugins("cpp14")]]
+// [[Rcpp::depends(BH)]]
+// [[Rcpp::depends(RcppParallel)]]
+
 // clang-format off
-#include "simulations.h"
+#include <simulations.h>
 
 #include <Rcpp.h>
 
@@ -13,167 +18,29 @@
 #include <vector>
 // clang-format on
 
-Rcpp::List simulation::do_simulation() {
-  // prepare landscape and pop
+// [[Rcpp::interfaces(r, cpp)]]
+
+/// function to export landscape as matrix
+//' Returns a test landscape.
+//'
+//' @param nItems How many items.
+//' @param landsize Size as a numeric (float).
+//' @param nClusters How many clusters, an integer value.
+//' @param clusterSpread Dispersal of items around cluster centres.
+//' @param regen_time Regeneration time, in timesteps.
+//' @return A data frame of the evolved population traits.
+//' @export
+// [[Rcpp::export]]
+Rcpp::DataFrame get_test_landscape(const int nItems, const float landsize,
+                                   const int nClusters,
+                                   const float clusterSpread,
+                                   const int regen_time) {
+  Resources food(nItems, landsize, nClusters, clusterSpread, regen_time);
   food.initResources();
-  food.countAvailable();
-  pop.setTrait(mSize);
-  pop.initPos(food);
-  Rcpp::List edgeLists;
 
-  // vector to hold generations in which edgelists are logged
-  std::vector<int> gens_edge_lists;
-  // create object to count infections
-  Rcpp::IntegerVector n_infected(genmax, 0);
-
-  // agent data logging increment
-  int increment_log =
-      std::max((static_cast<int>(static_cast<float>(genmax) * 0.001f)), 2);
-
-  // get sequence of generations in which spillover happens
-  // when do introductions occur
-  Rcpp::IntegerVector gens_patho_intro = Rcpp::seq(g_patho_init, genmax - 1);
-  auto gen_spillover_happens =
-      Rcpp::rbinom(genmax - g_patho_init, 1, spillover_rate);
-  switch (scenario) {
-    case 1:
-      // do nothing as sequence is already prepared
-      break;
-    case 2:
-      // single spillover scenario
-      gens_patho_intro = Rcpp::IntegerVector::create(g_patho_init);
-      break;
-    case 3:
-      // sporadic spillover scenario
-      gens_patho_intro = gens_patho_intro[gen_spillover_happens > 0];
-      break;
-    default:
-      break;
-  }
-
-  // go over gens
-  for (int gen = 0; gen < genmax; gen++) {
-    // food.initResources();
-    food.countAvailable();
-
-    // reset counter and positions
-    pop.counter = std::vector<int>(pop.nAgents, 0);
-
-    // switch for pathogen introductions
-    switch (scenario) {
-      case 1:  // maintained for backwards compatibility but not necessary
-        if (gen >= g_patho_init) {
-          pop.introducePathogen(initialInfections);
-        }
-        break;
-      case 2:
-        if (gen == g_patho_init) {
-          pop.introducePathogen(initialInfections);
-        }
-        break;
-      case 3:
-        if ((gen == g_patho_init) || (gen > g_patho_init)) {
-          if (gen_spillover_happens(gen - g_patho_init)) {
-            pop.introducePathogen(initialInfections);
-          }
-        }
-        break;
-      default:
-        Rcpp::stop(
-            "Unrecognised scenario option, choose from `1`, `2`, or `3`");
-        break;
-    }
-
-    // timesteps start here
-    for (size_t t = 0; t < static_cast<size_t>(tmax); t++) {
-      // resources regrow
-      food.regenerate();
-      pop.updateRtree();
-      // movement section
-      pop.move(food, multithreaded);
-
-      // log movement
-      if (gen == std::max(g_patho_init - 1, 2)) {
-        mdPre.updateMoveData(pop, t);
-      }
-      if (gen == (genmax - 1)) {
-        mdPost.updateMoveData(pop, t);
-      }
-
-      // foraging -- split into parallelised picking
-      // and non-parallel exploitation
-      pop.pickForageItem(food, multithreaded);
-      pop.doForage(food);
-
-      // count associations
-      pop.countAssoc();
-
-      // relate to g_patho_init, which is the point of regime shift
-      if ((scenario > 0) && (gen >= g_patho_init)) {
-        // disease spread
-        pop.pathogenSpread();
-      }
-
-      // timestep ends here
-    }
-
-    pop.countInfected();
-    // log n infected
-    n_infected(gen) = pop.nInfected;
-    assert(pop.nInfected <= pop.nAgents);
-
-    // population infection cost by time, if infected
-    pop.energy = pop.intake;                       // first make energy = intake
-    pop.pathogenCost(costInfect, infect_percent);  // now energy minus costs
-
-    // check if any agents can reproduce if reproduction threshold is applied
-    bool reprod_threshold_met = true;
-    if (reprod_threshold) {
-      reprod_threshold_met = pop.check_reprod_threshold();
-      if (!reprod_threshold_met) {
-        std::string no_energy_warning =
-            "All agents' energy < 0, ending simulation at gen = " +
-            std::to_string(gen) + "\n";
-        Rcpp::warning(no_energy_warning);
-      }
-    }
-
-    // update gendata
-    if ((gen == (genmax - 1)) || (gen % increment_log == 0) ||
-        (!reprod_threshold_met)) {
-      // Rcpp::Rcout << "logging data at gen: " << gen << "\n";
-      gen_data.updateGenData(pop, gen);
-    }
-
-    if ((gen == 0) || ((gen % (genmax / 10)) == 0) || (gen == genmax - 1) ||
-        (!reprod_threshold_met)) {
-      edgeLists.push_back(pop.pbsn.getNtwkDf());
-      gens_edge_lists.push_back(gen);
-      Rcpp::Rcout << "gen: " << gen << " --- logged edgelist\n";
-    }
-
-    // break here if population is extinct
-    if (!reprod_threshold_met) {
-      break;
-    }
-
-    // reproduce
-    pop.Reproduce(food, infect_percent, dispersal, mProb, mSize);
-
-    // generation ends here
-  }
-  // all gens end here
-
-  Rcpp::Rcout << "Data prepared as an S4 class `pathomove_output`\n";
-
-  return Rcpp::List::create(
-      Rcpp::Named("gen_data") = gen_data.getGenData(),
-      Rcpp::Named("gens_patho_intro") = gens_patho_intro,
-      Rcpp::Named("n_infected_gen") = n_infected,
-      Rcpp::Named("move_data_pre") = mdPre.getMoveData(),
-      Rcpp::Named("move_data_post") = mdPost.getMoveData(),
-      Rcpp::Named("edgeLists") = edgeLists,
-      Rcpp::Named("gens_edge_lists") = gens_edge_lists);
+  return Rcpp::DataFrame::create(Rcpp::Named("x") = food.coordX,
+                                 Rcpp::Named("y") = food.coordY,
+                                 Rcpp::Named("tAvail") = food.counter);
 }
 
 //' Runs the pathomove simulation and return a `pathomove_output` object.

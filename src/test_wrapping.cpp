@@ -11,7 +11,7 @@
 // header file.
 #include <testthat.h>
 
-#include "landscape.h"
+#include <landscape.h>
 
 context("Position wrapping works") {
   const float landsize = 10.f;
