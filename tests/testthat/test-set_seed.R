@@ -4,6 +4,7 @@ test_that("Setting seed gives reproducible results without multithreading", {
   run_original <- run_pathomove(
     scenario = 2,
     genmax = 10,
+    tmax = 10,
     g_patho_init = 1,
     p_v_transmit = 0.2,
     costInfect = 0.25,
@@ -19,6 +20,7 @@ test_that("Setting seed gives reproducible results without multithreading", {
   run_replicate <- run_pathomove(
     scenario = 2,
     genmax = 10,
+    tmax = 10,
     g_patho_init = 1,
     p_v_transmit = 0.2,
     costInfect = 0.25,
@@ -54,6 +56,7 @@ test_that("Setting seed gives reproducible results without multithreading", {
   run_replicate <- run_pathomove(
     scenario = 2,
     genmax = 10,
+    tmax = 10,
     g_patho_init = 1,
     p_v_transmit = 0.2,
     costInfect = 0.25,
@@ -80,6 +83,7 @@ test_that("Multithreaded simulation is not reproducible", {
   run_original <- run_pathomove(
     scenario = 2,
     genmax = 10,
+    tmax = 10,
     g_patho_init = 1,
     p_v_transmit = 0.2,
     costInfect = 0.25,
@@ -95,6 +99,7 @@ test_that("Multithreaded simulation is not reproducible", {
   run_replicate <- run_pathomove(
     scenario = 2,
     genmax = 10,
+    tmax = 10,
     g_patho_init = 1,
     p_v_transmit = 0.2,
     costInfect = 0.25,
