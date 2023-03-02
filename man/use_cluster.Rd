@@ -9,6 +9,7 @@ use_cluster(
   password = "your_password",
   script = "which_script.R",
   folder = "pathomove",
+  tag = "scenario_tag",
   template_job = "some_template.sh",
   parameter_file = "which_parameters.csv"
 )
@@ -21,6 +22,10 @@ use_cluster(
 \item{script}{Which R script to run.}
 
 \item{folder}{The folder to prepare.}
+
+\item{tag}{A string for the scenario tag. Informative, single word tags such
+as "default", "scenario_01" etc. are recommended. These tags may be used to
+assign names to output files.}
 
 \item{template_job}{Which shell script to use as a template.}
 
