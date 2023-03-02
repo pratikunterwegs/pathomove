@@ -82,9 +82,9 @@ test_that("Multithreaded simulation is not reproducible", {
   # original run
   run_original <- run_pathomove(
     scenario = 2,
-    genmax = 10,
-    tmax = 10,
-    g_patho_init = 1,
+    genmax = 1,
+    tmax = 100,
+    g_patho_init = 0,
     p_v_transmit = 0.2,
     costInfect = 0.25,
     multithreaded = TRUE,
@@ -98,9 +98,9 @@ test_that("Multithreaded simulation is not reproducible", {
   # identical replicate with same seed
   run_replicate <- run_pathomove(
     scenario = 2,
-    genmax = 10,
-    tmax = 10,
-    g_patho_init = 1,
+    genmax = 1,
+    tmax = 100,
+    g_patho_init = 0,
     p_v_transmit = 0.2,
     costInfect = 0.25,
     multithreaded = TRUE,
