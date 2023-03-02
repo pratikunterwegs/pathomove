@@ -1,3 +1,4 @@
+// Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
 /*
  * This file uses the Catch unit testing library, alongside
  * testthat's simple bindings, to test a C++ function.
@@ -9,14 +10,8 @@
 
 // All test files should include the <testthat.h>
 // header file.
+#include <pathomove.h>
 #include <testthat.h>
-
-// Normally this would be a function from your package's
-// compiled library -- you might instead just include a header
-// file providing the definition, and let R CMD INSTALL
-// handle building and linking.
-
-#include <agent_dyn.h>
 
 // landscape parameters
 const float landsize = 10.f;
@@ -25,7 +20,8 @@ const int nClusters = 10;
 const float clusterSpread = 0.1f;
 const int regen_time = 50;
 
-Resources landscape(nItems, landsize, nClusters, clusterSpread, regen_time);
+pathomove::Resources landscape(nItems, landsize, nClusters, clusterSpread,
+                               regen_time);
 
 context("Items availability works correctly") {
   // initialise landscape and update Rtree
@@ -57,9 +53,9 @@ const float vertical = false;
 const float reprod_threshold = false;
 
 // make test population
-Population pop_2(popsize, n_samples, range_agents, range_food, range_move,
-                 handling_time, p_transmit, p_transmit, vertical,
-                 reprod_threshold);
+pathomove::Population pop_2(popsize, n_samples, range_agents, range_food,
+                            range_move, handling_time, p_transmit, p_transmit,
+                            vertical, reprod_threshold);
 
 // Initialize a unit test context. This is similar to how you
 // might begin an R test file with 'context()', expect the
@@ -91,9 +87,12 @@ context("Population movement works") {
   landscape.countAvailable();
 
   // initialise rtree and set counter value
-  bgi::rtree<value, bgi::quadratic<16>> tmpRtree;
+  pathomove::bgi::rtree<pathomove::value, pathomove::bgi::quadratic<16>>
+      tmpRtree;
+
   for (int i = 0; i < nItems; ++i) {
-    point p = point(landscape.coordX[i], landscape.coordY[i]);
+    pathomove::point p =
+        pathomove::point(landscape.coordX[i], landscape.coordY[i]);
     tmpRtree.insert(std::make_pair(p, i));
   }
 

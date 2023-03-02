@@ -1,3 +1,4 @@
+// Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
 /*
  * This file uses the Catch unit testing library, alongside
  * testthat's simple bindings, to test a C++ function.
@@ -9,14 +10,8 @@
 
 // All test files should include the <testthat.h>
 // header file.
+#include <pathomove.h>
 #include <testthat.h>
-
-// Normally this would be a function from your package's
-// compiled library -- you might instead just include a header
-// file providing the definition, and let R CMD INSTALL
-// handle building and linking.
-
-#include <agent_dyn.h>
 
 // food_4 parameters, only one item
 const float landsize = 10.f;
@@ -25,7 +20,8 @@ const int nClusters = 1;
 const float clusterSpread = 0.1f;
 const int regen_time = 50;
 
-Resources food_4(nItems, landsize, nClusters, clusterSpread, regen_time);
+pathomove::Resources food_4(nItems, landsize, nClusters, clusterSpread,
+                            regen_time);
 
 // population parameters
 const int popsize = 5;
@@ -41,9 +37,9 @@ const float vertical = true;
 const float reprod_threshold = true;
 
 // make test population
-Population pop_5(popsize, n_samples, range_agents, range_food, range_move,
-                 handling_time, p_transmit, p_v_transmit, vertical,
-                 reprod_threshold);
+pathomove::Population pop_5(popsize, n_samples, range_agents, range_food,
+                            range_move, handling_time, p_transmit, p_v_transmit,
+                            vertical, reprod_threshold);
 
 // Initialize a unit test context. This is similar to how you
 // might begin an R test file with 'context()', expect the

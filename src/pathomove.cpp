@@ -6,7 +6,7 @@
 // [[Rcpp::depends(RcppParallel)]]
 
 // clang-format off
-#include <simulations.h>
+#include <pathomove.h>
 
 #include <Rcpp.h>
 
@@ -17,8 +17,6 @@
 #include <string>
 #include <vector>
 // clang-format on
-
-// [[Rcpp::interfaces(r, cpp)]]
 
 /// function to export landscape as matrix
 //' Returns a test landscape.
@@ -35,7 +33,8 @@ Rcpp::DataFrame get_test_landscape(const int nItems, const float landsize,
                                    const int nClusters,
                                    const float clusterSpread,
                                    const int regen_time) {
-  Resources food(nItems, landsize, nClusters, clusterSpread, regen_time);
+  pathomove::Resources food(nItems, landsize, nClusters, clusterSpread,
+                            regen_time);
   food.initResources();
 
   return Rcpp::DataFrame::create(Rcpp::Named("x") = food.coordX,
@@ -104,9 +103,8 @@ Rcpp::DataFrame get_test_landscape(const int nItems, const float landsize,
 //' pathogen introduction are drawn.
 //' @param seed An integer number that is the seed for the R RNG. Defaults to
 //' zero.
-//'
-//' @return An S4 class, `pathomove_output`, with simulation outcomes.
 //' @export
+//' @return An S4 class, `pathomove_output`, with simulation outcomes.
 // [[Rcpp::export]]
 Rcpp::S4 run_pathomove(
     const int scenario = 1, const int popsize = 100, const int nItems = 1800,
@@ -141,7 +139,7 @@ Rcpp::S4 run_pathomove(
   }
 
   // Prepare R and RNG seed
-  set_seed(seed);
+  pathomove::set_seed(seed);
 
   // Prepare data for simulation messages
   // return scenario as string
@@ -203,12 +201,12 @@ Rcpp::S4 run_pathomove(
   /* Messages section ends here */
 
   // make simulation class with input parameters
-  simulation this_sim(popsize, scenario, nItems, landsize, nClusters,
-                      clusterSpread, tmax, genmax, g_patho_init, n_samples,
-                      range_food, range_agents, range_move, handling_time,
-                      regen_time, pTransmit, p_v_transmit, initialInfections,
-                      costInfect, multithreaded, dispersal, infect_percent,
-                      vertical, reprod_threshold, mProb, mSize, spillover_rate);
+  pathomove::simulation this_sim(
+      popsize, scenario, nItems, landsize, nClusters, clusterSpread, tmax,
+      genmax, g_patho_init, n_samples, range_food, range_agents, range_move,
+      handling_time, regen_time, pTransmit, p_v_transmit, initialInfections,
+      costInfect, multithreaded, dispersal, infect_percent, vertical,
+      reprod_threshold, mProb, mSize, spillover_rate);
   // do the simulation using the simulation class function
   Rcpp::List pathomoveOutput = this_sim.do_simulation();
   // get generation data from output

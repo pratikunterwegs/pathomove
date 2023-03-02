@@ -1,3 +1,4 @@
+// Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
 /*
  * This file uses the Catch unit testing library, alongside
  * testthat's simple bindings, to test a C++ function.
@@ -7,17 +8,10 @@
  * `LinkingTo: testthat` within your DESCRIPTION file.
  */
 
-// All test files should include the <testthat.h>
-// header file.
+#include <pathomove.h>
 #include <testthat.h>
 
-// Normally this would be a function from your package's
-// compiled library -- you might instead just include a header
-// file providing the definition, and let R CMD INSTALL
-// handle building and linking.
-
-#include <agent_dyn.h>
-
+// set up parameters for the population and landscape
 const int popsize = 100;
 const int n_samples = 4;
 const float range_food = 1.f;
@@ -27,11 +21,11 @@ const int handling_time = 5;
 const float p_transmit = 0.1;
 const float test_mSize = 0.001;
 const float vertical = false;
-// const float reprod_threshold = false;
 
 // make test population
-Population pop(popsize, n_samples, range_agents, range_food, range_move,
-               handling_time, p_transmit, p_transmit, vertical, false);
+pathomove::Population pop(popsize, n_samples, range_agents, range_food,
+                          range_move, handling_time, p_transmit, p_transmit,
+                          vertical, false);
 
 // Initialize a unit test context. This is similar to how you
 // might begin an R test file with 'context()', expect the
@@ -66,7 +60,8 @@ const float clusterSpread = 1.f;
 const int regen_time = 20;
 
 // a food object
-Resources land(nItems, landsize, nClusters, clusterSpread, regen_time);
+pathomove::Resources land(nItems, landsize, nClusters, clusterSpread,
+                          regen_time);
 
 // Population position on the landscape
 context("Population position initialisation works") {
