@@ -15,3 +15,10 @@
 #include "simulations.h"
 
 #endif  // pathomove_pathomove_H_
+
+// Undef FALSE which may be defined as integer in one of the imported third
+// party headers.
+// This solution copied from https://github.com/RcppCore/Rcpp/issues/846
+#ifdef FALSE
+  #undef FALSE
+#endif
