@@ -4,6 +4,9 @@
 #' @param password Password.
 #' @param script Which R script to run.
 #' @param folder The folder to prepare.
+#' @param tag A string for the scenario tag. Informative, single word tags such
+#' as "default", "scenario_01" etc. are recommended. These tags may be used to
+#' assign names to output files.
 #' @param template_job Which shell script to use as a template.
 #' @param parameter_file Where to get parameters.
 #'
