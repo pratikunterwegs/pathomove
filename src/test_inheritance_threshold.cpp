@@ -1,3 +1,4 @@
+// Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
 /*
  * This file uses the Catch unit testing library, alongside
  * testthat's simple bindings, to test a C++ function.
@@ -9,14 +10,8 @@
 
 // All test files should include the <testthat.h>
 // header file.
+#include <pathomove.h>
 #include <testthat.h>
-
-// Normally this would be a function from your package's
-// compiled library -- you might instead just include a header
-// file providing the definition, and let R CMD INSTALL
-// handle building and linking.
-
-#include <agent_dyn.h>
 
 // food_3 parameters
 const float landsize = 10.f;
@@ -25,7 +20,8 @@ const int nClusters = 10;
 const float clusterSpread = 0.1f;
 const int regen_time = 50;
 
-Resources food_3(nItems, landsize, nClusters, clusterSpread, regen_time);
+pathomove::Resources food_3(nItems, landsize, nClusters, clusterSpread,
+                            regen_time);
 
 // population parameters
 const int popsize = 5;
@@ -40,9 +36,9 @@ const float vertical = false;
 const float reprod_threshold = true;
 
 // make test population
-Population pop_4(popsize, n_samples, range_agents, range_food, range_move,
-                 handling_time, p_transmit, p_transmit, vertical,
-                 reprod_threshold);
+pathomove::Population pop_4(popsize, n_samples, range_agents, range_food,
+                            range_move, handling_time, p_transmit, p_transmit,
+                            vertical, reprod_threshold);
 
 // Initialize a unit test context. This is similar to how you
 // might begin an R test file with 'context()', expect the
@@ -63,10 +59,13 @@ context("Population inheritance with a threshold") {
   food_3.coordY = {3.0f, 3.f, 3.f, 3.f, 3.f, 3.f, 3.f, 3.f, 3.f, 3.f};
   food_3.counter = std::vector<int>(nItems, 0);
   food_3.countAvailable();
+
   // initialise rtree and set counter value
-  bgi::rtree<value, bgi::quadratic<16>> tmpRtree;
+  pathomove::bgi::rtree<pathomove::value, pathomove::bgi::quadratic<16>>
+      tmpRtree;
+
   for (int i = 0; i < nItems; ++i) {
-    point p = point(food_3.coordX[i], food_3.coordY[i]);
+    pathomove::point p = pathomove::point(food_3.coordX[i], food_3.coordY[i]);
     tmpRtree.insert(std::make_pair(p, i));
   }
   food_3.rtree = tmpRtree;
