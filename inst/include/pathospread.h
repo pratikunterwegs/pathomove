@@ -6,13 +6,15 @@
 
 // clang-format off
 #include <unordered_set>
+#include <vector>
 
-#include <parameters.h>
-#include <agent_dyn.h>
+#include "parameters.h"
+#include "agent_dyn.h"
 // clang-format on
 
+namespace pathomove {
 /// function to infect n individuals
-void Population::introducePathogen(const int initialInfections) {
+inline void Population::introducePathogen(const int initialInfections) {
   // recount for safety
   countInfected();
   shufflePop();
@@ -42,7 +44,7 @@ void Population::introducePathogen(const int initialInfections) {
 }
 
 /// function to spread pathogen
-void Population::pathogenSpread() {
+inline void Population::pathogenSpread() {
   // looping through agents, query rtree for neighbours
   // pathogen spreads in random order
   shufflePop();
@@ -76,8 +78,8 @@ void Population::pathogenSpread() {
 }
 
 /// function for pathogen cost --- use old formula
-void Population::pathogenCost(const float costInfect,
-                              const bool infect_percent) {
+inline void Population::pathogenCost(const float costInfect,
+                                     const bool infect_percent) {
   for (int i = 0; i < nAgents; i++) {
     if (infect_percent) {
       energy[i] = intake[i] * (std::pow((1.f - costInfect),
@@ -90,7 +92,7 @@ void Population::pathogenCost(const float costInfect,
 }
 
 /// count infected agents
-void Population::countInfected() {
+inline void Population::countInfected() {
   nInfected = 0;
   for (int i = 0; i < nAgents; i++) {
     if (infected[i]) {
@@ -99,5 +101,6 @@ void Population::countInfected() {
   }
   assert(nInfected <= nAgents);
 }
+}  // namespace pathomove
 
 #endif  // INST_INCLUDE_PATHOSPREAD_H_

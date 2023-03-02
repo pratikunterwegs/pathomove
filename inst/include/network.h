@@ -11,6 +11,7 @@
 
 // clang-format on
 
+namespace pathomove {
 // network should be a member of population later
 // network has funs to return network metrics and the adj matrix
 struct Network {
@@ -28,7 +29,7 @@ struct Network {
 };
 
 /// function for dataframe from rcpp matrix
-Rcpp::DataFrame Network::getNtwkDf() {
+inline Rcpp::DataFrame Network::getNtwkDf() {
   std::vector<int> focal;
   std::vector<int> subfocal;
   std::vector<int> edgeWeight;
@@ -50,5 +51,6 @@ Rcpp::DataFrame Network::getNtwkDf() {
 
   return ntwkDf;
 }
+}  // namespace pathomove
 
 #endif  // INST_INCLUDE_NETWORK_H_

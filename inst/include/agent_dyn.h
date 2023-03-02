@@ -9,29 +9,29 @@
 // [[Rcpp::depends(RcppParallel)]]
 
 // clang-format off
-#include "agent_def.h"
-
 #include <algorithm>
 #include <cassert>
 #include <iostream>
 #include <utility>
 #include <vector>
 
-#include <landscape.h>
-#include <network.h>
+#include "agent_def.h"
+#include "landscape.h"
+#include "network.h"
 
 #include <Rcpp.h>
 #include <RcppParallel.h>
 #include <boost/foreach.hpp>
 // clang-format on
 
+namespace pathomove {
 // wrapper around R's RNG such that we get a uniform distribution over
 // [0,n) as required by the STL algorithm
 // taken from https://gallery.rcpp.org/articles/stl-random-shuffle/
 inline int randWrapper(const int n) { return floor(unif_rand() * n); }
 
 // to shuffle pop id
-void Population::shufflePop() {
+inline void Population::shufflePop() {
   Rcpp::IntegerVector order_agents = Rcpp::seq(0, nAgents - 1);
 
   std::random_shuffle(order_agents.begin(), order_agents.end(), randWrapper);
@@ -40,7 +40,7 @@ void Population::shufflePop() {
 }
 
 // to update agent Rtree
-void Population::updateRtree() {
+inline void Population::updateRtree() {
   // initialise rtree
   bgi::rtree<value, bgi::quadratic<16>> tmpRtree;
   for (int i = 0; i < nAgents; ++i) {
@@ -52,7 +52,7 @@ void Population::updateRtree() {
 }
 
 // function for initial positions
-void Population::initPos(const Resources &food) {
+inline void Population::initPos(const Resources &food) {
   coordX = Rcpp::as<std::vector<float>>(Rcpp::runif(nAgents, 0.f, food.dSize));
   coordY = Rcpp::as<std::vector<float>>(Rcpp::runif(nAgents, 0.f, food.dSize));
   initX = coordX;
@@ -61,7 +61,7 @@ void Population::initPos(const Resources &food) {
 }
 
 // set agent trait
-void Population::setTrait(const float &mSize) {
+inline void Population::setTrait(const float &mSize) {
   // create a cauchy distribution, mSize is the scale
   sF = Rcpp::as<std::vector<float>>(Rcpp::rnorm(nAgents, 0.0, mSize));
   sH = Rcpp::as<std::vector<float>>(Rcpp::rnorm(nAgents, 0.0, mSize));
@@ -69,8 +69,8 @@ void Population::setTrait(const float &mSize) {
 }
 
 // general function for agents within distance
-std::pair<int, int> Population::countAgents(const float &xloc,
-                                            const float &yloc) {
+inline std::pair<int, int> Population::countAgents(const float &xloc,
+                                                   const float &yloc) {
   int handlers = 0;
   int nonhandlers = 0;
   std::vector<value> near_agents;
@@ -94,8 +94,8 @@ std::pair<int, int> Population::countAgents(const float &xloc,
 }
 
 // function for near agent ids
-std::vector<int> Population::getNeighbourId(const float &xloc,
-                                            const float &yloc) {
+inline std::vector<int> Population::getNeighbourId(const float &xloc,
+                                                   const float &yloc) {
   std::vector<int> agent_id;
   std::vector<value> near_agents;
   // query for a simple box
@@ -116,8 +116,8 @@ std::vector<int> Population::getNeighbourId(const float &xloc,
 }
 
 // general function for items within distance
-int Population::countFood(const Resources &food, const float &xloc,
-                          const float &yloc) {
+inline int Population::countFood(const Resources &food, const float &xloc,
+                                 const float &yloc) {
   int nFood = 0;
 
   // check any available
@@ -143,8 +143,9 @@ int Population::countFood(const Resources &food, const float &xloc,
 }
 
 // function for the nearest available food item
-std::vector<int> Population::getFoodId(const Resources &food, const float &xloc,
-                                       const float &yloc) {
+inline std::vector<int> Population::getFoodId(const Resources &food,
+                                              const float &xloc,
+                                              const float &yloc) {
   std::vector<int> food_id;
   // check any available
   if (food.nAvailable > 0) {
@@ -170,7 +171,7 @@ std::vector<int> Population::getFoodId(const Resources &food, const float &xloc,
 }
 
 /// population movement function
-void Population::move(const Resources &food, const bool &multithreaded) {
+inline void Population::move(const Resources &food, const bool &multithreaded) {
   const float twopi = 2.f * M_PI;
 
   // what increment for n samples in a circle around the agent
@@ -327,8 +328,8 @@ void Population::move(const Resources &food, const bool &multithreaded) {
 }
 
 // function to paralellise choice of forage item
-void Population::pickForageItem(const Resources &food,
-                                const bool &multithreaded) {
+inline void Population::pickForageItem(const Resources &food,
+                                       const bool &multithreaded) {
   // nearest food
   std::vector<int> idTargetFood(nAgents, -1);
 
@@ -379,7 +380,7 @@ void Population::pickForageItem(const Resources &food,
 }
 
 // function to exploitatively forage on picked forage items
-void Population::doForage(Resources &food) {
+inline void Population::doForage(Resources &food) {
   // all agents have picked a food item if they can forage
   // now forage in a serial loop --- this cannot be parallelised
   // this order is randomised
@@ -407,7 +408,7 @@ void Population::doForage(Resources &food) {
   }
 }
 
-void Population::countAssoc() {
+inline void Population::countAssoc() {
   for (int i = 0; i < nAgents; ++i) {
     // count nearby agents and update raw associations
     std::vector<int> nearby_agents = getNeighbourId(coordX[i], coordY[i]);
@@ -422,13 +423,13 @@ void Population::countAssoc() {
 }
 
 /// small function to check whether individuals have a positive energy balance
-const bool Population::check_reprod_threshold() {
+inline const bool Population::check_reprod_threshold() {
   return (std::count_if(energy.begin(), energy.end(),
                         [](float energy_f) { return energy_f > 0.f; }) > 0);
 }
 
 /// minor function to normalise vector
-Rcpp::NumericVector Population::handleFitness() {
+inline Rcpp::NumericVector Population::handleFitness() {
   Rcpp::NumericVector vecFitness = Rcpp::wrap(energy);
   // random errors in fitness
   Rcpp::NumericVector rd_fitness = Rcpp::rnorm(nAgents, 0.0f, 1e-5f);
@@ -442,7 +443,7 @@ Rcpp::NumericVector Population::handleFitness() {
 
 /// prepare function to handle fitness and offer parents when applying a
 /// reproduction threshold
-std::pair<std::vector<int>, std::vector<float>>
+inline std::pair<std::vector<int>, std::vector<float>>
 Population::applyReprodThreshold() {
   std::vector<float> energy_pos;
   std::vector<int> id_pos;
@@ -473,9 +474,10 @@ Population::applyReprodThreshold() {
 }
 
 // fun for replication
-void Population::Reproduce(const Resources &food, const bool &infect_percent,
-                           const float &dispersal, const float &mProb,
-                           const float &mSize) {
+inline void Population::Reproduce(const Resources &food,
+                                  const bool &infect_percent,
+                                  const float &dispersal, const float &mProb,
+                                  const float &mSize) {
   // draw vertical infectons
   auto v_infect = Rcpp::rbinom(nAgents, 1, p_v_transmit);
 
@@ -629,5 +631,6 @@ void Population::Reproduce(const Resources &food, const bool &infect_percent,
   std::swap(intake, tmpIntake);
   tmpIntake.clear();
 }
+}  // namespace pathomove
 
 #endif  // INST_INCLUDE_AGENT_DYN_H_

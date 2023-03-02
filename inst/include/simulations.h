@@ -5,12 +5,13 @@
 
 // clang-format off
 #include <algorithm>
+#include <string>
+#include <vector>
 
-#include <landscape.h>
-#include <agent_dyn.h>
-#include <data_types.h>
+#include "data_types.h"
 // clang-format on
 
+namespace pathomove {
 class simulation {
  public:
   simulation(const int popsize, const int scenario, const int nItems,
@@ -96,7 +97,9 @@ class simulation {
   Rcpp::List do_simulation();
 };
 
-Rcpp::List simulation::do_simulation() {
+/// @brief
+/// @return
+inline Rcpp::List simulation::do_simulation() {
   // prepare landscape and pop
   food.initResources();
   food.countAvailable();
@@ -258,5 +261,6 @@ Rcpp::List simulation::do_simulation() {
       Rcpp::Named("edgeLists") = edgeLists,
       Rcpp::Named("gens_edge_lists") = gens_edge_lists);
 }
+}  // namespace pathomove
 
 #endif  // INST_INCLUDE_SIMULATIONS_H_

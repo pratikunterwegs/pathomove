@@ -9,9 +9,9 @@
 #include <random>
 #include <vector>
 
-#include <agent_dyn.h>
-#include <network.h>
+#include "agent_dyn.h"
 
+namespace pathomove {
 // define a struct holding a vector of data frames which holds generation wise
 // data
 struct genData {
@@ -43,7 +43,7 @@ struct moveData {
 };
 
 /// function to update gendata
-void genData::updateGenData(const Population &pop, const int g_) {
+inline void genData::updateGenData(const Population &pop, const int g_) {
   gDataList.push_back(Rcpp::DataFrame::create(
       // get pop data
       Rcpp::Named("intake") =
@@ -63,7 +63,7 @@ void genData::updateGenData(const Population &pop, const int g_) {
 }
 
 // function to return gen data as an rcpp list
-Rcpp::List genData::getGenData() {
+inline Rcpp::List genData::getGenData() {
   Rcpp::List dataToReturn = Rcpp::List::create(
       Rcpp::Named("pop_data") = gDataList, Rcpp::Named("gens") = gens,
       Rcpp::Named("n_infected") = gNInfected);
@@ -71,7 +71,7 @@ Rcpp::List genData::getGenData() {
   return dataToReturn;
 }
 
-void moveData::updateMoveData(const Population &pop, const int t_) {
+inline void moveData::updateMoveData(const Population &pop, const int t_) {
   assert(t_ <= tmax && "too many timesteps logged");
 
   timesteps[t_] = std::vector<int>(popsize, t_);
@@ -79,7 +79,7 @@ void moveData::updateMoveData(const Population &pop, const int t_) {
   y[t_] = pop.coordY;
 }
 
-Rcpp::List moveData::getMoveData() {
+inline Rcpp::List moveData::getMoveData() {
   Rcpp::List mDataList(tmax);
   std::vector<int> id(popsize, 0);
   std::iota(std::begin(id), std::end(id), 0);
@@ -92,5 +92,6 @@ Rcpp::List moveData::getMoveData() {
 
   return mDataList;
 }
+}  // namespace pathomove
 
 #endif  // INST_INCLUDE_DATA_TYPES_H_
