@@ -10,7 +10,9 @@
 #include <chrono>
 #include <random>
 
+namespace pathomove {
 // landscape
 const double foodEnergy = 1.0;
+}  // namespace pathomove
 
 #endif  // INST_INCLUDE_PARAMETERS_H_

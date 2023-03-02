@@ -17,10 +17,11 @@
 
 #include <boost/foreach.hpp>
 
-#include <landscape.h>
-#include <network.h>
+#include "landscape.h"
+#include "network.h"
 // clang-format on
 
+namespace pathomove {
 // Agent class
 struct Population {
  public:
@@ -157,5 +158,6 @@ struct Population {
   // functions for the network
   // there is no function to update the network, this is handled in countAssoc
 };
+}  // namespace pathomove
 
 #endif  // INST_INCLUDE_AGENT_DEF_H_

@@ -19,11 +19,10 @@
 #include <boost/geometry/geometries/point.hpp>
 #include <boost/geometry/index/rtree.hpp>
 
-#include <parameters.h>
+#include "parameters.h"
 // clang-format on
 
-// [[Rcpp::interfaces(r, cpp)]]
-
+namespace pathomove {
 // apparently some types
 namespace bg = boost::geometry;
 namespace bgi = boost::geometry::index;
@@ -58,7 +57,7 @@ struct Resources {
   std::vector<int> counter;
   int nAvailable;
   // make rtree
-  bgi::rtree<value, bgi::quadratic<16> > rtree;
+  bgi::rtree<value, bgi::quadratic<16>> rtree;
 
   // funs to init with nCentres
   void initResources();
@@ -68,7 +67,7 @@ struct Resources {
 
 /// @brief Function to set the R RNG seed
 /// @param seed An integer passed to run_pathomve
-void set_seed(const int &seed) {
+inline void set_seed(const int &seed) {
   Rcpp::Environment base_env("package:base");
   Rcpp::Function set_seed_r = base_env["set.seed"];
   set_seed_r(seed);
@@ -78,11 +77,11 @@ void set_seed(const int &seed) {
 // because std::fabs + std::fmod is somewhat suspicious
 // we assume values that are at most a little larger than max (max + 1) and
 // a little smaller than zero (-1)
-float wrap_pos(const float &p1, const float &pmax) {
+inline float wrap_pos(const float &p1, const float &pmax) {
   return p1 - pmax * std::floor(p1 / pmax);
 }
 
-void Resources::initResources() {
+inline void Resources::initResources() {
   // generate n central items
   std::vector<float> centreCoordX(nClusters);
   std::vector<float> centreCoordY(nClusters);
@@ -130,7 +129,7 @@ void Resources::initResources() {
   tmpRtree.clear();
 }
 
-void Resources::countAvailable() {
+inline void Resources::countAvailable() {
   nAvailable = 0;
   // counter set to max regeneration value on foraging
   for (size_t i = 0; i < static_cast<size_t>(nItems); i++) {
@@ -140,7 +139,7 @@ void Resources::countAvailable() {
   }
 }
 
-void Resources::regenerate() {
+inline void Resources::regenerate() {
   for (int i = 0; i < nItems; i++) {
     counter[i] -= (counter[i] > 0 ? 1 : 0);
     available[i] = (counter[i] == 0);
@@ -148,5 +147,6 @@ void Resources::regenerate() {
   // set availability
   countAvailable();
 }
+}  // namespace pathomove
 
 #endif  // INST_INCLUDE_LANDSCAPE_H_
