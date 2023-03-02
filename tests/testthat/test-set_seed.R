@@ -81,6 +81,7 @@ test_that("Setting seed gives reproducible results without multithreading", {
 test_that("Multithreaded simulation is not reproducible", {
   # original run
   run_original <- run_pathomove(
+    popsize = 500,
     scenario = 2,
     genmax = 1,
     tmax = 100,
@@ -97,6 +98,7 @@ test_that("Multithreaded simulation is not reproducible", {
 
   # identical replicate with same seed
   run_replicate <- run_pathomove(
+    popsize = 500,
     scenario = 2,
     genmax = 1,
     tmax = 100,
