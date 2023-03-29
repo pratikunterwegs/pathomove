@@ -7,7 +7,6 @@
   [![Codecov test coverage](https://codecov.io/gh/pratikunterwegs/pathomove/branch/main/graph/badge.svg)](https://codecov.io/gh/pratikunterwegs/pathomove?branch=main)
 <!-- badges: end -->
 
-
 This repository holds the source code for the _Pathomove_ simulation, a spatially explicit, individual-based, evolutionary model of the evolution of animal social movement strategies under the risk of pathogen transmission.
 
 The model is written by Pratik Gupte, in the Modelling Adaptive Response Mechanisms Group (Weissing Lab) at the Groningen Institute for Evolutionary Life Science, at the University of Groningen.
@@ -24,22 +23,7 @@ Email: pratikgupte16@gmail.com OR p.r.gupte@rug.nl
 ORCID: https://orcid.org/0000-0001-5294-7819
 ```
 
-Please cite this simulation model as Pratik Gupte. (2022). Source code for Pathomove, an individual-based model for the evolution of animal movement strategies under the risk of pathogen transmission (v1.0.2). Zenodo. https://doi.org/10.5281/zenodo.6331816
-
-```bibtex
-@software{pratik_gupte_2022_6331816,
-  author       = {Pratik Gupte},
-  title        = {{Source code for Pathomove, an individual-based 
-                   model for the evolution of animal movement
-                   strategies under the risk of pathogen transmission}},
-  month        = mar,
-  year         = 2022,
-  publisher    = {Zenodo},
-  version      = {v1.0.2},
-  doi          = {10.5281/zenodo.6331816},
-  url          = {https://doi.org/10.5281/zenodo.6331816}
-}
-```
+You can cite all versions by using the DOI 10.5281/zenodo.6331815. This DOI represents all versions, and will always resolve to the latest one.
 
 ## Simulation model
 
@@ -175,6 +159,8 @@ The workflow to run this model to replicate the results presented in our _biorXi
 
 A basic working example of how to use this package can be found in the script in the `vignettes` directory, `vignettes/basic_usage.Rmd`.
 
+**Note:** In order to have completely reproducible simulations, it is necessary to run the simulation in single-threaded mode. Multi-threaded simualtion runs are _not_ reproducible.
+
 The basic workflow for the package is:
 
 ### Local use
@@ -255,6 +241,7 @@ pathomove::use_cluster(
   password = "your HPC password", 
   script = "your simulation run script", # e.g. scripts/do_sim_pathomove.R
   folder = "yourFolder", # folder for the output
+  scenario_tag = "scenario_tag", # user-defined name for the scenario
   template_job = "template job shell script",  # the shell script from (5)
   parameter_file = "some parameter file name.csv" # the parameter data
 )
@@ -263,27 +250,3 @@ pathomove::use_cluster(
 7. Simulation output should be returned as `Rds` files into the `data/output` folder specified above _on the cluster_, or your custom equivalent. Move these `Rds` files to your local system for further analysis.
 
 Please note (again): This is advanced functionality. It is brittle, i.e., it is not tested to work across a range of systems. Please do _not_ attempt this lightly.
-
----
-
-## Reference dataset
-
-A reference dataset is available on Zenodo at https://zenodo.org/record/6331757.
-
-Please cite the simulation data as:
-
-```bibtex
-@dataset{pratik_rajan_gupte_2022_6331757,
-  author       = {Pratik Rajan Gupte},
-  title        = {{Reference data from the Pathomove simulation, for 
-                   the manuscript "Novel pathogen introduction
-                   rapidly alters the evolution of movement,
-                   restructuring animal societies"}},
-  month        = mar,
-  year         = 2022,
-  publisher    = {Zenodo},
-  version      = {v1.0},
-  doi          = {10.5281/zenodo.6331757},
-  url          = {https://doi.org/10.5281/zenodo.6331757}
-}
-```
