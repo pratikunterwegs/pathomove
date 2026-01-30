@@ -1,6 +1,6 @@
 // Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
-#ifndef INST_INCLUDE_LANDSCAPE_H_
-#define INST_INCLUDE_LANDSCAPE_H_
+
+#pragma once
 
 // [[Rcpp::depends(BH)]]
 // [[Rcpp::depends(RcppParallel)]]
@@ -148,5 +148,3 @@ inline void Resources::regenerate() {
   countAvailable();
 }
 }  // namespace pathomove
-
-#endif  // INST_INCLUDE_LANDSCAPE_H_

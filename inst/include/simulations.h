@@ -1,7 +1,7 @@
 // Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
 // simulation class for pathomove
-#ifndef INST_INCLUDE_SIMULATIONS_H_
-#define INST_INCLUDE_SIMULATIONS_H_
+
+#pragma once
 
 // clang-format off
 #include <algorithm>
@@ -262,5 +262,3 @@ inline Rcpp::List simulation::do_simulation() {
       Rcpp::Named("gens_edge_lists") = gens_edge_lists);
 }
 }  // namespace pathomove
-
-#endif  // INST_INCLUDE_SIMULATIONS_H_

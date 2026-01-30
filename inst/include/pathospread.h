@@ -1,6 +1,6 @@
 // Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
-#ifndef INST_INCLUDE_PATHOSPREAD_H_
-#define INST_INCLUDE_PATHOSPREAD_H_
+
+#pragma once
 
 /// define functions for pathogen spread
 
@@ -102,5 +102,3 @@ inline void Population::countInfected() {
   assert(nInfected <= nAgents);
 }
 }  // namespace pathomove
-
-#endif  // INST_INCLUDE_PATHOSPREAD_H_

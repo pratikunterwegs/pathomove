@@ -1,7 +1,7 @@
 // Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
 /// the network structure, which holds an adjacency matrix
-#ifndef INST_INCLUDE_NETWORK_H_
-#define INST_INCLUDE_NETWORK_H_
+
+#pragma once
 
 // clang-format off
 #include <cassert>
@@ -52,5 +52,3 @@ inline Rcpp::DataFrame Network::getNtwkDf() {
   return ntwkDf;
 }
 }  // namespace pathomove
-
-#endif  // INST_INCLUDE_NETWORK_H_

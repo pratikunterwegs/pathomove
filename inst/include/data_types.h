@@ -1,7 +1,7 @@
 // Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
 /// data types and related functions
-#ifndef INST_INCLUDE_DATA_TYPES_H_
-#define INST_INCLUDE_DATA_TYPES_H_
+
+#pragma once
 
 #include <algorithm>
 #include <fstream>
@@ -93,5 +93,3 @@ inline Rcpp::List moveData::getMoveData() {
   return mDataList;
 }
 }  // namespace pathomove
-
-#endif  // INST_INCLUDE_DATA_TYPES_H_

@@ -1,6 +1,6 @@
 // Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
-#ifndef INST_INCLUDE_AGENT_DEF_H_
-#define INST_INCLUDE_AGENT_DEF_H_
+
+#pragma once
 
 #define _USE_MATH_DEFINES
 /// code to make agents
@@ -24,6 +24,7 @@
 namespace pathomove {
 // Agent class
 struct Population {
+  // TODO: add a default constructor with sensible values
  public:
   Population(const int popsize, const int n_samples, const float range_agents,
              const float range_food, const float range_move,
@@ -79,7 +80,7 @@ struct Population {
   const int nAgents;
   std::vector<float> coordX, coordY, initX, initY, intake, energy;
   // weights
-  std::vector<float> sF, sH, sN;
+  std::vector<float> sF, sH, sN;  // TODO: make this a 2D tensor
 
   // counter and metrics
   std::vector<int> counter, associations;  // number of total interactions
@@ -105,10 +106,10 @@ struct Population {
   std::vector<float> moved;
 
   // position rtree
-  bgi::rtree<value, bgi::quadratic<16>> agentRtree;
+  bgi::rtree<value, bgi::quadratic<16>> agentRtree;  // TODO: remove spatial index based dist calc
 
   // network object
-  Network pbsn;
+  Network pbsn;  // TODO: build off a tensor
 
   /// functions for the population ///
   // population order, trait and position randomiser
@@ -159,5 +160,3 @@ struct Population {
   // there is no function to update the network, this is handled in countAssoc
 };
 }  // namespace pathomove
-
-#endif  // INST_INCLUDE_AGENT_DEF_H_

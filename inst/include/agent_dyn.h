@@ -1,6 +1,6 @@
 // Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
-#ifndef INST_INCLUDE_AGENT_DYN_H_
-#define INST_INCLUDE_AGENT_DYN_H_
+
+#pragma once
 
 #define _USE_MATH_DEFINES
 /// code to make agents do things
@@ -39,17 +39,17 @@ inline void Population::shufflePop() {
   order = Rcpp::as<std::vector<int>>(order_agents);
 }
 
-// to update agent Rtree
-inline void Population::updateRtree() {
-  // initialise rtree
-  bgi::rtree<value, bgi::quadratic<16>> tmpRtree;
-  for (int i = 0; i < nAgents; ++i) {
-    point p = point(coordX[i], coordY[i]);
-    tmpRtree.insert(std::make_pair(p, i));
-  }
-  std::swap(agentRtree, tmpRtree);
-  tmpRtree.clear();
-}
+// // to update agent Rtree
+// inline void Population::updateRtree() {
+//   // initialise rtree
+//   bgi::rtree<value, bgi::quadratic<16>> tmpRtree;
+//   for (int i = 0; i < nAgents; ++i) {
+//     point p = point(coordX[i], coordY[i]);
+//     tmpRtree.insert(std::make_pair(p, i));
+//   }
+//   std::swap(agentRtree, tmpRtree);
+//   tmpRtree.clear();
+// }
 
 // function for initial positions
 inline void Population::initPos(const Resources &food) {
@@ -57,118 +57,118 @@ inline void Population::initPos(const Resources &food) {
   coordY = Rcpp::as<std::vector<float>>(Rcpp::runif(nAgents, 0.f, food.dSize));
   initX = coordX;
   initY = coordY;
-  updateRtree();
+  // updateRtree();
 }
 
 // set agent trait
 inline void Population::setTrait(const float &mSize) {
-  // create a cauchy distribution, mSize is the scale
+  // create a Normal distribution, mSize is the scale
   sF = Rcpp::as<std::vector<float>>(Rcpp::rnorm(nAgents, 0.0, mSize));
   sH = Rcpp::as<std::vector<float>>(Rcpp::rnorm(nAgents, 0.0, mSize));
   sN = Rcpp::as<std::vector<float>>(Rcpp::rnorm(nAgents, 0.0, mSize));
 }
 
-// general function for agents within distance
-inline std::pair<int, int> Population::countAgents(const float &xloc,
-                                                   const float &yloc) {
-  int handlers = 0;
-  int nonhandlers = 0;
-  std::vector<value> near_agents;
-  // query for a simple box
-  agentRtree.query(bgi::satisfies([&](value const &v) {
-                     return bg::distance(v.first, point(xloc, yloc)) <
-                            range_agents;
-                   }),
-                   std::back_inserter(near_agents));
+// // general function for agents within distance
+// inline std::pair<int, int> Population::countAgents(const float &xloc,
+//                                                    const float &yloc) {
+//   int handlers = 0;
+//   int nonhandlers = 0;
+//   std::vector<value> near_agents;
+//   // query for a simple box
+//   agentRtree.query(bgi::satisfies([&](value const &v) {
+//                      return bg::distance(v.first, point(xloc, yloc)) <
+//                             range_agents;
+//                    }),
+//                    std::back_inserter(near_agents));
 
-  BOOST_FOREACH (value const &v, near_agents) {  // NOLINT
-    if (counter[v.second] > 0)
-      handlers++;
-    else
-      nonhandlers++;
-  }
-  near_agents.clear();
-  // first element is number of near entities
-  // second is the identity of entities
-  return std::pair<int, int>{handlers, nonhandlers};
-}
+//   BOOST_FOREACH (value const &v, near_agents) {  // NOLINT
+//     if (counter[v.second] > 0)
+//       handlers++;
+//     else
+//       nonhandlers++;
+//   }
+//   near_agents.clear();
+//   // first element is number of near entities
+//   // second is the identity of entities
+//   return std::pair<int, int>{handlers, nonhandlers};
+// }
 
-// function for near agent ids
-inline std::vector<int> Population::getNeighbourId(const float &xloc,
-                                                   const float &yloc) {
-  std::vector<int> agent_id;
-  std::vector<value> near_agents;
-  // query for a simple box
-  // neighbours for associations are counted over the MOVEMENT RANGE
-  agentRtree.query(bgi::satisfies([&](value const &v) {
-                     return bg::distance(v.first, point(xloc, yloc)) <
-                            range_move;
-                   }),
-                   std::back_inserter(near_agents));
+// // function for near agent ids
+// inline std::vector<int> Population::getNeighbourId(const float &xloc,
+//                                                    const float &yloc) {
+//   std::vector<int> agent_id;
+//   std::vector<value> near_agents;
+//   // query for a simple box
+//   // neighbours for associations are counted over the MOVEMENT RANGE
+//   agentRtree.query(bgi::satisfies([&](value const &v) {
+//                      return bg::distance(v.first, point(xloc, yloc)) <
+//                             range_move;
+//                    }),
+//                    std::back_inserter(near_agents));
 
-  BOOST_FOREACH (value const &v, near_agents) {  // NOLINT
-    agent_id.push_back(v.second);
-  }
-  near_agents.clear();
-  // first element is number of near entities
-  // second is the identity of entities
-  return agent_id;
-}
+//   BOOST_FOREACH (value const &v, near_agents) {  // NOLINT
+//     agent_id.push_back(v.second);
+//   }
+//   near_agents.clear();
+//   // first element is number of near entities
+//   // second is the identity of entities
+//   return agent_id;
+// }
 
-// general function for items within distance
-inline int Population::countFood(const Resources &food, const float &xloc,
-                                 const float &yloc) {
-  int nFood = 0;
+// // general function for items within distance
+// inline int Population::countFood(const Resources &food, const float &xloc,
+//                                  const float &yloc) {
+//   int nFood = 0;
 
-  // check any available
-  if (food.nAvailable > 0) {
-    // query for a simple box
-    std::vector<value> near_food;
-    food.rtree.query(bgi::satisfies([&](value const &v) {
-                       return bg::distance(v.first, point(xloc, yloc)) <
-                              range_food;
-                     }),
-                     std::back_inserter(near_food));
+//   // check any available
+//   if (food.nAvailable > 0) {
+//     // query for a simple box
+//     std::vector<value> near_food;
+//     food.rtree.query(bgi::satisfies([&](value const &v) {
+//                        return bg::distance(v.first, point(xloc, yloc)) <
+//                               range_food;
+//                      }),
+//                      std::back_inserter(near_food));
 
-    BOOST_FOREACH (value const &v, near_food) {  // NOLINT
-      // count only which are available!
-      if (food.available[v.second]) {
-        nFood++;
-      }
-    }
-    near_food.clear();
-  }
+//     BOOST_FOREACH (value const &v, near_food) {  // NOLINT
+//       // count only which are available!
+//       if (food.available[v.second]) {
+//         nFood++;
+//       }
+//     }
+//     near_food.clear();
+//   }
 
-  return nFood;
-}
+//   return nFood;
+// }
 
-// function for the nearest available food item
-inline std::vector<int> Population::getFoodId(const Resources &food,
-                                              const float &xloc,
-                                              const float &yloc) {
-  std::vector<int> food_id;
-  // check any available
-  if (food.nAvailable > 0) {
-    // query for a simple box
-    std::vector<value> near_food;
-    // food is accessed over the MOVEMENT RANGE
-    food.rtree.query(bgi::satisfies([&](value const &v) {
-                       return bg::distance(v.first, point(xloc, yloc)) <
-                              range_move;
-                     }),
-                     std::back_inserter(near_food));
+// // function for the nearest available food item
+// inline std::vector<int> Population::getFoodId(const Resources &food,
+//                                               const float &xloc,
+//                                               const float &yloc) {
+//   std::vector<int> food_id;
+//   // check any available
+//   if (food.nAvailable > 0) {
+//     // query for a simple box
+//     std::vector<value> near_food;
+//     // food is accessed over the MOVEMENT RANGE
+//     food.rtree.query(bgi::satisfies([&](value const &v) {
+//                        return bg::distance(v.first, point(xloc, yloc)) <
+//                               range_move;
+//                      }),
+//                      std::back_inserter(near_food));
 
-    BOOST_FOREACH (value const &v, near_food) {  // NOLINT
-      // count only which are available!
-      if (food.available[v.second]) {
-        food_id.push_back(v.second);
-      }
-    }
-    near_food.clear();
-  }
+//     BOOST_FOREACH (value const &v, near_food) {  // NOLINT
+//       // count only which are available!
+//       if (food.available[v.second]) {
+//         food_id.push_back(v.second);
+//       }
+//     }
+//     near_food.clear();
+//   }
 
-  return food_id;
-}
+//   return food_id;
+// }
 
 /// population movement function
 inline void Population::move(const Resources &food, const bool &multithreaded) {
@@ -632,5 +632,3 @@ inline void Population::Reproduce(const Resources &food,
   tmpIntake.clear();
 }
 }  // namespace pathomove
-
-#endif  // INST_INCLUDE_AGENT_DYN_H_
