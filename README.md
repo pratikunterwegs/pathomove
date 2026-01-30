@@ -1,7 +1,7 @@
 # Source code for _Pathomove_, an individual-based model for the evolution of animal movement strategies under the risk of pathogen transmission
 
 <!-- badges: start -->
-  [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+  [![Project Status: Inactive – The project has reached a stable, usable state but is no longer being actively developed; support/maintenance will be provided as time allows.](https://www.repostatus.org/badges/latest/inactive.svg)](https://www.repostatus.org/#inactive)
   [![R-CMD-check](https://github.com/pratikunterwegs/pathomove/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pratikunterwegs/pathomove/actions/workflows/R-CMD-check.yaml)
   [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6331816.svg)](https://doi.org/10.5281/zenodo.6331816)
   [![Codecov test coverage](https://codecov.io/gh/pratikunterwegs/pathomove/branch/main/graph/badge.svg)](https://codecov.io/gh/pratikunterwegs/pathomove?branch=main)
@@ -159,7 +159,7 @@ The workflow to run this model to replicate the results presented in our _biorXi
 
 A basic working example of how to use this package can be found in the script in the `vignettes` directory, `vignettes/basic_usage.Rmd`.
 
-**Note:** In order to have completely reproducible simulations, it is necessary to run the simulation in single-threaded mode. Multi-threaded simualtion runs are _not_ reproducible.
+**Note:** In order to have completely reproducible simulations, it is necessary to run the simulation in single-threaded mode. Multi-threaded simulation runs are _not_ reproducible.
 
 The basic workflow for the package is:
 
