@@ -7,10 +7,7 @@
 #' @return Writes a parameter file.
 #' @export
 #'
-make_parameter_file <- function(replicates,
-                                ...,
-                                which_file = "this_file.csv") {
-
+make_parameter_file <- function(replicates, ..., which_file = "this_file.csv") {
   # make combinations
   parameters <- data.table::CJ(
     ...,

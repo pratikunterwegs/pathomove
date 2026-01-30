@@ -17,12 +17,18 @@ get_social_strategy <- function(df) {
     msg = "get_social_strat: data does not have social weights"
   )
   data.table::setDT(df)
-  df[, social_strat := data.table::fcase(
-    (sH > 0 & sN > 0), "agent tracking",
-    (sH > 0 & sN < 0), "handler tracking",
-    (sH < 0 & sN > 0), "non-handler tracking",
-    (sH < 0 & sN < 0), "agent avoiding"
-  )][]
+  df[,
+    social_strat := data.table::fcase(
+      (sH > 0 & sN > 0),
+      "agent tracking",
+      (sH > 0 & sN < 0),
+      "handler tracking",
+      (sH < 0 & sN > 0),
+      "non-handler tracking",
+      (sH < 0 & sN < 0),
+      "agent avoiding"
+    )
+  ][]
 }
 
 #' Get functional variation in movement weights.
@@ -45,10 +51,11 @@ get_functional_variation <- function(df) {
   )
 
   # transform weights
-  df[, c("sF", "sH", "sN") := lapply(.SD, function(x) {
-    x / (abs(sF) + abs(sH) + abs(sN))
-  }),
-  .SDcols = c("sF", "sH", "sN")
+  df[,
+    c("sF", "sH", "sN") := lapply(.SD, function(x) {
+      x / (abs(sF) + abs(sH) + abs(sN))
+    }),
+    .SDcols = c("sF", "sH", "sN")
   ][]
 }
 
@@ -95,8 +102,10 @@ get_agent_avoidance <- function(df) {
   data.table::setDT(df)
   d_ <- copy(df)
   # avoidance is sum of negative agent weights
-  d_[, agent_avoidance := (fifelse(sH < 0, sH, 0) + fifelse(sN < 0, sN, 0)) /
-    (abs(sH) + abs(sN) + abs(sF))]
+  d_[,
+    agent_avoidance := (fifelse(sH < 0, sH, 0) + fifelse(sN < 0, sN, 0)) /
+      (abs(sH) + abs(sN) + abs(sF))
+  ]
   # assign to original df, modified by reference
   df[, agent_avoidance := d_$agent_avoidance]
 }

@@ -15,6 +15,7 @@ data <- run_pathomove(
 test_that("Individuals infected artificially are correctly marked", {
   data <- get_trait_data(data)
   expect_identical(
-    unique(data[data$gen == max(data$gen), ]$src_infect), 0L
+    unique(data[data$gen == max(data$gen), ]$src_infect),
+    0L
   )
 })

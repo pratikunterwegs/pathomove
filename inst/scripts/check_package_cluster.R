@@ -1,4 +1,3 @@
-
 library(pathomove)
 password <- readLines("data/password")
 

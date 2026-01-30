@@ -9,8 +9,7 @@
 #' @return A `data.table` with all reported generations.
 #' @export
 #'
-get_trait_data <- function(object,
-                           scaled_preferences = TRUE) {
+get_trait_data <- function(object, scaled_preferences = TRUE) {
   # setting variables to NULL
   sF <- NULL
   sH <- NULL
@@ -40,7 +39,8 @@ get_trait_data <- function(object,
   )
 
   trait_data_ <- Map(
-    trait_data_, generations_,
+    trait_data_,
+    generations_,
     f = function(td_, g_) {
       td_$gen <- g_
       data.table::as.data.table(td_)
@@ -52,11 +52,15 @@ get_trait_data <- function(object,
 
   # scale weights if required
   if (scaled_preferences) {
-    trait_data_[, c("sF", "sH", "sN") := lapply(
-      .SD, function(tr_) {
-        tr_ / (abs(sF) + abs(sH) + abs(sN))
-      }
-    ), .SDcols = c("sF", "sH", "sN")][] # add [] for printing output
+    trait_data_[,
+      c("sF", "sH", "sN") := lapply(
+        .SD,
+        function(tr_) {
+          tr_ / (abs(sF) + abs(sH) + abs(sN))
+        }
+      ),
+      .SDcols = c("sF", "sH", "sN")
+    ][] # add [] for printing output
   }
 
   return(trait_data_)
