@@ -117,17 +117,19 @@ struct Population {
   void setTrait(const float &mSize);
   void initPos(const Resources &food);
 
+  const bool is_handling(const size_t &i);
+
   // make rtree and get nearest agents and food
   void updateRtree();
 
-  int countFood(const Resources &food, const float &xloc, const float &yloc);
+  const int countFood(const Resources &food, const double &xloc, const double &yloc);
 
-  std::vector<int> getFoodId(const Resources &food, const float &xloc,
-                             const float &yloc);
+  const std::vector<int> getFoodId(const Resources &food, const double &xloc,
+                             const double &yloc);
 
-  std::pair<int, int> countAgents(const float &xloc, const float &yloc);
+  const std::pair<int, int> countAgents(const double &xloc, const double &yloc);
 
-  std::vector<int> getNeighbourId(const float &xloc, const float &yloc);
+  const std::vector<int> getNeighbourId(const double &xloc, const double &yloc);
 
   // functions to move and forage on a landscape
   void move(const Resources &food, const bool &multithreaded);
