@@ -14,7 +14,8 @@ on:
       - "R/**"
       # Benchmarking code, config file, and manual trigger
       - "touchstone/**"
-      - ".github/workflows/touchstone-*.yaml"
+      - ".github/workflows/touchstone-receive.yaml"
+      - ".github/workflows/touchstone-comment.yaml"
       - ".benchmark"
 
 permissions:
