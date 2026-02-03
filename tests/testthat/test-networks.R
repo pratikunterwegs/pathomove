@@ -76,8 +76,9 @@ trait_data <- trait_data[gen >= g_patho_init, ]
 test_that("Vertical infection is not overridden by manual infection", {
   # infection sources in the last generation
   # in the first spillover gen, we would expect to find srcInfect = 0
-  infection_sources <- trait_data[trait_data$gen ==
-    max(trait_data$gen), ]$src_infect
+  infection_sources <- trait_data[
+    trait_data$gen == max(trait_data$gen),
+  ]$src_infect
   expect_true(
     all(infection_sources < 0) # all are infected from parents
   )

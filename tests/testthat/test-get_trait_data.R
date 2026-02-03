@@ -23,7 +23,8 @@ movement <- get_move_data(data)
 test_that("Get data from simulation output", {
   # check for class, at least data.frame
   expect_s3_class(
-    trait_data, "data.frame"
+    trait_data,
+    "data.frame"
   )
   # check for nAgents in one (and hence each) generation
   expect_identical(
@@ -36,7 +37,8 @@ test_that("Get data from simulation output", {
   )
   # check for tidygraph class
   expect_s3_class(
-    networks[[1]], "tbl_graph"
+    networks[[1]],
+    "tbl_graph"
   )
   # check all network list elements are tidygraphs
   expect_identical(
@@ -53,7 +55,8 @@ test_that("Get data from simulation output", {
     colnames(movement)
   )
   expect_identical(
-    max(movement$time), tmax - 1L
+    max(movement$time),
+    tmax - 1L
   )
 })
 
@@ -77,9 +80,11 @@ test_that("Social information use is calculated", {
   # check that weights are scaled -1 -- +1
   # check only for sF
   expect_gte(
-    min(trait_data$sF), -1.0
+    min(trait_data$sF),
+    -1.0
   )
   expect_lte(
-    max(trait_data$sF), 1.0
+    max(trait_data$sF),
+    1.0
   )
 })

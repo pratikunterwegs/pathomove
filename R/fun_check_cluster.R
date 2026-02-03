@@ -6,8 +6,10 @@
 #' @return None, should check and prepare cluster.
 #' @export
 #'
-check_prepare_cluster <- function(ssh_con = "some_server",
-                                  password = "your_password") {
+check_prepare_cluster <- function(
+  ssh_con = "some_server",
+  password = "your_password"
+) {
   message("checking cluster for pathomove")
   # connect to server
   s <- ssh::ssh_connect(ssh_con, passwd = password)

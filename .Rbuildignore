@@ -17,3 +17,5 @@
 ^\.covrignore$
 ^.*\.log$
 ^touchstone$
+^README\.Rmd$
+^touchstone$

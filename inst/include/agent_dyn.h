@@ -1,6 +1,6 @@
 // Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
-#ifndef INST_INCLUDE_AGENT_DYN_H_
-#define INST_INCLUDE_AGENT_DYN_H_
+
+#pragma once
 
 #define _USE_MATH_DEFINES
 /// code to make agents do things
@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "agent_def.h"
+#include "helpers.h"
 #include "landscape.h"
 #include "network.h"
 
@@ -29,6 +30,13 @@ namespace pathomove {
 // [0,n) as required by the STL algorithm
 // taken from https://gallery.rcpp.org/articles/stl-random-shuffle/
 inline int randWrapper(const int n) { return floor(unif_rand() * n); }
+
+/// @brief Is agent i handling food?
+/// @param i Agent i.
+/// @return A boolean.
+inline const bool Population::is_handling(const size_t &i) {
+  return counter[i] > 0;
+}
 
 // to shuffle pop id
 inline void Population::shufflePop() {
@@ -57,114 +65,101 @@ inline void Population::initPos(const Resources &food) {
   coordY = Rcpp::as<std::vector<float>>(Rcpp::runif(nAgents, 0.f, food.dSize));
   initX = coordX;
   initY = coordY;
-  updateRtree();
+  // updateRtree();
 }
 
 // set agent trait
 inline void Population::setTrait(const float &mSize) {
-  // create a cauchy distribution, mSize is the scale
+  // create a Normal distribution, mSize is the scale
   sF = Rcpp::as<std::vector<float>>(Rcpp::rnorm(nAgents, 0.0, mSize));
   sH = Rcpp::as<std::vector<float>>(Rcpp::rnorm(nAgents, 0.0, mSize));
   sN = Rcpp::as<std::vector<float>>(Rcpp::rnorm(nAgents, 0.0, mSize));
 }
 
-// general function for agents within distance
-inline std::pair<int, int> Population::countAgents(const float &xloc,
-                                                   const float &yloc) {
+/// @brief Count agents in a Population near the location (x,y)
+/// @param x X coordinate.
+/// @param y Y coordinate.
+/// @param range Distance to compare against.
+/// @return Count of agents within range.
+inline const std::pair<int, int> Population::countAgents(const double &x,
+                                                         const double &y) {
   int handlers = 0;
   int nonhandlers = 0;
-  std::vector<value> near_agents;
-  // query for a simple box
-  agentRtree.query(bgi::satisfies([&](value const &v) {
-                     return bg::distance(v.first, point(xloc, yloc)) <
-                            range_agents;
-                   }),
-                   std::back_inserter(near_agents));
+  const double range_square = square(range_agents);
 
-  BOOST_FOREACH (value const &v, near_agents) {  // NOLINT
-    if (counter[v.second] > 0)
-      handlers++;
-    else
-      nonhandlers++;
+  for (size_t i = 0; i < nAgents; i++) {
+    const double distsquare = square(coordX[i] - x) + square(coordY[i] - y);
+    if (distsquare < range_square) {
+      if (is_handling(i)) {
+        handlers++;
+      } else {
+        nonhandlers++;
+      }
+    }
   }
-  near_agents.clear();
-  // first element is number of near entities
-  // second is the identity of entities
+
   return std::pair<int, int>{handlers, nonhandlers};
 }
 
-// function for near agent ids
-inline std::vector<int> Population::getNeighbourId(const float &xloc,
-                                                   const float &yloc) {
-  std::vector<int> agent_id;
-  std::vector<value> near_agents;
-  // query for a simple box
-  // neighbours for associations are counted over the MOVEMENT RANGE
-  agentRtree.query(bgi::satisfies([&](value const &v) {
-                     return bg::distance(v.first, point(xloc, yloc)) <
-                            range_move;
-                   }),
-                   std::back_inserter(near_agents));
+/// @brief
+/// @param x
+/// @param y
+/// @return
+inline const std::vector<int> Population::getNeighbourId(const double &x,
+                                                            const double &y) {
+  const double range_square = square(range_agents);
 
-  BOOST_FOREACH (value const &v, near_agents) {  // NOLINT
-    agent_id.push_back(v.second);
+  std::vector<int> agent_id;
+
+  for (int i = 0; i < nAgents; i++) {
+    const double distsquare = square(coordX[i] - x) + square(coordY[i] - y);
+    if (distsquare < range_square) {
+      agent_id.push_back(i);
+    }
   }
-  near_agents.clear();
-  // first element is number of near entities
-  // second is the identity of entities
+
   return agent_id;
 }
 
-// general function for items within distance
-inline int Population::countFood(const Resources &food, const float &xloc,
-                                 const float &yloc) {
-  int nFood = 0;
-
-  // check any available
+/// @brief
+/// @param food
+/// @param x
+/// @param y
+/// @return
+inline const int Population::countFood(const Resources &food, const double &x,
+                                       const double &y) {
+  int nfood = 0;
   if (food.nAvailable > 0) {
-    // query for a simple box
-    std::vector<value> near_food;
-    food.rtree.query(bgi::satisfies([&](value const &v) {
-                       return bg::distance(v.first, point(xloc, yloc)) <
-                              range_food;
-                     }),
-                     std::back_inserter(near_food));
+    const double range_square = square(range_food);
 
-    BOOST_FOREACH (value const &v, near_food) {  // NOLINT
-      // count only which are available!
-      if (food.available[v.second]) {
-        nFood++;
-      }
+    int nfood = 0;
+
+    for (size_t i = 0; i < food.nItems; i++) {
+      const double distsquare =
+          square(food.coordX[i] - x) + square(food.coordY[i] - y);
+      if (distsquare < range_square && food.available[i]) nfood++;
     }
-    near_food.clear();
   }
 
-  return nFood;
+  return nfood;
 }
 
-// function for the nearest available food item
-inline std::vector<int> Population::getFoodId(const Resources &food,
-                                              const float &xloc,
-                                              const float &yloc) {
+/// @brief
+/// @param food
+/// @param x
+/// @param y
+/// @return
+inline const std::vector<int> Population::getFoodId(const Resources &food,
+                                                       const double &x,
+                                                       const double &y) {
   std::vector<int> food_id;
-  // check any available
-  if (food.nAvailable > 0) {
-    // query for a simple box
-    std::vector<value> near_food;
-    // food is accessed over the MOVEMENT RANGE
-    food.rtree.query(bgi::satisfies([&](value const &v) {
-                       return bg::distance(v.first, point(xloc, yloc)) <
-                              range_move;
-                     }),
-                     std::back_inserter(near_food));
+  const double range_square = square(range_food);
 
-    BOOST_FOREACH (value const &v, near_food) {  // NOLINT
-      // count only which are available!
-      if (food.available[v.second]) {
-        food_id.push_back(v.second);
-      }
+  for (int i = 0; i < food.nItems; i++) {
+    const auto distsquare = square(food.coordX[i] - x) + square(food.coordY[i] - y);
+    if (distsquare < range_square && food.available[i]) {
+      food_id.push_back(i);
     }
-    near_food.clear();
   }
 
   return food_id;
@@ -632,5 +627,3 @@ inline void Population::Reproduce(const Resources &food,
   tmpIntake.clear();
 }
 }  // namespace pathomove
-
-#endif  // INST_INCLUDE_AGENT_DYN_H_
