@@ -201,9 +201,8 @@ inline Rcpp::List simulation::do_simulation() {
       }
 
       // timestep ends here
+      pop.countInfected();  // count infected in each timestep
     }
-
-    pop.countInfected();
     // log n infected
     n_infected(gen) = pop.nInfected;
     assert(pop.nInfected <= pop.nAgents);
