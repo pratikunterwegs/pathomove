@@ -1,4 +1,3 @@
-
 #' Get network data from Rds files.
 #'
 #' @param output A `pathomove_output` object.
@@ -41,20 +40,18 @@ get_networks <- function(output, assoc_threshold = 5) {
   }
 
   # work on nodes
-  nodes <- Map(nodes, output@gens_edge_lists,
-    f = function(n, g) {
-      n$gen <- g
-      n$id <- seq_len(nrow(n))
-      data.table::setDT(n)
+  nodes <- Map(nodes, output@gens_edge_lists, f = function(n, g) {
+    n$gen <- g
+    n$id <- seq_len(nrow(n))
+    data.table::setDT(n)
 
-      # add simulation parameter data
-      n[, names(agent_parameters) := agent_parameters]
-      n[, names(eco_parameters) := eco_parameters]
+    # add simulation parameter data
+    n[, names(agent_parameters) := agent_parameters]
+    n[, names(eco_parameters) := eco_parameters]
 
-      n <- get_social_strategy(n)
-      n
-    }
-  )
+    n <- get_social_strategy(n)
+    n
+  })
 
   assertthat::assert_that(
     length(el) == length(nodes),

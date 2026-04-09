@@ -7,6 +7,7 @@
 #include <Rcpp.h>
 
 #include "agent_def.h"
+#include "helpers.h"
 #include "agent_dyn.h"
 #include "landscape.h"
 #include "network.h"

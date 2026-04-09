@@ -13,14 +13,15 @@
 #' @return Runs a job which makes more jobs.
 #' @export
 #'
-use_cluster <- function(ssh_con = "some_server",
-                        password = "your_password",
-                        script = "which_script.R",
-                        folder = "pathomove",
-                        tag = "scenario_tag",
-                        template_job = "some_template.sh",
-                        parameter_file = "which_parameters.csv") {
-
+use_cluster <- function(
+  ssh_con = "some_server",
+  password = "your_password",
+  script = "which_script.R",
+  folder = "pathomove",
+  tag = "scenario_tag",
+  template_job = "some_template.sh",
+  parameter_file = "which_parameters.csv"
+) {
   # connect to server
   s <- ssh::ssh_connect(ssh_con, passwd = password)
 

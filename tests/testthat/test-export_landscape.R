@@ -14,27 +14,34 @@ test_that("Landscape export function", {
   )
 
   expect_s3_class(
-    land, "data.frame"
+    land,
+    "data.frame"
   )
 
   expect_identical(
-    colnames(land), c("x", "y", "tAvail")
+    colnames(land),
+    c("x", "y", "tAvail")
   )
 
   expect_equal(
-    nrow(land), nItems
+    nrow(land),
+    nItems
   )
 
   expect_gte(
-    min(land$x), 0.0
+    min(land$x),
+    0.0
   )
   expect_lte(
-    min(land$x), landsize
+    min(land$x),
+    landsize
   )
   expect_gte(
-    min(land$y), 0.0
+    min(land$y),
+    0.0
   )
   expect_lte(
-    min(land$y), landsize
+    min(land$y),
+    landsize
   )
 })

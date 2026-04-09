@@ -1,3 +1,4 @@
+# Modified to follow workflow in EpiNow2
 name: Continuous Benchmarks (Receive)
 
 concurrency:
@@ -6,20 +7,26 @@ concurrency:
 
 on: 
   pull_request:
+    paths:
+      # Where model code is defined: R/, src/, inst/include/
+      - "inst/include/**"
+      - "src/**"
+      - "R/**"
+      # Benchmarking code, config file, and manual trigger
+      - "touchstone/**"
+      - ".github/workflows/touchstone-receive.yaml"
+      - ".github/workflows/touchstone-comment.yaml"
+      - ".benchmark"
 
 permissions:
   contents: read
+  statuses: write
+  pull-requests: write
 
 jobs:
   prepare:
-    runs-on: ubuntu-latest 
-    if:
-      true &&
-      (
-        github.event.pull_request.author_association == 'OWNER' ||
-        github.event.pull_request.author_association == 'MEMBER' ||
-        github.event.pull_request.author_association == 'COLLABORATOR' 
-      )
+    runs-on: ubuntu-latest
+    # Allow benchmarking workflow to run for external contribs
     outputs:
       config: ${{ steps.read_touchstone_config.outputs.config }}
     steps:
@@ -50,10 +57,9 @@ jobs:
       RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: lorenzwalthert/touchstone/actions/receive@v1
+      - uses: lorenzwalthert/touchstone/actions/receive@main
         with:
           cache-version: 1
           benchmarking_repo: ${{ matrix.config.benchmarking_repo }}
           benchmarking_ref: ${{ matrix.config.benchmarking_ref }}
-          benchmarking_path: ${{ matrix.config.benchmarking_path }} 
-          force_upstream: true
+          benchmarking_path: ${{ matrix.config.benchmarking_path }}

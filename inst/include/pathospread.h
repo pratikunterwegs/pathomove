@@ -1,6 +1,6 @@
 // Copyright 2022 Pratik R Gupte. See repository licence in LICENSE.md.
-#ifndef INST_INCLUDE_PATHOSPREAD_H_
-#define INST_INCLUDE_PATHOSPREAD_H_
+
+#pragma once
 
 /// define functions for pathogen spread
 
@@ -48,7 +48,7 @@ inline void Population::pathogenSpread() {
   // looping through agents, query rtree for neighbours
   // pathogen spreads in random order
   shufflePop();
-  for (int i = 0; i < nAgents; i++) {
+  for (size_t i = 0; i < nAgents; i++) {
     // spread to neighbours if self infected
     size_t id = order[i];
     if (infected[id]) {
@@ -58,6 +58,48 @@ inline void Population::pathogenSpread() {
 
       if (nbrsId.size() > 0) {
         // draw whether neighbours will be infected
+        
+        auto transmission = Rcpp::rbinom(nbrsId.size(), 1, pTransmit);
+
+        // loop through neighbours
+        for (size_t j = 0; j < nbrsId.size(); j++) {
+          size_t toInfect = nbrsId[j];
+
+          if (!infected[toInfect]) {
+            // infect neighbours with prob p
+            if (transmission(j)) {
+              infected[toInfect] = true;
+              srcInfect[toInfect] = id + 1;  // add 1 to id
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/// function to spread pathogen
+inline void Population::pathogenSpread2() {
+  // looping through agents, query rtree for neighbours
+  // pathogen spreads in random order
+  // shufflePop();  // turn off shuffling - shuffle only once per tstep?
+
+  // run only if there are infected individuals
+  if (nInfected > 0) {
+    // count neighbours of infected
+  }
+
+  for (size_t i = 0; i < nAgents; i++) {
+    // spread to neighbours if self infected
+    size_t id = order[i];
+    if (infected[id]) {
+      timeInfected[id]++;  // increase time infecetd
+      // get neigbour ids
+      std::vector<int> nbrsId = getNeighbourId(coordX[id], coordY[id]);
+
+      if (nbrsId.size() > 0) {
+        // draw whether neighbours will be infected
+        
         auto transmission = Rcpp::rbinom(nbrsId.size(), 1, pTransmit);
 
         // loop through neighbours
@@ -102,5 +144,3 @@ inline void Population::countInfected() {
   assert(nInfected <= nAgents);
 }
 }  // namespace pathomove
-
-#endif  // INST_INCLUDE_PATHOSPREAD_H_

@@ -103,6 +103,7 @@ Rcpp::DataFrame get_test_landscape(const int nItems, const float landsize,
 //' pathogen introduction are drawn.
 //' @param seed An integer number that is the seed for the R RNG. Defaults to
 //' zero.
+//' @param print_progress A boolean for whether to print progress.
 //' @export
 //' @return An S4 class, `pathomove_output`, with simulation outcomes.
 // [[Rcpp::export]]
@@ -120,7 +121,7 @@ Rcpp::S4 run_pathomove(
     const bool infect_percent = false, const bool vertical = false,
     const bool reprod_threshold = false, const float mProb = 0.01,
     const float mSize = 0.01, const float spillover_rate = 1.0,
-    const int seed = 0) {
+    const int seed = 0, const bool print_progress = false) {
   // check that intial infections is less than popsize
   if (initialInfections > popsize) {
     Rcpp::stop("Error: Initial infections must be less than/equal to popsize");
@@ -180,24 +181,26 @@ Rcpp::S4 run_pathomove(
   Rcpp::String vertical_infection = vertical ? "vertical" : "no_vertical";
 
   /* Section for simulation messages */
-  Rcpp::Rcout << "Running a `pathomove` simulation...\n";
-  Rcpp::Rcout << " Generations: " << genmax << " | Timesteps: " << tmax << "\n";
-  Rcpp::Rcout << " Scenario: " << scenario << ": " << scenario_str << "\n";
-  Rcpp::Rcout << " " + scenario_message;
-  Rcpp::Rcout << "Landscape:\n Size: " << landsize
-              << " | Food items: " << nItems << " | Clusters: " << nClusters
-              << " | Spread: " << clusterSpread << "\n";
-  Rcpp::Rcout << "Population:\n "
-              << "Population size: " << popsize
-              << " | Movement range: " << range_move << "\n"
-              << " Reproduction threshold: "
-              << (reprod_threshold ? "On" : "Off") << "\n";
-  Rcpp::Rcout << "Pathogen:\n "
-              << "p(Transmit): " << pTransmit
-              << " | p(Vertical transmit): " << (vertical ? p_v_transmit : 0.0)
-              << "\n "
-              << "Cost: " << costInfect
-              << " | Initial infections: " << initialInfections << "\n\n";
+  if (print_progress) {
+    Rcpp::Rcout << "Running a `pathomove` simulation...\n";
+    Rcpp::Rcout << " Generations: " << genmax << " | Timesteps: " << tmax
+                << "\n";
+    Rcpp::Rcout << " Scenario: " << scenario << ": " << scenario_str << "\n";
+    Rcpp::Rcout << " " + scenario_message;
+    Rcpp::Rcout << "Landscape:\n Size: " << landsize
+                << " | Food items: " << nItems << " | Clusters: " << nClusters
+                << " | Spread: " << clusterSpread << "\n";
+    Rcpp::Rcout << "Population:\n "
+                << "Population size: " << popsize
+                << " | Movement range: " << range_move << "\n"
+                << " Reproduction threshold: "
+                << (reprod_threshold ? "On" : "Off") << "\n";
+    Rcpp::Rcout << "Pathogen:\n "
+                << "p(Transmit): " << pTransmit << " | p(Vertical transmit): "
+                << (vertical ? p_v_transmit : 0.0) << "\n "
+                << "Cost: " << costInfect
+                << " | Initial infections: " << initialInfections << "\n\n";
+  }
   /* Messages section ends here */
 
   // make simulation class with input parameters

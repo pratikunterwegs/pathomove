@@ -32,7 +32,8 @@ run_pathomove(
   mProb = 0.01,
   mSize = 0.01,
   spillover_rate = 1,
-  seed = 0L
+  seed = 0L,
+  print_progress = FALSE
 )
 }
 \arguments{
@@ -119,6 +120,8 @@ pathogen introduction are drawn.}
 
 \item{seed}{An integer number that is the seed for the R RNG. Defaults to
 zero.}
+
+\item{print_progress}{A boolean for whether to print progress.}
 }
 \value{
 An S4 class, \code{pathomove_output}, with simulation outcomes.

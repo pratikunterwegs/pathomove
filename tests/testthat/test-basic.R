@@ -15,7 +15,8 @@ test_that("Pathomove basic runs with scenario 1", {
 
   # check for clas pathomove_output
   expect_s4_class(
-    data, "pathomove_output"
+    data,
+    "pathomove_output"
   )
   expect_snapshot(
     slotNames(data)
@@ -29,7 +30,8 @@ test_that("Pathomove basic runs with scenario 1", {
 
   # expect equal lengths
   expect_identical(
-    length(data@edge_lists), length(data@gens_edge_lists),
+    length(data@edge_lists),
+    length(data@gens_edge_lists),
     "Not as many trait dataframes as generations"
   )
 

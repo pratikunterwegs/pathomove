@@ -1,0 +1,40 @@
+---
+title: "benchmarking"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{benchmarking}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(pathomove)
+```
+
+```{r}
+# some setup
+genmax <- 10L
+g_patho_init <- genmax / 2
+initial_infections <- 5L
+tmax = 100
+popsize = 100
+scenario = 1
+
+microbenchmark::microbenchmark(
+  simple_case = run_pathomove(
+    scenario = scenario,
+    popsize = popsize,
+    initialInfections = initial_infections,
+    tmax = tmax,
+    genmax = genmax,
+    g_patho_init = g_patho_init
+  )
+)
+```

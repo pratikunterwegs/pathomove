@@ -1,4 +1,5 @@
 ## usethis namespace: start
+#' @import RcppEigen
 #' @importFrom data.table :=
 #' @importFrom data.table .BY
 #' @importFrom data.table .EACHI
